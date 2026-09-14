@@ -1,0 +1,103 @@
+{
+  "manifestSha256": "06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441",
+  "phase": 3,
+  "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+  "reviewerName": "Dr. Renato Sarmento",
+  "registration": "CRM 170837",
+  "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record.",
+  "evidenceType": "verbal, reported by the owner",
+  "reviewedAt": "2026-09-14T05:08:32.516Z",
+  "maxAgeDays": 365,
+  "groups": [
+    {
+      "key": "copy:consulta-clinica-online",
+      "approvedSha256": "a51af0d2f8711b0fefa8d2f3ccd56fee2b6a1361c582d257a11e7fc538def16a",
+      "resultingStateSha256": "57a1b0a76a0bfc918d4eecb6769cac8aa648482c3c0367d6e4fac24f50cc7c84"
+    },
+    {
+      "key": "copy:atestado-medico-online",
+      "approvedSha256": "f4be9b19d62f92c60998caecea84198f19c10bbb0346c14644f61e56a7c68e36",
+      "resultingStateSha256": "7ecf290c6d999ccca2fb9551af4f0dcd2f47191feb950f640b1630c9c137361e"
+    },
+    {
+      "key": "copy:consulta-pele-online",
+      "approvedSha256": "039c61b8e25b6c9b5f71793d74b64e3baa8fe8f6693ab3103390907550659162",
+      "resultingStateSha256": "c776ef12a65e17894d101c53ab04b5c2d9d40fbd90e2022f2b3c3827f86bf4e5"
+    },
+    {
+      "key": "copy:pediatria-online",
+      "approvedSha256": "06255c6661099ef91b1fdd65676a7d34fc142568e7be53efc4e3b0402005b576",
+      "resultingStateSha256": "db1a62428109be0e272aa349394c5f57aa222f10c004ccb2cd4c1a6248ff8a09"
+    },
+    {
+      "key": "copy:controle-peso-online",
+      "approvedSha256": "96c66f4efb35bcaf7415195fd1064fb27f38af22e6f2a9e3a674a6baf1438a75",
+      "resultingStateSha256": "6cef1c826c133f9690f6dd821d0a91e4bbd789952488ec10a240926205131786"
+    },
+    {
+      "key": "copy:doencas-cronicas-online",
+      "approvedSha256": "982b714a2c025906c6eac6bda74df9c99d2f932923e7e92a9c96ef04c2160e10",
+      "resultingStateSha256": "c9736374617876f8c7680448828bc9510397adc8837af516bf9843b9a4959d6e"
+    },
+    {
+      "key": "copy:musculoesqueletico-online",
+      "approvedSha256": "22debaecd2a14c66e538fe0cc64d0c390e7b5ad4def013af6afe4af349c5e5a4",
+      "resultingStateSha256": "9986d82ef3707789835ec964b21ffe0c93a1833e49a655a525302a6bb05fbdac"
+    },
+    {
+      "key": "copy:parar-de-fumar-online",
+      "approvedSha256": "1c4c310b4766cabfef987cd968d241b5464522e2390499a7541b6eda18fc26e1",
+      "resultingStateSha256": "cb4ec9f22436bb40775cb26255c5c2f35885bbf1329182d3b48f7fcf32484349"
+    },
+    {
+      "key": "copy:renovacao-receita-online",
+      "approvedSha256": "06c66aacefa51f2bc6197e3aef3bc5c855968de7a8652e9599e8d78e05cab3b9",
+      "resultingStateSha256": "1e7b78c863536a1d44a9f3d314d01123c0502e60bdeb8ba1ea4e1532c057a299"
+    },
+    {
+      "key": "copy:queda-cabelo-online",
+      "approvedSha256": "1cccb93f06c2b0b0591b9ace370ea51f59455f60d69fec1d43769b0a9b911d6b",
+      "resultingStateSha256": "0fd3a9c260ed97fbfcd92ac6ab0ccb40a0082245bea6af05a14c58710d0a9b3f"
+    },
+    {
+      "key": "copy:saude-da-mulher-online",
+      "approvedSha256": "4332c1f3799b4ce76f01719353cab74ccd63b21737173e8137d4c1118b26c0df",
+      "resultingStateSha256": "e822a4b21feea9a5b9917619de8f841c45811738e37c1678887a33c694fbb590"
+    },
+    {
+      "key": "copy:saude-viagem-online",
+      "approvedSha256": "948ddc35e3d52b9fac57a505869dc6bdfb86ee6af84a7fde2f610bc0c83ce2d2",
+      "resultingStateSha256": "950e7c53e87afa7a5dd3737a6fac0474d27cc0d85fcc07169e59d46f2bd5b7e6"
+    },
+    {
+      "key": "copy:saude-do-homem-online",
+      "approvedSha256": "64a7127e5ecc620d816dc88e120bffd2200ba404fee420391e4bbd7290b91146",
+      "resultingStateSha256": "b8be6dedbe54e92a61181712ad3f81c73b885c24850db6b83ad1613c8a62a8c9"
+    },
+    {
+      "key": "copy:saude-idoso-online",
+      "approvedSha256": "a9dd011acfc301f5bdf9628471ab7aecf3308f15d49c7935cca8717ab756f55f",
+      "resultingStateSha256": "28bb1c27b2f8528c493a85c49f2e1f8dc461a3597b547dd76366bfa017627ee1"
+    },
+    {
+      "key": "copy:saude-mental-online",
+      "approvedSha256": "8fd74470c588d838c6ab4d5f359cbbbe52def28902f4abbac795093e0a6b53c0",
+      "resultingStateSha256": "16bb476f256a1b4ac65dc21c35d0e185d0f3788646b732d4738daf080529b996"
+    },
+    {
+      "key": "copy:saude-sexual-ist-online",
+      "approvedSha256": "f827b2381785e15df3a592c35744c4076690f21b8b4af69309e6476d434bd3f7",
+      "resultingStateSha256": "52364baead8a430b370e1c994874030343b22c45d7af24fba7f72d2083edcea0"
+    },
+    {
+      "key": "copy:segunda-opiniao-medica",
+      "approvedSha256": "c0b38a270ed36c853c85ed74abb179e8f4c0782191a9fd94d2a7656d13fd4516",
+      "resultingStateSha256": "4835eb2b47b70564ae535c9c9bf88fbe8d8b6bed17877704d8e1b634c624dfb5"
+    },
+    {
+      "key": "copy:solicitacao-exames-online",
+      "approvedSha256": "d975744403fc5cae8ccd844a0a29ec6b284381fb2bf53b00cd93c72eae431603",
+      "resultingStateSha256": "4b9f9bc9e25f8b356670b087ac0e9cf7f4ff975addca3782cc0cf639aa567328"
+    }
+  ]
+}

@@ -40,11 +40,24 @@ export function verifyPage(before,after,draft,links=[],{localizedUrls}={}){
 }
 if(process.argv[1]?.endsWith('verify-public.mjs')){
  const root=process.argv.includes('--brazil')?'seo/brazil':'seo/spain',read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`));
- const phase2=process.argv.includes('--phase=2'),rollout=phase2?'raw/rollout/phase2':'raw/rollout';
- const key=process.argv.find(a=>a.startsWith('--group='))?.slice(8),manifest=read(phase2?'content-briefs/storage-mutation-manifest-phase2.json':'content-briefs/storage-mutation-manifest.json');
+ const phase=Number(process.argv.find(a=>a.startsWith('--phase='))?.slice(8)??1),rollout=phase>1?`raw/rollout/phase${phase}`:'raw/rollout';
+ const key=process.argv.find(a=>a.startsWith('--group='))?.slice(8),manifest=read(phase>1?`content-briefs/storage-mutation-manifest-phase${phase}.json`:'content-briefs/storage-mutation-manifest.json');
  const group=manifest.groups.find(g=>g.key===key);assert(group,'Prepared storage group required');
  const stem=key.replaceAll(':','-'),receipt=read(`${rollout}/${stem}-applied.json`);
  assert.equal(receipt.approvalSha256,group.approvalSha256,'Mutation receipt mismatch');assert.equal(receipt.dryRun,false);
+ if(group.copyPatch){
+  // Summary/name patch: the public API (uncached) returns the approved text for every locale.
+  const slug=key.slice(5),results=[];
+  for(const [locale,d] of Object.entries(group.copyPatch)){
+   const endpoint=`https://api.myglobalhealth.online/api/services/${slug}?countryCode=${manifest.country}&locale=${locale}`;
+   const r=await fetch(endpoint,{cache:'no-store',signal:AbortSignal.timeout(45000)});assert.equal(r.status,200,`API status ${locale}`);
+   const s=(await r.json()).data?.service;assert.equal(s?.summary,d.summary,`Summary mismatch ${locale}`);if(d.name)assert.equal(s?.name,d.name,`Name mismatch ${locale}`);
+   results.push({endpoint,status:'passed'});
+  }
+  fs.mkdirSync(`${root}/${rollout}`,{recursive:true});
+  fs.writeFileSync(`${root}/${rollout}/${stem}-public.json`,JSON.stringify({checkedAt:new Date().toISOString(),group:key,approvalSha256:group.approvalSha256,results},null,2));
+  console.log(JSON.stringify({group:key,passed:results.length}));process.exit(0);
+ }
  assert.equal(manifest.draftsSha256,hash(read('content-briefs/exact-drafts.json')),'Drafts changed');
  const inventory=read('raw/public-inventory-2026-09-13.json'),drafts=read('content-briefs/exact-drafts.json'),links=read('content-briefs/link-drafts.json'),results=[];
  const appliedKeys=new Set(manifest.groups.slice(0,manifest.groups.indexOf(group)+1).map(g=>g.key));

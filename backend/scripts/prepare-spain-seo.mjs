@@ -101,7 +101,46 @@ export function prepareSpain(snapshot,drafts,links,sourceFor,{keys,overrideHolds
  }
  return {status:'storage prepared; no approval or publication',country:'es',snapshotSha256:hash(s),draftsSha256:hash(drafts),groups,blockers};
 }
+// Storage-based summary/name patches for any market: before = stored row, after = approved draft.
+// patches: {slug: {LOCALE: {summary, name?, currentName?}}}. One group per service.
+export function planCopyPatches(snapshot,patches){
+ const s=snapshot.data,def=s.country.defaultLocale,locales=s.countryLocales.map(l=>l.locale);
+ const groups=[],blockers=[];let state=structuredClone(s);
+ for(const [slug,byLocale] of Object.entries(patches)){
+  const key=`copy:${slug}`;
+  try{
+   const base=one(state.services,r=>r.slug===slug,'Service missing');assert(base.isActive&&base.visibility==='PUBLIC','Service publication drift');
+   assert.deepEqual(Object.keys(byLocale).sort(),[...locales].sort(),'Every market locale needs a draft');
+   const changes=[];
+   const patch=(table,row,after)=>{const changed=Object.fromEntries(Object.entries(after).filter(([k,v])=>row[k]!==v));if(Object.keys(changed).length)changes.push({action:'update',table,id:row.id,before:structuredClone(row),after:changed});};
+   for(const [locale,d] of Object.entries(byLocale)){
+    assert(typeof d.summary==='string'&&d.summary.trim()&&d.summary.length<=160,`Summary missing or over 160 chars (${locale})`);
+    assert(!/<[a-z]/i.test(d.summary),'Summary must be plain text');
+    const after={summary:d.summary};
+    const row=state.serviceTranslations.find(t=>t.serviceId===base.id&&t.locale===locale);
+    if(d.name){const current=row?.name??base.name;assert.equal(current,d.currentName,`Name drift ${locale}: stored "${current}"`);after.name=d.name;}
+    assert(row||locale===def,`Missing ${locale} translation row; inserts are out of scope`);
+    if(row)patch('serviceTranslations',row,after);
+    if(locale===def)patch('services',base,after);
+   }
+   assert(changes.length,'No changes');
+   const group={key,stateKey:`service:${base.id}`,urls:[],copyPatch:byLocale,changes};
+   const next=rehearse(state,group);group.resultingStateSha256=romanianContentStates(next)[group.stateKey];group.approvalSha256=hash(group);groups.push(group);state=next;
+  }catch(e){blockers.push({key,reason:e.message.split('\n')[0]});}
+ }
+ return {status:'storage prepared; no approval or publication',country:s.country.code,snapshotSha256:hash(s),groups,blockers};
+}
 if(process.argv[1]?.endsWith('prepare-spain-seo.mjs')){
+ const phaseArg=process.argv.find(a=>a.startsWith('--phase='))?.slice(8),brazil=process.argv.includes('--brazil');
+ if(phaseArg&&Number(phaseArg)>=3){
+  // Phase 3+: storage-based copy patches (summary/name) for Spain or Brazil.
+  const root=brazil?'seo/brazil':'seo/spain',read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`));
+  const plan=read(`content-briefs/phase${phaseArg}-plan.json`);
+  const manifest={...planCopyPatches(read(plan.snapshot),plan.patches),phase:Number(phaseArg)};
+  fs.writeFileSync(`${root}/content-briefs/storage-mutation-manifest-phase${phaseArg}.json`,JSON.stringify(manifest,null,2)+'\n');
+  console.log(JSON.stringify({market:manifest.country,phase:manifest.phase,groups:manifest.groups.length,operations:manifest.groups.reduce((n,g)=>n+g.changes.length,0),blockers:manifest.blockers,manifestSha256:hash(manifest)}));
+  process.exit(0);
+ }
  const root='seo/spain',read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`));const drafts=read('content-briefs/exact-drafts.json'),links=read('content-briefs/link-drafts.json');
  const sourceFor=d=>{const r=read(d.source);return r.data.service??r.data.doctor;};
  if(process.argv.includes('--phase=2')){

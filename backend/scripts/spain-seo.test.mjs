@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {prepareSpain,hash,rehearse} from './prepare-spain-seo.mjs';
+import {prepareSpain,planCopyPatches,hash,rehearse} from './prepare-spain-seo.mjs';
 import {executeSpainGroup,verifySpainApproval,rolloutReceipt} from './apply-spain-seo.mjs';
 import {APPROVED_SPAIN_STATES,SPAIN_REVIEW_POLICY,romanianContentStates,assertSpainClinicalChanges,reviewedRomaniaTransaction} from '../src/content/romania-clinical-review.ts';
 import {verifyPage} from '../../seo/spain/verify-public.mjs';
@@ -48,6 +48,16 @@ test('Spain planner preserves hidden/unrelated data, exact locales and hashes; r
  const fa=rehearse(fallback,fm.groups[0]);assert.equal(fa.serviceTranslations[1].seoTitle,'New');assert.equal(fa.serviceFaqs[0].answer,'New es');assert.equal(fa.serviceFaqTranslations[0].answer,'New en');assert.equal(fa.serviceFaqTranslations.length,1);
  const noEn=structuredClone(fallback);noEn.serviceFaqTranslations=[];assert.match(prepareSpain({data:noEn},patched,[],d=>f.sources[d.locale]).blockers[0].reason,/Missing FAQ translation/);
  const changed=structuredClone(f.drafts);changed[0].after.seoTitle='Other';assert.notEqual(prepareSpain({data:f.data},changed,[],d=>f.sources[d.locale]).groups[0].approvalSha256,m.groups[0].approvalSha256);
+});
+test('copy patches write summary/name per locale from storage and refuse drift',()=>{
+ const f=fixture(),data=structuredClone(f.data);data.services[0].name='Old';data.serviceTranslations.forEach(t=>t.name=null);
+ const patches={test:{ES:{summary:'Resumen.',name:'Nuevo',currentName:'Old'},EN:{summary:'Summary.'}}};
+ const m=planCopyPatches({data},patches);assert.equal(m.blockers.length,0,JSON.stringify(m.blockers));
+ const after=rehearse(data,m.groups[0]);assert.equal(after.services[0].summary,'Resumen.');assert.equal(after.services[0].name,'Nuevo');
+ assert.equal(after.serviceTranslations.find(t=>t.locale==='EN').summary,'Summary.');assert.equal(after.services[0].basePriceCents,3900);
+ assert.match(planCopyPatches({data},{test:{ES:{summary:'x',name:'N',currentName:'Wrong'},EN:{summary:'y'}}}).blockers[0].reason,/Name drift/);
+ assert.match(planCopyPatches({data},{test:{ES:{summary:'x'}}}).blockers[0].reason,/Every market locale/);
+ assert.match(planCopyPatches({data},{test:{ES:{summary:'x'.repeat(161)},EN:{summary:'y'}}}).blockers[0].reason,/160/);
 });
 test('registration typo correction rewrites only doctor-owned text and refuses leftovers',async()=>{
  const f=fixture(),data=structuredClone(f.data);

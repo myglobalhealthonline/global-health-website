@@ -11,7 +11,8 @@ export const tables={services:'Service',serviceTranslations:'ServiceTranslation'
 export const withoutUpdatedAt=['DoctorCountry'];
 const copy=['seoTitle','seoDescription','heroTitle','heroDescription','detailBody'];
 // Doctor/DoctorCountry fields are writable only for the verified registration-typo correction group.
-export const updates={services:copy,serviceTranslations:copy,serviceFaqs:['question','answer'],serviceFaqTranslations:['question','answer'],doctorMarketTranslations:['seoTitle','seoDescription'],doctorFaqs:['question','answer'],serviceLinks:['isActive'],doctors:['seoTitle','seoDescription','qualifications'],doctorCountries:['registrationNumber']};
+// summary/name are written only by storage-based copy-patch groups (phase 3+).
+export const updates={services:[...copy,'summary','name'],serviceTranslations:[...copy,'summary','name'],serviceFaqs:['question','answer'],serviceFaqTranslations:['question','answer'],doctorMarketTranslations:['seoTitle','seoDescription'],doctorFaqs:['question','answer'],serviceLinks:['isActive'],doctors:['seoTitle','seoDescription','qualifications'],doctorCountries:['registrationNumber']};
 export const inserts={serviceFaqs:['id','serviceId','question','answer','sortOrder','isVisible'],serviceFaqTranslations:['id','serviceFaqId','locale','question','answer']};
 export function verifySpainApproval(manifest,approval,group,now=Date.now()){
  const policy=manifest.country==='br'?BRAZIL_REVIEW_POLICY:SPAIN_REVIEW_POLICY,states=manifest.country==='br'?APPROVED_BRAZIL_STATES:APPROVED_SPAIN_STATES;
@@ -53,15 +54,15 @@ export async function executeSpainGroup(client,expected,group,{apply=false,befor
 }
 if(process.argv[1]?.endsWith('apply-spain-seo.mjs')){
  const market=process.argv.includes('--brazil')?'brazil':'spain',root=`seo/${market}`,read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`)),arg=n=>process.argv.find(v=>v.startsWith(`--${n}=`))?.slice(n.length+3);
- // Phase 2: follow-up groups planned against the post-rollout snapshot, with their own approval and receipts.
- const phase2=process.argv.includes('--phase=2'),suffix=phase2?'-phase2':'',rolloutDir=phase2?'raw/rollout/phase2':'raw/rollout';
+ // Phase N>1: follow-up groups planned against a later snapshot, with their own plan, approval and receipts.
+ const phase=Number(arg('phase')??1),suffix=phase>1?`-phase${phase}`:'',rolloutDir=phase>1?`raw/rollout/phase${phase}`:'raw/rollout';
  const manifest=read(`content-briefs/storage-mutation-manifest${suffix}.json`);assert.equal(manifest.status,'storage prepared; no approval or publication','Authenticated storage preparation required');
  assert.equal(manifest.country,market==='brazil'?'br':'es','Manifest market mismatch');
  const group=manifest.groups.find(g=>g.key===arg('group'));assert(group,'Unknown/preflight-held group');
  const apply=process.argv.includes('--apply');
  if(apply){verifySpainApproval(manifest,read(`clinical-approval${suffix}.json`),group);assert.equal(arg('confirm'),group.approvalSha256,'Explicit production group confirmation required');assert(read(`enforcement-deployment${suffix}.json`).deploymentId,'Deployed mutation-boundary enforcement required');}
- if(phase2){const phase1=read('content-briefs/storage-mutation-manifest.json');assert.equal(manifest.afterPhase1ManifestSha256,hash(phase1),'Phase 1 manifest changed');for(const g of phase1.groups)assert.equal(read(`raw/rollout/${g.key.replaceAll(':','-')}-applied.json`).publicVerified,true,'Phase 1 not fully verified');}
- let expected=read(phase2?read('content-briefs/phase2-plan.json').snapshot:'raw/storage-preflight-2026-09-13.json').data;assert.equal(hash(expected),manifest.snapshotSha256,'Snapshot changed');
+ if(phase===2){const phase1=read('content-briefs/storage-mutation-manifest.json');assert.equal(manifest.afterPhase1ManifestSha256,hash(phase1),'Phase 1 manifest changed');for(const g of phase1.groups)assert.equal(read(`raw/rollout/${g.key.replaceAll(':','-')}-applied.json`).publicVerified,true,'Phase 1 not fully verified');}
+ let expected=read(phase>1?read(`content-briefs/phase${phase}-plan.json`).snapshot:'raw/storage-preflight-2026-09-13.json').data;assert.equal(hash(expected),manifest.snapshotSha256,'Snapshot changed');
  for(const prior of manifest.groups.slice(0,manifest.groups.indexOf(group))){
   const receipt=read(`${rolloutDir}/${prior.key.replaceAll(':','-')}-applied.json`);assert.equal(receipt.approvalSha256,prior.approvalSha256);assert.equal(receipt.publicVerified,true,'Previous group not publicly verified');expected=rehearse(expected,prior);
  }

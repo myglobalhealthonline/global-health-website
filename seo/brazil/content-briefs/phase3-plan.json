@@ -1,0 +1,204 @@
+{
+  "snapshot": "raw/storage-phase3-2026-09-14.json",
+  "source": "Owner-approved summary/name drafts from session \"Cards showing wrong language\" (handoff 2026-09-14); owner confirmed approval in this session",
+  "patches": {
+    "consulta-clinica-online": {
+      "PT": {
+        "summary": "Fale com um clínico geral por videochamada sobre sintomas agudos não urgentes, dúvidas de saúde ou exames de rotina, de qualquer lugar do Brasil."
+      },
+      "EN": {
+        "summary": "See a general practitioner by video call for non-urgent acute symptoms, health questions or routine test requests, from anywhere in Brazil."
+      },
+      "ES": {
+        "summary": "Habla con un médico general por videollamada sobre síntomas agudos no urgentes, dudas de salud o exámenes de rutina, desde cualquier lugar de Brasil."
+      }
+    },
+    "atestado-medico-online": {
+      "PT": {
+        "summary": "Para quando você está doente e precisa se afastar. Um clínico geral avalia você por videochamada e emite o atestado digital se considerar indicado."
+      },
+      "EN": {
+        "summary": "For when you are too unwell for work or school. A GP assesses you by video call and issues a digital medical certificate if clinically appropriate."
+      },
+      "ES": {
+        "summary": "Si estás enfermo y no puedes ir al trabajo o a clases, un médico general te evalúa por videollamada y emite el certificado digital si está indicado."
+      }
+    },
+    "consulta-pele-online": {
+      "PT": {
+        "summary": "Envie fotos da lesão antes da chamada e um clínico geral avalia acne, eczema, manchas, micoses ou infecções de pele com você por videochamada."
+      },
+      "EN": {
+        "summary": "Send photos of the affected skin before the call, then a GP assesses acne, eczema, spots, fungal or other skin infections with you by video."
+      },
+      "ES": {
+        "summary": "Envía fotos de la zona afectada antes de la llamada y un médico general evalúa acné, eccema, manchas, hongos o infecciones de piel por videollamada."
+      }
+    },
+    "pediatria-online": {
+      "PT": {
+        "summary": "Consulta por vídeo para crianças e adolescentes com febre, infecções, alergias ou dúvidas sobre desenvolvimento. Um dos pais ou responsável deve participar."
+      },
+      "EN": {
+        "summary": "Video consultations for children and teens with fever, infections, allergies or development questions. A parent or legal guardian must attend throughout."
+      },
+      "ES": {
+        "summary": "Consulta por videollamada para niños y adolescentes con fiebre, infecciones, alergias o dudas sobre el desarrollo. Debe estar presente un padre o tutor legal."
+      }
+    },
+    "controle-peso-online": {
+      "PT": {
+        "summary": "Avaliação médica por vídeo para investigar causas hormonais ou metabólicas do ganho de peso, com pedido de exames e orientação para o seu perfil."
+      },
+      "EN": {
+        "summary": "A medical assessment by video to look into hormonal or metabolic causes of weight gain, with test requests and guidance based on your profile."
+      },
+      "ES": {
+        "summary": "Evaluación médica por videollamada para investigar causas hormonales o metabólicas del aumento de peso, con solicitud de exámenes y orientación personalizada."
+      }
+    },
+    "doencas-cronicas-online": {
+      "PT": {
+        "summary": "Para quem tem hipertensão, diabetes, hipotireoidismo ou outra condição crônica estável: revisão de exames e da medicação por videochamada."
+      },
+      "EN": {
+        "summary": "Follow-up by video call for stable hypertension, diabetes, hypothyroidism and other chronic conditions, with a review of your tests and medication."
+      },
+      "ES": {
+        "summary": "Seguimiento por videollamada de hipertensión, diabetes, hipotiroidismo y otras condiciones crónicas estables, con revisión de exámenes y de la medicación."
+      }
+    },
+    "musculoesqueletico-online": {
+      "PT": {
+        "summary": "Dor nas costas, no pescoço, no joelho ou no ombro avaliada por um clínico geral por vídeo, com plano de tratamento e exames de imagem quando indicado."
+      },
+      "EN": {
+        "summary": "Back, neck, knee or shoulder pain assessed by a GP over video, with a treatment plan and imaging requests when indicated."
+      },
+      "ES": {
+        "summary": "Un médico general evalúa por videollamada tu dolor de espalda, cuello, rodilla u hombro, con plan de tratamiento y exámenes de imagen cuando esté indicado."
+      }
+    },
+    "parar-de-fumar-online": {
+      "PT": {
+        "summary": "Um médico avalia seu grau de dependência do tabaco e monta com você um plano adaptado ao seu perfil, com orientação sobre as opções de tratamento."
+      },
+      "EN": {
+        "summary": "A doctor assesses your level of tobacco dependence and builds a quit plan suited to your profile, including guidance on treatment options."
+      },
+      "ES": {
+        "summary": "Un médico evalúa tu nivel de dependencia del tabaco y diseña un plan para dejar de fumar adaptado a tu perfil, con orientación sobre el tratamiento."
+      }
+    },
+    "renovacao-receita-online": {
+      "PT": {
+        "summary": "Para quem usa medicação contínua e está estável. O clínico revisa o tratamento por vídeo e emite receita eletrônica quando clinicamente indicado."
+      },
+      "EN": {
+        "summary": "For people on stable long-term medication. A GP reviews your treatment by video and issues an electronic prescription when clinically appropriate."
+      },
+      "ES": {
+        "summary": "Para quienes usan medicación continua y están estables. Un médico general revisa el tratamiento y emite la receta electrónica cuando está indicado."
+      }
+    },
+    "queda-cabelo-online": {
+      "PT": {
+        "summary": "Um clínico geral analisa o padrão da queda por vídeo e com imagens, investiga causas hormonais, nutricionais ou de estresse e pode pedir exames."
+      },
+      "EN": {
+        "summary": "A GP looks at the pattern of your hair loss by video and photos, explores hormonal, nutritional or stress-related causes and can order tests."
+      },
+      "ES": {
+        "summary": "Un médico general analiza por videollamada y con imágenes el patrón de la caída, busca causas hormonales, nutricionales o de estrés y puede pedir exámenes."
+      }
+    },
+    "saude-da-mulher-online": {
+      "PT": {
+        "summary": "Anticoncepção, ciclo irregular, sintomas hormonais ou infecção urinária: converse por videochamada com um clínico geral sobre a sua saúde."
+      },
+      "EN": {
+        "summary": "Talk to a GP by video call about contraception, irregular periods, hormonal symptoms, urinary infections or other everyday women's health concerns."
+      },
+      "ES": {
+        "summary": "Consulta por videollamada con un médico general sobre anticoncepción, ciclos irregulares, síntomas hormonales, infección urinaria y otras dudas de salud."
+      }
+    },
+    "saude-viagem-online": {
+      "PT": {
+        "summary": "Antes de viajar, receba orientação médica por vídeo sobre vacinas, profilaxia e cuidados para o destino. Também atende quem volta com sintomas."
+      },
+      "EN": {
+        "summary": "Pre-travel advice by video call on vaccines, prophylaxis and destination-specific care, plus assessment if you develop symptoms after you return."
+      },
+      "ES": {
+        "summary": "Orientación médica por videollamada antes de viajar sobre vacunas, profilaxis y cuidados según el destino, y evaluación si tienes síntomas al volver."
+      }
+    },
+    "saude-do-homem-online": {
+      "PT": {
+        "summary": "Converse de casa ou do trabalho com um clínico geral sobre disfunção erétil, queda de cabelo, check-up, saúde sexual ou sintomas hormonais."
+      },
+      "EN": {
+        "summary": "Speak with a GP by video from home or work about erectile dysfunction, hair loss, a check-up, sexual health or hormonal symptoms."
+      },
+      "ES": {
+        "summary": "Habla desde casa o el trabajo con un médico general sobre disfunción eréctil, caída del cabello, chequeo, salud sexual o síntomas hormonales."
+      }
+    },
+    "saude-idoso-online": {
+      "PT": {
+        "summary": "Pessoas com 60 anos ou mais recebem, sem sair de casa, revisão de medicamentos, orientação sobre quedas e rastreamento cognitivo básico por vídeo."
+      },
+      "EN": {
+        "summary": "Adults aged 60 and over get a medication review, fall prevention advice and basic cognitive screening by video call, without leaving home."
+      },
+      "ES": {
+        "summary": "Para personas de 60 años o más, sin salir de casa: revisión de medicamentos, prevención de caídas y cribado cognitivo básico por videollamada."
+      }
+    },
+    "saude-mental-online": {
+      "PT": {
+        "summary": "Uma primeira avaliação médica para ansiedade, depressão, estresse ou burnout, com orientação inicial e encaminhamento a psicólogo ou psiquiatra se indicado."
+      },
+      "EN": {
+        "summary": "A first medical assessment for anxiety, depression, stress or burnout, with initial guidance and referral to a psychologist or psychiatrist if needed."
+      },
+      "ES": {
+        "summary": "Una primera evaluación médica de ansiedad, depresión, estrés o burnout, con orientación inicial y derivación a psicólogo o psiquiatra si está indicado."
+      }
+    },
+    "saude-sexual-ist-online": {
+      "PT": {
+        "summary": "Consulta confidencial por vídeo para rastreamento de IST, avaliação de sintomas, de PEP ou PrEP e orientação sobre prevenção, sem julgamento."
+      },
+      "EN": {
+        "summary": "A confidential video consultation for STI screening, possible symptoms, PEP or PrEP assessment and prevention advice, without judgment."
+      },
+      "ES": {
+        "summary": "Consulta confidencial por videollamada para detección de ITS, evaluación de síntomas, de PEP o PrEP y orientación sobre prevención, sin juicios."
+      }
+    },
+    "segunda-opiniao-medica": {
+      "PT": {
+        "summary": "Tire dúvidas sobre um diagnóstico, exame ou plano de tratamento com uma avaliação independente de um clínico geral antes de decidir o próximo passo."
+      },
+      "EN": {
+        "summary": "Get an independent GP review of a diagnosis, test result or treatment plan by video call before you decide on the next step."
+      },
+      "ES": {
+        "summary": "Revisa con un médico general independiente un diagnóstico, resultado de examen o plan de tratamiento antes de decidir el siguiente paso."
+      }
+    },
+    "solicitacao-exames-online": {
+      "PT": {
+        "summary": "Após avaliação clínica por vídeo, o médico solicita os exames de sangue, imagem ou check-up adequados ao seu caso, válidos em laboratórios de todo o Brasil."
+      },
+      "EN": {
+        "summary": "After a clinical assessment by video, the doctor orders the blood, imaging or check-up tests suited to your case, for use at labs across Brazil."
+      },
+      "ES": {
+        "summary": "Tras evaluarte por videollamada, el médico solicita los análisis de sangre, imagen o chequeo adecuados a tu caso, válidos en laboratorios de Brasil."
+      }
+    }
+  }
+}

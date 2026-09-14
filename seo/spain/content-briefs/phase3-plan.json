@@ -1,0 +1,420 @@
+{
+  "snapshot": "raw/storage-post-rollout-phase2-2026-09-14.json",
+  "source": "Owner-approved summary/name drafts from session \"Cards showing wrong language\" (handoff 2026-09-14); owner confirmed approval in this session",
+  "patches": {
+    "consulta-medica-online": {
+      "ES": {
+        "summary": "Si tienes síntomas agudos o un problema de salud no urgente, la Consulta Médica General te conecta por videollamada con un médico que te valora y orienta."
+      },
+      "EN": {
+        "summary": "For acute symptoms or a non-urgent health problem, a General Medical Consultation lets you speak to a doctor by video call for an assessment and advice."
+      },
+      "PT": {
+        "summary": "Com sintomas agudos ou um problema de saúde não urgente, a Consulta Médica Geral permite falar por videochamada com um médico que o avalia e aconselha."
+      },
+      "CS": {
+        "summary": "Při akutních příznacích nebo neakutních zdravotních potížích nabízí Všeobecná lékařská konzultace videohovor s lékařem, který vás posoudí a poradí."
+      },
+      "RO": {
+        "summary": "Pentru simptome acute sau probleme de sănătate neurgente, Consultație medicală generală îți oferă un apel video cu un medic care te evaluează și te sfătuiește.",
+        "name": "Consultație medicală generală",
+        "currentName": "Consulta medicală generală"
+      },
+      "DE": {
+        "summary": "Bei akuten oder nicht dringenden Beschwerden bietet die Allgemeine ärztliche Konsultation ein Videogespräch mit ärztlicher Einschätzung und Beratung."
+      }
+    },
+    "justificante-medico-online": {
+      "ES": {
+        "summary": "Si estás enfermo y no puedes trabajar, el Justificante Médico parte de una valoración por videollamada. Solo se emite si tu situación clínica lo justifica."
+      },
+      "EN": {
+        "summary": "If you are too unwell to work, a Medical Certificate starts with a video assessment. It is issued only where your clinical situation justifies it."
+      },
+      "PT": {
+        "summary": "Se está doente e não pode trabalhar, o Atestado Médico começa com uma avaliação por videochamada. Só é emitido se a situação clínica o justificar."
+      },
+      "CS": {
+        "summary": "Když jste nemocní a nemůžete pracovat, začíná Lékařské potvrzení posouzením přes videohovor. Vydá se jen tehdy, když to klinický stav odůvodňuje."
+      },
+      "RO": {
+        "summary": "Dacă ești bolnav și nu poți munci, serviciul Adeverință medicală începe cu o evaluare video. Documentul se emite doar dacă situația clinică o justifică."
+      },
+      "DE": {
+        "summary": "Wer krank ist und nicht arbeiten kann: Die Ärztliche Bescheinigung beginnt mit einer Videobeurteilung und wird nur bei klinischer Begründung ausgestellt."
+      }
+    },
+    "renovacion-tratamiento-online": {
+      "ES": {
+        "summary": "Para adultos con un tratamiento estable, la Renovación de Tratamiento revisa tu estado clínico y efectos secundarios, con documentación si está indicada."
+      },
+      "EN": {
+        "summary": "Designed for adults on stable treatment, Treatment Renewal is a clinical review of your condition and any side effects, with documentation where indicated."
+      },
+      "PT": {
+        "summary": "Para adultos com tratamento estável, a Renovação de Tratamento revê o seu estado clínico e efeitos secundários, com documentação quando indicado."
+      },
+      "CS": {
+        "summary": "Pro dospělé se stabilní léčbou je Obnovení léčby klinickou kontrolou vašeho stavu a nežádoucích účinků, s dokumentací tam, kde je to indikováno."
+      },
+      "RO": {
+        "summary": "Pentru adulții cu tratament stabil, Reînnoirea tratamentului evaluează clinic starea ta și efectele secundare, cu documentație dacă e indicat."
+      },
+      "DE": {
+        "summary": "Für Erwachsene mit stabiler Therapie prüft die Verlängerung der Behandlung Ihren klinischen Zustand und Nebenwirkungen, mit Unterlagen bei Indikation."
+      }
+    },
+    "pediatria-online": {
+      "ES": {
+        "summary": "Valoración por video en Atención Primaria Pediatría para bebés, niños y adolescentes con problemas agudos o no urgentes. Menores de 16 con padre, madre o tutor.",
+        "name": "Atención Primaria Pediatría",
+        "currentName": "Atención Primária Pediatria"
+      },
+      "EN": {
+        "summary": "Babies, children and teenagers with acute or non-urgent concerns can be assessed by video through Paediatric GP. Under-16s need a parent or guardian present."
+      },
+      "PT": {
+        "summary": "Avaliação por vídeo na Atenção Primária Pediatria para bebés, crianças e adolescentes com problemas agudos ou não urgentes. Menores de 16 com pai, mãe ou tutor."
+      },
+      "CS": {
+        "summary": "Kojence, děti a dospívající s akutními či neakutními potížemi posoudí přes video služba Primární péče Pediatrie. Do 16 let je nutný rodič či zákonný zástupce."
+      },
+      "RO": {
+        "summary": "Evaluare video în Asistență Primară Pediatrie pentru bebeluși, copii și adolescenți cu probleme acute sau neurgente. Sub 16 ani, cu părinte sau tutore prezent."
+      },
+      "DE": {
+        "summary": "Über Primäre Pädiatrie: Videobeurteilung für Babys, Kinder und Jugendliche bei akuten oder nicht dringenden Beschwerden. Unter 16 mit Elternteil oder Vormund."
+      }
+    },
+    "caida-cabello-online": {
+      "ES": {
+        "summary": "Un médico busca por videollamada la causa de tu Caída del Cabello o pérdida de densidad y te orienta sobre un manejo basado en la evidencia."
+      },
+      "EN": {
+        "summary": "In a Hair Loss Consultation, a doctor looks into the medical cause of thinning or shedding hair by video and advises on evidence-based management options."
+      },
+      "PT": {
+        "summary": "Um médico procura por videochamada a causa médica da Queda de Cabelo ou da rarefação capilar e aconselha sobre opções de gestão baseadas em evidência."
+      },
+      "CS": {
+        "summary": "Když vás trápí Vypadávání vlasů nebo jejich řídnutí, lékař přes videohovor hledá zdravotní příčinu a poradí možnosti péče založené na důkazech."
+      },
+      "RO": {
+        "summary": "Prin serviciul Căderea părului, un medic caută prin video cauza medicală a căderii sau subțierii firelor și te sfătuiește asupra opțiunilor bazate pe dovezi."
+      },
+      "DE": {
+        "summary": "Bei Haarausfall oder dünner werdendem Haar sucht ein Arzt per Video nach der medizinischen Ursache und berät Sie zu evidenzbasiertem Vorgehen."
+      }
+    },
+    "consulta-piel-online": {
+      "ES": {
+        "summary": "Erupciones, eccema, acné o una lesión que quieres revisar: en la Consulta de Piel un médico te valora por videollamada y te deriva a dermatología si hace falta."
+      },
+      "EN": {
+        "summary": "Rashes, eczema, acne or a lesion you want checked: in a Skin Consultation a doctor assesses your skin by video and refers you to dermatology if needed."
+      },
+      "PT": {
+        "summary": "Erupções, eczema, acne ou uma lesão a avaliar: na Consulta de Pele um médico observa a sua pele por vídeo e encaminha para dermatologia se necessário."
+      },
+      "CS": {
+        "summary": "Vyrážka, ekzém, akné nebo kožní změna ke kontrole: Kožní konzultace znamená posouzení kůže lékařem přes video a odeslání k dermatologovi, je-li třeba.",
+        "name": "Kožní konzultace",
+        "currentName": "Dermatologická konzultace"
+      },
+      "RO": {
+        "summary": "Erupții, eczemă, acnee sau o leziune de verificat: prin Consultație de piele un medic îți evaluează pielea și te trimite la dermatologie dacă e nevoie.",
+        "name": "Consultație de piele",
+        "currentName": "Consultație dermatologică"
+      },
+      "DE": {
+        "summary": "Ausschlag, Ekzem, Akne oder eine Hautveränderung: In der Hautsprechstunde beurteilt ein Arzt Ihre Haut per Video und überweist bei Bedarf in die Dermatologie."
+      }
+    },
+    "control-peso-online": {
+      "ES": {
+        "summary": "En Control de Peso se revisan los factores médicos, hormonales y metabólicos de tu peso, con plan personalizado y seguimiento. No es un programa de dieta."
+      },
+      "EN": {
+        "summary": "Our Weight Management service looks at medical, hormonal and metabolic factors behind your weight, with a personalised plan and follow-up. Not a diet programme."
+      },
+      "PT": {
+        "summary": "No Controlo de Peso analisam-se os fatores médicos, hormonais e metabólicos do seu peso, com plano personalizado e acompanhamento. Não é um programa de dieta.",
+        "name": "Controlo de Peso",
+        "currentName": "Controle de Peso"
+      },
+      "CS": {
+        "summary": "Služba Kontrola hmotnosti posoudí zdravotní, hormonální a metabolické faktory vaší váhy a nabídne osobní plán se sledováním. Nejde o dietní program."
+      },
+      "RO": {
+        "summary": "Prin Controlul greutății se evaluează factorii medicali, hormonali și metabolici ai greutății tale, cu plan personalizat și monitorizare. Nu e program de dietă."
+      },
+      "DE": {
+        "summary": "Die Gewichtskontrolle betrachtet medizinische, hormonelle und metabolische Faktoren Ihres Gewichts, mit persönlichem Plan und Begleitung. Kein Diätprogramm."
+      }
+    },
+    "dejar-de-fumar-online": {
+      "ES": {
+        "summary": "Para Dejar de Fumar con apoyo médico, se valora tu nivel de dependencia y se diseña contigo un plan personalizado con apoyo conductual y seguimiento."
+      },
+      "EN": {
+        "summary": "For Smoking Cessation with medical support, your dependence is assessed and a personalised plan is built with you, with behavioural support and follow-up."
+      },
+      "PT": {
+        "summary": "Para Deixar de Fumar com apoio médico, é avaliada a sua dependência e definido consigo um plano personalizado, com apoio comportamental e acompanhamento."
+      },
+      "CS": {
+        "summary": "Pokud chcete Přestat kouřit s lékařskou podporou, lékař zhodnotí míru závislosti a sestaví s vámi osobní plán s behaviorální podporou a průběžným sledováním."
+      },
+      "RO": {
+        "summary": "Pentru Renunțarea la fumat, medicul îți evaluează dependența și face cu tine un plan personalizat, cu sprijin comportamental și monitorizare."
+      },
+      "DE": {
+        "summary": "Der Service „Mit dem Rauchen aufhören“ bewertet Ihre Abhängigkeit und erstellt mit Ihnen einen persönlichen Plan mit Verhaltensunterstützung und Nachsorge."
+      }
+    },
+    "derivaciones-pruebas-online": {
+      "ES": {
+        "summary": "Tras una evaluación clínica, Derivaciones y Pruebas emite cartas de derivación privadas y solicitudes de analíticas o imagen. No incluye el sistema público."
+      },
+      "EN": {
+        "summary": "After a clinical assessment, Referrals & Investigations provides private referral letters and blood test or imaging requests. Not for public-system referrals."
+      },
+      "PT": {
+        "summary": "Após avaliação clínica, Encaminhamentos e Exames fornece cartas de encaminhamento privadas e pedidos de análises ou imagiologia. Não inclui o sistema público."
+      },
+      "CS": {
+        "summary": "Po klinickém vyšetření zahrnuje služba Žádanky a vyšetření soukromá doporučení ke specialistům a žádanky na krevní testy či zobrazování. Mimo veřejný systém."
+      },
+      "RO": {
+        "summary": "După o evaluare clinică, Trimiteri și teste oferă scrisori de trimitere private și cereri de analize sau imagistică. Nu include sistemul public."
+      },
+      "DE": {
+        "summary": "Nach klinischer Beurteilung: private Überweisungen und Labor- oder Bildgebungsanträge im Service Überweisungen und Untersuchungen. Ohne öffentliches System."
+      }
+    },
+    "enfermedades-cronicas-online": {
+      "ES": {
+        "summary": "Seguimiento continuado de Enfermedades Crónicas como hipertensión, diabetes, tiroides o asma, con un médico que ajusta tu manejo cuando algo cambia."
+      },
+      "EN": {
+        "summary": "Ongoing follow-up for hypertension, diabetes, thyroid disease or asthma through Chronic Disease Management, with a doctor adjusting care as things change."
+      },
+      "PT": {
+        "summary": "Acompanhamento contínuo de Doenças Crónicas como hipertensão, diabetes, tiroide ou asma, com um médico que ajusta a sua gestão quando algo muda.",
+        "name": "Doenças Crónicas",
+        "currentName": "Doenças Crônicas"
+      },
+      "CS": {
+        "summary": "Průběžné sledování nabízí služba Chronická onemocnění při hypertenzi, diabetu, štítné žláze nebo astmatu, s lékařem, který upraví péči při změnách."
+      },
+      "RO": {
+        "summary": "Monitorizare continuă prin Boli cronice pentru hipertensiune, diabet, tiroidă sau astm, cu un medic care îți ajustează îngrijirea când ceva se schimbă."
+      },
+      "DE": {
+        "summary": "Der Service Chronische Erkrankungen begleitet Sie laufend bei Bluthochdruck, Diabetes, Schilddrüse oder Asthma; ein Arzt passt die Therapie bei Änderungen an."
+      }
+    },
+    "medicina-viaje-online": {
+      "ES": {
+        "summary": "Si viajas a zonas con malaria o de mayor riesgo, Medicina de Viaje revisa tu salud e itinerario, orienta sobre vacunas y valora la profilaxis antipalúdica."
+      },
+      "EN": {
+        "summary": "Before a trip to malaria or higher-risk areas, Travel Health reviews your health and itinerary, advises on vaccinations and assesses malaria prophylaxis."
+      },
+      "PT": {
+        "summary": "Antes de ir para zonas com malária ou maior risco, a Medicina de Viagem revê a sua saúde e itinerário, orienta sobre vacinas e avalia a profilaxia antipalúdica."
+      },
+      "CS": {
+        "summary": "Před cestou do oblastí s malárií nebo vyšším rizikem projde Cestovní medicína vaše zdraví a itinerář, poradí s očkováním a posoudí antimalarickou profylaxi."
+      },
+      "RO": {
+        "summary": "Înainte de zone cu malarie sau risc crescut, Medicina de călătorie îți verifică sănătatea și traseul, recomandă vaccinuri și evaluează profilaxia antimalarică."
+      },
+      "DE": {
+        "summary": "Vor Reisen in Malaria- oder Risikogebiete prüft die Reisemedizin Ihre Gesundheit und Reiseroute, berät zu Impfungen und beurteilt die Malariaprophylaxe."
+      }
+    },
+    "musculoesqueletico-online": {
+      "ES": {
+        "summary": "Espalda, articulaciones, ciática o lesión muscular: el servicio Musculoesquelético busca la causa y coordina pruebas o derivación si hay indicación clínica."
+      },
+      "EN": {
+        "summary": "Back or joint pain, sciatica or a muscle injury: a Musculoskeletal Assessment looks for the cause and coordinates tests or referral where clinically indicated."
+      },
+      "PT": {
+        "summary": "Costas, articulações, ciática ou lesões musculares: o serviço Musculoesquelético procura a causa e coordena exames ou encaminhamento se clinicamente indicado."
+      },
+      "CS": {
+        "summary": "Bolest zad či kloubů, ischias nebo svalové zranění: služba Muskuloskeletální hledá příčinu a koordinuje vyšetření nebo odeslání, je-li to klinicky indikováno."
+      },
+      "RO": {
+        "summary": "Spate, articulații, sciatică sau leziuni musculare: Evaluare musculo-scheletică caută cauza și coordonează investigații sau trimitere, dacă e indicat clinic.",
+        "name": "Evaluare musculo-scheletică",
+        "currentName": "musculo-scheletic"
+      },
+      "DE": {
+        "summary": "Rücken, Gelenke, Ischias, Muskelverletzung: Im Bereich Muskuloskelettal wird die Ursache geklärt, bei klinischer Indikation mit Untersuchung oder Überweisung."
+      }
+    },
+    "salud-femenina-online": {
+      "ES": {
+        "summary": "Anticoncepción, salud hormonal, menopausia, alteraciones menstruales o salud sexual: en Salud Femenina lo hablas con un médico en una consulta confidencial."
+      },
+      "EN": {
+        "summary": "Contraception, hormonal health, menopause, period problems or sexual health can be discussed with a doctor in a confidential Women's Health consultation."
+      },
+      "PT": {
+        "summary": "Contraceção, saúde hormonal, menopausa, alterações menstruais ou saúde sexual: em Saúde Feminina fala com um médico numa consulta confidencial."
+      },
+      "CS": {
+        "summary": "Antikoncepci, hormonální zdraví, menopauzu, potíže s menstruací nebo sexuální zdraví probere v rámci služby Ženské zdraví lékař při důvěrné konzultaci."
+      },
+      "RO": {
+        "summary": "Contracepție, sănătate hormonală, menopauză, probleme menstruale sau sănătate sexuală: prin Sănătatea femeilor discuți confidențial cu un medic."
+      },
+      "DE": {
+        "summary": "Verhütung, Hormongesundheit, Wechseljahre, Zyklusbeschwerden oder sexuelle Gesundheit besprechen Sie im Bereich Frauengesundheit vertraulich mit einem Arzt."
+      }
+    },
+    "salud-masculina-online": {
+      "ES": {
+        "summary": "Disfunción eréctil, libido baja o síntomas de testosterona baja se valoran en Salud Masculina con una evaluación clínica confidencial y un plan claro."
+      },
+      "EN": {
+        "summary": "Erectile dysfunction, low libido or symptoms of low testosterone are covered in a confidential Men's Health assessment that ends with a clear plan."
+      },
+      "PT": {
+        "summary": "Disfunção erétil, libido reduzida ou sintomas de testosterona baixa são avaliados em Saúde Masculina, numa avaliação clínica confidencial com um plano claro."
+      },
+      "CS": {
+        "summary": "Erektilní dysfunkci, snížené libido nebo příznaky nízkého testosteronu řeší služba Mužské zdraví důvěrným klinickým vyšetřením a jasným plánem."
+      },
+      "RO": {
+        "summary": "Disfuncția erectilă, libidoul scăzut sau simptomele de testosteron scăzut sunt evaluate confidențial în Sănătate Masculină, cu un plan clar la final."
+      },
+      "DE": {
+        "summary": "Erektionsstörungen, verminderte Libido oder Anzeichen eines Testosteronmangels werden im Bereich Männergesundheit vertraulich beurteilt, mit einem klaren Plan."
+      }
+    },
+    "salud-mental-online": {
+      "ES": {
+        "summary": "Valoración confidencial de Salud Mental para ansiedad, ánimo bajo, estrés o burnout, con orientación sobre los siguientes pasos y derivación si está indicada."
+      },
+      "EN": {
+        "summary": "A confidential Mental Health assessment for anxiety, low mood, stress or burnout, with guidance on next steps and referral where indicated."
+      },
+      "PT": {
+        "summary": "Avaliação confidencial de Saúde Mental para ansiedade, humor em baixo, stress ou burnout, com orientação sobre os próximos passos e encaminhamento se indicado."
+      },
+      "CS": {
+        "summary": "Důvěrné vyšetření v rámci služby Duševní zdraví při úzkosti, skleslé náladě, stresu nebo vyhoření, s doporučením dalšího postupu a odesláním, je-li indikováno."
+      },
+      "RO": {
+        "summary": "Evaluare confidențială de Sănătate mintală pentru anxietate, dispoziție scăzută, stres, burnout, cu îndrumare spre pașii următori și trimitere dacă e indicat."
+      },
+      "DE": {
+        "summary": "Vertrauliche Abklärung im Service Psychische Gesundheit bei Angst, Niedergeschlagenheit, Stress, Burnout, mit nächsten Schritten und Überweisung bei Indikation."
+      }
+    },
+    "segunda-opinion-medica": {
+      "ES": {
+        "summary": "Ante una decisión importante, como una cirugía o un fármaco nuevo, la Segunda Opinión Médica revisa con independencia tu diagnóstico, informes y tratamiento."
+      },
+      "EN": {
+        "summary": "Before a major decision such as surgery or a new medication, a Second Medical Opinion independently reviews your diagnosis, reports and treatment plan."
+      },
+      "PT": {
+        "summary": "Antes de uma decisão importante, como cirurgia ou novo medicamento, a Segunda Opinião Médica revê com independência o diagnóstico, relatórios e tratamento."
+      },
+      "CS": {
+        "summary": "Před zásadním rozhodnutím, například o operaci nebo novém léku, vám Druhý lékařský názor nabídne nezávislé posouzení diagnózy, zpráv a léčebného plánu."
+      },
+      "RO": {
+        "summary": "Înainte de o decizie importantă, ca o operație sau un medicament nou, A doua opinie medicală îți analizează independent diagnosticul, rapoartele și tratamentul."
+      },
+      "DE": {
+        "summary": "Vor wichtigen Entscheidungen wie einer Operation oder neuen Medikation prüft die Zweite medizinische Meinung unabhängig Diagnose, Befunde und Therapieplan."
+      }
+    },
+    "dermatologia-especialista-online": {
+      "ES": {
+        "summary": "Acné grave, psoriasis resistente al tratamiento o lesiones sospechosas: en Dermatología Especialista un dermatólogo te valora con imágenes de alta resolución."
+      },
+      "EN": {
+        "summary": "Severe acne, treatment-resistant psoriasis or a suspicious lesion: in Specialist Dermatology a dermatologist assesses your skin using high-resolution images."
+      },
+      "PT": {
+        "summary": "Acne grave, psoríase resistente ao tratamento ou lesões suspeitas: em Dermatologia Especialista um dermatologista avalia-o com imagens de alta resolução."
+      },
+      "CS": {
+        "summary": "Těžké akné, psoriáza odolná vůči léčbě nebo podezřelá léze: ve službě Specialista dermatologie posoudí dermatolog vaši kůži pomocí snímků ve vysokém rozlišení."
+      },
+      "RO": {
+        "summary": "Acnee severă, psoriazis rezistent la tratament sau leziune suspectă: în Dermatologie specialistă, un dermatolog te evaluează cu imagini de înaltă rezoluție."
+      },
+      "DE": {
+        "summary": "Schwere Akne, therapieresistente Psoriasis, verdächtige Läsion: Im Service Dermatologie-Spezialist beurteilt ein Dermatologe Sie mit hochauflösenden Bildern."
+      }
+    },
+    "psicologo-online": {
+      "ES": {
+        "summary": "Terapia individual y evaluación psicológica en Psicología Clínica para ansiedad, depresión, trauma y otras dificultades. No incluye prescribir medicación."
+      },
+      "EN": {
+        "summary": "Individual therapy and psychological assessment in Clinical Psychology for anxiety, depression, trauma and other difficulties. No medication is prescribed."
+      },
+      "PT": {
+        "summary": "Terapia individual e avaliação psicológica em Psicologia Clínica para ansiedade, depressão, trauma e outras dificuldades. Não inclui a prescrição de medicação."
+      },
+      "CS": {
+        "summary": "Individuální terapie a psychologické vyšetření v rámci služby Klinická psychologie při úzkosti, depresi, traumatu a dalších potížích. Bez předepisování léků."
+      },
+      "RO": {
+        "summary": "Terapie individuală și evaluare psihologică în Psihologie clinică pentru anxietate, depresie, traumă și alte dificultăți. Nu include prescrierea de medicamente."
+      },
+      "DE": {
+        "summary": "Einzeltherapie und psychologische Diagnostik im Bereich Klinische Psychologie bei Angst, Depression, Trauma und anderen Belastungen. Keine Medikamentenrezepte."
+      }
+    },
+    "psiquiatra-online": {
+      "ES": {
+        "summary": "Evaluación en Psiquiatría Especialista para TDAH en adultos, trastorno bipolar, depresión resistente o cuadros que no mejoraron con medicina general."
+      },
+      "EN": {
+        "summary": "Assessment in Specialist Psychiatry for adult ADHD, bipolar disorder, treatment-resistant depression or conditions not improved by general medical care."
+      },
+      "PT": {
+        "summary": "Avaliação em Psiquiatria Especialista para PHDA em adultos, perturbação bipolar, depressão resistente ou quadros que não melhoraram com medicina geral."
+      },
+      "CS": {
+        "summary": "Vyšetření ve službě Specialista psychiatrie při ADHD v dospělosti, bipolární poruše, depresi odolné vůči léčbě nebo potížích, které nezlepšila všeobecná péče."
+      },
+      "RO": {
+        "summary": "Evaluare prin serviciul Specialist în psihiatrie pentru TDAH la adulți, tulburare bipolară, depresie rezistentă sau afecțiuni neameliorate în medicina generală."
+      },
+      "DE": {
+        "summary": "Beurteilung im Service Psychiatrie-Spezialist bei Erwachsenen-ADHS, bipolarer Störung, therapieresistenter Depression oder ohne allgemeinmedizinische Besserung."
+      }
+    },
+    "cardiologo-online": {
+      "ES": {
+        "summary": "Palpitaciones, tensión mal controlada o una cardiopatía conocida se valoran en Cardiología Especialista, con revisión de tu ECG, ecocardiograma o Holter."
+      },
+      "EN": {
+        "summary": "Palpitations, poorly controlled blood pressure or a known heart condition are assessed in Specialist Cardiology, including your ECG, echocardiogram or Holter."
+      },
+      "PT": {
+        "summary": "Palpitações, tensão mal controlada ou doença cardíaca conhecida são avaliadas em Cardiologia Especialista, com revisão do seu ECG, ecocardiograma ou Holter."
+      },
+      "CS": {
+        "summary": "Bušení srdce, špatně kontrolovaný tlak nebo známé srdeční onemocnění posoudí služba Specialista kardiologie, včetně kontroly EKG, echokardiogramu či Holteru."
+      },
+      "RO": {
+        "summary": "Palpitații, tensiune slab controlată sau o boală cardiacă cunoscută, evaluate prin Specialist în cardiologie, cu analiza ECG, ecocardiogramei sau Holterului."
+      },
+      "DE": {
+        "summary": "Im Service Kardiologie-Spezialist: Beurteilung bei Herzstolpern, unkontrolliertem Blutdruck oder bekanntem Herzleiden, samt Prüfung von EKG, Echo oder Holter."
+      }
+    }
+  }
+}

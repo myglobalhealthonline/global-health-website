@@ -111,6 +111,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "38e1974987fe1f49c9970d038406964bcb244c2105924d8a7680c51d40e641b0",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ],
   "doctor:cmrdppjf5000u01ru1ayu78k0": [
@@ -127,6 +133,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "889d9db808a2f22c6b6d0bc87b832f64767b87623dae846f103bc7597438634f",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ],
   "doctor:cmrdpvch9001i01ruy7pmzmdk": [
@@ -149,6 +161,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "65989d07fee7a7eba5d505463cdbca24eecefae278d2c25f03fdab8cf72ce99f",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ],
   "doctor:cmrdpu7ro001e01ruc1ycm5n5": [
@@ -211,6 +229,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "307a5efe5928494e33cc560d9405a2429e1f4d069fb84215c9a83632b8d805ca",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ],
   "service:cmre7q9p1003ingjuum9voxoc": [
@@ -225,6 +249,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T03:46:07.151Z",
       "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
+    },
+    {
+      "stateSha256": "452f97d235a98f84e1c1f500d58c5fcfc31dfdf4bc616ad57c7f2089ec20a436",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ],
   "service:cmre7q8mg0037ngjuso41eynq": [
@@ -233,6 +263,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "b5e27e6b152f5bc7cbf8c76fac458db40d4fd6d939bd97839a50af806f39062a",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ],
   "service:cmre7qg1l005cngjub14ciym5": [
@@ -241,6 +277,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "12173428759ab434416a5862c95c543e4d5f6ac1c54c890bf37cf22f9a0c9aca",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ],
   "service:cmre7q3a5001ongjur495me3b": [
@@ -249,6 +291,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "7f3d730681fc18524b8641a06df35b669dbdccb069e0a0ad2965e48667c71829",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ],
   "service:cmre7q5fw002angjuebao1obt": [
@@ -263,6 +311,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T03:46:07.151Z",
       "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
+    },
+    {
+      "stateSha256": "52b51bdd7800c78939828ee6a28d6cbf93ad6fd8f1f9546eb94c8d6d643c3d28",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ],
   "service:cmre7pwwv0000ngjuwvmiacw9": [
@@ -271,6 +325,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T03:46:07.151Z",
       "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
+    },
+    {
+      "stateSha256": "2af4c9706d065d09e41bf01e05724ba83df4e1ccaeab5f67a06549a9872d2c05",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ],
   "doctor:cmrdpwar1001n01ruwhfioqs6": [
@@ -287,6 +347,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T03:46:07.151Z",
       "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
+    },
+    {
+      "stateSha256": "cce6c0ca745ea87b4e93dd4eb43688c0c7241d413e668ea2494b502cff20229b",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ],
   "service:cmre7pxza000angjubr3s2h65": [
@@ -295,6 +361,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T03:46:07.151Z",
       "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
+    },
+    {
+      "stateSha256": "6fe08e7d5d67c4c6bd73a54a2e5e56aa245c42e52aba1cfe6c1ad8e099146a0a",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ],
   "service:cmre7q6hn002lngju3chey2ai": [
@@ -303,11 +375,219 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T03:46:07.151Z",
       "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
+    },
+    {
+      "stateSha256": "fd6acc786827379107eab2d7e78c61abe40d423f5d6e2830913fc6ee7cb93eab",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    }
+  ],
+  "service:cmre7pz0n000kngjuib862zxl": [
+    {
+      "stateSha256": "e769187e17f67a9ab34e37261bdd1e1d15e2c4684ab1b3a9cacbdac438f9c503",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    }
+  ],
+  "service:cmre7q038000ungjuxs5rkyxy": [
+    {
+      "stateSha256": "a31504d54a725e0827e3f34c3bf88c29a160628547b48d6424f612d2477a2f83",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    }
+  ],
+  "service:cmre7qcvw004engju2es5log3": [
+    {
+      "stateSha256": "7a5cdf01c134ad06f0dcaaf7f30fd909898fa9c872735af6413fbe2125b82ca7",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    }
+  ],
+  "service:cmre7q7k0002vngju6v73lt8h": [
+    {
+      "stateSha256": "6980d69d6233f69011f1562e24a75680d1792288fe200d520c9244cf0e8aa3b5",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    }
+  ],
+  "service:cmre7q27m001dngju2395w6dl": [
+    {
+      "stateSha256": "afbdb0f74b1c74dff067e6be9deb6fdca198b9fc3318b2dc98aeb4b4b5b80306",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    }
+  ],
+  "service:cmre7q1550013ngjujfvwl58k": [
+    {
+      "stateSha256": "7338ae3399f5d55421041d517b5994c552481fa25dc6b59d8ebb022d3e00676b",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    }
+  ],
+  "service:cmre7qh33005ongju25lilrfq": [
+    {
+      "stateSha256": "e648ceac6e00ae8a192372d41b095181570f7d19f69285ad91ae7e5dbd471fc7",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T05:08:32.368Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
     }
   ]
 };
-export const BRAZIL_REVIEW_POLICY: { maxAgeDays: number | null } = { maxAgeDays: null };
-export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {};
+// Review-age policy chosen by the owner on 2026-09-14.
+export const BRAZIL_REVIEW_POLICY: { maxAgeDays: number | null } = { maxAgeDays: 365 };
+export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
+  "service:cmrf53m7j0000mwjud779ur6k": [
+    {
+      "stateSha256": "57a1b0a76a0bfc918d4eecb6769cac8aa648482c3c0367d6e4fac24f50cc7c84",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53n1n000amwjufjd0mt0z": [
+    {
+      "stateSha256": "7ecf290c6d999ccca2fb9551af4f0dcd2f47191feb950f640b1630c9c137361e",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53rx9001tmwjuheylxq9n": [
+    {
+      "stateSha256": "c776ef12a65e17894d101c53ab04b5c2d9d40fbd90e2022f2b3c3827f86bf4e5",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53tja002amwju4a3yubyx": [
+    {
+      "stateSha256": "db1a62428109be0e272aa349394c5f57aa222f10c004ccb2cd4c1a6248ff8a09",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53xm1003kmwjuwuaixgfg": [
+    {
+      "stateSha256": "6cef1c826c133f9690f6dd821d0a91e4bbd789952488ec10a240926205131786",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53uch002jmwjuj0cs6n1f": [
+    {
+      "stateSha256": "c9736374617876f8c7680448828bc9510397adc8837af516bf9843b9a4959d6e",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53vzd0032mwjuyq6qq26r": [
+    {
+      "stateSha256": "9986d82ef3707789835ec964b21ffe0c93a1833e49a655a525302a6bb05fbdac",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53yfs003tmwju9a9kb6n6": [
+    {
+      "stateSha256": "cb4ec9f22436bb40775cb26255c5c2f35885bbf1329182d3b48f7fcf32484349",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53nux000jmwjuzhearx4t": [
+    {
+      "stateSha256": "1e7b78c863536a1d44a9f3d314d01123c0502e60bdeb8ba1ea4e1532c057a299",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53v60002tmwjukdoh6mvz": [
+    {
+      "stateSha256": "0fd3a9c260ed97fbfcd92ac6ab0ccb40a0082245bea6af05a14c58710d0a9b3f",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53phb0012mwjugm5jp41p": [
+    {
+      "stateSha256": "e822a4b21feea9a5b9917619de8f841c45811738e37c1678887a33c694fbb590",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53r40001kmwjug6ly0nla": [
+    {
+      "stateSha256": "950e7c53e87afa7a5dd3737a6fac0474d27cc0d85fcc07169e59d46f2bd5b7e6",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53qak001bmwju7ufg2pb5": [
+    {
+      "stateSha256": "b8be6dedbe54e92a61181712ad3f81c73b885c24850db6b83ad1613c8a62a8c9",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53z930043mwjumjntd7c9": [
+    {
+      "stateSha256": "28bb1c27b2f8528c493a85c49f2e1f8dc461a3597b547dd76366bfa017627ee1",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53onw000smwjugx2rt50j": [
+    {
+      "stateSha256": "16bb476f256a1b4ac65dc21c35d0e185d0f3788646b732d4738daf080529b996",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf54032004dmwjuodh62mcc": [
+    {
+      "stateSha256": "52364baead8a430b370e1c994874030343b22c45d7af24fba7f72d2083edcea0",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53sq40021mwjuiu3pf1z7": [
+    {
+      "stateSha256": "4835eb2b47b70564ae535c9c9bf88fbe8d8b6bed17877704d8e1b634c624dfb5",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ],
+  "service:cmrf53wsr003bmwjuz15y0o32": [
+    {
+      "stateSha256": "4b9f9bc9e25f8b356670b087ac0e9cf7f4ff975addca3782cc0cf639aa567328",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T05:08:32.516Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    }
+  ]
+};
 export const assertSpainClinicalChanges = (before: Snapshot, after: Snapshot, now = Date.now()) => assertReviewedChanges(before, after, 'Spain', SPAIN_REVIEW_POLICY, APPROVED_SPAIN_STATES, now);
 export const assertBrazilClinicalChanges = (before: Snapshot, after: Snapshot, now = Date.now()) => assertReviewedChanges(before, after, 'Brazil', BRAZIL_REVIEW_POLICY, APPROVED_BRAZIL_STATES, now);
 function assertReviewedChanges(before: Snapshot, after: Snapshot, market: string, policy: { maxAgeDays: number | null }, approvals: Record<string, SpainApproval[]>, now: number): void {

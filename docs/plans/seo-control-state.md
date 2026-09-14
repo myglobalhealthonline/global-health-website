@@ -9519,6 +9519,46 @@ verification).
 - **Standing instruction.** Doctors add availability themselves. Fidel's groups stay
   held and are not an owner action item.
 
+### 56.8 Phase 3: service summaries and name fixes, Spain and Brazil (14 September 2026)
+
+**Status:** prepared and rehearsed. Approval recording, deploy and rollout are pending.
+Nothing is published.
+
+- **Cause.** Service listing cards showed no description: 20 of 24 Spain services and
+  all 18 Brazil services had `summary` null. The null values predate the Spain
+  rollout: the 13 September snapshot already showed them. A frontend card fallback
+  (`26fbf10a`) covers the display gap. These writes add real per-locale summaries.
+- **Owner decisions, confirmed in this session.**
+  - Spain approval by Dra. María Fernanda Ocampo Mora.
+  - Brazil approval by Dr. Renato Sarmento (`cmqyzr0fb000o01lu9deh6mf5`; CRM
+    170837; active and isVerified in storage), with `BRAZIL_REVIEW_POLICY` set to
+    365 days.
+  - Cardiology summary published despite its availability hold.
+  - The owner lifted "Spain only" for this batch.
+- **Drafts.** Produced by a separate session ("Cards showing wrong language"). Every
+  summary is at most 160 characters, with no same-day, no-wait or language claims.
+  Plan files: `seo/spain/content-briefs/phase3-plan.json` and
+  `seo/brazil/content-briefs/phase3-plan.json`.
+- **Spain manifest** `storage-mutation-manifest-phase3.json`, SHA-256 `93272d41…`: 20
+  groups, 140 operations. Summary is written on 20 base rows and 120 translation rows.
+  8 name writes cover 7 corrections, each compare-and-set against stored values that
+  all matched:
+  - pediatría ES "Atención Primária Pediatria" becomes "Atención Primaria Pediatría"
+    (base and ES row);
+  - RO general consultation;
+  - RO musculoskeletal;
+  - CS/RO skin names change from "dermatology" to skin-consultation wording;
+  - PT "Controlo de Peso" and "Doenças Crónicas".
+- **Brazil manifest** `storage-mutation-manifest-phase3.json` (local, gitignored),
+  SHA-256 `06e665c2…`: 18 groups, 72 operations, summary only.
+- **Planned from fresh read-only snapshots.** Spain post-phase-2 showed zero drift;
+  Brazil was taken 14 September. No other field is touched. `summary` and `name` are
+  in the clinical state hash, so every service gets a newly approved full state.
+- **Proof.** 14 tests pass. Isolated PostgreSQL rehearsals passed for both manifests
+  (receipts `seo/spain/raw/postgres-rehearsal-2026-09-14-93272d41.json` and
+  `seo/brazil/raw/postgres-rehearsal-2026-09-14-06e665c2.json`). The public verifier
+  checks API `summary`/`name` per locale.
+
 **Next (historical, superseded by §56.6):**
 1. Dra. Ocampo approves manifest `8846503c…` and its group hashes.
 2. Record `clinical-approval.json` and matching `APPROVED_SPAIN_STATES`.
@@ -9608,6 +9648,66 @@ J5/J6 (public-system facts, validity) and the medical disclaimer also need legal
 SEO-SPAIN-002 is unchanged: no cluster expansion, and the September 18 daily read and
 September 24 global inspection stand. No cohort is registered, because nothing was
 published.
+
+### 56.9 Spanish dermatology queries on the EN URL — investigated and closed (14 September 2026)
+
+**Status: hold closed. One frontend fix committed on `Dev-hassaan`, not yet deployed.** This
+supersedes the "Spanish dermatology queries still land on EN" hold in §§56.2, 56.4 and
+56.5.
+
+**Evidence.** Fresh final GSC data (August 13 to September 11) and URL Inspection were pulled
+through the OpenSEO Search Console connector, which works despite the expired local OAuth:
+[gsc-dermatology-locale-2026-09-14.json](../../seo/spain/raw/gsc-dermatology-locale-2026-09-14.json).
+
+- **Temporary burst, already over.** The EN specialist-dermatology URL had zero impressions
+  before August 29. It then drew about 220 impressions from August 29 to September 3, at
+  positions 69–82 with zero clicks. From September 4 to 11 it had one impression in total.
+  The burst followed Google's August 27 recrawl of the EN page. The 28-day totals in §52.5
+  and §56.1 only made it look continuous.
+- **Google is not confusing the locales.** Every inspected URL shows Google-selected
+  canonical equal to the declared canonical. Live hrefLang, sitemap alternates, `html lang`,
+  titles and bodies are correct in all six locales of both dermatology services.
+- **The ES blog did not cause the ES service's decline.** The ES service drew 27–34
+  impressions a day on July 20–23, at about position 40. From July 24 it drew 0–2 a day.
+  The ES blog's first impressions were on August 15, three weeks later. The blog now holds
+  the Spanish head queries at positions 17–20 and is not retitled.
+- **Stale crawl is the real bottleneck.**
+  - `/spain/es/services/dermatologia-especialista-online` was last crawled 2026-07-19, so
+    Google has not seen the August trust fix or the September 14 content.
+  - `/spain/es/services/consulta-piel-online` is **Discovered – currently not indexed** and
+    has never been crawled.
+  - `/spain/en/services/consulta-piel-online` was also last crawled 2026-07-19.
+- **One Spanish signal on non-default locales.** `<meta name="keywords">` was emitted in
+  Spanish on the EN/PT/CS/RO/DE URLs of every Spain service. `seoKeywords` has no
+  translation column, so every locale inherited the Spanish base value. Google ignores this
+  tag, so the ranking effect is expected to be close to zero.
+- **Stray URL.** `/spain/es/blog/dermatologo-que-resuelve-y-que-no` had one impression on
+  September 11 and returns 404. No action.
+
+**Fix.** The service route now emits `keywords` only on the market's default locale
+(`frontend/app/[country]/[lang]/services/[serviceSlug]/page.tsx`). This applies to all
+markets. No content, slug, canonical, robots or hreflang change.
+
+**Not done, by evidence.**
+- The ES blog is not retitled: the blog did not cause the service's decline.
+- The EN page is not noindexed or canonicalised to ES.
+- No slug change. §5 of the 2026-07-28 indexation plan still applies.
+
+**Owner action (UI only).** In Search Console, request indexing for
+`/spain/es/services/dermatologia-especialista-online` and
+`/spain/es/services/consulta-piel-online`. Do not use the Indexing API for this.
+
+**Proof.**
+- Frontend `tsc --noEmit` passes.
+- 20 SEO unit-test files pass (217 tests; 5 skipped).
+- `git diff --check` is clean.
+- A local server against the production API renders:
+  - ES: the Spanish keywords tag is still present.
+  - EN and CS: no keywords tag; title and `index, follow` are unchanged.
+
+**Next read.** On September 18 and September 24, re-inspect both ES services. Compare their
+daily series against the EN URL using newly available dates. Reopen this item only if EN
+again gets sustained Spanish impressions after the ES pages are recrawled.
 
 ## 57. Brazil evidence and guarded preparation — 13 September 2026
 

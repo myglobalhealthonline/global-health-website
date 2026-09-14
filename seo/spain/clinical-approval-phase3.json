@@ -1,0 +1,113 @@
+{
+  "manifestSha256": "93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884",
+  "phase": 3,
+  "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+  "reviewerName": "Dra. María Fernanda Ocampo Mora",
+  "registration": "CGCOM 291409735",
+  "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record.",
+  "evidenceType": "verbal, reported by the owner",
+  "reviewedAt": "2026-09-14T05:08:32.368Z",
+  "maxAgeDays": 365,
+  "groups": [
+    {
+      "key": "copy:consulta-medica-online",
+      "approvedSha256": "c8c0b363f70ed9aa84df244221000cef4866a6f6ab3ea385fa4f0f4815b88aa4",
+      "resultingStateSha256": "2af4c9706d065d09e41bf01e05724ba83df4e1ccaeab5f67a06549a9872d2c05"
+    },
+    {
+      "key": "copy:justificante-medico-online",
+      "approvedSha256": "8d66ef54c2487f39448a046a124a6c3605cf2e0a2402c1f5aec2134ad0a0a3ff",
+      "resultingStateSha256": "6fe08e7d5d67c4c6bd73a54a2e5e56aa245c42e52aba1cfe6c1ad8e099146a0a"
+    },
+    {
+      "key": "copy:renovacion-tratamiento-online",
+      "approvedSha256": "cdeae6ce0926a24b95351c0865c56580c946edd6ea8b21245edb60b980cbcdd2",
+      "resultingStateSha256": "e769187e17f67a9ab34e37261bdd1e1d15e2c4684ab1b3a9cacbdac438f9c503"
+    },
+    {
+      "key": "copy:pediatria-online",
+      "approvedSha256": "dabd8a48c052f2bf0ec587affa6834682ca10ff76ad360f532c210b25675d7ad",
+      "resultingStateSha256": "65989d07fee7a7eba5d505463cdbca24eecefae278d2c25f03fdab8cf72ce99f"
+    },
+    {
+      "key": "copy:caida-cabello-online",
+      "approvedSha256": "cd086c4cabec72493c85e74fe1b56a5b4a0e923b63edd0666dc6797dc38ce3b7",
+      "resultingStateSha256": "fd6acc786827379107eab2d7e78c61abe40d423f5d6e2830913fc6ee7cb93eab"
+    },
+    {
+      "key": "copy:consulta-piel-online",
+      "approvedSha256": "7eb7f891c19251e3e2165517cf544bda6265b8b61b14cdb09a4ab39bbc3c9f02",
+      "resultingStateSha256": "cce6c0ca745ea87b4e93dd4eb43688c0c7241d413e668ea2494b502cff20229b"
+    },
+    {
+      "key": "copy:control-peso-online",
+      "approvedSha256": "478efd02f2e1f42813ab018855489f9afbf00df89f03baa1e7820c1c8f3205ae",
+      "resultingStateSha256": "a31504d54a725e0827e3f34c3bf88c29a160628547b48d6424f612d2477a2f83"
+    },
+    {
+      "key": "copy:dejar-de-fumar-online",
+      "approvedSha256": "0474e2773bccc5cdfcbe44e66a25880a680b0c132144f29e4fdd0de2fb4cb344",
+      "resultingStateSha256": "7a5cdf01c134ad06f0dcaaf7f30fd909898fa9c872735af6413fbe2125b82ca7"
+    },
+    {
+      "key": "copy:derivaciones-pruebas-online",
+      "approvedSha256": "a5b20564ec6cf1845907fb1106e02736bca521c259c4d476c50899412a58f145",
+      "resultingStateSha256": "307a5efe5928494e33cc560d9405a2429e1f4d069fb84215c9a83632b8d805ca"
+    },
+    {
+      "key": "copy:enfermedades-cronicas-online",
+      "approvedSha256": "ff502ffada643d679f53a8d0d6b35b2df852498aefcf152647204b1bd9abe41c",
+      "resultingStateSha256": "452f97d235a98f84e1c1f500d58c5fcfc31dfdf4bc616ad57c7f2089ec20a436"
+    },
+    {
+      "key": "copy:medicina-viaje-online",
+      "approvedSha256": "9f66227564d275a90e20945a87edefa33b7876a95362e6afe31b576cf213d539",
+      "resultingStateSha256": "6980d69d6233f69011f1562e24a75680d1792288fe200d520c9244cf0e8aa3b5"
+    },
+    {
+      "key": "copy:musculoesqueletico-online",
+      "approvedSha256": "5f362c1cfae4b3cce85ac37f9420a29c0f5508d8b073e6577850eefe031934c3",
+      "resultingStateSha256": "b5e27e6b152f5bc7cbf8c76fac458db40d4fd6d939bd97839a50af806f39062a"
+    },
+    {
+      "key": "copy:salud-femenina-online",
+      "approvedSha256": "059f509e3a900f5e39e3e524a7c80f5c4846b0e78411fb8873a96074398abf42",
+      "resultingStateSha256": "afbdb0f74b1c74dff067e6be9deb6fdca198b9fc3318b2dc98aeb4b4b5b80306"
+    },
+    {
+      "key": "copy:salud-masculina-online",
+      "approvedSha256": "0a39f46db8a84ff0e91c9ca952421790d70d8645b57c013799b8beaa42af423b",
+      "resultingStateSha256": "7338ae3399f5d55421041d517b5994c552481fa25dc6b59d8ebb022d3e00676b"
+    },
+    {
+      "key": "copy:salud-mental-online",
+      "approvedSha256": "40fd0f5b05d83c79f7c796e9ec71faea35132cd4d0d73e496d85e73f4b55673f",
+      "resultingStateSha256": "7f3d730681fc18524b8641a06df35b669dbdccb069e0a0ad2965e48667c71829"
+    },
+    {
+      "key": "copy:segunda-opinion-medica",
+      "approvedSha256": "a4201bbf104875cac90ae2f90c59a17ea004fbc2d5822faee92d340ee744ceca",
+      "resultingStateSha256": "52b51bdd7800c78939828ee6a28d6cbf93ad6fd8f1f9546eb94c8d6d643c3d28"
+    },
+    {
+      "key": "copy:dermatologia-especialista-online",
+      "approvedSha256": "2e06e673464f8ba0484ee85060b49cea5e8fbf98a25cfb9997e83be84b9221d1",
+      "resultingStateSha256": "38e1974987fe1f49c9970d038406964bcb244c2105924d8a7680c51d40e641b0"
+    },
+    {
+      "key": "copy:psicologo-online",
+      "approvedSha256": "10af08e082c0ec52c4d9ada56354cb3b45ed44026e8f1e634a527087349fd17c",
+      "resultingStateSha256": "12173428759ab434416a5862c95c543e4d5f6ac1c54c890bf37cf22f9a0c9aca"
+    },
+    {
+      "key": "copy:psiquiatra-online",
+      "approvedSha256": "e17e5bb27545ee224fb64c7089d979d5888c4e463fd5942fcbfbed1bf4039586",
+      "resultingStateSha256": "889d9db808a2f22c6b6d0bc87b832f64767b87623dae846f103bc7597438634f"
+    },
+    {
+      "key": "copy:cardiologo-online",
+      "approvedSha256": "efc7d16ceda0b0226f0829e3da97fd048b9c2fffdc438729784a78c92e864e7e",
+      "resultingStateSha256": "e648ceac6e00ae8a192372d41b095181570f7d19f69285ad91ae7e5dbd471fc7"
+    }
+  ]
+}
