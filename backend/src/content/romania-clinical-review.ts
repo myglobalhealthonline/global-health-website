@@ -47,7 +47,207 @@ type SpainApproval = { stateSha256: string; reviewerDoctorId: string; reviewedAt
 // Review-age policy chosen by the owner on 2026-09-14 (ledger §56.4). Approved states stay
 // empty until the named reviewer approves exact state hashes from the Spain manifest.
 export const SPAIN_REVIEW_POLICY: { maxAgeDays: number | null } = { maxAgeDays: 365 };
-export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {};
+// Owner-reported verbal approval, ledger §56.6; bound to manifest 8846503c… group states.
+export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
+  "service:cmrf0qzdm00qd01qrfcfnsjmx": [
+    {
+      "stateSha256": "5cc4f91eee2b80b6ac9bb50dd7b69bf3441aa023ed2444feda0908eb2a2028d8",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "doctor:cmrdpx4ah001r01rupv1od828": [
+    {
+      "stateSha256": "610ad9aae8449cad7757fd5145b1fb343802e5f7ad179d16d52ef052776903cd",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "service:cmrf0phum00qa01qr0xkpwhhf": [
+    {
+      "stateSha256": "51e726f859d93d901829ff69db390ca0b4b4e0890bdb4d0248468f3dc132129c",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "service:cmrezwush00pq01qrtoq51csl": [
+    {
+      "stateSha256": "6e9365d005cb294e34dce7490a05bb0b8e9e6bbcd2e8dd5ff1cd85e3e6881ea9",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "doctor:cmrdpted5001901ru0wk0ncnd": [
+    {
+      "stateSha256": "d210998f37da0758cf01c353b0a79a042d16db07c09003fda87270c858d2645c",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "service:cmrezuq7000pn01qrkiyrthxw": [
+    {
+      "stateSha256": "70718d32da5f4a5fca474753144b4144811320c4f32db8fb43d33c279c48fe48",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "doctor:cmrdpz5n3001z01rukg2lecs5": [
+    {
+      "stateSha256": "e7302591a004705b358853b3e5283660ad4f6434e09d95bddf7bce18495d6641",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "service:cmre7qdwm004pngjuoofudwu5": [
+    {
+      "stateSha256": "9c1c0d16c41cbf41eb0b25cb1a32bad0408b51743a9fb736ae169be9fe63c338",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "doctor:cmrdppjf5000u01ru1ayu78k0": [
+    {
+      "stateSha256": "0312d9cd45f7449a76354d149066666852d30ff0cdb2c1e792acf810f02c6c16",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "service:cmre7qeyz0050ngjund1jqnhp": [
+    {
+      "stateSha256": "e138ce27eb0b8f91060fb8646ee9d2895d2e119071fe02752550192065725052",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "doctor:cmrdpvch9001i01ruy7pmzmdk": [
+    {
+      "stateSha256": "966aa9c5d33a3b364a4e9de6801e0c8105a2cbe2845bd2885a33e7864fcf7982",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "service:cmre7qbti0042ngjumicur4m2": [
+    {
+      "stateSha256": "a4c6a760191c1528f5dbbc7bcda485c68096b17ce5c54a2aea82c81d3b15e0dc",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "f230825fad8f4bdf0fc23409882123acab74dd6f4cd427976e72fa41194c0cac",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "doctor:cmrdpu7ro001e01ruc1ycm5n5": [
+    {
+      "stateSha256": "8e381c7100342f395dce69fe066a7301d8ec7ded97da61f5810bc8fb37b44b0d",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "doctor:cmrdpxpi0001v01ruqavjiq79": [
+    {
+      "stateSha256": "a1616ab574d2a47c640298c8d3329a5816bbc204c31684a71ac1d519d1b4a624",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "doctor:cmrdq1nhe002b01ru2xmq0iab": [
+    {
+      "stateSha256": "00faea5e2f05d6597c67f1043d62f339eaaf1e88ea9d30828d1ae18cd9c2f9b3",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "doctor:cmrdpsayj001401ruyb4x1ze3": [
+    {
+      "stateSha256": "e31ed7b25cee5ebeaf078fb3b7a80287953d07cab016e3fe269643f5c6160ac8",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "doctor:cmrdq2bu1002f01ru2g8317b6": [
+    {
+      "stateSha256": "1ef1afe2a1c7d4395c38619b5f3d7ded81231893d55f6529bd2a2ea6d7c00b80",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "doctor:cmrdq0tv2002701rupeh3nkyd": [
+    {
+      "stateSha256": "9f7cd229af2dbd29456d56ae38ddd457abaa6662e30d4e1af49fc4109c5a4225",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "service:cmre7qas1003sngjus0w2obwn": [
+    {
+      "stateSha256": "e9fc5d8446f7aa806b5804ed22a3c13799df515e65a748dea7747824a8dc2692",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "service:cmre7q9p1003ingjuum9voxoc": [
+    {
+      "stateSha256": "7f119541051d4dca4958a7b14c0d82c0af77e0e0361742813f57331826ceff8e",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "service:cmre7q8mg0037ngjuso41eynq": [
+    {
+      "stateSha256": "cf79ada7dbfa95a8637b671cbe9e1fdb32229795e30ba0f5c9e4df37dbdbc61c",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "service:cmre7qg1l005cngjub14ciym5": [
+    {
+      "stateSha256": "8cffaec7c0996960123e6326e73fc6f808579661f928b76973bbdc7fc866ae32",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "service:cmre7q3a5001ongjur495me3b": [
+    {
+      "stateSha256": "6b46e80efaf86a86f1b0d78f46e6e47df924f3635513b0978d2f6b13b41dd166",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ],
+  "service:cmre7q5fw002angjuebao1obt": [
+    {
+      "stateSha256": "518957591ecf86e8f4d1d01bb7a82a68a099dc8191023ff4408c68be6a7dd772",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T01:31:26.987Z",
+      "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    }
+  ]
+};
 export const BRAZIL_REVIEW_POLICY: { maxAgeDays: number | null } = { maxAgeDays: null };
 export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {};
 export const assertSpainClinicalChanges = (before: Snapshot, after: Snapshot, now = Date.now()) => assertReviewedChanges(before, after, 'Spain', SPAIN_REVIEW_POLICY, APPROVED_SPAIN_STATES, now);

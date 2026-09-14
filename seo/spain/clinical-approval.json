@@ -1,0 +1,137 @@
+{
+  "manifestSha256": "8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65",
+  "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+  "reviewerName": "Dra. María Fernanda Ocampo Mora",
+  "registration": "CGCOM 291409735",
+  "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record.",
+  "evidenceType": "verbal, reported by the owner",
+  "reviewedAt": "2026-09-14T01:31:26.987Z",
+  "maxAgeDays": 365,
+  "groups": [
+    {
+      "key": "service:consulta-diagnotico-vascular",
+      "approvedSha256": "2ca5cb39e936a38531bf9f69189d67c301fc2acb05e18ce951ea27703894135d",
+      "resultingStateSha256": "5cc4f91eee2b80b6ac9bb50dd7b69bf3441aa023ed2444feda0908eb2a2028d8"
+    },
+    {
+      "key": "doctor:dr-leandro-wang",
+      "approvedSha256": "56562895e13180fb2f14ff4c548336232036955658909ec1605450527db55720",
+      "resultingStateSha256": "610ad9aae8449cad7757fd5145b1fb343802e5f7ad179d16d52ef052776903cd"
+    },
+    {
+      "key": "service:consulta-flebologia-y-linfologia",
+      "approvedSha256": "9bd83db9fd7ad0b47c68003b00bcc1a6b8762b454993385c156d983057da3c02",
+      "resultingStateSha256": "51e726f859d93d901829ff69db390ca0b4b4e0890bdb4d0248468f3dc132129c"
+    },
+    {
+      "key": "service:consulta-online-medicina-estetica",
+      "approvedSha256": "89751481d0f4ac189a22896797ddf1293380f0895804c45e5a8207b283fba150",
+      "resultingStateSha256": "6e9365d005cb294e34dce7490a05bb0b8e9e6bbcd2e8dd5ff1cd85e3e6881ea9"
+    },
+    {
+      "key": "doctor:dr-maria-fernanda-ocampo-mora",
+      "approvedSha256": "eb1d1d1afdfaa1712eb84ea615d607f67dd064100c1d49bfe6206415108d5226",
+      "resultingStateSha256": "d210998f37da0758cf01c353b0a79a042d16db07c09003fda87270c858d2645c"
+    },
+    {
+      "key": "service:consulta-salud-vascular-circulatoria",
+      "approvedSha256": "ec9931e8c37de120b02b375cff373893862cee78600f844f0b774ebd8ebda100",
+      "resultingStateSha256": "70718d32da5f4a5fca474753144b4144811320c4f32db8fb43d33c279c48fe48"
+    },
+    {
+      "key": "doctor:dr-eszter-szilagyi",
+      "approvedSha256": "642de896321763262f6dbbc0314aae72328d00869860e4c58b3d3e75d5c74e47",
+      "resultingStateSha256": "e7302591a004705b358853b3e5283660ad4f6434e09d95bddf7bce18495d6641"
+    },
+    {
+      "key": "service:dermatologia-especialista-online",
+      "approvedSha256": "dec83244b0071eaa6dec11c2040978106ef285ee7267947facaf50bfee87c7a7",
+      "resultingStateSha256": "9c1c0d16c41cbf41eb0b25cb1a32bad0408b51743a9fb736ae169be9fe63c338"
+    },
+    {
+      "key": "doctor:dr-alfredo-del-valle",
+      "approvedSha256": "6139b41ca61e2bbd76745e7a3482e327b7466fad00b0bb4df44e77bf76f93c8b",
+      "resultingStateSha256": "0312d9cd45f7449a76354d149066666852d30ff0cdb2c1e792acf810f02c6c16"
+    },
+    {
+      "key": "service:psiquiatra-online",
+      "approvedSha256": "0354ca35a8729d8e68f60f8d3a9dc7419695ed0e8b25c9c4e244387dd61d3463",
+      "resultingStateSha256": "e138ce27eb0b8f91060fb8646ee9d2895d2e119071fe02752550192065725052"
+    },
+    {
+      "key": "doctor:dr-fabiana-cornejo",
+      "approvedSha256": "48c8e386b00c2d6c9ac967b360df7976e50444180bbce183d6bd55e37cac21c6",
+      "resultingStateSha256": "966aa9c5d33a3b364a4e9de6801e0c8105a2cbe2845bd2885a33e7864fcf7982"
+    },
+    {
+      "key": "service:pediatria-online",
+      "approvedSha256": "2481b89c7224887288fbfe6b7917a78a710ee7ed08c75d0addc124fc56272774",
+      "resultingStateSha256": "a4c6a760191c1528f5dbbc7bcda485c68096b17ce5c54a2aea82c81d3b15e0dc"
+    },
+    {
+      "key": "doctor:dr-silvina-irale",
+      "approvedSha256": "5dd6a0f1730f218b8543edd256c53a5a6c9eaacbb08dffeb8eac757bf0c703e8",
+      "resultingStateSha256": "8e381c7100342f395dce69fe066a7301d8ec7ded97da61f5810bc8fb37b44b0d"
+    },
+    {
+      "key": "doctor:dr-eduardo-olivas",
+      "approvedSha256": "515c83669af07340e2a14813de4a3bd355f4f48a08f3f030a22a72b93c87e841",
+      "resultingStateSha256": "a1616ab574d2a47c640298c8d3329a5816bbc204c31684a71ac1d519d1b4a624"
+    },
+    {
+      "key": "doctor:dr-javier-villarte-betancor",
+      "approvedSha256": "f84bdf25bb3cabf1db5ce9e734dfaba1fbed49d5d137c9cdd6c08ebd31d40bb1",
+      "resultingStateSha256": "00faea5e2f05d6597c67f1043d62f339eaaf1e88ea9d30828d1ae18cd9c2f9b3"
+    },
+    {
+      "key": "doctor:dr-romulo-brito",
+      "approvedSha256": "edc9e2326295af5b430a338d4b51bd75f5d8b2dd605d9b7963603e782d746ea7",
+      "resultingStateSha256": "e31ed7b25cee5ebeaf078fb3b7a80287953d07cab016e3fe269643f5c6160ac8"
+    },
+    {
+      "key": "doctor:dr-syed-tahir",
+      "approvedSha256": "b0e911cd8ba33fdbc7e08cb2b10c9322334d74807027506fa174497f5c95dee5",
+      "resultingStateSha256": "1ef1afe2a1c7d4395c38619b5f3d7ded81231893d55f6529bd2a2ea6d7c00b80"
+    },
+    {
+      "key": "doctor:dr-tomas-ruiz-palacios",
+      "approvedSha256": "e1f6887baf35872543c4ebb1f43b88eb9039203c714ada2fcab1664a00a89752",
+      "resultingStateSha256": "9f7cd229af2dbd29456d56ae38ddd457abaa6662e30d4e1af49fc4109c5a4225"
+    },
+    {
+      "key": "link:cmre7soee002sg8ju1hnpt499",
+      "approvedSha256": "ad19d8193864ecf8b2a6ea6b5587c13d4745835b89e5f956d993e53fb5d7e2a6",
+      "resultingStateSha256": "e9fc5d8446f7aa806b5804ed22a3c13799df515e65a748dea7747824a8dc2692"
+    },
+    {
+      "key": "link:cmre7skhw002kg8judewg26hr",
+      "approvedSha256": "8366f3a14966c84f77237da4af6d932b8bb145c2ed03374d2645caca2258e298",
+      "resultingStateSha256": "7f119541051d4dca4958a7b14c0d82c0af77e0e0361742813f57331826ceff8e"
+    },
+    {
+      "key": "link:cmre7tkdz004mg8juc9wpct8q",
+      "approvedSha256": "8b8671b3f4b1a6a639780d8ada42860fd99d405623450207676a8d4ef9477c71",
+      "resultingStateSha256": "cf79ada7dbfa95a8637b671cbe9e1fdb32229795e30ba0f5c9e4df37dbdbc61c"
+    },
+    {
+      "key": "link:cmre7ts6t0052g8ju6asq61tw",
+      "approvedSha256": "3697cfc95389f151cde8564993e9924a821df3e3e05117f7452788fd5e7ac9a0",
+      "resultingStateSha256": "f230825fad8f4bdf0fc23409882123acab74dd6f4cd427976e72fa41194c0cac"
+    },
+    {
+      "key": "link:cmre7t1od003kg8jujyc8vdtm",
+      "approvedSha256": "a1b9634abb292438fa0dc6eb148fd6833fcd0f818c58c21b261b6c0959a231e2",
+      "resultingStateSha256": "8cffaec7c0996960123e6326e73fc6f808579661f928b76973bbdc7fc866ae32"
+    },
+    {
+      "key": "link:cmre7stv60034g8juje70ar9l",
+      "approvedSha256": "79deed8defecf44a75beb616217913557859fc3a696a246affc16df2d9ebfbec",
+      "resultingStateSha256": "6b46e80efaf86a86f1b0d78f46e6e47df924f3635513b0978d2f6b13b41dd166"
+    },
+    {
+      "key": "link:cmre7u1jt005mg8jutxyy9pz0",
+      "approvedSha256": "dd8a5b4c3de1b273f6dba91d3e29e771255e750bd53cf2d6ea51b032115bd5c6",
+      "resultingStateSha256": "518957591ecf86e8f4d1d01bb7a82a68a099dc8191023ff4408c68be6a7dd772"
+    }
+  ]
+}
