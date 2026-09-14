@@ -99,6 +99,13 @@ export interface SuklPatientIdentity {
   phone?: string;
   email?: string;
   /**
+   * Free-text contact address, max 1024 characters. SÚKL require EITHER this or
+   * `phone` on every prescription. It is not the same thing as `address`
+   * below, which is the structured residence used to identify the patient —
+   * filling that one in does not satisfy the contact requirement.
+   */
+  contactAddress?: string;
+  /**
    * Needed whenever SÚKL cannot identify the patient in the population
    * register (ROB). Their C018 is explicit: the address may be omitted ONLY if
    * the patient can be found there from the other details, which a foreign or
@@ -163,6 +170,8 @@ function patientBlock(p: SuklPatientIdentity): string {
     el("ZP", p.insurerCode) +
     el("Telefon", p.phone) +
     el("Email", p.email) +
+    // Last in ulozeni_pacient_type's sequence, after Pohlavi.
+    el("KontaktniAdresa", p.contactAddress) +
     "</Pacient>"
   );
 }
@@ -222,6 +231,11 @@ export function assertCreatePrescriptionValid(input: SuklCreatePrescriptionInput
   if (!/^\d{11}$/.test(input.prescriber.pzs)) problems.push("PZS must be 11 digits");
   if (!input.prescriber.phone.trim()) problems.push("the prescriber's phone is required");
   if (input.prescriber.lekar.length > 36) problems.push("Lekar is at most 36 characters");
+  // SÚKL: "V požadavku musí být zadáno buď telefonní číslo pacienta nebo
+  // kontaktní adresa pacienta" — one of the two, on every prescription.
+  if (!input.patient.phone?.trim() && !input.patient.contactAddress?.trim()) {
+    problems.push("the patient's phone or contact address is required");
+  }
   if (input.items.length === 0) problems.push("at least one item is required");
 
   for (const [i, item] of input.items.entries()) {

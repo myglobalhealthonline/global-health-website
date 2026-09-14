@@ -39,6 +39,7 @@ function input(overrides: Partial<SuklCreatePrescriptionInput> = {}): SuklCreate
       dateOfBirth: "1985-04-12",
       insuranceNumber: "8554120123",
       insurerCode: "111",
+      phone: "+420777123456",
     },
     prescriber: {
       lekar: "141EA8AA-F82D-4D74-A725-CDABE9973ACA",
@@ -99,6 +100,26 @@ test("the message is signed, unenveloped, and verifies over its own bytes", () =
   });
   verifier.loadSignature(signature);
   assert.equal(verifier.checkSignature(xml), true);
+});
+
+test("the patient needs a phone or a contact address, and either one will do", () => {
+  // SÚKL's own rejection, 2026-09-14: "V požadavku musí být zadáno buď
+  // telefonní číslo pacienta nebo kontaktní adresa pacienta". The structured
+  // residence address does NOT satisfy it — that is identity, not contact.
+  const noContact = {
+    ...input().patient,
+    phone: undefined,
+    address: { city: "Praha", postcode: "12000" },
+  };
+  assert.throws(
+    () => assertCreatePrescriptionValid(input({ patient: noContact })),
+    /phone or contact address is required/,
+  );
+
+  const xml = buildCreatePrescriptionRequest(
+    input({ patient: { ...noContact, contactAddress: "Vinohradská 12, Praha" } }),
+  );
+  assert.match(xml, /<KontaktniAdresa>Vinohradská 12, Praha<\/KontaktniAdresa><\/Pacient>/);
 });
 
 test("invalid input is refused locally rather than by SÚKL", () => {

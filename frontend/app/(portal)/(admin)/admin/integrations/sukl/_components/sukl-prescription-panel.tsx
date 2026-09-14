@@ -33,6 +33,8 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
     dateOfBirth: "",
     insuranceNumber: "",
     insurerCode: "",
+    patientPhone: "",
+    contactAddress: "",
     street: "",
     houseNumber: "",
     city: "",
@@ -50,7 +52,10 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
     !busy &&
     form.doctorUserId.trim().length > 0 &&
     form.medicineName.trim().length > 0 &&
-    form.instructions.trim().length > 0;
+    form.instructions.trim().length > 0 &&
+    // SÚKL refuse a prescription with neither; checked here so the button
+    // stays disabled instead of sending a request that is bound to fail.
+    (form.patientPhone.trim().length > 0 || form.contactAddress.trim().length > 0);
 
   async function issue() {
     setBusy(true);
@@ -69,6 +74,8 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
             dateOfBirth: form.dateOfBirth.trim() || undefined,
             insuranceNumber: form.insuranceNumber.trim() || undefined,
             insurerCode: form.insurerCode.trim() || undefined,
+            phone: form.patientPhone.trim() || undefined,
+            contactAddress: form.contactAddress.trim() || undefined,
             // Sent only when the mandatory pair is present; a partial address
             // is rejected, and omitting it entirely is valid for a patient
             // SÚKL can find in the population register.
@@ -154,6 +161,23 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
         <F label="Patient given names" value={form.givenNames} on={(v) => setForm((f) => ({ ...f, givenNames: v }))} />
         <F label="Date of birth (YYYY-MM-DD)" value={form.dateOfBirth} on={(v) => setForm((f) => ({ ...f, dateOfBirth: v }))} />
         <F label="Insurance number (9–10 digits)" value={form.insuranceNumber} on={(v) => setForm((f) => ({ ...f, insuranceNumber: v }))} />
+        <F
+          label="Patient phone (this or contact address)"
+          value={form.patientPhone}
+          on={(v) => setForm((f) => ({ ...f, patientPhone: v }))}
+        />
+        <F
+          label="Patient contact address (this or phone)"
+          value={form.contactAddress}
+          on={(v) => setForm((f) => ({ ...f, contactAddress: v }))}
+        />
+        <div className="sm:col-span-2">
+          <p className="m-0 text-xs" style={{ color: "var(--portal-muted)" }}>
+            SÚKL require the patient&rsquo;s phone or a contact address on every prescription. The
+            street, city and postcode below are a different thing — the residence used to find the
+            patient in the population register — and do not count towards this.
+          </p>
+        </div>
         <F label="Patient street" value={form.street} on={(v) => setForm((f) => ({ ...f, street: v }))} />
         <F label="Patient house number" value={form.houseNumber} on={(v) => setForm((f) => ({ ...f, houseNumber: v }))} />
         <F label="Patient city (required with postcode)" value={form.city} on={(v) => setForm((f) => ({ ...f, city: v }))} />

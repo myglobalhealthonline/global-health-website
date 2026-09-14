@@ -108,6 +108,9 @@ export const suklIssuePrescriptionSchema = z.object({
     insurerCode: z.string().trim().regex(/^\d{3}$/).optional(),
     phone: z.string().trim().max(20).optional(),
     email: z.string().trim().email().max(256).optional(),
+    // SÚKL require phone OR contactAddress; checked in assertCreatePrescriptionValid
+    // so the rule lives in one place for every caller, not only this route.
+    contactAddress: z.string().trim().max(1024).optional(),
     // Required by SÚKL whenever the patient cannot be found in the population
     // register — see C018. City and postcode are the mandatory pair.
     address: z
