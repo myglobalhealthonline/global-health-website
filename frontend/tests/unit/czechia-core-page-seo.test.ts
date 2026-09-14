@@ -163,3 +163,41 @@ describe("Czechia core-page SEO", () => {
     }
   }, 30_000);
 });
+
+// Market-agnostic core-page SEO coverage — runs the same well-formedness
+// assertions across all six live markets (data/countries.ts), not just
+// Czechia. Catches the class of bug the exact-copy assertions above can't:
+// a builder producing a broken title/description for a market that has no
+// hand-tuned EXPECTED entry (e.g. the "Información legal. · España" stray
+// period regression — a market whose static-page-seo override doesn't cover
+// it falls through to the shared `heroTitle`/`heroAccent` builder, and only
+// a cross-market check catches that builder breaking).
+describe("Core-page SEO — all markets", () => {
+  const MARKETS = countries.map((c) => ({ slug: c.slug, lang: c.defaultLocale }));
+  const ROUTES = ["about", "contact", "book", "legal", "pricing"] as const;
+
+  it.each(MARKETS)("wires a well-formed title and description for every core route ($slug)", async ({ slug, lang }) => {
+    const routeModules = await Promise.all([
+      import("@/app/[country]/[lang]/about/page"),
+      import("@/app/[country]/[lang]/contact/page"),
+      import("@/app/[country]/[lang]/book/page"),
+      import("@/app/[country]/[lang]/legal/page"),
+      import("@/app/[country]/[lang]/pricing/page"),
+    ]);
+    const params = Promise.resolve({ country: slug, lang });
+
+    for (let index = 0; index < ROUTES.length; index += 1) {
+      const path = ROUTES[index];
+      const metadata = await routeModules[index].generateMetadata({ params });
+      const title = (metadata.title as { absolute?: string } | undefined)?.absolute ?? "";
+      const description = metadata.description ?? "";
+
+      expect(title.length, `${slug}/${path} title`).toBeGreaterThan(0);
+      expect(description.length, `${slug}/${path} description`).toBeGreaterThan(0);
+      // Regression guard for the "Información legal. · España" bug: a
+      // sentence-ending period must never immediately precede the
+      // brand/breadcrumb separator.
+      expect(title, `${slug}/${path} title has no stray period before a separator`).not.toMatch(/\.\s*[·|—]/);
+    }
+  }, 30_000);
+});

@@ -901,6 +901,8 @@ export type CommonLocale = {
     tagSpecialist: string;
     tagGeneral: string;
     priceVaries: string;
+    /** "View" — service-catalogue card CTA that links to the service detail page. */
+    viewService: string;
     continue: string;
     languageLabel: string;
     languageAll: string;

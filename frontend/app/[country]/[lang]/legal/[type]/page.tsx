@@ -15,6 +15,8 @@ import {
 import { sanitizePageBodyHtml } from "@/lib/content/sanitize-page-body";
 import { SITE_NAME } from "@/lib/constants";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { indexableHreflangCluster } from "@/lib/seo/hreflang";
@@ -139,8 +141,17 @@ export default async function CountryLegalDocumentPage({
         )
     : null;
 
+  const legalIndexLabel = `${c.legalPage.heroTitle} ${c.legalPage.heroAccent}`.trim();
+
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: c.navigation.home, url: "/" },
+          { name: legalIndexLabel, url: `/${slug}/${lang}/legal` },
+          { name: title, url: `/${slug}/${lang}/legal/${type}` },
+        ])}
+      />
       <GH2CompactHero
         eyebrow={t.heroEyebrow.replace("{country}", c.countryNames?.[code] ?? config.name)}
         title={title}

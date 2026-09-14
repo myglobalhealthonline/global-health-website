@@ -1339,7 +1339,7 @@ function ServiceChoiceCard({
               href={viewHref}
               className="gh2-btn-compact gh2-btn-compact-secondary-dark"
             >
-              View
+              {bp.viewService}
             </Link>
             {/* Doctor-first flow: `href` already pins this doctor AND this
                 service, so an anchor here would re-expose the cross-product one
