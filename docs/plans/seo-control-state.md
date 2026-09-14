@@ -10099,6 +10099,53 @@ menu); all five destinations 200, self-canonical, indexable. Cohort start for ro
 6, 7, 10, 11, 12: 14 September 2026; measure 12 October and 9 November. Rollback of the database rows: `patch-internal-links.mjs rollback` with
 the same manifest and hash; it refuses if content changed after this apply.
 
+## 59. Brazil homepage, booking and tool metadata — 15 September 2026
+
+**Status: LIVE.** Owner approved items 1, 2 and 6 of the post-phase-4 review. Code only;
+no database write. Commits `7f878d0a` (copy) and `a061e407` (locale keys) on `main`.
+Frontend deployment for `7f878d0a`: `b33f195d-7d56-4f75-b5dc-a3569f46a89d` SUCCESS.
+
+- **Homepage (br pt/en/es).** New code-owned SEO title/description in
+  `country-home-copy.ts`. The stored HOME PageContent strings ("Registered GPs &
+  Specialists", "Mesmo dia no Brasil", "Citas el mismo día") beat code for Brazil,
+  so `app/[country]/[lang]/page.tsx` now prefers code SEO for Brazil title and
+  description only; hero copy keeps CMS-first order. Clear those stored HOME fields
+  before editing Brazil home SEO in the admin, or edits will not show.
+- **Availability panel.** Brazil titles no longer say same day (PT "Horários
+  disponíveis com médico", EN "Available Consultation Times", ES "Horarios de
+  consulta disponibles"); pt-BR wording. Stats caption on Brazil PT named Portugal's
+  regulator ("Registados na Ordem dos Médicos"); now "Registrados no Conselho
+  Regional de Medicina (CRM)".
+- **Booking.** Hard-coded English "Need a same-day GP instead?" link is now
+  `bookPage.sameDayLink`, translated in all six locales. Brazil override: PT title
+  "Agende sua consulta" and link "Ver consulta com médico de família"; EN/ES link
+  names the consultation. R$199 on the booking page is the real price of
+  `renovacao-receita-online` and `solicitacao-exames-online`, not a defect.
+- **Tools (br pt).** Calorie: "Calculadora de Calorias Brasil | Calorias por Dia".
+  Due date: "Calculadora Gestacional e de Gravidez Brasil | DPP". Descriptions
+  updated. Evidence is the 13 September matrix (calorie 2,251 impressions / 7 clicks;
+  due date 824 / 0; queries "calculadora gestacional", "calculadora de gravidez",
+  "calculadora idade gestacional"). GSC was not refreshed: the local GSC script lacks
+  `google-api-python-client`. Positions are unknown, so low CTR may be ranking, not
+  wording.
+- **Locale keys.** Seven availability-panel keys fell back to English in
+  pt/es/cs/ro/de; translated. `check-locale-keys` now passes (it failed before).
+- **Proof.** Frontend `tsc --noEmit` exit 0; 89 related vitest tests pass; eslint
+  clean; local render against the production API. Production check 15 September:
+  all ten URLs 200 with unchanged self-canonicals; Brazil pages serve the new
+  title/description/text; Portugal and Ireland book/home pages unchanged apart from
+  the translated Portugal link.
+- **Cohort.** Brazil homepage ×3, book ×3, two PT tools: measure 13 October,
+  10 November, 8 December 2026.
+- **Found, not changed.**
+  - The phase-3 `summary` for `solicitacao-exames-online` still says tests are
+    "válidos em laboratórios de todo o Brasil", the claim phase 4 removed from its
+    FAQ. It shows on booking cards. Needs a reviewed database edit.
+  - Other Portugal-Portuguese strings remain across Brazil PT booking and homepage
+    sections; EN homepage still lists "Specialists" in service filters.
+  - Ireland `BUNDLE` entries in `country-home-copy.ts` are keyed "IE:en" but looked
+    up with lowercase codes, so they likely never render (separate task raised).
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
