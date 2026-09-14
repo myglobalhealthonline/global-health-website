@@ -9393,6 +9393,21 @@ detection, protected drift refusal and exact inverse restore. Receipt:
 
 **Proof:** 12 focused tests pass; backend `tsc --noEmit` passes.
 
+**Registry follow-up (14 September).** The owner described Luz and Tomás as
+psychologists.
+- **Tomás.** He is a psychologist. The Colegio Oficial de Psicología de la Región de
+  Murcia public search lists TOMAS RUIZ PALACIOS as No. MU05691. His registration is
+  now verified by a named record, not only attested. The stored "MUO5691" is a
+  letter-O typo; correct it through the doctor portal. The stored credential was not
+  altered ([evidence](../../seo/spain/raw/registry-recheck-tomas-2026-09-14.json)).
+- **Luz.** Storage records her as a physician: CGCOM 202009507, titled Médica General,
+  assigned to general-care services. She is not recorded as a psychologist. The
+  CGCOM "ALTA sin ejercicio" hold stands.
+- **Deployment and approval.** The owner reported verbal approval by Dra. Ocampo and
+  Dr Tiago, gave super-admin approval, and asked for a production deploy. Automated
+  permission review blocked the Railway action and the Wang "Specialist"
+  fact-register edit. No approval record, deployment or production write exists.
+
 **Next (unchanged order):**
 1. Dra. Ocampo approves manifest `8846503c…` and its group hashes.
 2. Record `clinical-approval.json` and matching `APPROVED_SPAIN_STATES`.
