@@ -155,6 +155,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "4b302dd519873c84baa3b175b11e6a2d53f9698619924869068e83625c3801b4",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T19:29:31.514Z",
+      "evidence": "reported by the owner: super admin stated in chat on 2026-09-15 that each country's clinical director reviews and approves service and doctor descriptions, and instructed \"trim them and apply\"; Spain clinical director Dra. María Fernanda Ocampo Mora. Applies to the SEO description trims (<=155 characters, six locales) in phase-7 manifest 5b189c761de1245bc5fc3a1c7dee9db468aeb294659cab0342fd4bebd389245f. No written record."
     }
   ],
   "service:cmre7qeyz0050ngjund1jqnhp": [
@@ -175,6 +181,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T15:02:33.821Z",
       "evidence": "verbal, reported by the owner: super admin stated in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the sick-leave draft copy (seo/spain/sick-leave-wording-review-2026-09-14.md §3) applied as phase-4 manifest 65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809; owner chose to include the legal-sensitive passages without separate legal review. No written record."
+    },
+    {
+      "stateSha256": "984e464010045b072f7f4819c27e028ba3e9114b91eb9de72d3ed0fb72bf9b0a",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T19:29:31.514Z",
+      "evidence": "reported by the owner: super admin stated in chat on 2026-09-15 that each country's clinical director reviews and approves service and doctor descriptions, and instructed \"trim them and apply\"; Spain clinical director Dra. María Fernanda Ocampo Mora. Applies to the SEO description trims (<=155 characters, six locales) in phase-7 manifest 5b189c761de1245bc5fc3a1c7dee9db468aeb294659cab0342fd4bebd389245f. No written record."
     }
   ],
   "doctor:cmrdpvch9001i01ruy7pmzmdk": [
@@ -275,6 +287,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T03:46:07.151Z",
       "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
+    },
+    {
+      "stateSha256": "4f3bacdaa61d2b2d8fc3f65848da16d3a2a92f2dea964de9c6af11b60cb0cd3f",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T19:29:31.514Z",
+      "evidence": "reported by the owner: super admin stated in chat on 2026-09-15 that each country's clinical director reviews and approves service and doctor descriptions, and instructed \"trim them and apply\"; Spain clinical director Dra. María Fernanda Ocampo Mora. Applies to the SEO description trims (<=155 characters, six locales) in phase-7 manifest 5b189c761de1245bc5fc3a1c7dee9db468aeb294659cab0342fd4bebd389245f. No written record."
     }
   ],
   "service:cmre7qas1003sngjus0w2obwn": [
@@ -289,6 +307,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T05:08:32.368Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    },
+    {
+      "stateSha256": "795bb5fcf086c5e9de412bbf84026b31ebe04beb822a9baf522fb936168a785d",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T19:29:31.514Z",
+      "evidence": "reported by the owner: super admin stated in chat on 2026-09-15 that each country's clinical director reviews and approves service and doctor descriptions, and instructed \"trim them and apply\"; Spain clinical director Dra. María Fernanda Ocampo Mora. Applies to the SEO description trims (<=155 characters, six locales) in phase-7 manifest 5b189c761de1245bc5fc3a1c7dee9db468aeb294659cab0342fd4bebd389245f. No written record."
     }
   ],
   "service:cmre7q9p1003ingjuum9voxoc": [
@@ -445,6 +469,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T15:02:33.821Z",
       "evidence": "verbal, reported by the owner: super admin stated in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the sick-leave draft copy (seo/spain/sick-leave-wording-review-2026-09-14.md §3) applied as phase-4 manifest 65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809; owner chose to include the legal-sensitive passages without separate legal review. No written record."
+    },
+    {
+      "stateSha256": "22789979324e88ade82f8809685fef230bb5a54ed4ea5ad15a36def6110d4d96",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T19:29:31.514Z",
+      "evidence": "reported by the owner: super admin stated in chat on 2026-09-15 that each country's clinical director reviews and approves service and doctor descriptions, and instructed \"trim them and apply\"; Spain clinical director Dra. María Fernanda Ocampo Mora. Applies to the SEO description trims (<=155 characters, six locales) in phase-7 manifest 5b189c761de1245bc5fc3a1c7dee9db468aeb294659cab0342fd4bebd389245f. No written record."
     }
   ],
   "service:cmre7q6hn002lngju3chey2ai": [
@@ -491,6 +521,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T05:08:32.368Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    },
+    {
+      "stateSha256": "f9ae2efe37276f42a08507af82f434f5986b52c00c66366cc23a58144e993eaf",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T19:29:31.514Z",
+      "evidence": "reported by the owner: super admin stated in chat on 2026-09-15 that each country's clinical director reviews and approves service and doctor descriptions, and instructed \"trim them and apply\"; Spain clinical director Dra. María Fernanda Ocampo Mora. Applies to the SEO description trims (<=155 characters, six locales) in phase-7 manifest 5b189c761de1245bc5fc3a1c7dee9db468aeb294659cab0342fd4bebd389245f. No written record."
     }
   ],
   "service:cmre7q27m001dngju2395w6dl": [

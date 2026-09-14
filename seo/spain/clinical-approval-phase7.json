@@ -1,0 +1,43 @@
+{
+  "manifestSha256": "5b189c761de1245bc5fc3a1c7dee9db468aeb294659cab0342fd4bebd389245f",
+  "phase": 7,
+  "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+  "reviewerName": "Dra. María Fernanda Ocampo Mora",
+  "registration": "CGCOM 291409735",
+  "evidence": "reported by the owner: super admin stated in chat on 2026-09-15 that each country's clinical director reviews and approves service and doctor descriptions, and instructed \"trim them and apply\"; Spain clinical director Dra. María Fernanda Ocampo Mora. Applies to the SEO description trims (<=155 characters, six locales) in phase-7 manifest 5b189c761de1245bc5fc3a1c7dee9db468aeb294659cab0342fd4bebd389245f. No written record.",
+  "evidenceType": "owner-reported clinical director approval",
+  "reviewedAt": "2026-09-14T19:29:31.514Z",
+  "maxAgeDays": 365,
+  "groups": [
+    {
+      "key": "text:service:cmre7qeyz0050ngjund1jqnhp",
+      "approvedSha256": "37a3babaddbf118098e302e796bc2d5c1a0e3eebaa5e83ca90f1f693af1aa22d",
+      "resultingStateSha256": "984e464010045b072f7f4819c27e028ba3e9114b91eb9de72d3ed0fb72bf9b0a"
+    },
+    {
+      "key": "text:service:cmre7qas1003sngjus0w2obwn",
+      "approvedSha256": "992cf977f97e804adf731a97ce486d1317fff9b94f63b7fadfaffa9ee0b072cd",
+      "resultingStateSha256": "795bb5fcf086c5e9de412bbf84026b31ebe04beb822a9baf522fb936168a785d"
+    },
+    {
+      "key": "text:service:cmre7q7k0002vngju6v73lt8h",
+      "approvedSha256": "9db4b19b15cdd3568f4d77380b54dcfc8be5efd223fd8d2dadfd708a9d489a1a",
+      "resultingStateSha256": "f9ae2efe37276f42a08507af82f434f5986b52c00c66366cc23a58144e993eaf"
+    },
+    {
+      "key": "text:service:cmre7pxza000angjubr3s2h65",
+      "approvedSha256": "3d01cc05f42889017768251b1dc7cc0feffb034f474f969eba425ac995a44728",
+      "resultingStateSha256": "22789979324e88ade82f8809685fef230bb5a54ed4ea5ad15a36def6110d4d96"
+    },
+    {
+      "key": "text:doctor:cmrdppjf5000u01ru1ayu78k0",
+      "approvedSha256": "2fece0da8248cf044bfe7788da187f5c943f7953f0b785c514698b113b0d6d34",
+      "resultingStateSha256": "4b302dd519873c84baa3b175b11e6a2d53f9698619924869068e83625c3801b4"
+    },
+    {
+      "key": "text:doctor:cmrdq0tv2002701rupeh3nkyd",
+      "approvedSha256": "7c73323a3e7d552cb6ffc0ae2bdfe595f18e2f96f01eb058cfa79a1db98d4270",
+      "resultingStateSha256": "4f3bacdaa61d2b2d8fc3f65848da16d3a2a92f2dea964de9c6af11b60cb0cd3f"
+    }
+  ]
+}
