@@ -1,0 +1,18 @@
+{
+  "manifestSha256": "cda73159eba0d46f493b63fb139a1d8dd68d4d80e28becc36341c9ea260e3014",
+  "phase": 6,
+  "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+  "reviewerName": "Dra. MarÃ­a Fernanda Ocampo Mora",
+  "registration": "CGCOM 291409735",
+  "evidence": "verbal, reported by the owner: super admin chose in chat on 2026-09-14 \"Dra. Ocampo, approved now\" for the phase-6 copy (Dr. Leandro Wang services and profile without specialist claims, owner confirmed he is a General Medicine Physician; EN GP hero and CS skin same-day/no-waiting promises removed) applied as phase-6 manifest cda73159eba0d46f493b63fb139a1d8dd68d4d80e28becc36341c9ea260e3014. No written record.",
+  "evidenceType": "verbal, reported by the owner",
+  "reviewedAt": "2026-09-14T17:17:33.611Z",
+  "maxAgeDays": 365,
+  "groups": [
+    {
+      "key": "text:doctor:cmrdpx4ah001r01rupv1od828",
+      "approvedSha256": "f982d9c03c5015d8e1a3b843279ee04a96362666a107ffbfa719a036ceb7dda9",
+      "resultingStateSha256": "a64999c1fd2bb812cb275d9d19eb45ff41a432e1dc84abf4e41a7db701c2be1a"
+    }
+  ]
+}

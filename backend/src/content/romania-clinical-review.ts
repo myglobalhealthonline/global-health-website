@@ -75,6 +75,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T16:39:47.837Z",
       "evidence": "verbal, reported by the owner: super admin chose in chat on 2026-09-14 \"Dra. Ocampo, approved now\" for the phase-5 copy (Dr. Leandro Wang services and profile without specialist claims, owner confirmed he is a General Medicine Physician; EN GP hero and CS skin same-day/no-waiting promises removed) applied as phase-5 manifest 76e364744cac04a366f5d512bc468f3904f4a32bb9b0f967297dabcb50fb4649. No written record."
+    },
+    {
+      "stateSha256": "a64999c1fd2bb812cb275d9d19eb45ff41a432e1dc84abf4e41a7db701c2be1a",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T17:17:33.611Z",
+      "evidence": "verbal, reported by the owner: super admin chose in chat on 2026-09-14 \"Dra. Ocampo, approved now\" for the phase-6 copy (Dr. Leandro Wang services and profile without specialist claims, owner confirmed he is a General Medicine Physician; EN GP hero and CS skin same-day/no-waiting promises removed) applied as phase-6 manifest cda73159eba0d46f493b63fb139a1d8dd68d4d80e28becc36341c9ea260e3014. No written record."
     }
   ],
   "service:cmrf0phum00qa01qr0xkpwhhf": [
