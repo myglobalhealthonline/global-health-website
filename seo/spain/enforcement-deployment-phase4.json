@@ -1,9 +1,11 @@
 {
-  "deploymentId": "aeb4531b-44ad-4bfe-a718-b941488866bd",
+  "deploymentId": "9f5e09cb-ffd4-48ef-b4c6-e2753d702bf5",
   "service": "Backend (Railway Production)",
   "status": "SUCCESS",
-  "commit": "cdb8e3cd",
+  "commit": "1625ae06",
   "branch": "main",
-  "frontendDeploymentId": "e30337d7-f044-47b5-a96b-e6aa3c7f44c0",
-  "note": "Owner (super admin) instructed the phase-4 apply on 2026-09-14 before any new deploy. This deployment carries the Spain mutation-boundary gate with phase-3 approved states only; it does NOT carry the phase-4 approved states for manifest 65ffc902. The runner verified phase-4 approval from the local approval record. Until main is synced and redeployed, admin-portal edits to the 7 phase-4 services/profiles are expected to be refused by the deployed gate. Replace this receipt with the real deployment IDs after that deploy."
+  "frontendDeploymentId": "5b56694e-f789-4829-98ff-de74e28c5662",
+  "deployedAt": "2026-09-14T15:26:25.233Z",
+  "readiness": "https://api.myglobalhealth.online/ready returned ok:true, database connected",
+  "note": "Carries the Spain gate with phase-4 approved states for manifest 65ffc902 (sick-leave wording) and the Spain-only about/contact override. Deployment IDs and commit read from the Railway CLI."
 }

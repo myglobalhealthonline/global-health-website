@@ -9738,8 +9738,34 @@ again gets sustained Spanish impressions after the ES pages are recrawled.
 
 ### 56.11 Phase 4: sick-leave wording fixes (14 September 2026)
 
-**Status: PARTLY LIVE.** The 8 page-copy entries are live and publicly verified. The 7
-service/profile groups and the Spain about/contact wording are NOT live yet.
+**Status: LIVE (updated 2026-09-14 ~15:55Z).** All 7 service/profile groups (75
+operations), the 8 page-copy entries and the Spain about/contact wording are live and
+publicly verified. The "Remaining" list below is historical.
+
+- **Deployment.** `main` at `1625ae06`. Railway Backend `9f5e09cb-ffd4-48ef-b4c6-e2753d702bf5`
+  and Frontend `5b56694e-f789-4829-98ff-de74e28c5662` SUCCESS (2026-09-14T15:26:25Z), read
+  from the Railway CLI; `/ready` ok. Receipt `seo/spain/enforcement-deployment-phase4.json`
+  (replaces the interim receipt that named the phase-3 deployment).
+- **Snapshot recovery.** The planning snapshot `seo/spain/raw/storage-post-phase3-2026-09-14.json`
+  was missing locally. A fresh read-only export was taken; its hash equals the manifest
+  `snapshotSha256` `b7e60ce9…` exactly, so storage had not drifted since planning. Kept local,
+  not committed.
+- **Rollout.** `run-rollout.ps1 -Phase 4`: every group had a dry-run, guarded apply and API
+  verification; all passed on the first attempt, 15:49:51Z to 15:53:08Z. Receipts in
+  `seo/spain/raw/rollout/phase4/`. Justificante 6 locales, GP 6, psychiatry 5, Olivas/Ocampo/
+  Brito/Tahir profiles 6 each. Two earlier attempts stopped before any database access (missing
+  snapshot; a Node stderr warning under a redirected PowerShell run).
+- **Live HTML spot check.** ES justificante: "plena validez legal" and "baja médica privada"
+  gone, public-service/mutua wording present. ES GP: "acredite la incapacidad temporal" gone.
+  `es/doctors`: "bajas laborales" gone. About/contact es/en/pt/de/cs/ro carry the new wording.
+- **Cohort.** [publication-cohort-phase4-2026-09-14.json](../../seo/spain/publication-cohort-phase4-2026-09-14.json);
+  day 30/60/90 = 2026-10-14 / 2026-11-13 / 2026-12-13, same as phases 1–3.
+- **New finding, not changed.** The issued ES absence certificate is titled "Certificado de
+  Baja Médica" with the heading "Período de baja médica"
+  (`backend/src/modules/generated-documents/docx-template-labels.ts` lines 174 and 200). It
+  implies a statutory parte de baja on the document patients receive. Changing it is new
+  clinical/legal wording outside manifest `65ffc902`; needs owner and clinical approval
+  (candidate: "Justificante médico de ausencia" / "Período de ausencia").
 
 - **Approval.** Recorded 2026-09-14T15:02:33Z for manifest
   `65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809` (7 groups, 75
@@ -10140,3 +10166,24 @@ the same manifest and hash; it refuses if content changed after this apply.
 
 - brazil group copy:solicitacao-exames-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-solicitacao-exames-online-applied.json.
 - seo/brazil phase 3 group copy:solicitacao-exames-online: public verification passed 2026-09-14T05:35:22.7226695Z. Receipt: seo/brazil/raw/rollout/phase3/copy-solicitacao-exames-online-public.json.
+
+- spain group text:service:cmre7pxza000angjubr3s2h65: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmre7pxza000angjubr3s2h65-applied.json.
+- seo/spain phase 4 group text:service:cmre7pxza000angjubr3s2h65: public verification passed 2026-09-14T15:49:51.3607491Z. Receipt: seo/spain/raw/rollout/phase4/text-service-cmre7pxza000angjubr3s2h65-public.json.
+
+- spain group text:service:cmre7pwwv0000ngjuwvmiacw9: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmre7pwwv0000ngjuwvmiacw9-applied.json.
+- seo/spain phase 4 group text:service:cmre7pwwv0000ngjuwvmiacw9: public verification passed 2026-09-14T15:50:24.3580996Z. Receipt: seo/spain/raw/rollout/phase4/text-service-cmre7pwwv0000ngjuwvmiacw9-public.json.
+
+- spain group text:service:cmre7qeyz0050ngjund1jqnhp: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmre7qeyz0050ngjund1jqnhp-applied.json.
+- seo/spain phase 4 group text:service:cmre7qeyz0050ngjund1jqnhp: public verification passed 2026-09-14T15:50:56.5197529Z. Receipt: seo/spain/raw/rollout/phase4/text-service-cmre7qeyz0050ngjund1jqnhp-public.json.
+
+- spain group text:doctor:cmrdpxpi0001v01ruqavjiq79: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-doctor-cmrdpxpi0001v01ruqavjiq79-applied.json.
+- seo/spain phase 4 group text:doctor:cmrdpxpi0001v01ruqavjiq79: public verification passed 2026-09-14T15:51:30.3859758Z. Receipt: seo/spain/raw/rollout/phase4/text-doctor-cmrdpxpi0001v01ruqavjiq79-public.json.
+
+- spain group text:doctor:cmrdpted5001901ru0wk0ncnd: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-doctor-cmrdpted5001901ru0wk0ncnd-applied.json.
+- seo/spain phase 4 group text:doctor:cmrdpted5001901ru0wk0ncnd: public verification passed 2026-09-14T15:52:02.9070636Z. Receipt: seo/spain/raw/rollout/phase4/text-doctor-cmrdpted5001901ru0wk0ncnd-public.json.
+
+- spain group text:doctor:cmrdpsayj001401ruyb4x1ze3: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-doctor-cmrdpsayj001401ruyb4x1ze3-applied.json.
+- seo/spain phase 4 group text:doctor:cmrdpsayj001401ruyb4x1ze3: public verification passed 2026-09-14T15:52:36.3664963Z. Receipt: seo/spain/raw/rollout/phase4/text-doctor-cmrdpsayj001401ruyb4x1ze3-public.json.
+
+- spain group text:doctor:cmrdq2bu1002f01ru2g8317b6: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-doctor-cmrdq2bu1002f01ru2g8317b6-applied.json.
+- seo/spain phase 4 group text:doctor:cmrdq2bu1002f01ru2g8317b6: public verification passed 2026-09-14T15:53:08.9533374Z. Receipt: seo/spain/raw/rollout/phase4/text-doctor-cmrdq2bu1002f01ru2g8317b6-public.json.
