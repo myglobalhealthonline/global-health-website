@@ -1,0 +1,38 @@
+{
+  "manifestSha256": "76e364744cac04a366f5d512bc468f3904f4a32bb9b0f967297dabcb50fb4649",
+  "phase": 5,
+  "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+  "reviewerName": "Dra. María Fernanda Ocampo Mora",
+  "registration": "CGCOM 291409735",
+  "evidence": "verbal, reported by the owner: super admin chose in chat on 2026-09-14 \"Dra. Ocampo, approved now\" for the phase-5 copy (Dr. Leandro Wang services and profile without specialist claims, owner confirmed he is a General Medicine Physician; EN GP hero and CS skin same-day/no-waiting promises removed) applied as phase-5 manifest 76e364744cac04a366f5d512bc468f3904f4a32bb9b0f967297dabcb50fb4649. No written record.",
+  "evidenceType": "verbal, reported by the owner",
+  "reviewedAt": "2026-09-14T16:39:47.837Z",
+  "maxAgeDays": 365,
+  "groups": [
+    {
+      "key": "text:service:cmrf0phum00qa01qr0xkpwhhf",
+      "approvedSha256": "2636b3933a7c2e835b2d9e7bddc6837143c0b0a5b466d8205c60a568f69fc23d",
+      "resultingStateSha256": "c4be63e0fe36fd2b61e3f22b9f65b4b6324f79f6c7fc9b93aa7b983b68936c34"
+    },
+    {
+      "key": "text:service:cmrf0qzdm00qd01qrfcfnsjmx",
+      "approvedSha256": "da22a4160454b240ef157379f14146f53d54ac6215dae7d93c8444af23326550",
+      "resultingStateSha256": "f993d1587da031467c577c0abe054ec7ed727c285bc67df7e0827dfc8fbe0548"
+    },
+    {
+      "key": "text:doctor:cmrdpx4ah001r01rupv1od828",
+      "approvedSha256": "4bdfbe206e67a07b5f6f7e31ca23567bd7dfcecea971858644132ace6bfef4e2",
+      "resultingStateSha256": "ea76973d3eaa75682f34fcd380892eb37d20eb115d925b72d97047ef74e6f8cb"
+    },
+    {
+      "key": "text:service:cmre7pwwv0000ngjuwvmiacw9",
+      "approvedSha256": "b561716d48c055f7b4279fa374bce7cd4f74dd54d827ade8fc5787cf310503f6",
+      "resultingStateSha256": "a55e035adf23b15a6caa95e16a240e6b2b27ee1574a37751597c69810b604fcf"
+    },
+    {
+      "key": "text:service:cmre7q4co001yngjucbez1gc0",
+      "approvedSha256": "0911f1d587612d7d1cc6d722a1e16e110c58337d3aa060ee1d1bcc463e2537a3",
+      "resultingStateSha256": "21ea85bb586c5fff9d1a9983420be7cfb8e4905baab4605760460f71b67bdc3d"
+    }
+  ]
+}

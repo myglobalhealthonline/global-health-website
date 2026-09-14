@@ -55,6 +55,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "f993d1587da031467c577c0abe054ec7ed727c285bc67df7e0827dfc8fbe0548",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T16:39:47.837Z",
+      "evidence": "verbal, reported by the owner: super admin chose in chat on 2026-09-14 \"Dra. Ocampo, approved now\" for the phase-5 copy (Dr. Leandro Wang services and profile without specialist claims, owner confirmed he is a General Medicine Physician; EN GP hero and CS skin same-day/no-waiting promises removed) applied as phase-5 manifest 76e364744cac04a366f5d512bc468f3904f4a32bb9b0f967297dabcb50fb4649. No written record."
     }
   ],
   "doctor:cmrdpx4ah001r01rupv1od828": [
@@ -63,6 +69,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "ea76973d3eaa75682f34fcd380892eb37d20eb115d925b72d97047ef74e6f8cb",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T16:39:47.837Z",
+      "evidence": "verbal, reported by the owner: super admin chose in chat on 2026-09-14 \"Dra. Ocampo, approved now\" for the phase-5 copy (Dr. Leandro Wang services and profile without specialist claims, owner confirmed he is a General Medicine Physician; EN GP hero and CS skin same-day/no-waiting promises removed) applied as phase-5 manifest 76e364744cac04a366f5d512bc468f3904f4a32bb9b0f967297dabcb50fb4649. No written record."
     }
   ],
   "service:cmrf0phum00qa01qr0xkpwhhf": [
@@ -71,6 +83,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "c4be63e0fe36fd2b61e3f22b9f65b4b6324f79f6c7fc9b93aa7b983b68936c34",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T16:39:47.837Z",
+      "evidence": "verbal, reported by the owner: super admin chose in chat on 2026-09-14 \"Dra. Ocampo, approved now\" for the phase-5 copy (Dr. Leandro Wang services and profile without specialist claims, owner confirmed he is a General Medicine Physician; EN GP hero and CS skin same-day/no-waiting promises removed) applied as phase-5 manifest 76e364744cac04a366f5d512bc468f3904f4a32bb9b0f967297dabcb50fb4649. No written record."
     }
   ],
   "service:cmrezwush00pq01qrtoq51csl": [
@@ -367,6 +385,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T15:02:33.821Z",
       "evidence": "verbal, reported by the owner: super admin stated in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the sick-leave draft copy (seo/spain/sick-leave-wording-review-2026-09-14.md §3) applied as phase-4 manifest 65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809; owner chose to include the legal-sensitive passages without separate legal review. No written record."
+    },
+    {
+      "stateSha256": "a55e035adf23b15a6caa95e16a240e6b2b27ee1574a37751597c69810b604fcf",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T16:39:47.837Z",
+      "evidence": "verbal, reported by the owner: super admin chose in chat on 2026-09-14 \"Dra. Ocampo, approved now\" for the phase-5 copy (Dr. Leandro Wang services and profile without specialist claims, owner confirmed he is a General Medicine Physician; EN GP hero and CS skin same-day/no-waiting promises removed) applied as phase-5 manifest 76e364744cac04a366f5d512bc468f3904f4a32bb9b0f967297dabcb50fb4649. No written record."
     }
   ],
   "doctor:cmrdpwar1001n01ruwhfioqs6": [
@@ -389,6 +413,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T05:08:32.368Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    },
+    {
+      "stateSha256": "21ea85bb586c5fff9d1a9983420be7cfb8e4905baab4605760460f71b67bdc3d",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T16:39:47.837Z",
+      "evidence": "verbal, reported by the owner: super admin chose in chat on 2026-09-14 \"Dra. Ocampo, approved now\" for the phase-5 copy (Dr. Leandro Wang services and profile without specialist claims, owner confirmed he is a General Medicine Physician; EN GP hero and CS skin same-day/no-waiting promises removed) applied as phase-5 manifest 76e364744cac04a366f5d512bc468f3904f4a32bb9b0f967297dabcb50fb4649. No written record."
     }
   ],
   "service:cmre7pxza000angjubr3s2h65": [
