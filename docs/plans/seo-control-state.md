@@ -9521,8 +9521,35 @@ verification).
 
 ### 56.8 Phase 3: service summaries and name fixes, Spain and Brazil (14 September 2026)
 
-**Status:** prepared and rehearsed. Approval recording, deploy and rollout are pending.
-Nothing is published.
+**Status: LIVE.** All 38 groups were applied and publicly verified on 14 September
+2026: Spain 20 of 20 from `05:16:42Z` to `05:26:57Z`, then Brazil 18 of 18 from
+`05:27:24Z` to `05:35:22Z`.
+
+- **Approvals.** Recorded in this session on the owner's confirmation at
+  `05:08:32Z`: `seo/spain/clinical-approval-phase3.json` and
+  `seo/brazil/clinical-approval-phase3.json`. `BRAZIL_REVIEW_POLICY` is 365 days.
+  Commit `cdb8e3cd`.
+- **Deployment.** `main` is at `cdb8e3cd`. Railway Backend
+  `aeb4531b-44ad-4bfe-a718-b941488866bd` and Frontend
+  `e30337d7-f044-47b5-a96b-e6aa3c7f44c0` show SUCCESS, and `/ready` returns ok.
+  Receipts: `seo/{spain,brazil}/enforcement-deployment-phase3.json`.
+- **Verification.**
+  - The uncached public API returns the approved `summary`, and `name` where
+    changed, for every locale of every group.
+  - Price, duration, currency, slug and active flag match the planning snapshots
+    for all 38 services.
+  - One apparent assignment difference on `psicologo-online` is the API omitting
+    the inactive doctor Irene Galve Moros. Her assignment row is unchanged, and the
+    runner's full-storage readback would have refused any assignment change.
+- **Browser check (no booking).** ES booking step 1 shows "Atención Primaria
+  Pediatría" with its new summary card. The CS skin service shows the name "Kožní
+  konzultace".
+- **Observation, not changed.** The CS skin service seoTitle still ends "Tentýž
+  den" (same day). Titles were out of scope; this is a candidate for a later
+  approved edit.
+- **Cohort.** The same 30/60/90-day dates as phases 1–2 apply (2026-10-14,
+  2026-11-13, 2026-12-13). These are listing-card and metadata-adjacent changes, so
+  read them against the phase-1/2 cohorts rather than as a separate SEO cohort.
 
 - **Cause.** Service listing cards showed no description: 20 of 24 Spain services and
   all 18 Brazil services had `summary` null. The null values predate the Spain
@@ -9565,7 +9592,7 @@ Nothing is published.
 3. The owner authorizes the enforcement deployment and production writes.
 4. Run groups sequentially, verifying each publicly.
 
-### 56.8 Spain sick-leave wording review (14 September 2026)
+### 56.10 Spain sick-leave wording review (14 September 2026)
 
 **Status: REVIEW ONLY. The owner agreed the classification.** No database write,
 content push, deployment or indexation action was made. Full inventory, exact quotes
@@ -9970,3 +9997,117 @@ the same manifest and hash; it refuses if content changed after this apply.
 
 - spain group correction:dr-tomas-ruiz-palacios:MU05691: database committed; public verification pending. Receipt: seo/spain/raw/rollout/correction-dr-tomas-ruiz-palacios-MU05691-applied.json.
 - Spain phase 2 group correction:dr-tomas-ruiz-palacios:MU05691: public verification passed 2026-09-14T04:35:11.8350007Z. Receipt: seo/spain/raw/rollout/phase2/correction-dr-tomas-ruiz-palacios-MU05691-public.json.
+
+- spain group copy:consulta-medica-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-consulta-medica-online-applied.json.
+- seo/spain phase 3 group copy:consulta-medica-online: public verification passed 2026-09-14T05:16:44.7782986Z. Receipt: seo/spain/raw/rollout/phase3/copy-consulta-medica-online-public.json.
+
+- spain group copy:justificante-medico-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-justificante-medico-online-applied.json.
+- seo/spain phase 3 group copy:justificante-medico-online: public verification passed 2026-09-14T05:17:17.5090638Z. Receipt: seo/spain/raw/rollout/phase3/copy-justificante-medico-online-public.json.
+
+- spain group copy:renovacion-tratamiento-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-renovacion-tratamiento-online-applied.json.
+- seo/spain phase 3 group copy:renovacion-tratamiento-online: public verification passed 2026-09-14T05:17:49.1571313Z. Receipt: seo/spain/raw/rollout/phase3/copy-renovacion-tratamiento-online-public.json.
+
+- spain group copy:pediatria-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-pediatria-online-applied.json.
+- seo/spain phase 3 group copy:pediatria-online: public verification passed 2026-09-14T05:18:20.6420187Z. Receipt: seo/spain/raw/rollout/phase3/copy-pediatria-online-public.json.
+
+- spain group copy:caida-cabello-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-caida-cabello-online-applied.json.
+- seo/spain phase 3 group copy:caida-cabello-online: public verification passed 2026-09-14T05:18:52.9336618Z. Receipt: seo/spain/raw/rollout/phase3/copy-caida-cabello-online-public.json.
+
+- spain group copy:consulta-piel-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-consulta-piel-online-applied.json.
+- seo/spain phase 3 group copy:consulta-piel-online: public verification passed 2026-09-14T05:19:24.2170058Z. Receipt: seo/spain/raw/rollout/phase3/copy-consulta-piel-online-public.json.
+
+- spain group copy:control-peso-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-control-peso-online-applied.json.
+- seo/spain phase 3 group copy:control-peso-online: public verification passed 2026-09-14T05:19:56.0139559Z. Receipt: seo/spain/raw/rollout/phase3/copy-control-peso-online-public.json.
+
+- spain group copy:dejar-de-fumar-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-dejar-de-fumar-online-applied.json.
+- seo/spain phase 3 group copy:dejar-de-fumar-online: public verification passed 2026-09-14T05:20:29.1215242Z. Receipt: seo/spain/raw/rollout/phase3/copy-dejar-de-fumar-online-public.json.
+
+- spain group copy:derivaciones-pruebas-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-derivaciones-pruebas-online-applied.json.
+- seo/spain phase 3 group copy:derivaciones-pruebas-online: public verification passed 2026-09-14T05:21:00.4471445Z. Receipt: seo/spain/raw/rollout/phase3/copy-derivaciones-pruebas-online-public.json.
+
+- spain group copy:enfermedades-cronicas-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-enfermedades-cronicas-online-applied.json.
+- seo/spain phase 3 group copy:enfermedades-cronicas-online: public verification passed 2026-09-14T05:21:31.4104676Z. Receipt: seo/spain/raw/rollout/phase3/copy-enfermedades-cronicas-online-public.json.
+
+- spain group copy:medicina-viaje-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-medicina-viaje-online-applied.json.
+- seo/spain phase 3 group copy:medicina-viaje-online: public verification passed 2026-09-14T05:22:04.4239950Z. Receipt: seo/spain/raw/rollout/phase3/copy-medicina-viaje-online-public.json.
+
+- spain group copy:musculoesqueletico-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-musculoesqueletico-online-applied.json.
+- seo/spain phase 3 group copy:musculoesqueletico-online: public verification passed 2026-09-14T05:22:37.0139014Z. Receipt: seo/spain/raw/rollout/phase3/copy-musculoesqueletico-online-public.json.
+
+- spain group copy:salud-femenina-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-salud-femenina-online-applied.json.
+- seo/spain phase 3 group copy:salud-femenina-online: public verification passed 2026-09-14T05:23:10.2102323Z. Receipt: seo/spain/raw/rollout/phase3/copy-salud-femenina-online-public.json.
+
+- spain group copy:salud-masculina-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-salud-masculina-online-applied.json.
+- seo/spain phase 3 group copy:salud-masculina-online: public verification passed 2026-09-14T05:23:42.8511642Z. Receipt: seo/spain/raw/rollout/phase3/copy-salud-masculina-online-public.json.
+
+- spain group copy:salud-mental-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-salud-mental-online-applied.json.
+- seo/spain phase 3 group copy:salud-mental-online: public verification passed 2026-09-14T05:24:14.7338444Z. Receipt: seo/spain/raw/rollout/phase3/copy-salud-mental-online-public.json.
+
+- spain group copy:segunda-opinion-medica: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-segunda-opinion-medica-applied.json.
+- seo/spain phase 3 group copy:segunda-opinion-medica: public verification passed 2026-09-14T05:24:45.9573635Z. Receipt: seo/spain/raw/rollout/phase3/copy-segunda-opinion-medica-public.json.
+
+- spain group copy:dermatologia-especialista-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-dermatologia-especialista-online-applied.json.
+- seo/spain phase 3 group copy:dermatologia-especialista-online: public verification passed 2026-09-14T05:25:19.2416997Z. Receipt: seo/spain/raw/rollout/phase3/copy-dermatologia-especialista-online-public.json.
+
+- spain group copy:psicologo-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-psicologo-online-applied.json.
+- seo/spain phase 3 group copy:psicologo-online: public verification passed 2026-09-14T05:25:51.3483544Z. Receipt: seo/spain/raw/rollout/phase3/copy-psicologo-online-public.json.
+
+- spain group copy:psiquiatra-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-psiquiatra-online-applied.json.
+- seo/spain phase 3 group copy:psiquiatra-online: public verification passed 2026-09-14T05:26:25.3543081Z. Receipt: seo/spain/raw/rollout/phase3/copy-psiquiatra-online-public.json.
+
+- spain group copy:cardiologo-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/copy-cardiologo-online-applied.json.
+- seo/spain phase 3 group copy:cardiologo-online: public verification passed 2026-09-14T05:26:57.2155864Z. Receipt: seo/spain/raw/rollout/phase3/copy-cardiologo-online-public.json.
+
+- brazil group copy:consulta-clinica-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-consulta-clinica-online-applied.json.
+- seo/brazil phase 3 group copy:consulta-clinica-online: public verification passed 2026-09-14T05:27:25.7776743Z. Receipt: seo/brazil/raw/rollout/phase3/copy-consulta-clinica-online-public.json.
+
+- brazil group copy:atestado-medico-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-atestado-medico-online-applied.json.
+- seo/brazil phase 3 group copy:atestado-medico-online: public verification passed 2026-09-14T05:27:53.2738770Z. Receipt: seo/brazil/raw/rollout/phase3/copy-atestado-medico-online-public.json.
+
+- brazil group copy:consulta-pele-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-consulta-pele-online-applied.json.
+- seo/brazil phase 3 group copy:consulta-pele-online: public verification passed 2026-09-14T05:28:20.4712228Z. Receipt: seo/brazil/raw/rollout/phase3/copy-consulta-pele-online-public.json.
+
+- brazil group copy:pediatria-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-pediatria-online-applied.json.
+- seo/brazil phase 3 group copy:pediatria-online: public verification passed 2026-09-14T05:28:48.3167706Z. Receipt: seo/brazil/raw/rollout/phase3/copy-pediatria-online-public.json.
+
+- brazil group copy:controle-peso-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-controle-peso-online-applied.json.
+- seo/brazil phase 3 group copy:controle-peso-online: public verification passed 2026-09-14T05:29:16.2817048Z. Receipt: seo/brazil/raw/rollout/phase3/copy-controle-peso-online-public.json.
+
+- brazil group copy:doencas-cronicas-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-doencas-cronicas-online-applied.json.
+- seo/brazil phase 3 group copy:doencas-cronicas-online: public verification passed 2026-09-14T05:29:44.3894328Z. Receipt: seo/brazil/raw/rollout/phase3/copy-doencas-cronicas-online-public.json.
+
+- brazil group copy:musculoesqueletico-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-musculoesqueletico-online-applied.json.
+- seo/brazil phase 3 group copy:musculoesqueletico-online: public verification passed 2026-09-14T05:30:12.5240482Z. Receipt: seo/brazil/raw/rollout/phase3/copy-musculoesqueletico-online-public.json.
+
+- brazil group copy:parar-de-fumar-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-parar-de-fumar-online-applied.json.
+- seo/brazil phase 3 group copy:parar-de-fumar-online: public verification passed 2026-09-14T05:30:39.5039725Z. Receipt: seo/brazil/raw/rollout/phase3/copy-parar-de-fumar-online-public.json.
+
+- brazil group copy:renovacao-receita-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-renovacao-receita-online-applied.json.
+- seo/brazil phase 3 group copy:renovacao-receita-online: public verification passed 2026-09-14T05:31:07.8928360Z. Receipt: seo/brazil/raw/rollout/phase3/copy-renovacao-receita-online-public.json.
+
+- brazil group copy:queda-cabelo-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-queda-cabelo-online-applied.json.
+- seo/brazil phase 3 group copy:queda-cabelo-online: public verification passed 2026-09-14T05:31:35.9815723Z. Receipt: seo/brazil/raw/rollout/phase3/copy-queda-cabelo-online-public.json.
+
+- brazil group copy:saude-da-mulher-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-saude-da-mulher-online-applied.json.
+- seo/brazil phase 3 group copy:saude-da-mulher-online: public verification passed 2026-09-14T05:32:06.6958526Z. Receipt: seo/brazil/raw/rollout/phase3/copy-saude-da-mulher-online-public.json.
+
+- brazil group copy:saude-viagem-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-saude-viagem-online-applied.json.
+- seo/brazil phase 3 group copy:saude-viagem-online: public verification passed 2026-09-14T05:32:33.6776819Z. Receipt: seo/brazil/raw/rollout/phase3/copy-saude-viagem-online-public.json.
+
+- brazil group copy:saude-do-homem-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-saude-do-homem-online-applied.json.
+- seo/brazil phase 3 group copy:saude-do-homem-online: public verification passed 2026-09-14T05:33:00.8250938Z. Receipt: seo/brazil/raw/rollout/phase3/copy-saude-do-homem-online-public.json.
+
+- brazil group copy:saude-idoso-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-saude-idoso-online-applied.json.
+- seo/brazil phase 3 group copy:saude-idoso-online: public verification passed 2026-09-14T05:33:29.2478275Z. Receipt: seo/brazil/raw/rollout/phase3/copy-saude-idoso-online-public.json.
+
+- brazil group copy:saude-mental-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-saude-mental-online-applied.json.
+- seo/brazil phase 3 group copy:saude-mental-online: public verification passed 2026-09-14T05:33:57.5800908Z. Receipt: seo/brazil/raw/rollout/phase3/copy-saude-mental-online-public.json.
+
+- brazil group copy:saude-sexual-ist-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-saude-sexual-ist-online-applied.json.
+- seo/brazil phase 3 group copy:saude-sexual-ist-online: public verification passed 2026-09-14T05:34:25.1526867Z. Receipt: seo/brazil/raw/rollout/phase3/copy-saude-sexual-ist-online-public.json.
+
+- brazil group copy:segunda-opiniao-medica: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-segunda-opiniao-medica-applied.json.
+- seo/brazil phase 3 group copy:segunda-opiniao-medica: public verification passed 2026-09-14T05:34:53.1943781Z. Receipt: seo/brazil/raw/rollout/phase3/copy-segunda-opiniao-medica-public.json.
+
+- brazil group copy:solicitacao-exames-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-solicitacao-exames-online-applied.json.
+- seo/brazil phase 3 group copy:solicitacao-exames-online: public verification passed 2026-09-14T05:35:22.7226695Z. Receipt: seo/brazil/raw/rollout/phase3/copy-solicitacao-exames-online-public.json.

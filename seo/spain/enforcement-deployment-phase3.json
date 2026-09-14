@@ -1,0 +1,10 @@
+{
+  "deploymentId": "aeb4531b-44ad-4bfe-a718-b941488866bd",
+  "service": "Backend (Railway Production)",
+  "status": "SUCCESS",
+  "commit": "cdb8e3cd",
+  "branch": "main",
+  "frontendDeploymentId": "e30337d7-f044-47b5-a96b-e6aa3c7f44c0",
+  "readiness": "https://api.myglobalhealth.online/ready returned ok:true, database connected",
+  "note": "Carries the Spain gate with phase-3 approved states for manifest 93272d41 (service summaries and name corrections)."
+}
