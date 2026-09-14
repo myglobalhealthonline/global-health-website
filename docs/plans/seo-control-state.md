@@ -9793,7 +9793,21 @@ publicly verified. The "Remaining" list below is historical.
 
 ### 56.12 Phase 5 and owner follow-ups (14 September 2026)
 
-**Status: PREPARED, NOT LIVE.** Owner answers on 14 September, applied or prepared as follows.
+**Status (updated ~17:15Z): phase 5 LIVE except Wang's public profile; phase 6 prepared.**
+- Approval recorded by the owner (`e7b4a564`, reviewedAt 16:39:47Z). Deploy Backend
+  `4b1b2121-fbb3-4f95-8bf4-d916d8d0f10d` / Frontend `db5745f0-be68-45bb-8e04-354e8d6f4d9f`
+  (also ships the certificate retitle). Receipt `seo/spain/enforcement-deployment-phase5.json`.
+- Applied and API-verified: phlebology/lymphology (6 locales), vascular diagnosis (6), EN GP
+  hero, CS skin. Wang group committed (Doctor/DoctorTranslation ES) but public verification
+  failed: the public profile renders `DoctorMarketTranslation` rows, which phase 5 did not touch.
+  Receipt left `publicVerified:false` deliberately.
+- **Phase 6** `storage-mutation-manifest-phase6.json`, SHA-256 `cda73159…`, 1 group, 6
+  operations (Wang market rows ES/EN/PT/CS/RO/DE: bio + seoDescription lose "especialista /
+  specialist / Facharzt / medic specialist" claims and "Cita el mismo día"), 0 blockers, planned
+  from local read-only snapshot `raw/storage-post-phase5-2026-09-14.json`. Approval recorder
+  creation was refused by automated permission review; not recorded.
+
+Owner answers on 14 September, applied or prepared as follows.
 
 - **Issued absence certificate (ES).** Owner chose "Justificante médico de ausencia". Code change
   committed (`586b3881`): `docTitleAbsence` "Certificado de Baja Médica" → "Justificante Médico de
@@ -10217,3 +10231,15 @@ the same manifest and hash; it refuses if content changed after this apply.
 
 - spain group text:doctor:cmrdq2bu1002f01ru2g8317b6: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-doctor-cmrdq2bu1002f01ru2g8317b6-applied.json.
 - seo/spain phase 4 group text:doctor:cmrdq2bu1002f01ru2g8317b6: public verification passed 2026-09-14T15:53:08.9533374Z. Receipt: seo/spain/raw/rollout/phase4/text-doctor-cmrdq2bu1002f01ru2g8317b6-public.json.
+
+- spain group text:service:cmrf0phum00qa01qr0xkpwhhf: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmrf0phum00qa01qr0xkpwhhf-applied.json.
+- seo/spain phase 5 group text:service:cmrf0phum00qa01qr0xkpwhhf: public verification passed 2026-09-14T16:46:50.1663523Z. Receipt: seo/spain/raw/rollout/phase5/text-service-cmrf0phum00qa01qr0xkpwhhf-public.json.
+
+- spain group text:service:cmrf0qzdm00qd01qrfcfnsjmx: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmrf0qzdm00qd01qrfcfnsjmx-applied.json.
+- seo/spain phase 5 group text:service:cmrf0qzdm00qd01qrfcfnsjmx: public verification passed 2026-09-14T16:47:26.9121162Z. Receipt: seo/spain/raw/rollout/phase5/text-service-cmrf0qzdm00qd01qrfcfnsjmx-public.json.
+
+- spain group text:doctor:cmrdpx4ah001r01rupv1od828: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-doctor-cmrdpx4ah001r01rupv1od828-applied.json.
+
+- spain group text:service:cmre7pwwv0000ngjuwvmiacw9: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmre7pwwv0000ngjuwvmiacw9-applied.json.
+
+- spain group text:service:cmre7q4co001yngjucbez1gc0: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmre7q4co001yngjucbez1gc0-applied.json.

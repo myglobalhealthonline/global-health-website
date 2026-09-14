@@ -1,0 +1,9 @@
+{
+  "deploymentId": "4b1b2121-fbb3-4f95-8bf4-d916d8d0f10d",
+  "service": "Backend (Railway Production)",
+  "status": "SUCCESS",
+  "commit": "e7b4a564",
+  "branch": "main",
+  "frontendDeploymentId": "db5745f0-be68-45bb-8e04-354e8d6f4d9f",
+  "note": "Carries the Spain gate with phase-5 approved states for manifest 76e36474 (Wang non-specialist wording, EN GP and CS skin same-day removal) and the ES absence certificate retitle. IDs read from the Railway CLI."
+}
