@@ -87,6 +87,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "486110d50666f6ad4e0eeda1c3fbc6213acceaf3e3c0170625f8f53dc877e691",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T15:02:33.821Z",
+      "evidence": "verbal, reported by the owner: super admin stated in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the sick-leave draft copy (seo/spain/sick-leave-wording-review-2026-09-14.md §3) applied as phase-4 manifest 65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809; owner chose to include the legal-sensitive passages without separate legal review. No written record."
     }
   ],
   "service:cmrezuq7000pn01qrkiyrthxw": [
@@ -139,6 +145,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T05:08:32.368Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    },
+    {
+      "stateSha256": "ace6256ee4de7af27b472cfc98ef71fd93d68c736e22b4a82e12601a3323ff54",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T15:02:33.821Z",
+      "evidence": "verbal, reported by the owner: super admin stated in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the sick-leave draft copy (seo/spain/sick-leave-wording-review-2026-09-14.md §3) applied as phase-4 manifest 65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809; owner chose to include the legal-sensitive passages without separate legal review. No written record."
     }
   ],
   "doctor:cmrdpvch9001i01ruy7pmzmdk": [
@@ -183,6 +195,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "d2d440983ba9a8c82fb6921c7ec8d45c535cc4bea411f0fd2ccf897f928db2ff",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T15:02:33.821Z",
+      "evidence": "verbal, reported by the owner: super admin stated in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the sick-leave draft copy (seo/spain/sick-leave-wording-review-2026-09-14.md §3) applied as phase-4 manifest 65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809; owner chose to include the legal-sensitive passages without separate legal review. No written record."
     }
   ],
   "doctor:cmrdq1nhe002b01ru2xmq0iab": [
@@ -199,6 +217,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "c34fd7f741a87a71d92451247323b01589c0eddc9a323b2cc4ed14312a682a65",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T15:02:33.821Z",
+      "evidence": "verbal, reported by the owner: super admin stated in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the sick-leave draft copy (seo/spain/sick-leave-wording-review-2026-09-14.md §3) applied as phase-4 manifest 65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809; owner chose to include the legal-sensitive passages without separate legal review. No written record."
     }
   ],
   "doctor:cmrdq2bu1002f01ru2g8317b6": [
@@ -207,6 +231,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "1b046963f6de94d3db1fe64bf79c1245a3c267c9530f721c2054c67c10cdb563",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T15:02:33.821Z",
+      "evidence": "verbal, reported by the owner: super admin stated in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the sick-leave draft copy (seo/spain/sick-leave-wording-review-2026-09-14.md §3) applied as phase-4 manifest 65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809; owner chose to include the legal-sensitive passages without separate legal review. No written record."
     }
   ],
   "doctor:cmrdq0tv2002701rupeh3nkyd": [
@@ -331,6 +361,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T05:08:32.368Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    },
+    {
+      "stateSha256": "580196de7c3788088339bd291e35497a87b70a16e300ea5711eff856a952cf84",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T15:02:33.821Z",
+      "evidence": "verbal, reported by the owner: super admin stated in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the sick-leave draft copy (seo/spain/sick-leave-wording-review-2026-09-14.md §3) applied as phase-4 manifest 65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809; owner chose to include the legal-sensitive passages without separate legal review. No written record."
     }
   ],
   "doctor:cmrdpwar1001n01ruwhfioqs6": [
@@ -367,6 +403,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T05:08:32.368Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the service summaries and name corrections in phase-3 manifest 93272d41675b88bc135294d5c65bc84f3a7c78a08b11ad21d2c79e5579d35884. No written record."
+    },
+    {
+      "stateSha256": "6107a14467f5432e2b7a1e10a27f1d03c883da4657465e27c840e465343c5a81",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T15:02:33.821Z",
+      "evidence": "verbal, reported by the owner: super admin stated in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the sick-leave draft copy (seo/spain/sick-leave-wording-review-2026-09-14.md §3) applied as phase-4 manifest 65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809; owner chose to include the legal-sensitive passages without separate legal review. No written record."
     }
   ],
   "service:cmre7q6hn002lngju3chey2ai": [

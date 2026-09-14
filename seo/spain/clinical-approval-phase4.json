@@ -1,0 +1,48 @@
+{
+  "manifestSha256": "65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809",
+  "phase": 4,
+  "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+  "reviewerName": "Dra. María Fernanda Ocampo Mora",
+  "registration": "CGCOM 291409735",
+  "evidence": "verbal, reported by the owner: super admin stated in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved the sick-leave draft copy (seo/spain/sick-leave-wording-review-2026-09-14.md §3) applied as phase-4 manifest 65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809; owner chose to include the legal-sensitive passages without separate legal review. No written record.",
+  "evidenceType": "verbal, reported by the owner",
+  "reviewedAt": "2026-09-14T15:02:33.821Z",
+  "maxAgeDays": 365,
+  "groups": [
+    {
+      "key": "text:service:cmre7pxza000angjubr3s2h65",
+      "approvedSha256": "7671a0c0339c232ba33e9c9d5f64f960ad6189fee4803e93a6a0c08f2f9b24d2",
+      "resultingStateSha256": "6107a14467f5432e2b7a1e10a27f1d03c883da4657465e27c840e465343c5a81"
+    },
+    {
+      "key": "text:service:cmre7pwwv0000ngjuwvmiacw9",
+      "approvedSha256": "24ecf9332cdef3d2de13e8c847a700117f3d2634d540d7dc09bc654ee7e6a7f3",
+      "resultingStateSha256": "580196de7c3788088339bd291e35497a87b70a16e300ea5711eff856a952cf84"
+    },
+    {
+      "key": "text:service:cmre7qeyz0050ngjund1jqnhp",
+      "approvedSha256": "748a2167dfc91e2bfa83c982b148d678c37611d443d84c712e41575f0c4cbdae",
+      "resultingStateSha256": "ace6256ee4de7af27b472cfc98ef71fd93d68c736e22b4a82e12601a3323ff54"
+    },
+    {
+      "key": "text:doctor:cmrdpxpi0001v01ruqavjiq79",
+      "approvedSha256": "ee99b0bf8ee1133c640e14e5b82b26c715e389765c2c62351ca722f7243d7879",
+      "resultingStateSha256": "d2d440983ba9a8c82fb6921c7ec8d45c535cc4bea411f0fd2ccf897f928db2ff"
+    },
+    {
+      "key": "text:doctor:cmrdpted5001901ru0wk0ncnd",
+      "approvedSha256": "c6b69658ed6e1554b4e93eed6aef51cce52f7028c2c13c2523a948db7315aba1",
+      "resultingStateSha256": "486110d50666f6ad4e0eeda1c3fbc6213acceaf3e3c0170625f8f53dc877e691"
+    },
+    {
+      "key": "text:doctor:cmrdpsayj001401ruyb4x1ze3",
+      "approvedSha256": "194282288d8746e8e2c2e297a9eb66686ad0ab3c3db193fb8a52ccf50e03a03d",
+      "resultingStateSha256": "c34fd7f741a87a71d92451247323b01589c0eddc9a323b2cc4ed14312a682a65"
+    },
+    {
+      "key": "text:doctor:cmrdq2bu1002f01ru2g8317b6",
+      "approvedSha256": "098ae482af62a2ba915635f3a599ea1c17cc2b106f57ac61f2232c4be0946646",
+      "resultingStateSha256": "1b046963f6de94d3db1fe64bf79c1245a3c267c9530f721c2054c67c10cdb563"
+    }
+  ]
+}

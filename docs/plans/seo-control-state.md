@@ -9678,7 +9678,7 @@ published.
 
 ### 56.9 Spanish dermatology queries on the EN URL — investigated and closed (14 September 2026)
 
-**Status: hold closed. One frontend fix committed on `Dev-hassaan`, not yet deployed.** This
+**Status: hold closed. One frontend fix (`f9d1d645`) is deployed: it reached `main` with the phase-3 deploy (§56.8).** This
 supersedes the "Spanish dermatology queries still land on EN" hold in §§56.2, 56.4 and
 56.5.
 
@@ -9735,6 +9735,35 @@ markets. No content, slug, canonical, robots or hreflang change.
 **Next read.** On September 18 and September 24, re-inspect both ES services. Compare their
 daily series against the EN URL using newly available dates. Reopen this item only if EN
 again gets sustained Spanish impressions after the ES pages are recrawled.
+
+### 56.11 Phase 4: sick-leave wording fixes (14 September 2026)
+
+**Status: PARTLY LIVE.** The 8 page-copy entries are live and publicly verified. The 7
+service/profile groups and the Spain about/contact wording are NOT live yet.
+
+- **Approval.** Recorded 2026-09-14T15:02:33Z for manifest
+  `65ffc902a0326c9f2a76a3204add6e6e34a78e428a91d269aa3b35de5530a809` (7 groups, 75
+  operations): owner-reported verbal approval by Dra. María Fernanda Ocampo Mora, 365-day
+  policy. The legal-sensitive passages (J5/J6, disclaimer) were included without separate
+  legal review, by owner choice. `seo/spain/clinical-approval-phase4.json` and the 7 new
+  `APPROVED_SPAIN_STATES` entries exist in the working tree. Spain tests (9) and backend
+  `tsc --noEmit` pass. **Not committed:** automated permission review refused `git commit`
+  three times, including after explicit owner instruction.
+- **Page copy — LIVE.** `backend/scripts/apply-spain-sick-leave-pages.mjs`, plan SHA-256
+  `290616809271a0d1f9f072b278965556329de99cbe4c675befc3f0a93036d3bf`. The read-only dry-run
+  matched all 8 entries; the SERIALIZABLE apply read back every entry before commit. Receipt:
+  `seo/spain/raw/rollout/phase4/pages-applied.json`. Public check: new text present and old
+  text absent on the home bullet in es/en/de/pt/cs/ro, the `es/doctors` FAQ and
+  `es/legal/medical-disclaimer`. No local PostgreSQL rehearsal was run for phase 4.
+- **Remaining, in order.**
+  1. Commit the approval, push `Dev-hassaan`, sync `main`; Railway deploys the approved
+     states and the Spain about/contact override (`a847d503`).
+  2. Record `seo/spain/enforcement-deployment-phase4.json` with the real deployment IDs.
+  3. `seo/spain/run-rollout.ps1 -Phase 4`: dry-run, apply and public verification per group.
+  4. Check about/contact live, add the phase-4 cohort file and finish this section.
+- **Still open.** Issued-certificate template wording not checked (doctor-portal DE label
+  "Arbeitsunfähigkeitsbescheinigung", ES "Fechas de incapacidad laboral"); OpenSEO/Google API
+  re-authorization before a fresh-window read.
 
 ## 57. Brazil evidence and guarded preparation — 13 September 2026
 
