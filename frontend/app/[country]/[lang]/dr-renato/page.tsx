@@ -163,7 +163,7 @@ export default async function DrRenatoSharePage({ params }: { params: Params }) 
   );
   const serviceItems = bookable.map(({ service: s, pairBookability }) => ({
     title: s.name,
-    description: s.summary,
+    description: s.cardDescription ?? "",
     detailHref: `/${COUNTRY_SLUG}/${locale}/services/${s.slug}`,
     bookHref: buildBookHref({
       country: COUNTRY_SLUG,

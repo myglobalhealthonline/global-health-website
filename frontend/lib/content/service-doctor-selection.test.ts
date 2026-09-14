@@ -13,6 +13,7 @@ function service(
   return {
     name: overrides.slug,
     summary: "",
+    cardDescription: null,
     kind: "GENERAL",
     durationMinutes: 30,
     basePriceCents: 5000,

@@ -17,6 +17,7 @@ import {
 } from "@/lib/content/public-content-source";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 import { marketDisplayName } from "@/lib/content/doctor-market-name";
+import { serviceCardDescription } from "@/lib/content/service-card-description";
 
 /**
  * Data-driven country collections used by the country-scoped landing pages
@@ -32,6 +33,9 @@ export type CountryServiceCard = {
   slug: string;
   name: string;
   summary: string;
+  /** Listing-card text: `summary`, else the truncated hero lede. Cards only —
+   *  the booking step keeps rendering the raw `summary`. */
+  cardDescription: string | null;
   kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY";
   durationMinutes: number | null;
   basePriceCents: number | null;
@@ -491,6 +495,13 @@ export const getCountryServices = cache(async (
       slug: r.slug,
       name: r.name,
       summary: typeof r.summary === "string" ? r.summary : "",
+      cardDescription: serviceCardDescription(
+        typeof r.summary === "string" ? r.summary : null,
+        typeof r.heroDescription === "string" ? r.heroDescription : null,
+        Array.isArray(r.translatedFields)
+          ? r.translatedFields.filter((f): f is string => typeof f === "string")
+          : null,
+      ),
       kind: rowKind ?? kind ?? "GENERAL",
       durationMinutes: typeof r.durationMinutes === "number" ? r.durationMinutes : null,
       basePriceCents: typeof r.basePriceCents === "number" ? r.basePriceCents : null,

@@ -6,6 +6,7 @@ function service(overrides: Partial<CountryServiceCard> & Pick<CountryServiceCar
   return {
     name: overrides.slug,
     summary: "",
+    cardDescription: null,
     kind: "SPECIALIST",
     durationMinutes: 30,
     basePriceCents: 5000,

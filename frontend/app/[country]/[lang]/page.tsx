@@ -158,7 +158,7 @@ function mapServiceToCatalogItem(
     price: s.basePriceCents == null ? null : Math.round(s.basePriceCents / 100),
     currency: s.currencyCode ?? "EUR",
     dur: s.durationMinutes != null ? `${s.durationMinutes} ${labels.min}` : "—",
-    description: s.summary?.trim() || null,
+    description: s.cardDescription,
     // "Learn more" → service detail page; "Book" → consult doctor-pick.
     // `href` kept as the single-CTA fallback (= book) for safety.
     href: hrefs.bookHref,

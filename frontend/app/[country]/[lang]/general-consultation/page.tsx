@@ -209,7 +209,7 @@ export default async function CountryLangGeneralConsultationPage({
   // Without this the priced services would never actually charge.
   const serviceItems = prioritizedServices.map((s) => ({
     title: s.name,
-    description: s.summary,
+    description: s.cardDescription ?? "",
     // Two CTAs: "Learn more" opens the read-only service detail page;
     // "Book" enters the consult doctor-pick flow (cart-first booking).
     detailHref: `/${slug}/${lang}/services/${s.slug}`,
