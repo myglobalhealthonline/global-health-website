@@ -1,0 +1,10 @@
+{
+  "deploymentId": "5dd6e677-3837-4d1d-af40-1c85f9169887",
+  "service": "Backend (Railway Production)",
+  "status": "SUCCESS",
+  "commit": "9b72d33d076f205e40a022633db6d4bac5544c1b",
+  "branch": "main",
+  "createdAt": "2026-09-14T21:38:39.617Z",
+  "readiness": "https://api.myglobalhealth.online/ready returned ok:true, database connected",
+  "note": "Carries the Brazil gate with BRAZIL_REVIEW_POLICY 365 days and phase-4 approved states for manifest f87bf107 (reviewed packet re-planned after phase 3)."
+}

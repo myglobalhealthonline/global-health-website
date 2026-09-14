@@ -9985,6 +9985,44 @@ The owner reports: “Reviews were done by Dr tiago and Dr. Renato Sarmento, so 
 
 GitHub flagged a Mapbox secret in captured third-party HTML. Removed the Brazil raw capture directory and authenticated manifest/rollback copies from outgoing Git history; retained them locally under explicit ignore rules. Drafts, review confirmation, implementation and evidence summaries remain tracked. The original local Brazil commit IDs are superseded by the cleaned commit. Local approval hashes remain unchanged. Evidence integration checks explicitly skip when the ignored package is absent; production preparation still requires that package.
 
+### 57.6 Phase 4: reviewed Brazil packet applied (15 September 2026)
+
+**Status: LIVE.** All 19 groups (96 operations) were applied and publicly verified
+between `2026-09-14T21:54:06Z` and `22:02:56Z` UTC (15 September local). This
+supersedes the run instructions in §57.2–57.3 and in the 13 September handoff.
+
+- **Why phase 4.** Phase 3 (§56.8) wrote `summary` on the same 18 services after the
+  packet was prepared, so manifest `c7c57537…` could only fail with storage drift.
+  The unchanged drafts were re-planned (`prepare-brazil-seo.mjs --phase=4`) against a
+  fresh read-only snapshot (`raw/storage-phase4-2026-09-15.json`) and refreshed public
+  sources (`raw/api-2026-09-15/`). Every draft `before` value still matched live.
+- **Equivalence.** Manifest `f87bf107…` writes the same rows and the same values as
+  `c7c57537…`. Only stored before-values differ: `summary`, `updatedAt`,
+  `lastReviewedAt`.
+- **Approval.** `seo/brazil/clinical-approval-phase4.json`: owner-confirmed, reviewer
+  Dr. Renato Sarmento (`cmqyzr0fb000o01lu9deh6mf5`), Dr tiago reported by name,
+  `reviewedAt` 2026-09-14T21:24:30Z, 365-day policy. 19 states appended to
+  `APPROVED_BRAZIL_STATES` (phase-3 states kept). Offline gate check passed 19/19.
+- **Deployment.** Commit `9b72d33d` on `main`; Railway Backend
+  `5dd6e677-3837-4d1d-af40-1c85f9169887` SUCCESS; `/ready` ok. Receipt:
+  `seo/brazil/enforcement-deployment-phase4.json`.
+- **Proof.** Backend `tsc --noEmit` exit 0; 18 Node tests pass. Receipts in
+  `seo/brazil/raw/rollout/phase4/`: 19 applied (all `dryRun:false`,
+  `publicVerified:true`), 19 before-snapshots, 19 public checks (3 locales each:
+  title, description, H1, rendered FAQ, FAQ schema, canonical, robots, alternates).
+  Browser spot-check of PT `solicitacao-exames-online`: new title/description/H1,
+  canonical unchanged, no "mesmo dia" text.
+- **Log note.** The runner's per-group "database committed" lines above cite
+  `raw/rollout/<group>-applied.json`; phase-4 receipts are actually under
+  `raw/rollout/phase4/`.
+- **Rollback.** Per group, reverse order, from the `-before.json` snapshots; verify
+  current rows equal the approved state first. Not performed.
+- **Cohort.** Register 30/60/90 checks for these 57 URLs on 2026-10-15, 2026-11-14,
+  2026-12-14. September 18/24/30 global checks unchanged.
+- **Still open.** 48 retained, 36 held legal/article and 12 verification pages;
+  homepage, pricing, clinician landing page; supplemental drafts; ICP-Brasil/Atesta
+  workflow confirmation; Dr tiago's identity; browser check of the remaining pages.
+
 ## 58. Internal-linking proposal — 13 September 2026
 
 Read-only OpenSEO/GSC/GA4 analysis and focused public verification completed at the
@@ -10327,3 +10365,60 @@ the same manifest and hash; it refuses if content changed after this apply.
 
 - spain group text:doctor:cmrdq0tv2002701rupeh3nkyd: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-doctor-cmrdq0tv2002701rupeh3nkyd-applied.json.
 - seo/spain phase 7 group text:doctor:cmrdq0tv2002701rupeh3nkyd: public verification passed 2026-09-14T19:36:45.9265548Z. Receipt: seo/spain/raw/rollout/phase7/text-doctor-cmrdq0tv2002701rupeh3nkyd-public.json.
+
+- brazil group service:solicitacao-exames-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-solicitacao-exames-online-applied.json.
+- seo/brazil phase 4 group service:solicitacao-exames-online: public verification passed 2026-09-14T21:54:09.2577791Z. Receipt: seo/brazil/raw/rollout/phase4/service-solicitacao-exames-online-public.json.
+
+- brazil group service:consulta-clinica-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-consulta-clinica-online-applied.json.
+- seo/brazil phase 4 group service:consulta-clinica-online: public verification passed 2026-09-14T21:54:39.4794507Z. Receipt: seo/brazil/raw/rollout/phase4/service-consulta-clinica-online-public.json.
+
+- brazil group service:renovacao-receita-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-renovacao-receita-online-applied.json.
+- seo/brazil phase 4 group service:renovacao-receita-online: public verification passed 2026-09-14T21:55:07.2378065Z. Receipt: seo/brazil/raw/rollout/phase4/service-renovacao-receita-online-public.json.
+
+- brazil group service:atestado-medico-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-atestado-medico-online-applied.json.
+- seo/brazil phase 4 group service:atestado-medico-online: public verification passed 2026-09-14T21:55:41.1614974Z. Receipt: seo/brazil/raw/rollout/phase4/service-atestado-medico-online-public.json.
+
+- brazil group doctor:dr-renato-sarmento: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/doctor-dr-renato-sarmento-applied.json.
+- seo/brazil phase 4 group doctor:dr-renato-sarmento: public verification passed 2026-09-14T21:56:12.6311933Z. Receipt: seo/brazil/raw/rollout/phase4/doctor-dr-renato-sarmento-public.json.
+
+- brazil group service:consulta-pele-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-consulta-pele-online-applied.json.
+- seo/brazil phase 4 group service:consulta-pele-online: public verification passed 2026-09-14T21:56:39.9531064Z. Receipt: seo/brazil/raw/rollout/phase4/service-consulta-pele-online-public.json.
+
+- brazil group service:controle-peso-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-controle-peso-online-applied.json.
+- seo/brazil phase 4 group service:controle-peso-online: public verification passed 2026-09-14T21:57:13.2482698Z. Receipt: seo/brazil/raw/rollout/phase4/service-controle-peso-online-public.json.
+
+- brazil group service:doencas-cronicas-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-doencas-cronicas-online-applied.json.
+- seo/brazil phase 4 group service:doencas-cronicas-online: public verification passed 2026-09-14T21:57:41.6587468Z. Receipt: seo/brazil/raw/rollout/phase4/service-doencas-cronicas-online-public.json.
+
+- brazil group service:musculoesqueletico-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-musculoesqueletico-online-applied.json.
+- seo/brazil phase 4 group service:musculoesqueletico-online: public verification passed 2026-09-14T21:58:10.0846094Z. Receipt: seo/brazil/raw/rollout/phase4/service-musculoesqueletico-online-public.json.
+
+- brazil group service:parar-de-fumar-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-parar-de-fumar-online-applied.json.
+- seo/brazil phase 4 group service:parar-de-fumar-online: public verification passed 2026-09-14T21:58:38.0362029Z. Receipt: seo/brazil/raw/rollout/phase4/service-parar-de-fumar-online-public.json.
+
+- brazil group service:pediatria-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-pediatria-online-applied.json.
+- seo/brazil phase 4 group service:pediatria-online: public verification passed 2026-09-14T21:59:06.9840863Z. Receipt: seo/brazil/raw/rollout/phase4/service-pediatria-online-public.json.
+
+- brazil group service:queda-cabelo-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-queda-cabelo-online-applied.json.
+- seo/brazil phase 4 group service:queda-cabelo-online: public verification passed 2026-09-14T21:59:34.4651512Z. Receipt: seo/brazil/raw/rollout/phase4/service-queda-cabelo-online-public.json.
+
+- brazil group service:saude-da-mulher-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-saude-da-mulher-online-applied.json.
+- seo/brazil phase 4 group service:saude-da-mulher-online: public verification passed 2026-09-14T22:00:01.9932333Z. Receipt: seo/brazil/raw/rollout/phase4/service-saude-da-mulher-online-public.json.
+
+- brazil group service:saude-do-homem-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-saude-do-homem-online-applied.json.
+- seo/brazil phase 4 group service:saude-do-homem-online: public verification passed 2026-09-14T22:00:30.0863737Z. Receipt: seo/brazil/raw/rollout/phase4/service-saude-do-homem-online-public.json.
+
+- brazil group service:saude-idoso-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-saude-idoso-online-applied.json.
+- seo/brazil phase 4 group service:saude-idoso-online: public verification passed 2026-09-14T22:00:58.4728125Z. Receipt: seo/brazil/raw/rollout/phase4/service-saude-idoso-online-public.json.
+
+- brazil group service:saude-mental-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-saude-mental-online-applied.json.
+- seo/brazil phase 4 group service:saude-mental-online: public verification passed 2026-09-14T22:01:26.5427055Z. Receipt: seo/brazil/raw/rollout/phase4/service-saude-mental-online-public.json.
+
+- brazil group service:saude-sexual-ist-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-saude-sexual-ist-online-applied.json.
+- seo/brazil phase 4 group service:saude-sexual-ist-online: public verification passed 2026-09-14T22:01:58.7104503Z. Receipt: seo/brazil/raw/rollout/phase4/service-saude-sexual-ist-online-public.json.
+
+- brazil group service:saude-viagem-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-saude-viagem-online-applied.json.
+- seo/brazil phase 4 group service:saude-viagem-online: public verification passed 2026-09-14T22:02:26.8703273Z. Receipt: seo/brazil/raw/rollout/phase4/service-saude-viagem-online-public.json.
+
+- brazil group service:segunda-opiniao-medica: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-segunda-opiniao-medica-applied.json.
+- seo/brazil phase 4 group service:segunda-opiniao-medica: public verification passed 2026-09-14T22:02:56.4157458Z. Receipt: seo/brazil/raw/rollout/phase4/service-segunda-opiniao-medica-public.json.
