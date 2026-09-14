@@ -3,7 +3,7 @@
 #
 # LibreOffice: branded DOCX → PDF (IE, PT, ES, CZ, RO).
 # Playwright: HTML PDF fallback when no DOCX pack (e.g. Brazil).
-# postinstall syncs Templates → assets/docx-templates and Alex Brush font.
+# DOCX templates live in assets/docx-templates; postinstall syncs the Alex Brush font.
 
 [phases.setup]
 nixPkgs = ["nodejs_22", "pnpm"]

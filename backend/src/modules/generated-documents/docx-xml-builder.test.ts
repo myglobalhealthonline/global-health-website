@@ -30,8 +30,7 @@ describe("docx-xml-builder", () => {
   });
 
   it("injectProfessionalLayout removes legacy Note and uses table", () => {
-    const path =
-      "c:/Users/nauma/Desktop/Global Website/global-health-website/Templates/(ES) Absence Certificate Template _ Global Health.docx";
+    const path = "assets/docx-templates/(ES) Absence Certificate Template _ Global Health.docx";
     if (!fs.existsSync(path)) return;
     const profile = profileForPrefix("ES");
     if (!profile) return;

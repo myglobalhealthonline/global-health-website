@@ -7,7 +7,7 @@
     },
     "scripts": {
         "dev": "node --watch --import tsx src/server.ts",
-        "postinstall": "prisma generate && node scripts/sync-docx-templates.mjs && node scripts/sync-alex-brush-font.mjs",
+        "postinstall": "prisma generate && node scripts/sync-alex-brush-font.mjs",
         "build": "tsc",
         "start": "node dist/cluster.js",
         "typecheck": "tsc --noEmit",

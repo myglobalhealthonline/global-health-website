@@ -1,2 +1,1 @@
-# Populated by `node scripts/sync-docx-templates.mjs` from repo `Templates/*.docx`.
-# Commit synced .docx here if Railway service root is `backend` only.
+# Source of truth for the country DOCX clinical templates. Edit the .docx files here.

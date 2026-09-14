@@ -49,22 +49,7 @@ const execFileAsync = promisify(execFile);
 const SOFFICE_VERSION_CHECK_TIMEOUT_MS = 5_000;
 const SOFFICE_CONVERT_TIMEOUT_MS = 45_000;
 
-function resolveDocxTemplatesRoot(): string {
-  // Prefer repo Templates/ (source of truth: logos in header, borders in layout).
-  const candidates = [
-    path.join(process.cwd(), "..", "Templates"),
-    path.join(process.cwd(), "Templates"),
-    path.join(process.cwd(), "assets", "docx-templates"),
-  ];
-  for (const root of candidates) {
-    if (fs.existsSync(root) && fs.readdirSync(root).some((f) => f.endsWith(".docx"))) {
-      return root;
-    }
-  }
-  return path.join(process.cwd(), "assets", "docx-templates");
-}
-
-export const DOCX_TEMPLATES_ROOT = resolveDocxTemplatesRoot();
+export const DOCX_TEMPLATES_ROOT = path.join(process.cwd(), "assets", "docx-templates");
 
 export function resolveDocxTemplatePath(
   countryCode: string,
