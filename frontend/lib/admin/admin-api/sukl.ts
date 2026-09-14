@@ -128,6 +128,28 @@ export type SuklAppPingDto = {
   responseHeaders: Record<string, string> | null;
 };
 
+/** An eRecept as SÚKL currently hold it. */
+export type SuklPrescriptionViewDto = {
+  ok: boolean;
+  documentId: string | null;
+  issuedOn: string | null;
+  validUntil: string | null;
+  extendedUntil: string | null;
+  state: string | null;
+  createdAt: string | null;
+  changedAt: string | null;
+  note: string | null;
+  patientSurname: string | null;
+  patientGivenNames: string | null;
+  items: Array<{ name: string | null; quantity: string | null; instructions: string | null }>;
+  dispensingCount: number;
+  errorCode: string | null;
+  errorMessage: string | null;
+  errorAdvice: string | null;
+  httpStatus: number;
+  durationMs: number;
+};
+
 /** Result of issuing an eRecept. */
 export type SuklIssuePrescriptionDto = {
   prescriptionId: string;

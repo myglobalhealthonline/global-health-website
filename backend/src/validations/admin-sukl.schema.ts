@@ -151,6 +151,15 @@ export const suklIssuePrescriptionSchema = z.object({
   urgent: z.boolean().optional(),
 });
 
+/** Identifies an issued eRecept for read-back or the průvodka download. */
+export const suklDocumentQuerySchema = z.object({
+  documentId: z
+    .string()
+    .trim()
+    .regex(/^[A-Za-z0-9-]{12,36}$/, "A SÚKL document id is 12-36 letters or digits"),
+  service: z.enum(SUKL_SERVICES).optional(),
+});
+
 export const suklCancelPrescriptionSchema = z.object({
   prescriptionId: z.string().trim().min(1),
   // SÚKL require a reason; an empty one is a rejected cancellation.

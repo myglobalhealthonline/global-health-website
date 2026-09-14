@@ -3,7 +3,10 @@
 import { useState } from "react";
 
 import { AdminCard, Btn, Pill } from "../../../_components/atoms";
-import type { SuklIssuePrescriptionDto } from "@/lib/admin/admin-api/sukl";
+import type {
+  SuklIssuePrescriptionDto,
+  SuklPrescriptionViewDto,
+} from "@/lib/admin/admin-api/sukl";
 
 /**
  * Issues a real eRecept into SÚKL's test system.
@@ -25,6 +28,43 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
   const [result, setResult] = useState<SuklIssuePrescriptionDto | null>(null);
   const [cancelled, setCancelled] = useState<string | null>(null);
   const [confirming, setConfirming] = useState(false);
+  const [viewDocId, setViewDocId] = useState("");
+  const [view, setView] = useState<SuklPrescriptionViewDto | null>(null);
+  const [viewBusy, setViewBusy] = useState(false);
+  const [viewError, setViewError] = useState<string | null>(null);
+
+  async function loadView(documentId: string) {
+    const id = documentId.trim();
+    setViewDocId(id);
+    setViewBusy(true);
+    setViewError(null);
+    setView(null);
+    try {
+      const res = await fetch(
+        `/api/admin/sukl/prescriptions/view?documentId=${encodeURIComponent(id)}`,
+      );
+      const json = (await res.json().catch(() => null)) as
+        | { ok?: boolean; message?: string; data?: SuklPrescriptionViewDto }
+        | null;
+      if (!res.ok || !json?.ok || !json.data) {
+        setViewError(json?.message ?? "The prescription could not be read");
+        return;
+      }
+      setView(json.data);
+    } catch {
+      setViewError("The prescription could not be read");
+    } finally {
+      setViewBusy(false);
+    }
+  }
+
+  function openPruvodka(documentId: string) {
+    window.open(
+      `/api/admin/sukl/prescriptions/pruvodka?documentId=${encodeURIComponent(documentId.trim())}`,
+      "_blank",
+      "noopener",
+    );
+  }
 
   const [form, setForm] = useState({
     doctorUserId: "",
@@ -287,6 +327,23 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
                 authorisation id for withdrawing or amending the prescription, and it is stored
                 against the record.
               </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Btn
+                  onClick={() => void loadView(result.documentId ?? "")}
+                  disabled={viewBusy}
+                  variant="secondary"
+                  size="sm"
+                >
+                  View at SÚKL
+                </Btn>
+                <Btn
+                  onClick={() => openPruvodka(result.documentId ?? "")}
+                  variant="secondary"
+                  size="sm"
+                >
+                  Open průvodka (PDF)
+                </Btn>
+              </div>
               {cancelled === result.prescriptionId ? (
                 <p className="m-0 mt-2 text-sm">Withdrawn.</p>
               ) : (
@@ -318,6 +375,92 @@ export function SuklPrescriptionPanel({ callable }: { callable: boolean }) {
           )}
         </div>
       ) : null}
+      <div className="mt-6 border-t pt-4" style={{ borderColor: "var(--portal-line)" }}>
+        <h3 className="m-0 mb-1 text-sm font-bold">View a prescription</h3>
+        <p className="m-0 mb-3 text-xs" style={{ color: "var(--portal-muted)" }}>
+          Reads an issued eRecept back from SÚKL by its document id, or opens the průvodka the
+          patient takes to a pharmacy. Read-only; no signature needed.
+        </p>
+        <div className="flex flex-wrap items-end gap-2">
+          <div className="min-w-[16rem] flex-1">
+            <F label="SÚKL document id" value={viewDocId} on={setViewDocId} />
+          </div>
+          <Btn
+            onClick={() => void loadView(viewDocId)}
+            disabled={!callable || viewBusy || viewDocId.trim().length < 12}
+            variant="primary"
+            size="sm"
+          >
+            {viewBusy ? "Loading…" : "Load from SÚKL"}
+          </Btn>
+          <Btn
+            onClick={() => openPruvodka(viewDocId)}
+            disabled={!callable || viewDocId.trim().length < 12}
+            variant="secondary"
+            size="sm"
+          >
+            Open průvodka (PDF)
+          </Btn>
+        </div>
+
+        {viewError ? (
+          <p className="mt-3 text-sm" style={{ color: "var(--portal-danger, #b42318)" }}>
+            {viewError}
+          </p>
+        ) : null}
+
+        {view ? (
+          <div
+            className="mt-3 rounded-md border px-4 py-3 text-sm"
+            style={{ borderColor: "var(--portal-line)" }}
+          >
+            {view.ok ? (
+              <>
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  <Pill tone="active" withDot>
+                    {view.state ?? "Unknown state"}
+                  </Pill>
+                  <span className="text-xs" style={{ color: "var(--portal-muted)" }}>
+                    {view.documentId} · HTTP {view.httpStatus} · {view.durationMs} ms
+                  </span>
+                </div>
+                <p className="m-0">
+                  Patient:{" "}
+                  {[view.patientGivenNames, view.patientSurname].filter(Boolean).join(" ") || "—"}
+                </p>
+                <p className="m-0">
+                  Issued {view.issuedOn ?? "—"} · valid until{" "}
+                  {view.extendedUntil ?? view.validUntil ?? "—"}
+                </p>
+                <ul className="m-0 mt-2 pl-5">
+                  {view.items.map((item, i) => (
+                    <li key={i}>
+                      <strong>{item.name ?? "—"}</strong> × {item.quantity ?? "—"} —{" "}
+                      {item.instructions ?? "—"}
+                    </li>
+                  ))}
+                </ul>
+                <p className="m-0 mt-2 text-xs" style={{ color: "var(--portal-muted)" }}>
+                  Dispensings recorded: {view.dispensingCount}
+                  {view.note ? ` · Note: ${view.note}` : ""}
+                </p>
+              </>
+            ) : (
+              <>
+                <Pill tone="inactive" withDot>
+                  {`Rejected — ${view.errorCode}`}
+                </Pill>
+                <p className="m-0 mt-2 whitespace-pre-wrap break-words">{view.errorMessage}</p>
+                {view.errorAdvice ? (
+                  <p className="m-0 mt-1 text-xs" style={{ color: "var(--portal-muted)" }}>
+                    SÚKL suggest: {view.errorAdvice}
+                  </p>
+                ) : null}
+              </>
+            )}
+          </div>
+        ) : null}
+      </div>
     </AdminCard>
   );
 }

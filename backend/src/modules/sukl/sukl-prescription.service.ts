@@ -3,6 +3,10 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "../../db/prisma.js";
 import {
   buildCancelPrescriptionRequest,
+  buildReadDocumentRequest,
+  interpretPruvodkaResponse,
+  interpretReadPrescriptionResponse,
+  type SuklPrescriptionView,
   buildCreatePrescriptionRequest,
   interpretCancelPrescriptionResponse,
   interpretCreatePrescriptionResponse,
@@ -318,5 +322,90 @@ export async function cancelSuklPrescription(input: {
     documentId: v.documentId,
     errorCode: v.errorCode,
     errorMessage: v.errorMessage,
+  };
+}
+
+/**
+ * Reads an eRecept back from SÚKL by its document id.
+ *
+ * Read-only and unsigned. When we hold the record, SÚKL's current state is
+ * written back to it, so the stored state reflects dispensing that happened
+ * at a pharmacy rather than staying PREDEPSANY forever.
+ */
+export async function readSuklPrescription(input: {
+  documentId: string;
+  service?: SuklService;
+}): Promise<SuklPrescriptionView & { httpStatus: number; durationMs: number }> {
+  const service: SuklService = input.service ?? "cuer";
+  if (!isSuklCallable(service)) {
+    throw new SuklNotConfiguredError(
+      `Cannot call SÚKL — missing: ${suklMissingCallConfig(service).join(", ")}`,
+    );
+  }
+
+  const envelope = wrapInSoapEnvelope(
+    buildReadDocumentRequest({
+      service,
+      operationElement: "NacteniPredpisuDotaz",
+      messageId: randomUUID(),
+      interfaceVersion: suklInterfaceVersion(service),
+      swKlienta: suklSwKlienta(),
+      sentAt: new Date(),
+      uzivatel: suklUzivatel()!,
+      pracoviste: suklWorkplaceCode()!,
+      documentId: input.documentId,
+    }),
+  );
+
+  const response = await suklPost(service, DEFAULT_ENDPOINT_PATH, envelope, {
+    soapAction: "NacistPredpis",
+  });
+  const view = interpretReadPrescriptionResponse({
+    httpStatus: response.httpStatus,
+    body: response.body,
+  });
+
+  if (view.ok && view.state) {
+    await prisma.suklPrescription.updateMany({
+      where: { documentId: input.documentId },
+      data: { suklState: view.state },
+    });
+  }
+
+  return { ...view, httpStatus: response.httpStatus, durationMs: response.durationMs };
+}
+
+/** Downloads the průvodka PDF — the slip the patient takes to a pharmacy. */
+export async function downloadSuklPruvodka(input: {
+  documentId: string;
+  service?: SuklService;
+}) {
+  const service: SuklService = input.service ?? "cuer";
+  if (!isSuklCallable(service)) {
+    throw new SuklNotConfiguredError(
+      `Cannot call SÚKL — missing: ${suklMissingCallConfig(service).join(", ")}`,
+    );
+  }
+
+  const envelope = wrapInSoapEnvelope(
+    buildReadDocumentRequest({
+      service,
+      operationElement: "StazeniPruvodkyDotaz",
+      messageId: randomUUID(),
+      interfaceVersion: suklInterfaceVersion(service),
+      swKlienta: suklSwKlienta(),
+      sentAt: new Date(),
+      uzivatel: suklUzivatel()!,
+      pracoviste: suklWorkplaceCode()!,
+      documentId: input.documentId,
+    }),
+  );
+
+  const response = await suklPost(service, DEFAULT_ENDPOINT_PATH, envelope, {
+    soapAction: "StahnoutPruvodku",
+  });
+  return {
+    ...interpretPruvodkaResponse({ httpStatus: response.httpStatus, body: response.body }),
+    httpStatus: response.httpStatus,
   };
 }

@@ -17,12 +17,15 @@ export const dynamic = "force-dynamic";
 
 function isAllowed(method: string, segments: string[]): boolean {
   if (method === "GET") {
-    // ["status"] | ["doctor-identities"] | ["wsdl"]
+    // ["status"] | ["doctor-identities"] | ["wsdl"] | ["prescriptions", "view" | "pruvodka"]
     return (
-      segments.length === 1 &&
-      (segments[0] === "status" ||
-        segments[0] === "doctor-identities" ||
-        segments[0] === "wsdl")
+      (segments.length === 1 &&
+        (segments[0] === "status" ||
+          segments[0] === "doctor-identities" ||
+          segments[0] === "wsdl")) ||
+      (segments.length === 2 &&
+        segments[0] === "prescriptions" &&
+        (segments[1] === "view" || segments[1] === "pruvodka"))
     );
   }
   if (method === "POST") {

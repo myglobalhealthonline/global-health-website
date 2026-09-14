@@ -12,7 +12,9 @@ import {
 } from "../modules/sukl/sukl.service.js";
 import {
   cancelSuklPrescription,
+  downloadSuklPruvodka,
   issueSuklPrescription,
+  readSuklPrescription,
 } from "../modules/sukl/sukl-prescription.service.js";
 import {
   listSuklDoctorIdentities,
@@ -26,6 +28,7 @@ import { resolveAdminSessionActor, verifyGlobalAdminAccess } from "../utils/admi
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   suklCancelPrescriptionSchema,
+  suklDocumentQuerySchema,
   suklDoctorIdentityBodySchema,
   suklDoctorParamsSchema,
   suklIssuePrescriptionSchema,
@@ -374,6 +377,64 @@ const adminSuklRoute: FastifyPluginAsync = async (app) => {
         },
       });
       return okResponse(result);
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  /** Read an issued eRecept back from SÚKL. Read-only; audited because it returns patient data. */
+  app.get("/api/admin/sukl/prescriptions/view", async (request, reply) => {
+    const query = suklDocumentQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid document id", query.error.flatten()));
+    }
+    const actor = resolveAdminSessionActor(request);
+    try {
+      const result = await readSuklPrescription(query.data);
+      await recordAudit({
+        actorUserId: actor?.userId ?? null,
+        actorRole: actor?.role ?? null,
+        action: "SUKL_CONNECTION_TESTED",
+        entityType: "SuklPrescription",
+        entityId: query.data.documentId,
+        request,
+        metadata: { kind: "prescription-viewed", ok: result.ok, errorCode: result.errorCode },
+      });
+      return okResponse(result);
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  /** The průvodka PDF, served inline so it opens in the browser. */
+  app.get("/api/admin/sukl/prescriptions/pruvodka", async (request, reply) => {
+    const query = suklDocumentQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid document id", query.error.flatten()));
+    }
+    const actor = resolveAdminSessionActor(request);
+    try {
+      const result = await downloadSuklPruvodka(query.data);
+      await recordAudit({
+        actorUserId: actor?.userId ?? null,
+        actorRole: actor?.role ?? null,
+        action: "SUKL_CONNECTION_TESTED",
+        entityType: "SuklPrescription",
+        entityId: query.data.documentId,
+        request,
+        metadata: { kind: "pruvodka-downloaded", ok: result.ok, errorCode: result.errorCode },
+      });
+      if (!result.ok || !result.pdf) {
+        return reply
+          .status(502)
+          .send(errorResponse(result.errorMessage ?? "SÚKL returned no průvodka"));
+      }
+      return reply
+        .header("content-type", "application/pdf")
+        .header("content-disposition", `inline; filename="pruvodka-${query.data.documentId}.pdf"`)
+        // Patient data: never let a proxy or the browser cache it.
+        .header("cache-control", "no-store")
+        .send(result.pdf);
     } catch (error) {
       return handleError(app, reply, error);
     }
