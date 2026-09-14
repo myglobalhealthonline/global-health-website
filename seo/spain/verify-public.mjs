@@ -8,10 +8,20 @@ const require=createRequire(import.meta.url),htmlRequire=createRequire(require.r
 const {parseDocument,DomUtils}=htmlRequire('htmlparser2');
 const plain=v=>DomUtils.textContent(parseDocument(v??'')).replace(/\s+/g,' ').trim();
 const normalized=faqs=>faqs.map(f=>({question:plain(f.question),answer:plain(f.answer)}));
-export function verifyPage(before,after,draft,links=[]){
+export function verifyPage(before,after,draft,links=[],{localizedUrls}={}){
  assert.equal(after.status,200,'HTTP status');assert.equal(after.finalUrl,after.url,'Unexpected redirect');
- assert.equal(after.canonical,before.canonical,'Canonical changed');assert.equal(after.robots,before.robots,'Robots changed');
- assert.deepEqual(after.hreflang,before.hreflang,'Alternates changed');
+ assert.equal(after.canonical,before.canonical,'Canonical changed');
+ if(localizedUrls){
+  // A newly localized service: every locale gains its own translation row, so the site's
+  // per-locale publication rule makes all locales indexable with a full alternate set.
+  assert.equal(after.robots,'index, follow','Localized locale not indexable');
+  const es=localizedUrls.find(u=>u.includes('/es/'));
+  assert.deepEqual(after.hreflang.map(h=>h.url).sort(),[...localizedUrls,es].sort(),'Alternates incomplete');
+  assert.equal(after.hreflang.find(h=>h.lang==='x-default')?.url,es,'x-default changed');
+ }else{
+  assert.equal(after.robots,before.robots,'Robots changed');
+  assert.deepEqual(after.hreflang,before.hreflang,'Alternates changed');
+ }
  assert.equal(after.title,draft?.after.seoTitle??before.title,'Title mismatch');
  assert.equal(after.description,draft?.after.seoDescription??before.description,'Description mismatch');
  assert.deepEqual(after.h1,draft?.after.heroTitle?[draft.after.heroTitle]:before.h1,'H1 mismatch');
@@ -38,7 +48,9 @@ if(process.argv[1]?.endsWith('verify-public.mjs')){
   const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(45000)}),html=await response.text();
   const after={...parse(html,url),status:response.status,finalUrl:response.url};
   const before=inventory.find(p=>p.url===url);assert(before,'Baseline missing');
-  results.push(verifyPage(before,after,drafts.find(d=>d.url===url&&appliedKeys.has(d.key)),links.filter(l=>l.urls.includes(url)&&appliedKeys.has(l.key))));
+  const slug=new URL(url).pathname.split('/')[4],localized=fs.existsSync(`${root}/content-briefs/body-localization.json`)&&read('content-briefs/body-localization.json')[slug]&&appliedKeys.has(`service:${slug}`);
+  const localizedUrls=localized?['es','en','pt','cs','ro','de'].map(l=>url.replace(/\/spain\/[a-z]{2}\//,`/spain/${l}/`)):undefined;
+  results.push(verifyPage(before,after,drafts.find(d=>d.url===url&&appliedKeys.has(d.key)),links.filter(l=>l.urls.includes(url)&&appliedKeys.has(l.key)),{localizedUrls}));
  }
  fs.writeFileSync(`${root}/raw/rollout/${stem}-public.json`,JSON.stringify({checkedAt:new Date().toISOString(),group:key,approvalSha256:group.approvalSha256,results,browserVerification:'pending; see handoff'},null,2));
  console.log(JSON.stringify({group:key,passed:results.length,browserVerification:'pending'}));

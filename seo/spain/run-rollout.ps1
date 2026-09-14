@@ -12,14 +12,15 @@ $receipt = "$root/enforcement-deployment.json"
 if (-not (Test-Path $receipt)) {
 Write-Json $receipt @'
 {
-  "deploymentId": "8a3d3ebb-0d66-4451-aac1-3d87318661c0",
+  "deploymentId": "2bc3fc44-9595-4a90-a586-8cc067247455",
   "service": "Backend (Railway Production)",
   "status": "SUCCESS",
-  "commit": "6c5d94e0beb889d22b816c0cc0ed11e4cec7f9b4",
+  "commit": "f777f767",
   "branch": "main",
-  "createdAt": "2026-09-14T01:06:31.987Z",
+  "createdAt": "2026-09-14T01:49:11.811Z",
+  "frontendDeploymentId": "68f182e3-3459-45c7-9e8f-7620e0371801",
   "readiness": "https://api.myglobalhealth.online/ready returned ok:true, database connected",
-  "note": "Includes the Spain mutation-boundary gate. Approved states were recorded locally after this deployment; the runner uses local gate code."
+  "note": "Includes the Spain mutation-boundary gate with the owner-reported approved states for manifest 8846503c."
 }
 '@
 }
@@ -35,7 +36,8 @@ foreach ($group in $manifest.groups) {
   node --env-file=backend/.env backend/scripts/apply-spain-seo.mjs "--group=$key" --apply "--confirm=$($group.approvalSha256)"
   if ($LASTEXITCODE -ne 0) { throw "Apply failed: $key" }
   $ok = $false
-  foreach ($i in 1..4) {
+  # Direct DB writes skip frontend tag revalidation; pages refresh on cache expiry (observed 2-5 min).
+  foreach ($i in 1..16) {
     node seo/spain/verify-public.mjs "--group=$key"
     if ($LASTEXITCODE -eq 0) { $ok = $true; break }
     Write-Host "verify retry $i in 30s"; Start-Sleep -Seconds 30

@@ -18,6 +18,12 @@ test('public verifier checks exact copy, FAQ schema and obsolete links',()=>{
  assert.doesNotThrow(()=>verifyPage(before,after,draft));
  assert.throws(()=>verifyPage(before,{...after,schemaFaqs:[]},draft),/schema/);
  assert.throws(()=>verifyPage(before,{...after,links:[{href:'/services/obsolete'}]},draft,[{targetSlug:'obsolete'}]),/Obsolete/);
+ // Localized service: noindex/no alternates before, indexable with full alternates after.
+ const urls=['https://e.com/spain/es/services/x','https://e.com/spain/en/services/x'];
+ const hidden={...before,robots:'noindex, follow',hreflang:[]},shown={...after,robots:'index, follow',hreflang:[{lang:'es-ES',url:urls[0]},{lang:'en-ES',url:urls[1]},{lang:'x-default',url:urls[0]}]};
+ assert.doesNotThrow(()=>verifyPage(hidden,shown,draft,[],{localizedUrls:urls}));
+ assert.throws(()=>verifyPage(hidden,{...shown,robots:'noindex, follow'},draft,[],{localizedUrls:urls}),/indexable/);
+ assert.throws(()=>verifyPage(hidden,shown,draft),/Robots changed/);
 });
 function clientFor(initial,failAt=Infinity){let state=structuredClone(initial),backup,writes=0;return{get state(){return state;},get writes(){return writes;},async query(sql,values=[]){
  if(sql.startsWith('BEGIN')){backup=structuredClone(state);return{rows:[]};}if(sql==='ROLLBACK'){state=backup;return{rows:[]};}if(sql==='COMMIT')return{rows:[]};

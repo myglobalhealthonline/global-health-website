@@ -44,3 +44,18 @@ Later on 14 September, owner attestations lifted the Tomás and Wang holds. A CG
 recheck still showed Luz as ALTA sin ejercicio, so her hold remains. Wang's two
 services were localized into five languages. The regenerated manifest has 25 groups
 and 9 held groups, and its isolated rehearsal passed again. Ledger §56.5.
+
+## Live completion (14 September 2026)
+
+All 25 approved groups (200 operations, 143 URLs) are live and publicly verified.
+Writes ran from 01:54Z through final verification at 02:53Z. The approval was
+owner-reported verbal approval by Dra. Ocampo, recorded in commit f777f767.
+Production Backend 2bc3fc44 and Frontend 68f182e3 are SUCCESS.
+
+Per-group before rows, applied receipts and public receipts are in raw/rollout/.
+Live prices, durations, assignments, languages and slugs match the 13 September
+evidence for all 102 sources. Browser checks covered a service page, a profile and
+booking step 1; no booking was made.
+
+Luz and Fidel remain held. The cohort and 30/60/90-day dates are in
+publication-cohort-2026-09-14.json and ledger §56.6.

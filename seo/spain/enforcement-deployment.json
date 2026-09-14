@@ -1,0 +1,11 @@
+{
+  "deploymentId": "2bc3fc44-9595-4a90-a586-8cc067247455",
+  "service": "Backend (Railway Production)",
+  "status": "SUCCESS",
+  "commit": "f777f767",
+  "branch": "main",
+  "createdAt": "2026-09-14T01:49:11.811Z",
+  "frontendDeploymentId": "68f182e3-3459-45c7-9e8f-7620e0371801",
+  "readiness": "https://api.myglobalhealth.online/ready returned ok:true, database connected",
+  "note": "Includes the Spain mutation-boundary gate with the owner-reported approved states for manifest 8846503c."
+}

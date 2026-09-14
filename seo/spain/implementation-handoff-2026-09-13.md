@@ -2,8 +2,8 @@
 
 Nothing from this package is live. Canonical status is ledger §56.
 
-**Latest: ledger §56.5** — manifest `8846503c…`, 25 groups, 9 held (Luz, Fidel);
-Tomás/Wang holds lifted by owner attestation.
+**LIVE — ledger §56.6:** all 25 groups of manifest `8846503c…` applied and publicly
+verified on 14 September 2026; Luz and Fidel groups remain held.
 
 **14 September update (ledger §56.4) supersedes the "pending" statements below:**
 the owner-confirmed read-only snapshot ran; the manifest is built from it (22 groups,

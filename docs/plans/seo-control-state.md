@@ -9408,7 +9408,62 @@ psychologists.
   permission review blocked the Railway action and the Wang "Specialist"
   fact-register edit. No approval record, deployment or production write exists.
 
-**Next (unchanged order):**
+### 56.6 Spain publication, 14 September 2026 — LIVE
+
+**All 25 approved groups (200 operations) are live and publicly verified.** This
+supersedes the "nothing published" statements in §§56–56.5 for these groups.
+
+- **Approval.** The owner (super admin) reported Dra. María Fernanda Ocampo Mora's
+  verbal approval of manifest `8846503c…` and ran the recorder personally.
+  `seo/spain/clinical-approval.json` records evidence type "verbal, reported by the
+  owner", reviewedAt `2026-09-14T01:31:26.987Z` and a 365-day policy.
+  `APPROVED_SPAIN_STATES` holds the 25 resulting states under 24 keys; commit
+  `f777f767`. The approval is internal only and is not shown publicly.
+- **Deployment.** `main` synced to `f777f767`. Railway Production Backend
+  `2bc3fc44-9595-4a90-a586-8cc067247455` and Frontend
+  `68f182e3-3459-45c7-9e8f-7620e0371801` show SUCCESS, and `/ready` returns ok with
+  the database connected. The earlier auto-deploy of `6c5d94e0` (Backend
+  `8a3d3ebb…`) had already carried the gate code.
+- **Rollout.** `seo/spain/run-rollout.ps1` was run by the owner for groups 1–2, then by
+  the agent on owner instruction. It applied the groups sequentially, each with a
+  dry-run, a guarded SERIALIZABLE apply, before rows and an applied receipt in
+  `seo/spain/raw/rollout/`, then public verification of all six locales. First write
+  `2026-09-14T01:54:04Z`; last verification `02:53:08Z`. 143 URLs.
+- **Verifier corrections during rollout.**
+  - Newly localized services legitimately change from `noindex, follow` with no
+    alternates to `index, follow` with six locales plus x-default: the frontend
+    per-locale publication rule keys on translated fields. The verifier now requires
+    that state for localized services and stays strict elsewhere.
+  - Direct DB writes skip frontend tag revalidation, so the live pages lagged the
+    API by 2–5 minutes. Verification retries were extended to cover it.
+- **Operational check.** The live API for all 102 drafted sources matches the
+  13 September evidence exactly: price, duration, currency, assigned doctors,
+  languages, active flag and slug.
+- **Browser check (no booking made).**
+  - The EN vascular diagnostics page shows the localized H1/body, €170/30 min, the
+    booking CTA and the existing clinical-review credit.
+  - The DE Ocampo profile renders.
+  - The ES booking step 1 lists services with unchanged prices, including the updated
+    aesthetic and vascular summaries.
+- **Held, not published:** Luz's profile and six services (CGCOM ALTA sin ejercicio),
+  plus Fidel's profile and cardiology (no appointments; he will add slots himself).
+
+**Measurement cohort:** [publication-cohort-2026-09-14.json](../../seo/spain/publication-cohort-2026-09-14.json).
+Day 30 is 2026-10-14, day 60 is 2026-11-13 and day 90 is 2026-12-13. Use complete
+final GSC windows, keep services/profiles separate from articles/tools, and validate
+conversion tracking before reading bookings. No ranking gain is inferred from this
+rollout. The September 18 Spain read and September 24 global inspection are
+unchanged, and now also serve as the first post-publication index/crawl check.
+
+**Remaining dependencies:**
+- Luz: registry update or documented explanation (operations).
+- Fidel: availability.
+- Tomás: correct his stored number `MUO5691` to `MU05691` via the doctor portal.
+- Wang: specialist qualification document for the fact register.
+- Brazil: the gate is live with a null policy, so admin edits to Brazil clinical
+  content are refused until Brazil approvals are recorded.
+
+**Next (historical, superseded by §56.6):**
 1. Dra. Ocampo approves manifest `8846503c…` and its group hashes.
 2. Record `clinical-approval.json` and matching `APPROVED_SPAIN_STATES`.
 3. The owner authorizes the enforcement deployment and production writes.
@@ -9576,3 +9631,78 @@ with arrow icon. Commit `033d7ee9` pushed to `Dev-hassaan` and present on `origi
 menu); all five destinations 200, self-canonical, indexable. Cohort start for rows
 6, 7, 10, 11, 12: 14 September 2026; measure 12 October and 9 November. Rollback of the database rows: `patch-internal-links.mjs rollback` with
 the same manifest and hash; it refuses if content changed after this apply.
+
+- spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
+- Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
+
+- spain group doctor:dr-leandro-wang: database committed; public verification pending. Receipt: seo/spain/raw/rollout/doctor-dr-leandro-wang-applied.json.
+- Spain group doctor:dr-leandro-wang: public HTML/FAQ/schema verified 2026-09-14T02:14:49.0873050Z. Receipt: seo/spain/raw/rollout/doctor-dr-leandro-wang-public.json.
+
+- spain group service:consulta-flebologia-y-linfologia: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-flebologia-y-linfologia-applied.json.
+- Spain group service:consulta-flebologia-y-linfologia: public HTML/FAQ/schema verified 2026-09-14T02:15:59.7501684Z. Receipt: seo/spain/raw/rollout/service-consulta-flebologia-y-linfologia-public.json.
+
+- spain group service:consulta-online-medicina-estetica: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-online-medicina-estetica-applied.json.
+- Spain group service:consulta-online-medicina-estetica: public HTML/FAQ/schema verified 2026-09-14T02:17:08.4404531Z. Receipt: seo/spain/raw/rollout/service-consulta-online-medicina-estetica-public.json.
+
+- spain group doctor:dr-maria-fernanda-ocampo-mora: database committed; public verification pending. Receipt: seo/spain/raw/rollout/doctor-dr-maria-fernanda-ocampo-mora-applied.json.
+- Spain group doctor:dr-maria-fernanda-ocampo-mora: public HTML/FAQ/schema verified 2026-09-14T02:20:54.5884580Z. Receipt: seo/spain/raw/rollout/doctor-dr-maria-fernanda-ocampo-mora-public.json.
+
+- spain group service:consulta-salud-vascular-circulatoria: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-salud-vascular-circulatoria-applied.json.
+- Spain group service:consulta-salud-vascular-circulatoria: public HTML/FAQ/schema verified 2026-09-14T02:22:03.1300402Z. Receipt: seo/spain/raw/rollout/service-consulta-salud-vascular-circulatoria-public.json.
+
+- spain group doctor:dr-eszter-szilagyi: database committed; public verification pending. Receipt: seo/spain/raw/rollout/doctor-dr-eszter-szilagyi-applied.json.
+- Spain group doctor:dr-eszter-szilagyi: public HTML/FAQ/schema verified 2026-09-14T02:25:46.8715082Z. Receipt: seo/spain/raw/rollout/doctor-dr-eszter-szilagyi-public.json.
+
+- spain group service:dermatologia-especialista-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-dermatologia-especialista-online-applied.json.
+- Spain group service:dermatologia-especialista-online: public HTML/FAQ/schema verified 2026-09-14T02:27:03.8012620Z. Receipt: seo/spain/raw/rollout/service-dermatologia-especialista-online-public.json.
+
+- spain group doctor:dr-alfredo-del-valle: database committed; public verification pending. Receipt: seo/spain/raw/rollout/doctor-dr-alfredo-del-valle-applied.json.
+- Spain group doctor:dr-alfredo-del-valle: public HTML/FAQ/schema verified 2026-09-14T02:30:48.7737827Z. Receipt: seo/spain/raw/rollout/doctor-dr-alfredo-del-valle-public.json.
+
+- spain group service:psiquiatra-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-psiquiatra-online-applied.json.
+- Spain group service:psiquiatra-online: public HTML/FAQ/schema verified 2026-09-14T02:31:51.8849434Z. Receipt: seo/spain/raw/rollout/service-psiquiatra-online-public.json.
+
+- spain group doctor:dr-fabiana-cornejo: database committed; public verification pending. Receipt: seo/spain/raw/rollout/doctor-dr-fabiana-cornejo-applied.json.
+- Spain group doctor:dr-fabiana-cornejo: public HTML/FAQ/schema verified 2026-09-14T02:35:37.9853429Z. Receipt: seo/spain/raw/rollout/doctor-dr-fabiana-cornejo-public.json.
+
+- spain group service:pediatria-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-pediatria-online-applied.json.
+- Spain group service:pediatria-online: public HTML/FAQ/schema verified 2026-09-14T02:36:35.4776626Z. Receipt: seo/spain/raw/rollout/service-pediatria-online-public.json.
+
+- spain group doctor:dr-silvina-irale: database committed; public verification pending. Receipt: seo/spain/raw/rollout/doctor-dr-silvina-irale-applied.json.
+- Spain group doctor:dr-silvina-irale: public HTML/FAQ/schema verified 2026-09-14T02:40:19.5942534Z. Receipt: seo/spain/raw/rollout/doctor-dr-silvina-irale-public.json.
+
+- spain group doctor:dr-eduardo-olivas: database committed; public verification pending. Receipt: seo/spain/raw/rollout/doctor-dr-eduardo-olivas-applied.json.
+- Spain group doctor:dr-eduardo-olivas: public HTML/FAQ/schema verified 2026-09-14T02:44:04.5545721Z. Receipt: seo/spain/raw/rollout/doctor-dr-eduardo-olivas-public.json.
+
+- spain group doctor:dr-javier-villarte-betancor: database committed; public verification pending. Receipt: seo/spain/raw/rollout/doctor-dr-javier-villarte-betancor-applied.json.
+- Spain group doctor:dr-javier-villarte-betancor: public HTML/FAQ/schema verified 2026-09-14T02:47:50.3733244Z. Receipt: seo/spain/raw/rollout/doctor-dr-javier-villarte-betancor-public.json.
+
+- spain group doctor:dr-romulo-brito: database committed; public verification pending. Receipt: seo/spain/raw/rollout/doctor-dr-romulo-brito-applied.json.
+- Spain group doctor:dr-romulo-brito: public HTML/FAQ/schema verified 2026-09-14T02:48:22.4481463Z. Receipt: seo/spain/raw/rollout/doctor-dr-romulo-brito-public.json.
+
+- spain group doctor:dr-syed-tahir: database committed; public verification pending. Receipt: seo/spain/raw/rollout/doctor-dr-syed-tahir-applied.json.
+- Spain group doctor:dr-syed-tahir: public HTML/FAQ/schema verified 2026-09-14T02:48:57.3043635Z. Receipt: seo/spain/raw/rollout/doctor-dr-syed-tahir-public.json.
+
+- spain group doctor:dr-tomas-ruiz-palacios: database committed; public verification pending. Receipt: seo/spain/raw/rollout/doctor-dr-tomas-ruiz-palacios-applied.json.
+- Spain group doctor:dr-tomas-ruiz-palacios: public HTML/FAQ/schema verified 2026-09-14T02:49:34.1464477Z. Receipt: seo/spain/raw/rollout/doctor-dr-tomas-ruiz-palacios-public.json.
+
+- spain group link:cmre7soee002sg8ju1hnpt499: database committed; public verification pending. Receipt: seo/spain/raw/rollout/link-cmre7soee002sg8ju1hnpt499-applied.json.
+- Spain group link:cmre7soee002sg8ju1hnpt499: public HTML/FAQ/schema verified 2026-09-14T02:50:07.0441048Z. Receipt: seo/spain/raw/rollout/link-cmre7soee002sg8ju1hnpt499-public.json.
+
+- spain group link:cmre7skhw002kg8judewg26hr: database committed; public verification pending. Receipt: seo/spain/raw/rollout/link-cmre7skhw002kg8judewg26hr-applied.json.
+- Spain group link:cmre7skhw002kg8judewg26hr: public HTML/FAQ/schema verified 2026-09-14T02:50:40.4246987Z. Receipt: seo/spain/raw/rollout/link-cmre7skhw002kg8judewg26hr-public.json.
+
+- spain group link:cmre7tkdz004mg8juc9wpct8q: database committed; public verification pending. Receipt: seo/spain/raw/rollout/link-cmre7tkdz004mg8juc9wpct8q-applied.json.
+- Spain group link:cmre7tkdz004mg8juc9wpct8q: public HTML/FAQ/schema verified 2026-09-14T02:51:08.9658100Z. Receipt: seo/spain/raw/rollout/link-cmre7tkdz004mg8juc9wpct8q-public.json.
+
+- spain group link:cmre7ts6t0052g8ju6asq61tw: database committed; public verification pending. Receipt: seo/spain/raw/rollout/link-cmre7ts6t0052g8ju6asq61tw-applied.json.
+- Spain group link:cmre7ts6t0052g8ju6asq61tw: public HTML/FAQ/schema verified 2026-09-14T02:51:40.7155121Z. Receipt: seo/spain/raw/rollout/link-cmre7ts6t0052g8ju6asq61tw-public.json.
+
+- spain group link:cmre7t1od003kg8jujyc8vdtm: database committed; public verification pending. Receipt: seo/spain/raw/rollout/link-cmre7t1od003kg8jujyc8vdtm-applied.json.
+- Spain group link:cmre7t1od003kg8jujyc8vdtm: public HTML/FAQ/schema verified 2026-09-14T02:52:09.0566549Z. Receipt: seo/spain/raw/rollout/link-cmre7t1od003kg8jujyc8vdtm-public.json.
+
+- spain group link:cmre7stv60034g8juje70ar9l: database committed; public verification pending. Receipt: seo/spain/raw/rollout/link-cmre7stv60034g8juje70ar9l-applied.json.
+- Spain group link:cmre7stv60034g8juje70ar9l: public HTML/FAQ/schema verified 2026-09-14T02:52:37.9541559Z. Receipt: seo/spain/raw/rollout/link-cmre7stv60034g8juje70ar9l-public.json.
+
+- spain group link:cmre7u1jt005mg8jutxyy9pz0: database committed; public verification pending. Receipt: seo/spain/raw/rollout/link-cmre7u1jt005mg8jutxyy9pz0-applied.json.
+- Spain group link:cmre7u1jt005mg8jutxyy9pz0: public HTML/FAQ/schema verified 2026-09-14T02:53:08.7116719Z. Receipt: seo/spain/raw/rollout/link-cmre7u1jt005mg8jutxyy9pz0-public.json.
