@@ -1,0 +1,23 @@
+{
+  "phases": {
+    "5": { "manifestSha256": "76e364744cac04a366f5d512bc468f3904f4a32bb9b0f967297dabcb50fb4649", "groups": 5, "operations": 18, "deployment": { "backend": "4b1b2121-fbb3-4f95-8bf4-d916d8d0f10d", "frontend": "db5745f0-be68-45bb-8e04-354e8d6f4d9f", "commit": "e7b4a564" } },
+    "6": { "manifestSha256": "cda73159eba0d46f493b63fb139a1d8dd68d4d80e28becc36341c9ea260e3014", "groups": 1, "operations": 6, "deployment": { "backend": "0e15f141-39d9-4d3d-8990-6a61cff05a6e", "frontend": "56cdf2bc-0765-4c90-a5ca-621124f94150", "commit": "d611a533" } }
+  },
+  "publishedOn": "2026-09-14",
+  "locales": ["es", "en", "pt", "cs", "ro", "de"],
+  "commercialPages": {
+    "services": [
+      "consulta-flebologia-y-linfologia (all locales)",
+      "consulta-diagnotico-vascular (all locales)",
+      "consulta-medica-online (EN hero)",
+      "consulta-piel-online (CS title, description, hero)"
+    ],
+    "doctorProfiles": ["dr-leandro-wang (all locales)"]
+  },
+  "measurement": {
+    "day30": "2026-10-14",
+    "day60": "2026-11-13",
+    "day90": "2026-12-13",
+    "note": "Accuracy change (non-specialist wording, same-day promises removed). Watch the two vascular services and Wang's profile for impression/CTR loss on 'especialista' queries; read against phase 1-4 cohorts."
+  }
+}

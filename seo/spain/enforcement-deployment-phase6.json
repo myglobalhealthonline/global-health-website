@@ -1,0 +1,9 @@
+{
+  "deploymentId": "0e15f141-39d9-4d3d-8990-6a61cff05a6e",
+  "service": "Backend (Railway Production)",
+  "status": "SUCCESS",
+  "commit": "d611a533",
+  "branch": "main",
+  "frontendDeploymentId": "56cdf2bc-0765-4c90-a5ca-621124f94150",
+  "note": "Carries the Spain gate with phase-6 approved states for manifest cda73159 (Dr. Leandro Wang public DoctorMarketTranslation rows, six locales). IDs read from the Railway CLI."
+}

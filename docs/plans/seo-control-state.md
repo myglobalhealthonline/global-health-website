@@ -9793,7 +9793,15 @@ publicly verified. The "Remaining" list below is historical.
 
 ### 56.12 Phase 5 and owner follow-ups (14 September 2026)
 
-**Status (updated ~17:15Z): phase 5 LIVE except Wang's public profile; phase 6 prepared.**
+**Status (updated ~17:35Z): phases 5 and 6 LIVE.** Phase 6 approval recorded by the owner
+(`d611a533`, reviewedAt 17:17:33Z); deploy Backend `0e15f141-39d9-4d3d-8990-6a61cff05a6e` /
+Frontend `56cdf2bc-0765-4c90-a5ca-621124f94150`; `run-rollout.ps1 -Phase 6` applied and
+API-verified Wang's six public profile rows. Live HTML es/en/de/ro: old specialist wording 0, new
+wording present. Cohort dates unchanged (2026-10-14 / 2026-11-13 / 2026-12-13). Open owner item:
+set Service `kind` from SPECIALIST to general for `consulta-flebologia-y-linfologia` and
+`consulta-diagnotico-vascular` in admin (drives the "Specialist care" eyebrow).
+
+Earlier status (~17:15Z): phase 5 LIVE except Wang's public profile; phase 6 prepared.
 - Approval recorded by the owner (`e7b4a564`, reviewedAt 16:39:47Z). Deploy Backend
   `4b1b2121-fbb3-4f95-8bf4-d916d8d0f10d` / Frontend `db5745f0-be68-45bb-8e04-354e8d6f4d9f`
   (also ships the certificate retitle). Receipt `seo/spain/enforcement-deployment-phase5.json`.
@@ -10243,3 +10251,6 @@ the same manifest and hash; it refuses if content changed after this apply.
 - spain group text:service:cmre7pwwv0000ngjuwvmiacw9: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmre7pwwv0000ngjuwvmiacw9-applied.json.
 
 - spain group text:service:cmre7q4co001yngjucbez1gc0: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-service-cmre7q4co001yngjucbez1gc0-applied.json.
+
+- spain group text:doctor:cmrdpx4ah001r01rupv1od828: database committed; public verification pending. Receipt: seo/spain/raw/rollout/text-doctor-cmrdpx4ah001r01rupv1od828-applied.json.
+- seo/spain phase 6 group text:doctor:cmrdpx4ah001r01rupv1od828: public verification passed 2026-09-14T17:23:46.0958078Z. Receipt: seo/spain/raw/rollout/phase6/text-doctor-cmrdpx4ah001r01rupv1od828-public.json.
