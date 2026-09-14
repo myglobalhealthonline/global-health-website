@@ -100,8 +100,10 @@ export async function PublicShell({
 
   // Organization `sameAs` — the active country's official authorities (IMC,
   // ERS, OM, DPC, CNPD…). This is the JSON-LD authority signal that earns
-  // AI-search citation. Outside a country scope it stays empty.
-  const organizationSameAs = activeTrust
+  // AI-search citation. Outside a country scope it stays empty — including the
+  // global root, where the edge header falls back to Ireland; only a country
+  // slug in the URL may attach one market's regulators to the organization.
+  const organizationSameAs = activeTrust && urlCountryCode
     ? activeTrust.authorityLinks.filter((l) => l.showInSchema).map((l) => l.url)
     : [];
 

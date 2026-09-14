@@ -5814,8 +5814,8 @@ the prior measurement, confirmed still not a bottleneck.
 | Médico general / consulta online | Real, largest (669+87+54 impr) | Best pos 22.1 | Yes (supportive cluster) | New (first crawl 07-17) | Hard wall (insurers + aggregators + AI Overview) | High in theory | SERP-BUSINESS WALL | MONITOR only |
 | Salud mental online | Minimal (3 impr) | n/a | Yes | New | Untested, too small | Low | Low-data | MONITOR |
 | `/spain/en/…consulta-medica-online` | Small, non-resident (7 clicks/514 impr) | Flat | Wrong-locale for the bulk; sliver legit | Established, plateaued | n/a | Negligible | Minor, non-blocking | MONITOR |
-| 3 vascular/phlebology services (diagnóstico vascular, flebología/linfología, salud vascular circulatoria) | **D — none found** (0 property-wide Spanish-query GSC hits, 16mo; no source content anywhere in DB) | n/a | n/a (correctly noindexed) | Not indexed | Not run — demand gate not met | None demonstrated | Content-completion gate | NO MATERIAL DEMAND — not an SEO candidate |
-| Medicina estética service | **C — SERP/business-model wall** (0 demand; SERP is 100% professional-training intent, not patient intent) | n/a | n/a (correctly noindexed) | Not indexed | Tested — wrong audience, not just competitive | None viable via this query | Content gate + wrong intent | NOT ACTIONABLE — wrong-intent wall, not a content-completion opportunity |
+| 3 vascular/phlebology services (diagnóstico vascular, flebología/linfología, salud vascular circulatoria) | **D — none found** (0 property-wide Spanish-query GSC hits, 16mo; no source content anywhere in DB) | n/a | n/a (was noindexed; **superseded 2026-09-14, §56.4–56.12: all live, indexable, localized**) | Not indexed at 2026-08-13 | Not run — demand gate not met | None demonstrated | Content-completion gate (closed) | NO MATERIAL DEMAND — not an SEO growth candidate |
+| Medicina estética service | **C — SERP/business-model wall** (0 demand; SERP is 100% professional-training intent, not patient intent) | n/a | n/a (was noindexed; **superseded 2026-09-14, §56.4: live, indexable, localized**) | Not indexed at 2026-08-13 | Tested — wrong audience, not just competitive | None viable via this query | Content gate + wrong intent | NOT ACTIONABLE — wrong-intent wall, not a content-completion opportunity |
 | Other 17 active ES service pages | Zero Spain-country demand | 0 impr each | Yes | New | Untested | n/a | NO MATERIAL DEMAND | MONITOR |
 | Tomás Ruiz Palacios (doctor) | Real, strong (pos 2.2–2.4) | Already winning | Yes | Established | n/a | High CTR, low volume | None | NO ACTION |
 | Luz Marina Zuluaga Ríos (doctor) | Evaporated (3 impr/90d) | Not reproducible | n/a | n/a | n/a | Negligible now | Was low-data noise | CORRECTION, not a candidate |
@@ -9842,6 +9842,30 @@ Owner answers on 14 September, applied or prepared as follows.
 - **Next.** Record approval → commit → sync `main` → record deployment → `run-rollout.ps1 -Phase 5`
   → cohort and ledger update. Scheduled reads unchanged (18 and 24 September; 14 October, 13
   November, 13 December).
+
+### 56.13 Spain audit cross-check and remaining mechanical fixes (14 September 2026)
+
+Cross-check of every Spain recommendation (§19, §43, §52–53, §56, §58, `seo/spain/` reports,
+six-market audit, editorial plan §7, indexation plan §2/§5) against live site and API.
+All content phases 1–6 and their follow-ups are live (audit: 912 stored fields match, 804 API
+checks, 0 failures). Remaining mechanical items fixed:
+
+- ES/PT/CS/RO/DE booking page showed hardcoded English "View" → localized `bookPage.viewService`.
+- Legal sub-pages gain BreadcrumbList JSON-LD (SMA-16).
+- Trailing period removed from `legalPage.heroAccent` ("Información legal. · España", SMA-21).
+- Core-page SEO unit test now runs market-agnostic assertions for all six markets (SMA-15).
+  Commit `11e50ae1`; tsc 0 errors; 97/97 targeted tests.
+- Global root Organization `sameAs` no longer inherits Ireland's regulators through the edge
+  fallback header; country pages keep their own (Spain: cgcom.es, aepd.es). Owner chose
+  per-market regulators with a neutral root (§52.6).
+- §19.13 vascular/aesthetic "correctly noindexed" rows annotated as superseded.
+
+Still open, needing fresh GSC/OpenSEO data and clinical approval before any write: striking-
+distance snippets (SMA-05/14), dermatology and online-vs-in-person updates (editorial §7.3),
+preparation/limitations content (day 60/90). Doctor-portal sick-leave labels (DE
+`documentCertificate`, ES `cardAbsenceDesc`) are portal wording, not SEO. Skipped by design:
+§53 sick-leave expansion, new "médico online España" page, neurology/paediatric specialist pages,
+indexing requests, backlink buying.
 
 ## 57. Brazil evidence and guarded preparation — 13 September 2026
 
