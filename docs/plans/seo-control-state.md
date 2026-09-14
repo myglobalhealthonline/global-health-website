@@ -9525,6 +9525,90 @@ verification).
 3. The owner authorizes the enforcement deployment and production writes.
 4. Run groups sequentially, verifying each publicly.
 
+### 56.8 Spain sick-leave wording review (14 September 2026)
+
+**Status: REVIEW ONLY. The owner agreed the classification.** No database write,
+content push, deployment or indexation action was made. Full inventory, exact quotes
+and draft copy: [sick-leave wording review](../../seo/spain/sick-leave-wording-review-2026-09-14.md).
+
+**Legal basis.** BOE Real Decreto 625/2014, art. 2.1, was checked on 14 September. For
+contingencias comunes, the parte de baja is issued by the public health service
+doctor. For contingencias profesionales, it is issued by the mutua or a collaborating
+company. A private consultation cannot issue baja, confirmación or alta.
+
+**Scope.** 422 live Spain URLs (HTTP 200) were fetched on 14 September in es/en/pt/cs/ro/de.
+Visible text and JSON-LD were searched for sick-leave terms in each locale. The public
+API was used for `justificante-medico-online` and `consulta-medica-online`.
+- Not covered: 12 URLs returning 404, booking and logged-in flows, emails, and the
+  issued certificate template.
+
+**Classification (per locale URL).**
+- **Implies statutory leave — 43 URLs.**
+  - Home services bullet ×6.
+  - Olivas, Ocampo, Brito and Tahir profiles ×24 ("bajas médicas" / "medical leave").
+  - `es/doctors` FAQ, which answers "Sí" to "bajas laborales".
+  - GP service ×6: FAQ `cmre7px5i0004ngjugfol80qo` says a private certificate
+    "acredite la incapacidad temporal". Also affected: ES ServiceLink
+    `cmre7rgl80000g8jufspbvv3k` and the EN "sick notes" bullet.
+  - Justificante service ×6:
+    - Rendered meta keyword "baja médica privada online España".
+    - "Certificado de incapacidad laboral" descriptions (DE
+      "Arbeitsunfähigkeitsbescheinigung").
+    - The note described as a "certificado médico de incapacidad temporal".
+    - A baja "a través de la mutua" for common illness (inaccurate).
+    - Payment days wrong: "tres primeros a cargo de la empresa"; days 1–3 are unpaid
+      unless the convenio says otherwise, and the employer pays days 4–15.
+    - "Plena validez legal".
+    - DE/PT mutua mistranslations.
+- **Ambiguous — 23 URLs.**
+  - Medical disclaimer ×6: ES is indexable; the other five are noindex and render the
+    ES text.
+  - About ×6 and contact ×6: they attribute the baja to INSS, never say no, and omit
+    the mutua.
+  - Psychiatry "informes para incapacidad" ×5.
+- **Accurate.** Anxiety sick-leave article ×6 and its teasers; ES/EN FAQ pages;
+  medical-review policy; the justificante "no puede hacer" list; paediatric school notes.
+
+**GSC.** No fresh pull was possible: the local Google API config is missing and the
+browser is not signed in. Evidence is the complete final 13 September exports.
+- **13 Aug–9 Sep, articles:** the six sick-leave articles have 16 clicks / 1,220
+  impressions (ES 10/922).
+- **13 Aug–9 Sep, justificante services:** 2/235, against 3/176 in 16 Jul–12 Aug. ES
+  justificante has no row in either window.
+- **Disclosed ES article queries:** all 34 are statutory intent. Examples: "mi médico no
+  me da la baja por ansiedad" 41 impressions at position 8.6; "me ha llamado la mutua"
+  13 + 8.
+- **Private-note queries on service pages:** about 13 impressions ("doctors note spain
+  same day", "online ärztliches attest").
+- **Conclusion:** commercial-fit hold confirmed. The expectation risk comes from
+  on-site copy, not search demand.
+
+**Draft replacement copy** exists in all six locales and points statutory leave to the
+public health service or the mutua. It is AI-drafted and **not clinically approved**.
+J5/J6 (public-system facts, validity) and the medical disclaimer also need legal review.
+- **Priority 1:** GP FAQ, justificante statutory wording and keywords, doctor profiles.
+- **Priority 2:** home bullet, `es/doctors` FAQ, justificante facts, validity and hero.
+- **Priority 3:** disclaimer, about/contact, psychiatry.
+
+**Write paths.**
+- Services, links and profiles: the existing Spain CMS runner.
+- Home bullet and `es/doctors` FAQ: page content, which §56.3 says the runner does not
+  govern.
+- Disclaimer: legal document writer.
+- About/contact: frontend code (`frontend/lib/content/country-contact.ts`), code PR.
+
+**Next.**
+1. Owner arranges clinical approval of the draft packet, and legal review for J5, J6
+   and the disclaimer.
+2. Build a guarded manifest for the approved service/profile groups; run
+   dry-run → apply → public verification; update this ledger per group.
+3. Check the issued certificate template for "incapacidad temporal" wording.
+4. Re-authorise the Google API / OpenSEO before a fresh-window read.
+
+SEO-SPAIN-002 is unchanged: no cluster expansion, and the September 18 daily read and
+September 24 global inspection stand. No cohort is registered, because nothing was
+published.
+
 ## 57. Brazil evidence and guarded preparation — 13 September 2026
 
 Research and local preparation complete for the first staffed service/profile batch;
