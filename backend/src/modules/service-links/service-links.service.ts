@@ -3,7 +3,6 @@ import { Prisma, type LocaleCode, type ServiceLinkType } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
-import { resolveTranslation } from "../shared/resolve-translation.js";
 import type { ServiceLinksReplaceBody } from "../../validations/service-links.schema.js";
 
 const DOCTOR_LINK_TX = { maxWait: 10_000, timeout: 20_000 } as const;
@@ -153,14 +152,15 @@ const publicLinkInclude = {
 } satisfies Prisma.ServiceLinkInclude;
 
 /**
- * Public: active links for a service, locale-merged (requested → default →
- * first) and ordered by type priority then `priority`. Max 4 enforced here so
- * every consumer (page + sitemap) honors Rule 4.
+ * Public: active links for a service in the requested locale only, ordered by
+ * type priority then `priority`. A link with no translation for that locale is
+ * dropped — unlike page copy, a callout never falls back to the market default,
+ * which rendered e.g. Spanish cards on /spain/en. Max 4 enforced here so every
+ * consumer (page + sitemap) honors Rule 4.
  */
 export async function resolveServiceLinksForPage(
   sourceServiceId: string,
   requested: LocaleCode,
-  defaultLocale: LocaleCode,
 ): Promise<PublicServiceLink[]> {
   const rows = await prisma.serviceLink.findMany({
     where: { sourceServiceId, isActive: true },
@@ -168,7 +168,7 @@ export async function resolveServiceLinksForPage(
   });
   const mapped = rows
     .map((row) => {
-      const { tr } = resolveTranslation(row.translations, requested, defaultLocale);
+      const tr = row.translations.find((t) => t.locale === requested);
       if (!tr) return null;
       return {
         id: row.id,

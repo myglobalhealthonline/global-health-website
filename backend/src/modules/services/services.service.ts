@@ -1334,12 +1334,8 @@ export async function getPublicServiceBySlug(
     const faqs = row.faqs.map((faq) =>
       mergeFaqTranslation(faq, merged.resolvedLocale, row.country.defaultLocale),
     );
-    // Contextual internal-link callouts (locale-merged, capped at 4).
-    const links = await resolveServiceLinksForPage(
-      row.id,
-      merged.resolvedLocale,
-      row.country.defaultLocale,
-    );
+    // Contextual internal-link callouts (requested locale only, capped at 4).
+    const links = await resolveServiceLinksForPage(row.id, merged.resolvedLocale);
     const assignedDoctorIds = new Set(
       row.assignedDoctors
         .filter(
