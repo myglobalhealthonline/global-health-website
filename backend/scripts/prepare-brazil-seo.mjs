@@ -37,4 +37,12 @@ export function prepareBrazil(snapshot,drafts,sourceFor){
  }catch(e){blockers.push({key,reason:e.message.split('\n')[0]});}}
  return{status:'storage prepared; no approval or publication',country:'br',snapshotSha256:hash(s),draftsSha256:hash(drafts),groups,blockers};
 }
-if(process.argv[1]?.endsWith('prepare-brazil-seo.mjs')){const root='seo/brazil',read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`));const drafts=read('content-briefs/exact-drafts.json');const m=prepareBrazil(read('raw/storage-preflight-2026-09-13.json'),drafts,d=>{const r=read(d.source);return r.data.service??r.data.doctor;});fs.writeFileSync(`${root}/content-briefs/storage-mutation-manifest.json`,JSON.stringify(m,null,2)+'\n');console.log(JSON.stringify({groups:m.groups.length,operations:m.groups.reduce((n,g)=>n+g.changes.length,0),blockers:m.blockers,sha256:hash(m)}));}
+if(process.argv[1]?.endsWith('prepare-brazil-seo.mjs')){const root='seo/brazil',read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`));const drafts=read('content-briefs/exact-drafts.json');
+ // Phase N>1: the same reviewed drafts re-planned against a later snapshot and refreshed public sources.
+ // Draft text is unchanged; only source fingerprints are re-bound, and every `before` value is still asserted.
+ const phase=Number(process.argv.find(a=>a.startsWith('--phase='))?.slice(8)??1),plan=phase>1?read(`content-briefs/phase${phase}-plan.json`):null;
+ const source=d=>{const r=read(plan?`${plan.sources}/${d.source.split('/').pop()}`:d.source);return r.data.service??r.data.doctor;};
+ const planned=plan?drafts.map(d=>({...d,sourceFingerprint:hash(source(d))})):drafts;
+ let m=prepareBrazil(read(plan?plan.snapshot:'raw/storage-preflight-2026-09-13.json'),planned,source);
+ if(plan)m={...m,draftsSha256:hash(drafts),phase,sources:plan.sources};
+ fs.writeFileSync(`${root}/content-briefs/storage-mutation-manifest${plan?`-phase${phase}`:''}.json`,JSON.stringify(m,null,2)+'\n');console.log(JSON.stringify({groups:m.groups.length,operations:m.groups.reduce((n,g)=>n+g.changes.length,0),blockers:m.blockers,sha256:hash(m)}));}

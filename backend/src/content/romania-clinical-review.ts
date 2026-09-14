@@ -563,6 +563,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "b8716bf0dd3afadc7ae7062bef0e7c5a1d0b98ef5113142b0608d32c0d5a9193",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53n1n000amwjufjd0mt0z": [
@@ -571,6 +577,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "774682585b51b2169e1263d1cc2f2588dfd37b6b9429d4be7a22f63dceedce5f",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53rx9001tmwjuheylxq9n": [
@@ -579,6 +591,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "370b70c53c2760a74da6017b6ff1505426ec9dfb43781e43c0707d3db3badf26",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53tja002amwju4a3yubyx": [
@@ -587,6 +605,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "8d8b746748695a505c2d8c52f2ada0b573ce49a2730a77f5656e41e27b7c9ede",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53xm1003kmwjuwuaixgfg": [
@@ -595,6 +619,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "193c077a3ecc111ec7f3d0c6b0d50d06bf42e7b432459d850f23ec5e84e5739b",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53uch002jmwjuj0cs6n1f": [
@@ -603,6 +633,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "03b607172238da592eca10b40f7ace2e8491be79e1444175282f7187481e0ea4",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53vzd0032mwjuyq6qq26r": [
@@ -611,6 +647,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "b20f2685ebde7753da03ffdadcbe0563de8ffd98b579e753307188f4c1c5c525",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53yfs003tmwju9a9kb6n6": [
@@ -619,6 +661,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "2ea14b8ebebf454f04b08a6c37dfeffec888a8bfaba2472baedd1220960c9229",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53nux000jmwjuzhearx4t": [
@@ -627,6 +675,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "7cca4074f9fae9bb6f5f5c0e5d6cbfe9f4dfc49007e5295d578e13f5d95d897f",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53v60002tmwjukdoh6mvz": [
@@ -635,6 +689,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "5988aaa1b49eed722c675b9a6eca00b890318fb29057cddb375a5f7f064881a0",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53phb0012mwjugm5jp41p": [
@@ -643,6 +703,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "10d74947e7317e6225f2b44831507f7b5c3bd9dca901a228f362e8047e3744c0",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53r40001kmwjug6ly0nla": [
@@ -651,6 +717,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "40a8f8530028096e75f0662de5d0e2b7d51aa692e01a1fcc398e03955d3d2e0c",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53qak001bmwju7ufg2pb5": [
@@ -659,6 +731,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "650b81790b1939b7891a9622f0fb10f2bf33f1791cbede9d5d9e7d9b828bfca4",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53z930043mwjumjntd7c9": [
@@ -667,6 +745,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "b8a22d1d50bc43ff1544bd37bfda11e69287cb9872dae78418f7b7a2fd2ef56d",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53onw000smwjugx2rt50j": [
@@ -675,6 +759,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "892b76953cb422b678608312caf4c4539290cedb6f4b6b075aa6ee2b48cdddaa",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf54032004dmwjuodh62mcc": [
@@ -683,6 +773,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "2535523cbf2d04c757159ef5a022c6c4fd7a11d8ec75f782eeeace6692a08854",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53sq40021mwjuiu3pf1z7": [
@@ -691,6 +787,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "b6541685668845e856457cbc113b8603704038ad12a26fddb4a96cb81b4d0b31",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ],
   "service:cmrf53wsr003bmwjuz15y0o32": [
@@ -699,6 +801,20 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T05:08:32.516Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-14 that Dr. Renato Sarmento approved the service summaries in phase-3 manifest 06e665c2c95c4af79516280794b6cc8a50570146fdf3a4222d8b20921761e441. No written record."
+    },
+    {
+      "stateSha256": "30f1b24f2e72cedc9b26edc3c8b651471da3c12f0ac4ceb603e7141a4e2068cc",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
+    }
+  ],
+  "doctor:cmqyzr0fb000o01lu9deh6mf5": [
+    {
+      "stateSha256": "599ea8de89fda337ee12712f91ec2544cf5bea2a8dae71153041807ebc19ab36",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-14T21:24:30.383Z",
+      "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
     }
   ]
 };

@@ -1,0 +1,127 @@
+{
+  "status": "owner-confirmed approval",
+  "manifestSha256": "f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880",
+  "supersedesManifestSha256": "c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640",
+  "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+  "reviewerName": "Dr. Renato Sarmento",
+  "additionalReportedReviewer": "Dr tiago",
+  "reviewedAt": "2026-09-14T21:24:30.383Z",
+  "maxAgeDays": 365,
+  "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record.",
+  "groups": [
+    {
+      "key": "service:solicitacao-exames-online",
+      "approvedSha256": "6ed163fe676cebf3894ef13469493684d731acaf039c3208de07ca06d9f28f20",
+      "stateKey": "service:cmrf53wsr003bmwjuz15y0o32",
+      "resultingStateSha256": "30f1b24f2e72cedc9b26edc3c8b651471da3c12f0ac4ceb603e7141a4e2068cc"
+    },
+    {
+      "key": "service:consulta-clinica-online",
+      "approvedSha256": "ddd47cf1ba2aaf5792acf4c558feec15dc918aa2fdf5a948f9703ec364a6a5b6",
+      "stateKey": "service:cmrf53m7j0000mwjud779ur6k",
+      "resultingStateSha256": "b8716bf0dd3afadc7ae7062bef0e7c5a1d0b98ef5113142b0608d32c0d5a9193"
+    },
+    {
+      "key": "service:renovacao-receita-online",
+      "approvedSha256": "593395b8be370242b2cdd25710bf1f5213172ad80cf1c12449ed05d7cda3e279",
+      "stateKey": "service:cmrf53nux000jmwjuzhearx4t",
+      "resultingStateSha256": "7cca4074f9fae9bb6f5f5c0e5d6cbfe9f4dfc49007e5295d578e13f5d95d897f"
+    },
+    {
+      "key": "service:atestado-medico-online",
+      "approvedSha256": "357f4c25b2c453f0c2442901e228acab04c936f5b6fb832547aaac2ed5b6ec9c",
+      "stateKey": "service:cmrf53n1n000amwjufjd0mt0z",
+      "resultingStateSha256": "774682585b51b2169e1263d1cc2f2588dfd37b6b9429d4be7a22f63dceedce5f"
+    },
+    {
+      "key": "doctor:dr-renato-sarmento",
+      "approvedSha256": "7d77b965e9af288575c0b13496383e0ff904354977b1312895250030b154bca7",
+      "stateKey": "doctor:cmqyzr0fb000o01lu9deh6mf5",
+      "resultingStateSha256": "599ea8de89fda337ee12712f91ec2544cf5bea2a8dae71153041807ebc19ab36"
+    },
+    {
+      "key": "service:consulta-pele-online",
+      "approvedSha256": "7fa335f4860710f77c831470dd623df3c235a5d92b9cda11fef843ed2fb9f2d3",
+      "stateKey": "service:cmrf53rx9001tmwjuheylxq9n",
+      "resultingStateSha256": "370b70c53c2760a74da6017b6ff1505426ec9dfb43781e43c0707d3db3badf26"
+    },
+    {
+      "key": "service:controle-peso-online",
+      "approvedSha256": "2a83eba21a407b6b8990da93becde37fe10eb0d3f487289ce3a96ab294cf6714",
+      "stateKey": "service:cmrf53xm1003kmwjuwuaixgfg",
+      "resultingStateSha256": "193c077a3ecc111ec7f3d0c6b0d50d06bf42e7b432459d850f23ec5e84e5739b"
+    },
+    {
+      "key": "service:doencas-cronicas-online",
+      "approvedSha256": "8f8dcf9077eec129fc1b9993ee95809783ef3506ee58d6ff17fd8088e43231dc",
+      "stateKey": "service:cmrf53uch002jmwjuj0cs6n1f",
+      "resultingStateSha256": "03b607172238da592eca10b40f7ace2e8491be79e1444175282f7187481e0ea4"
+    },
+    {
+      "key": "service:musculoesqueletico-online",
+      "approvedSha256": "29f76cbb17557a693990e718ea312a28e4259a7aa6f02b24656d816760f6a64a",
+      "stateKey": "service:cmrf53vzd0032mwjuyq6qq26r",
+      "resultingStateSha256": "b20f2685ebde7753da03ffdadcbe0563de8ffd98b579e753307188f4c1c5c525"
+    },
+    {
+      "key": "service:parar-de-fumar-online",
+      "approvedSha256": "aad1673709aaa7be6be9855c01d87d3bf7a1efff1dbe49c6fa3a3bd0efccee44",
+      "stateKey": "service:cmrf53yfs003tmwju9a9kb6n6",
+      "resultingStateSha256": "2ea14b8ebebf454f04b08a6c37dfeffec888a8bfaba2472baedd1220960c9229"
+    },
+    {
+      "key": "service:pediatria-online",
+      "approvedSha256": "a46f95228a79fde011a7e66d45956143605d44c0b1c228d15b8cd393b5310e86",
+      "stateKey": "service:cmrf53tja002amwju4a3yubyx",
+      "resultingStateSha256": "8d8b746748695a505c2d8c52f2ada0b573ce49a2730a77f5656e41e27b7c9ede"
+    },
+    {
+      "key": "service:queda-cabelo-online",
+      "approvedSha256": "ad2fb151766e67ef028853795e283fcb83a0ce763429ebe1d1ec5a04556afab7",
+      "stateKey": "service:cmrf53v60002tmwjukdoh6mvz",
+      "resultingStateSha256": "5988aaa1b49eed722c675b9a6eca00b890318fb29057cddb375a5f7f064881a0"
+    },
+    {
+      "key": "service:saude-da-mulher-online",
+      "approvedSha256": "2432cc2acd05201a2745646bf7f08445fe034918a881ccc6071d0b837f25b13a",
+      "stateKey": "service:cmrf53phb0012mwjugm5jp41p",
+      "resultingStateSha256": "10d74947e7317e6225f2b44831507f7b5c3bd9dca901a228f362e8047e3744c0"
+    },
+    {
+      "key": "service:saude-do-homem-online",
+      "approvedSha256": "a98cfbdf75761d0620a691ef8aefb2bc2b3d5c9bd458fb41c93d0b00f27f6295",
+      "stateKey": "service:cmrf53qak001bmwju7ufg2pb5",
+      "resultingStateSha256": "650b81790b1939b7891a9622f0fb10f2bf33f1791cbede9d5d9e7d9b828bfca4"
+    },
+    {
+      "key": "service:saude-idoso-online",
+      "approvedSha256": "e48873022049a829cf739fb0b2df8b9b6789f2626c1d27889d95ae4ab4407d82",
+      "stateKey": "service:cmrf53z930043mwjumjntd7c9",
+      "resultingStateSha256": "b8a22d1d50bc43ff1544bd37bfda11e69287cb9872dae78418f7b7a2fd2ef56d"
+    },
+    {
+      "key": "service:saude-mental-online",
+      "approvedSha256": "b78929b68c435f0905d540ce40cbb7d1b372514251c93e0b029b38dde5b71d4d",
+      "stateKey": "service:cmrf53onw000smwjugx2rt50j",
+      "resultingStateSha256": "892b76953cb422b678608312caf4c4539290cedb6f4b6b075aa6ee2b48cdddaa"
+    },
+    {
+      "key": "service:saude-sexual-ist-online",
+      "approvedSha256": "4a151011fb08e5257143b5634d882af2e37f821b849c688964208e176b0fe0b6",
+      "stateKey": "service:cmrf54032004dmwjuodh62mcc",
+      "resultingStateSha256": "2535523cbf2d04c757159ef5a022c6c4fd7a11d8ec75f782eeeace6692a08854"
+    },
+    {
+      "key": "service:saude-viagem-online",
+      "approvedSha256": "c3d54aae6ac19c6196654dc3835c7b6593eb9b65bf5486b9818248901bb459bf",
+      "stateKey": "service:cmrf53r40001kmwjug6ly0nla",
+      "resultingStateSha256": "40a8f8530028096e75f0662de5d0e2b7d51aa692e01a1fcc398e03955d3d2e0c"
+    },
+    {
+      "key": "service:segunda-opiniao-medica",
+      "approvedSha256": "bccbc79babef3c54ef301eafceadbfcb682efa05b33e331a4c235710ca32f801",
+      "stateKey": "service:cmrf53sq40021mwjuiu3pf1z7",
+      "resultingStateSha256": "b6541685668845e856457cbc113b8603704038ad12a26fddb4a96cb81b4d0b31"
+    }
+  ]
+}
