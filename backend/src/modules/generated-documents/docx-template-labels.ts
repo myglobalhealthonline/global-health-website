@@ -171,7 +171,8 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     registrationUnverified: "no verificado",
     signatureLine: "Firma del prescriptor",
     examsTitle: "Pruebas solicitadas",
-    absenceTitle: "Período de baja médica",
+    // Spain: a private note is never a parte de baja (RD 625/2014), so avoid "baja" wording.
+    absenceTitle: "Período de ausencia",
     prescriptionTitle: "Prescripción",
     additionalNotes: "Notas adicionales",
     pharmacy: "Farmacia",
@@ -197,7 +198,7 @@ export const TEMPLATE_LABELS: Record<string, TemplateLabels> = {
     uploadHint: "Escanee para subir de forma segura los resultados de sus pruebas a Global Health",
     confidentialNote:
       "Este documento contiene información médica confidencial destinada únicamente al paciente indicado.",
-    docTitleAbsence: "Certificado de Baja Médica",
+    docTitleAbsence: "Justificante Médico de Ausencia",
     docTitleExams: "Prescripción de Pruebas",
     docTitlePrescription: "Receta Médica",
     docTitleAttendance: "Certificado de Asistencia Médica",
