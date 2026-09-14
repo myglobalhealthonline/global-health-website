@@ -22,7 +22,10 @@ export function verifyPage(before,after,draft,links=[],{localizedUrls}={}){
   assert.equal(after.robots,before.robots,'Robots changed');
   assert.deepEqual(after.hreflang,before.hreflang,'Alternates changed');
  }
- assert.equal(after.title,draft?.after.seoTitle??before.title,'Title mismatch');
+ // buildPublicMetadata appends " · Global Health" when the stored title plus brand fits 60 chars,
+ // so a shortened stored title can legitimately render with the brand.
+ const title=draft?.after.seoTitle??before.title;
+ assert(after.title===title||after.title===`${title} · Global Health`,`Title mismatch: ${after.title} !== ${title}`);
  assert.equal(after.description,draft?.after.seoDescription??before.description,'Description mismatch');
  assert.deepEqual(after.h1,draft?.after.heroTitle?[draft.after.heroTitle]:before.h1,'H1 mismatch');
  const expected=normalized(before.faqs);

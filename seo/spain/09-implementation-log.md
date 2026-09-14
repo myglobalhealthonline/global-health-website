@@ -59,3 +59,14 @@ booking step 1; no booking was made.
 
 Luz and Fidel remain held. The cohort and 30/60/90-day dates are in
 publication-cohort-2026-09-14.json and ledger §56.6.
+
+## Phase 2 live (14 September 2026)
+
+Phase 2 published 8 groups (41 operations): Luz's profile and six services, on an owner
+hold override, and Tomás's registration typo correction (MUO5691 to MU05691 in 12
+fields). They went live 04:22–04:35Z on Backend 712e7380 / Frontend fe3726f0
+(main 6b4da640).
+
+All groups were publicly verified. Operational fields for 28 sources are unchanged,
+and Tomás's API shows no remaining MUO5691. Receipts are in raw/rollout/phase2/
+(local). Only Fidel's groups remain held. Ledger §56.7.

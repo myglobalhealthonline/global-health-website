@@ -8,12 +8,13 @@ $root = 'seo/spain'
 function Write-Json($path, $text) { [IO.File]::WriteAllText((Join-Path (Get-Location) $path), $text, (New-Object Text.UTF8Encoding $false)) }
 $manifestFile = if ($Phase -eq 2) { "$root/content-briefs/storage-mutation-manifest-phase2.json" } else { "$root/content-briefs/storage-mutation-manifest.json" }
 $rollout = if ($Phase -eq 2) { "$root/raw/rollout/phase2" } else { "$root/raw/rollout" }
-$phaseArgs = if ($Phase -eq 2) { @('--phase=2') } else { @() }
+# Force an array: a one-element result of `if` unrolls to a string, which splats as nothing.
+$phaseArgs = @(if ($Phase -eq 2) { '--phase=2' })
 $manifest = Get-Content $manifestFile -Raw | ConvertFrom-Json
 
 # Deployed enforcement receipt (operator attestation of the Railway deployment carrying the approved states).
 $receipt = if ($Phase -eq 2) { "$root/enforcement-deployment-phase2.json" } else { "$root/enforcement-deployment.json" }
-if (-not (Test-Path $receipt)) { throw "Missing $receipt: record the Railway deployment that carries the approved states first." }
+if (-not (Test-Path $receipt)) { throw "Missing ${receipt}: record the Railway deployment that carries the approved states first." }
 
 foreach ($group in $manifest.groups) {
   $key = $group.key; $stem = $key.Replace(':','-'); $applied = "$rollout/$stem-applied.json"

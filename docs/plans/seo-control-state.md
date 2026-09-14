@@ -9465,8 +9465,35 @@ unchanged, and now also serve as the first post-publication index/crawl check.
 
 ### 56.7 Spain phase 2 — Luz groups and Tomás registration typo (14 September 2026)
 
-**Status:** prepared, approved and pushed (`2c1fd66e` on Dev-hassaan). The owner pushes
-`main`; publication follows the deploy.
+**Status: LIVE.** All 8 phase-2 groups (41 operations) were applied and publicly
+verified on 14 September 2026, from `04:22:45Z` (first write) to `04:35:11Z` (last
+verification).
+
+- **Deployment.** The owner merged to `main` at `6b4da640`, which contains `2c1fd66e`.
+  Railway Backend `712e7380-b0e5-4acc-9028-259a561cfdae` and Frontend
+  `fe3726f0-7716-4da6-b49c-fe7f90f21883` show SUCCESS, and `/ready` returns ok. The
+  receipt is `seo/spain/enforcement-deployment-phase2.json`.
+- **Proof.**
+  - The live API for all 28 phase-2 sources matches the 13 September evidence exactly:
+    price, duration, currency, assigned doctors, languages, active flag and slug.
+  - Tomás's API returns 0 `MUO5691` and 6–8 `MU05691` per locale.
+  - Browser check: the ES profile title and qualification show "nº MU05691". The EN
+    GP service shows the new title "Online GP consultation in Spain", with €39/15 min
+    and booking unchanged. No booking was made.
+- **Verifier fixes during the run.**
+  - The run script now passes `--phase=2` to every step.
+  - The title check accepts the site's " · Global Health" suffix, which
+    `buildPublicMetadata` adds when a stored title plus brand fits in 60 characters.
+  - One transient frontend 500 on Luz's profile ("backend unavailable") cleared on
+    retry.
+- **Observation, not changed.** The EN GP service hero lede still promises same-day
+  documentation and "without a waiting room". Its draft changed only the title,
+  description and H1, so the hero is a candidate for a later approved edit.
+- **Cohort.** [publication-cohort-phase2-2026-09-14.json](../../seo/spain/publication-cohort-phase2-2026-09-14.json).
+  Checks fall on day 30 (2026-10-14), day 60 (2026-11-13) and day 90 (2026-12-13),
+  the same dates as phase 1.
+- **Spain holds now.** Only Fidel's profile and cardiology remain, pending his
+  availability.
 
 - **Luz Marina Zuluaga Ríos.** The owner (super admin) instructed publication of her
   profile and six drafted services, overriding the hold. CGCOM still listed "Médico de
@@ -9735,3 +9762,27 @@ the same manifest and hash; it refuses if content changed after this apply.
 
 - spain group link:cmre7u1jt005mg8jutxyy9pz0: database committed; public verification pending. Receipt: seo/spain/raw/rollout/link-cmre7u1jt005mg8jutxyy9pz0-applied.json.
 - Spain group link:cmre7u1jt005mg8jutxyy9pz0: public HTML/FAQ/schema verified 2026-09-14T02:53:08.7116719Z. Receipt: seo/spain/raw/rollout/link-cmre7u1jt005mg8jutxyy9pz0-public.json.
+
+- spain group service:consulta-medica-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-medica-online-applied.json.
+- Spain phase 2 group service:consulta-medica-online: public verification passed 2026-09-14T04:23:21.3132162Z. Receipt: seo/spain/raw/rollout/phase2/service-consulta-medica-online-public.json.
+
+- spain group doctor:dr-luz-marina-zuluaga-rios: database committed; public verification pending. Receipt: seo/spain/raw/rollout/doctor-dr-luz-marina-zuluaga-rios-applied.json.
+- Spain phase 2 group doctor:dr-luz-marina-zuluaga-rios: public verification passed 2026-09-14T04:24:37.2098057Z. Receipt: seo/spain/raw/rollout/phase2/doctor-dr-luz-marina-zuluaga-rios-public.json.
+
+- spain group service:consulta-piel-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-piel-online-applied.json.
+- Spain phase 2 group service:consulta-piel-online: public verification passed 2026-09-14T04:31:24.4855019Z. Receipt: seo/spain/raw/rollout/phase2/service-consulta-piel-online-public.json.
+
+- spain group service:justificante-medico-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-justificante-medico-online-applied.json.
+- Spain phase 2 group service:justificante-medico-online: public verification passed 2026-09-14T04:31:58.7619213Z. Receipt: seo/spain/raw/rollout/phase2/service-justificante-medico-online-public.json.
+
+- spain group service:segunda-opinion-medica: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-segunda-opinion-medica-applied.json.
+- Spain phase 2 group service:segunda-opinion-medica: public verification passed 2026-09-14T04:32:32.8641949Z. Receipt: seo/spain/raw/rollout/phase2/service-segunda-opinion-medica-public.json.
+
+- spain group service:caida-cabello-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-caida-cabello-online-applied.json.
+- Spain phase 2 group service:caida-cabello-online: public verification passed 2026-09-14T04:33:33.0541405Z. Receipt: seo/spain/raw/rollout/phase2/service-caida-cabello-online-public.json.
+
+- spain group service:enfermedades-cronicas-online: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-enfermedades-cronicas-online-applied.json.
+- Spain phase 2 group service:enfermedades-cronicas-online: public verification passed 2026-09-14T04:34:02.1340383Z. Receipt: seo/spain/raw/rollout/phase2/service-enfermedades-cronicas-online-public.json.
+
+- spain group correction:dr-tomas-ruiz-palacios:MU05691: database committed; public verification pending. Receipt: seo/spain/raw/rollout/correction-dr-tomas-ruiz-palacios-MU05691-applied.json.
+- Spain phase 2 group correction:dr-tomas-ruiz-palacios:MU05691: public verification passed 2026-09-14T04:35:11.8350007Z. Receipt: seo/spain/raw/rollout/phase2/correction-dr-tomas-ruiz-palacios-MU05691-public.json.

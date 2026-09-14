@@ -16,6 +16,8 @@ test('public verifier checks exact copy, FAQ schema and obsolete links',()=>{
  const draft={after:{seoTitle:'New'},addedFaqs:[{question:'Q?',answer:'A.'}]};
  const after={...before,title:'New',status:200,finalUrl:before.url,faqs:draft.addedFaqs,schemaFaqs:draft.addedFaqs,links:[],body:''};
  assert.doesNotThrow(()=>verifyPage(before,after,draft));
+ assert.doesNotThrow(()=>verifyPage(before,{...after,title:'New · Global Health'},draft));
+ assert.throws(()=>verifyPage(before,{...after,title:'Old'},draft),/Title mismatch/);
  assert.throws(()=>verifyPage(before,{...after,schemaFaqs:[]},draft),/schema/);
  assert.throws(()=>verifyPage(before,{...after,links:[{href:'/services/obsolete'}]},draft,[{targetSlug:'obsolete'}]),/Obsolete/);
  // Localized service: noindex/no alternates before, indexable with full alternates after.

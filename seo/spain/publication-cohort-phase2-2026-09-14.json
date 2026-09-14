@@ -1,0 +1,58 @@
+{
+  "publishedFrom": "2026-09-14T04:22:45.833Z",
+  "publishedThrough": "2026-09-14T04:35:11.830Z",
+  "manifestSha256": "3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea",
+  "groups": 8,
+  "operations": 41,
+  "commercialPages": {
+    "services": [
+      "https://www.myglobalhealth.online/spain/cs/services/consulta-medica-online",
+      "https://www.myglobalhealth.online/spain/de/services/consulta-medica-online",
+      "https://www.myglobalhealth.online/spain/de/services/consulta-piel-online",
+      "https://www.myglobalhealth.online/spain/de/services/justificante-medico-online",
+      "https://www.myglobalhealth.online/spain/de/services/segunda-opinion-medica",
+      "https://www.myglobalhealth.online/spain/en/services/caida-cabello-online",
+      "https://www.myglobalhealth.online/spain/en/services/consulta-medica-online",
+      "https://www.myglobalhealth.online/spain/en/services/consulta-piel-online",
+      "https://www.myglobalhealth.online/spain/en/services/enfermedades-cronicas-online",
+      "https://www.myglobalhealth.online/spain/en/services/segunda-opinion-medica",
+      "https://www.myglobalhealth.online/spain/es/services/consulta-medica-online",
+      "https://www.myglobalhealth.online/spain/es/services/consulta-piel-online",
+      "https://www.myglobalhealth.online/spain/es/services/justificante-medico-online",
+      "https://www.myglobalhealth.online/spain/es/services/segunda-opinion-medica",
+      "https://www.myglobalhealth.online/spain/pt/services/consulta-medica-online",
+      "https://www.myglobalhealth.online/spain/pt/services/consulta-piel-online",
+      "https://www.myglobalhealth.online/spain/pt/services/justificante-medico-online",
+      "https://www.myglobalhealth.online/spain/pt/services/segunda-opinion-medica",
+      "https://www.myglobalhealth.online/spain/ro/services/consulta-medica-online",
+      "https://www.myglobalhealth.online/spain/ro/services/consulta-piel-online",
+      "https://www.myglobalhealth.online/spain/ro/services/justificante-medico-online",
+      "https://www.myglobalhealth.online/spain/ro/services/segunda-opinion-medica"
+    ],
+    "doctorProfiles": [
+      "https://www.myglobalhealth.online/spain/cs/doctors/dr-luz-marina-zuluaga-rios",
+      "https://www.myglobalhealth.online/spain/cs/doctors/dr-tomas-ruiz-palacios",
+      "https://www.myglobalhealth.online/spain/de/doctors/dr-luz-marina-zuluaga-rios",
+      "https://www.myglobalhealth.online/spain/de/doctors/dr-tomas-ruiz-palacios",
+      "https://www.myglobalhealth.online/spain/en/doctors/dr-luz-marina-zuluaga-rios",
+      "https://www.myglobalhealth.online/spain/en/doctors/dr-tomas-ruiz-palacios",
+      "https://www.myglobalhealth.online/spain/es/doctors/dr-luz-marina-zuluaga-rios",
+      "https://www.myglobalhealth.online/spain/es/doctors/dr-tomas-ruiz-palacios",
+      "https://www.myglobalhealth.online/spain/pt/doctors/dr-luz-marina-zuluaga-rios",
+      "https://www.myglobalhealth.online/spain/pt/doctors/dr-tomas-ruiz-palacios",
+      "https://www.myglobalhealth.online/spain/ro/doctors/dr-luz-marina-zuluaga-rios",
+      "https://www.myglobalhealth.online/spain/ro/doctors/dr-tomas-ruiz-palacios"
+    ]
+  },
+  "articlesOrTools": [],
+  "measurement": {
+    "day30": "2026-10-14",
+    "day60": "2026-11-13",
+    "day90": "2026-12-13",
+    "rule": "Complete final GSC windows; services and profiles separate from articles/tools; validate conversion measurement before reading bookings; no ranking inference from rollout success."
+  },
+  "held": [
+    "doctor:dr-fidel-mesa-prado",
+    "service:cardiologo-online"
+  ]
+}
