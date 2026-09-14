@@ -4,16 +4,21 @@ import {hash,rehearse} from './prepare-romania-seo.mjs';
 import {romanianContentStates} from '../src/content/romania-clinical-review.ts';
 export {hash,rehearse};
 const one=(rows,fn,message)=>{const found=rows.filter(fn);assert.equal(found.length,1,message);return found[0];};
-export function prepareSpain(snapshot,drafts,links,sourceFor){
+// Doctor-owned text a registration-typo correction may rewrite. Credentials beyond the named value stay untouched.
+const correctionFields={doctors:['seoTitle','seoDescription','qualifications'],doctorCountries:['registrationNumber'],doctorMarketTranslations:['seoTitle','seoDescription'],doctorFaqs:['question','answer']};
+export function prepareSpain(snapshot,drafts,links,sourceFor,{keys,overrideHolds={},corrections=[]}={}){
  const s=snapshot.data;assert.equal(s.country.code,'es');assert.equal(s.country.defaultLocale,'ES');
  const groups=[],blockers=[];let state=structuredClone(s);
  // Manifest order: each service followed by its assigned doctors' profiles, remaining profiles, then link removals.
  const draftKeys=[...new Set(drafts.map(d=>d.key))],ordered=[];
- for(const key of draftKeys.filter(k=>k.startsWith('service:')&&!drafts.some(d=>d.key===k&&d.hold))){const svc=s.services.find(x=>`service:${x.slug}`===key);ordered.push(key,...s.assignments.filter(a=>a.serviceId===svc?.id&&a.isActive).map(a=>`doctor:${s.doctors.find(d=>d.id===a.doctorId)?.slug}`));}
- for(const key of [...new Set([...ordered.filter(k=>draftKeys.includes(k)),...draftKeys,...links.map(l=>l.key)])]){
+ for(const key of draftKeys.filter(k=>k.startsWith('service:')&&(overrideHolds[k]||!drafts.some(d=>d.key===k&&d.hold)))){const svc=s.services.find(x=>`service:${x.slug}`===key);ordered.push(key,...s.assignments.filter(a=>a.serviceId===svc?.id&&a.isActive).map(a=>`doctor:${s.doctors.find(d=>d.id===a.doctorId)?.slug}`));}
+ let order=[...new Set([...ordered.filter(k=>draftKeys.includes(k)),...draftKeys,...links.map(l=>l.key)])];
+ if(keys)order=order.filter(k=>keys.includes(k));
+ for(const key of order){
   try{
    const batch=drafts.filter(d=>d.key===key),link=links.find(l=>l.key===key),changes=[];
-   assert(!batch.some(d=>d.hold),batch.find(d=>d.hold)?.hold);
+   // An owner override lifts a recorded hold for this key only; the hold reason stays in the drafts.
+   assert(overrideHolds[key]||!batch.some(d=>d.hold),batch.find(d=>d.hold)?.hold);
    const update=(table,row,after)=>{for(const field of Object.keys(after))assert(field in row,`Missing stored column ${field}`);const changed=Object.fromEntries(Object.entries(after).filter(([k,v])=>row[k]!==v));if(Object.keys(changed).length)changes.push({action:'update',table,id:row.id,before:structuredClone(row),after:changed});};
    const insert=(table,after)=>{assert(!state[table].some(r=>r.id===after.id),'Existing proposed ID');changes.push({action:'insert',table,id:after.id,after});};
    let stateKey;
@@ -69,16 +74,47 @@ export function prepareSpain(snapshot,drafts,links,sourceFor){
    changes.sort((a,b)=>(a.action==='insert'&&a.table==='serviceFaqs'?-1:0)-(b.action==='insert'&&b.table==='serviceFaqs'?-1:0));
    assert(changes.length,'No changes');
    const group={key,stateKey,urls:link?.urls??batch.map(d=>d.url),changes};
+   if(overrideHolds[key])group.holdOverride=overrideHolds[key];
    const next=rehearse(state,group);group.resultingStateSha256=romanianContentStates(next)[stateKey];group.approvalSha256=hash(group);groups.push(group);state=next;
+  }catch(e){blockers.push({key,reason:e.message.split('\n')[0]});}
+ }
+ // Exact-string corrections of a verified registration typo across one doctor's stored rows.
+ for(const c of corrections){
+  const key=`correction:${c.doctorSlug}:${c.to}`;
+  try{
+   assert(c.from&&c.to&&c.from!==c.to&&c.evidence,'Correction needs from, to and evidence');
+   const doctor=one(state.doctors,d=>d.slug===c.doctorSlug,'Missing doctor'),markets=state.doctorCountries.filter(m=>m.doctorId===doctor.id);
+   assert(markets.every(m=>m.countryId===state.country.id),'Shared doctor requires cross-market review');
+   const owned={doctors:[doctor],doctorCountries:markets,doctorMarketTranslations:state.doctorMarketTranslations.filter(t=>markets.some(m=>m.id===t.doctorCountryId)),doctorFaqs:state.doctorFaqs.filter(f=>f.doctorId===doctor.id)};
+   const fix=v=>typeof v==='string'?v.replaceAll(c.from,c.to):Array.isArray(v)?v.map(fix):v,changes=[];
+   for(const [table,rows] of Object.entries(owned))for(const row of rows){
+    const after=Object.fromEntries(correctionFields[table].filter(f=>JSON.stringify(row[f]??null).includes(c.from)).map(f=>[f,fix(row[f])]));
+    if(Object.keys(after).length)changes.push({action:'update',table,id:row.id,before:structuredClone(row),after});
+   }
+   assert(changes.length,'No correction targets');
+   const group={key,stateKey:`doctor:${doctor.id}`,urls:c.urls,correction:{from:c.from,to:c.to,evidence:c.evidence},changes};
+   const next=rehearse(state,group);
+   const residue=JSON.stringify([next.doctors.find(d=>d.id===doctor.id),next.doctorCountries.filter(m=>m.doctorId===doctor.id),next.doctorTranslations.filter(t=>t.doctorId===doctor.id),next.doctorMarketTranslations.filter(t=>markets.some(m=>m.id===t.doctorCountryId)),next.doctorFaqs.filter(f=>f.doctorId===doctor.id)]);
+   assert(!residue.includes(c.from),'Typo remains outside correctable fields');
+   group.resultingStateSha256=romanianContentStates(next)[group.stateKey];group.approvalSha256=hash(group);groups.push(group);state=next;
   }catch(e){blockers.push({key,reason:e.message.split('\n')[0]});}
  }
  return {status:'storage prepared; no approval or publication',country:'es',snapshotSha256:hash(s),draftsSha256:hash(drafts),groups,blockers};
 }
 if(process.argv[1]?.endsWith('prepare-spain-seo.mjs')){
  const root='seo/spain',read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`));const drafts=read('content-briefs/exact-drafts.json'),links=read('content-briefs/link-drafts.json');
- let manifest;
- if(!fs.existsSync(`${root}/raw/storage-preflight-2026-09-13.json`))manifest={status:'awaiting authenticated storage; public drafts only',country:'es',draftsSha256:hash(drafts),groups:[],proposedGroups:[...new Set(drafts.map(d=>d.key)),...links.map(l=>l.key)],blockers:[{key:'storage',reason:'Automatic approval review rejected content snapshot; explicit user confirmation pending.'}]};
- else manifest=prepareSpain(read('raw/storage-preflight-2026-09-13.json'),drafts,links,d=>{const r=read(d.source);return r.data.service??r.data.doctor;});
- fs.writeFileSync(`${root}/content-briefs/storage-mutation-manifest.json`,JSON.stringify(manifest,null,2)+'\n');
- console.log(JSON.stringify({status:manifest.status,groups:manifest.groups.length,blockers:manifest.blockers,manifestSha256:hash(manifest)}));
+ const sourceFor=d=>{const r=read(d.source);return r.data.service??r.data.doctor;};
+ if(process.argv.includes('--phase=2')){
+  // Phase 2 plans only the listed follow-up keys against the post-rollout snapshot; phase 1 files stay untouched.
+  const plan=read('content-briefs/phase2-plan.json');
+  const manifest={...prepareSpain(read(plan.snapshot),drafts,[],sourceFor,plan),phase:2,afterPhase1ManifestSha256:hash(read('content-briefs/storage-mutation-manifest.json'))};
+  fs.writeFileSync(`${root}/content-briefs/storage-mutation-manifest-phase2.json`,JSON.stringify(manifest,null,2)+'\n');
+  console.log(JSON.stringify({phase:2,groups:manifest.groups.map(g=>`${g.key}(${g.changes.length})`),blockers:manifest.blockers,manifestSha256:hash(manifest)}));
+ }else{
+  let manifest;
+  if(!fs.existsSync(`${root}/raw/storage-preflight-2026-09-13.json`))manifest={status:'awaiting authenticated storage; public drafts only',country:'es',draftsSha256:hash(drafts),groups:[],proposedGroups:[...new Set(drafts.map(d=>d.key)),...links.map(l=>l.key)],blockers:[{key:'storage',reason:'Automatic approval review rejected content snapshot; explicit user confirmation pending.'}]};
+  else manifest=prepareSpain(read('raw/storage-preflight-2026-09-13.json'),drafts,links,sourceFor);
+  fs.writeFileSync(`${root}/content-briefs/storage-mutation-manifest.json`,JSON.stringify(manifest,null,2)+'\n');
+  console.log(JSON.stringify({status:manifest.status,groups:manifest.groups.length,blockers:manifest.blockers,manifestSha256:hash(manifest)}));
+ }
 }

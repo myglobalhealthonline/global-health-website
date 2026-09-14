@@ -136,4 +136,5 @@ loadtest/config/seed-passwords.json
 
 # Spain authenticated storage snapshots and rollout before-rows stay local.
 /seo/spain/raw/storage-preflight-*.json
+/seo/spain/raw/storage-post-rollout-*.json
 /seo/spain/raw/rollout/

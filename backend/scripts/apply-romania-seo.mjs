@@ -31,7 +31,8 @@ export async function mutateGroup(client, group) {
 }
 
 // Country runners supply fixed, reviewed table/column allowlists; values remain parameters.
-export async function mutateRows(client, group, tables, updateFields, insertFields) {
+// Some tables (e.g. DoctorCountry) have no updatedAt column; list them in withoutUpdatedAt.
+export async function mutateRows(client, group, tables, updateFields, insertFields, { withoutUpdatedAt = [] } = {}) {
   for (const op of group.changes) {
     const table = tables[op.table];
     assert(table, 'Unapproved table');
@@ -42,7 +43,8 @@ export async function mutateRows(client, group, tables, updateFields, insertFiel
       result = await client.query(`INSERT INTO "${table}" (${keys.map(k => `"${k}"`).join(',')}, "createdAt", "updatedAt") VALUES (${keys.map((_,i) => `$${i+1}`).join(',')}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`, keys.map(k => op.after[k]));
     } else {
       assert.equal(op.action, 'update');
-      result = await client.query(`UPDATE "${table}" SET ${keys.map((k,i) => `"${k}"=$${i+1}`).join(',')}, "updatedAt"=CURRENT_TIMESTAMP WHERE id=$${keys.length+1}`, [...keys.map(k => op.after[k]), op.id]);
+      const touch = withoutUpdatedAt.includes(table) ? '' : ', "updatedAt"=CURRENT_TIMESTAMP';
+      result = await client.query(`UPDATE "${table}" SET ${keys.map((k,i) => `"${k}"=$${i+1}`).join(',')}${touch} WHERE id=$${keys.length+1}`, [...keys.map(k => op.after[k]), op.id]);
     }
     assert.equal(result.rowCount, 1, `Row count mismatch: ${table}/${op.id}`);
   }

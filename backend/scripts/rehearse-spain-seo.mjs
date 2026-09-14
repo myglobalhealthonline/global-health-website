@@ -8,10 +8,11 @@ import {connect} from './romania-seo-storage.mjs';
 import {readSpain} from './spain-seo-storage.mjs';
 import {hash,rehearse} from './prepare-spain-seo.mjs';
 import {comparable,mutateRows} from './apply-romania-seo.mjs';
-import {tables,updates,inserts,executeSpainGroup} from './apply-spain-seo.mjs';
+import {tables,updates,inserts,executeSpainGroup,withoutUpdatedAt} from './apply-spain-seo.mjs';
 assert(['localhost','127.0.0.1'].includes(new URL(process.env.DATABASE_URL??'postgres://missing').hostname),'Rehearsal requires an isolated local database');
 const root='seo/spain',read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`));
-const manifest=read('content-briefs/storage-mutation-manifest.json'),snapshot=read('raw/storage-preflight-2026-09-13.json').data;
+const phase2=process.argv.includes('--phase=2');
+const manifest=read(phase2?'content-briefs/storage-mutation-manifest-phase2.json':'content-briefs/storage-mutation-manifest.json'),snapshot=read(phase2?read('content-briefs/phase2-plan.json').snapshot:'raw/storage-preflight-2026-09-13.json').data;
 assert.equal(manifest.snapshotSha256,hash(snapshot),'Manifest/snapshot mismatch');
 const source={country:'Country',countryLocales:'CountryLocale',services:'Service',serviceTranslations:'ServiceTranslation',serviceFaqs:'ServiceFaq',serviceFaqTranslations:'ServiceFaqTranslation',assignments:'ServiceDoctor',allDoctorAssignments:'ServiceDoctor',doctors:'Doctor',doctorCountries:'DoctorCountry',doctorTranslations:'DoctorTranslation',doctorMarketTranslations:'DoctorMarketTranslation',doctorFaqs:'DoctorFaq',serviceLinks:'ServiceLink',serviceLinkTranslations:'ServiceLinkTranslation'};
 const same=(actual,expected,message)=>assert.deepEqual(comparable(actual),comparable(expected),message);
@@ -43,7 +44,7 @@ try{
 
  // 1. All groups in one transaction, readback after each, savepoint failure, full rollback.
  await client.query('BEGIN ISOLATION LEVEL SERIALIZABLE');let expected=structuredClone(snapshot);
- for(const g of manifest.groups){await mutateRows(client,g,tables,updates,inserts);expected=rehearse(expected,g);same(await readSpain(client),expected,`Readback/preservation mismatch ${g.key}`);}
+ for(const g of manifest.groups){await mutateRows(client,g,tables,updates,inserts,{withoutUpdatedAt});expected=rehearse(expected,g);same(await readSpain(client),expected,`Readback/preservation mismatch ${g.key}`);}
  await client.query('SAVEPOINT failure_test');await assert.rejects(client.query('SELECT 1/0'));await client.query('ROLLBACK TO SAVEPOINT failure_test');same(await readSpain(client),expected);
  await client.query('ROLLBACK');same(await readSpain(client),snapshot,'Rollback mismatch');
 
@@ -51,7 +52,7 @@ try{
  const states=[structuredClone(snapshot)];
  for(const g of manifest.groups){
   assert.equal((await executeSpainGroup(client,states.at(-1),g)).alreadyApplied,false,`Unexpected applied state ${g.key}`);
-  await client.query('BEGIN ISOLATION LEVEL SERIALIZABLE');await mutateRows(client,g,tables,updates,inserts);await client.query('COMMIT');
+  await client.query('BEGIN ISOLATION LEVEL SERIALIZABLE');await mutateRows(client,g,tables,updates,inserts,{withoutUpdatedAt});await client.query('COMMIT');
   states.push(rehearse(states.at(-1),g));
   assert.equal((await executeSpainGroup(client,states.at(-2),g)).alreadyApplied,true,`Repeat not detected ${g.key}`);
  }

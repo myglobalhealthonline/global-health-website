@@ -47,6 +47,20 @@ test('Spain planner preserves hidden/unrelated data, exact locales and hashes; r
  const noEn=structuredClone(fallback);noEn.serviceFaqTranslations=[];assert.match(prepareSpain({data:noEn},patched,[],d=>f.sources[d.locale]).blockers[0].reason,/Missing FAQ translation/);
  const changed=structuredClone(f.drafts);changed[0].after.seoTitle='Other';assert.notEqual(prepareSpain({data:f.data},changed,[],d=>f.sources[d.locale]).groups[0].approvalSha256,m.groups[0].approvalSha256);
 });
+test('registration typo correction rewrites only doctor-owned text and refuses leftovers',async()=>{
+ const f=fixture(),data=structuredClone(f.data);
+ Object.assign(data.doctors[0],{slug:'doc-slug',seoTitle:'Psicólogo nº MUO1',seoDescription:null,qualifications:['PGS — nº MUO1','Máster']});
+ data.doctorCountries[0].registrationNumber='MUO1';
+ data.doctorFaqs.push({id:'dfaq',doctorId:'doc',locale:'ES',question:'¿Colegiado?',answer:'Sí, nº MUO1.'});
+ const c={doctorSlug:'doc-slug',from:'MUO1',to:'MU01',evidence:'registry.json',urls:['https://e.com/x']};
+ const m=prepareSpain({data},[],[],()=>null,{keys:[],corrections:[c]});assert.equal(m.blockers.length,0,JSON.stringify(m.blockers));
+ const g=m.groups[0];assert.deepEqual(g.changes.map(x=>x.table).sort(),['doctorCountries','doctorFaqs','doctors']);
+ const after=rehearse(data,g);assert.equal(after.doctorCountries[0].registrationNumber,'MU01');assert.deepEqual(after.doctors[0].qualifications,['PGS — nº MU01','Máster']);assert.equal(after.doctors[0].seoTitle,'Psicólogo nº MU01');
+ assert.equal(after.doctorCountries[0].chamberEntity,data.doctorCountries[0].chamberEntity);assert.equal(after.doctorCountries[0].isVerified,true);
+ const client=clientFor(data);await executeSpainGroup(client,data,g);assert.equal(client.writes,0);
+ const stuck=structuredClone(data);stuck.doctorTranslations.push({id:'dt',doctorId:'doc',locale:'EN',bio:'No. MUO1'});
+ assert.match(prepareSpain({data:stuck},[],[],()=>null,{keys:[],corrections:[c]}).blockers[0].reason,/Typo remains/);
+});
 test('Spain gate refuses absent, future and expired reviews; validates reviewer; allows operational-only changes',()=>{
  const f=fixture(),after=structuredClone(f.data);after.services[0].seoTitle='New';const key='service:svc',now=Date.parse('2026-09-13');
  assert.throws(()=>assertSpainClinicalChanges(f.data,after,now),/requires approval/);

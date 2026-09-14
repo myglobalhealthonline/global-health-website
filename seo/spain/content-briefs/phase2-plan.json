@@ -1,0 +1,37 @@
+{
+  "snapshot": "raw/storage-post-rollout-2026-09-14.json",
+  "keys": [
+    "service:consulta-medica-online",
+    "service:consulta-piel-online",
+    "service:justificante-medico-online",
+    "service:segunda-opinion-medica",
+    "service:caida-cabello-online",
+    "service:enfermedades-cronicas-online",
+    "doctor:dr-luz-marina-zuluaga-rios"
+  ],
+  "overrideHolds": {
+    "service:consulta-medica-online": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+    "service:consulta-piel-online": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+    "service:justificante-medico-online": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+    "service:segunda-opinion-medica": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+    "service:caida-cabello-online": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+    "service:enfermedades-cronicas-online": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+    "doctor:dr-luz-marina-zuluaga-rios": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising."
+  },
+  "corrections": [
+    {
+      "doctorSlug": "dr-tomas-ruiz-palacios",
+      "from": "MUO5691",
+      "to": "MU05691",
+      "evidence": "raw/registry-recheck-tomas-2026-09-14.json",
+      "urls": [
+        "https://www.myglobalhealth.online/spain/es/doctors/dr-tomas-ruiz-palacios",
+        "https://www.myglobalhealth.online/spain/en/doctors/dr-tomas-ruiz-palacios",
+        "https://www.myglobalhealth.online/spain/pt/doctors/dr-tomas-ruiz-palacios",
+        "https://www.myglobalhealth.online/spain/cs/doctors/dr-tomas-ruiz-palacios",
+        "https://www.myglobalhealth.online/spain/ro/doctors/dr-tomas-ruiz-palacios",
+        "https://www.myglobalhealth.online/spain/de/doctors/dr-tomas-ruiz-palacios"
+      ]
+    }
+  ]
+}

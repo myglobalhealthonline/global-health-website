@@ -37,21 +37,28 @@ export function verifyPage(before,after,draft,links=[],{localizedUrls}={}){
 }
 if(process.argv[1]?.endsWith('verify-public.mjs')){
  const root=process.argv.includes('--brazil')?'seo/brazil':'seo/spain',read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`));
- const key=process.argv.find(a=>a.startsWith('--group='))?.slice(8),manifest=read('content-briefs/storage-mutation-manifest.json');
+ const phase2=process.argv.includes('--phase=2'),rollout=phase2?'raw/rollout/phase2':'raw/rollout';
+ const key=process.argv.find(a=>a.startsWith('--group='))?.slice(8),manifest=read(phase2?'content-briefs/storage-mutation-manifest-phase2.json':'content-briefs/storage-mutation-manifest.json');
  const group=manifest.groups.find(g=>g.key===key);assert(group,'Prepared storage group required');
- const stem=key.replaceAll(':','-'),receipt=read(`raw/rollout/${stem}-applied.json`);
+ const stem=key.replaceAll(':','-'),receipt=read(`${rollout}/${stem}-applied.json`);
  assert.equal(receipt.approvalSha256,group.approvalSha256,'Mutation receipt mismatch');assert.equal(receipt.dryRun,false);
  assert.equal(manifest.draftsSha256,hash(read('content-briefs/exact-drafts.json')),'Drafts changed');
  const inventory=read('raw/public-inventory-2026-09-13.json'),drafts=read('content-briefs/exact-drafts.json'),links=read('content-briefs/link-drafts.json'),results=[];
  const appliedKeys=new Set(manifest.groups.slice(0,manifest.groups.indexOf(group)+1).map(g=>g.key));
  for(const url of group.urls){
   const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(45000)}),html=await response.text();
+  if(group.correction){
+   // Typo correction: every locale renders the corrected value and none of the old one.
+   assert.equal(response.status,200,'HTTP status');assert.equal(response.url,url,'Unexpected redirect');
+   assert(html.includes(group.correction.to),`Corrected value missing ${url}`);assert(!html.includes(group.correction.from),`Old value still rendered ${url}`);
+   results.push({url,status:'passed'});continue;
+  }
   const after={...parse(html,url),status:response.status,finalUrl:response.url};
   const before=inventory.find(p=>p.url===url);assert(before,'Baseline missing');
   const slug=new URL(url).pathname.split('/')[4],localized=fs.existsSync(`${root}/content-briefs/body-localization.json`)&&read('content-briefs/body-localization.json')[slug]&&appliedKeys.has(`service:${slug}`);
   const localizedUrls=localized?['es','en','pt','cs','ro','de'].map(l=>url.replace(/\/spain\/[a-z]{2}\//,`/spain/${l}/`)):undefined;
   results.push(verifyPage(before,after,drafts.find(d=>d.url===url&&appliedKeys.has(d.key)),links.filter(l=>l.urls.includes(url)&&appliedKeys.has(l.key)),{localizedUrls}));
  }
- fs.writeFileSync(`${root}/raw/rollout/${stem}-public.json`,JSON.stringify({checkedAt:new Date().toISOString(),group:key,approvalSha256:group.approvalSha256,results,browserVerification:'pending; see handoff'},null,2));
+ fs.writeFileSync(`${root}/${rollout}/${stem}-public.json`,JSON.stringify({checkedAt:new Date().toISOString(),group:key,approvalSha256:group.approvalSha256,results,browserVerification:'pending; see handoff'},null,2));
  console.log(JSON.stringify({group:key,passed:results.length,browserVerification:'pending'}));
 }

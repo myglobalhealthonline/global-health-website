@@ -197,6 +197,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "f50a0cdd9f18e7c813ab87d3bd9f72814afeb2dde2bc679f486fc54f52f2e97d",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T03:46:07.151Z",
+      "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
     }
   ],
   "service:cmre7qas1003sngjus0w2obwn": [
@@ -213,6 +219,12 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "e75a89878656d75c83399bc2c616093d8ba9796a8537071430318a75fd8345fe",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T03:46:07.151Z",
+      "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
     }
   ],
   "service:cmre7q8mg0037ngjuso41eynq": [
@@ -245,6 +257,52 @@ export const APPROVED_SPAIN_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
       "reviewedAt": "2026-09-14T01:31:26.987Z",
       "evidence": "verbal, reported by the owner: super admin reported in chat on 2026-09-14 that Dra. María Fernanda Ocampo Mora approved all 25 groups of Spain manifest 8846503c21bc0b851ad82ede5b936fe0a61b1b789d90222ba53c4a0aeb2fbc65; owner super-admin approval also given. No written record."
+    },
+    {
+      "stateSha256": "15477b5231f7de0595a9b3ca7e1ac489947f5b8b7123e490da39f9462217445f",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T03:46:07.151Z",
+      "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
+    }
+  ],
+  "service:cmre7pwwv0000ngjuwvmiacw9": [
+    {
+      "stateSha256": "5f3961ca76cfc7afff7484264f711a9b66c6a20bf735863aed0b0654a1590be4",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T03:46:07.151Z",
+      "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
+    }
+  ],
+  "doctor:cmrdpwar1001n01ruwhfioqs6": [
+    {
+      "stateSha256": "9f9cdc7e79680be83cb01ac3f054b8802f32d607233d5976f5de8c680d13ca0d",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T03:46:07.151Z",
+      "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
+    }
+  ],
+  "service:cmre7q4co001yngjucbez1gc0": [
+    {
+      "stateSha256": "fbd758fb4c2cbf70ce686defedd6909f3d78d77a79222e229338e31f2e544b59",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T03:46:07.151Z",
+      "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
+    }
+  ],
+  "service:cmre7pxza000angjubr3s2h65": [
+    {
+      "stateSha256": "49cde8248e26520fa54f11eec5192a2d93e3358a6e3506861c0faeb5aa87ae60",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T03:46:07.151Z",
+      "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
+    }
+  ],
+  "service:cmre7q6hn002lngju3chey2ai": [
+    {
+      "stateSha256": "4e7327b4a353f2b16cce07be19fde453cff76d2ad4e6b7adf66336d4ff05da8f",
+      "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+      "reviewedAt": "2026-09-14T03:46:07.151Z",
+      "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record."
     }
   ]
 };

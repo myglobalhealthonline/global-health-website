@@ -1,0 +1,73 @@
+{
+  "manifestSha256": "3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea",
+  "phase": 2,
+  "reviewerDoctorId": "cmrdpted5001901ru0wk0ncnd",
+  "reviewerName": "Dra. María Fernanda Ocampo Mora",
+  "registration": "CGCOM 291409735",
+  "evidence": "verbal, reported by the owner: super admin instructed on 2026-09-14 to publish Luz Marina Zuluaga Ríos's drafted groups (hold overridden despite CGCOM 'ALTA sin ejercicio') and to correct Tomás Ruiz Palacios's registration typo MUO5691 to MU05691 (COP Murcia record); covered by the owner-reported approval of Dra. María Fernanda Ocampo Mora of all Spain drafts. Phase-2 manifest 3cfecca07d21ac2c93e11b14531c82126f1eb1a8e1631445e92754577e5926ea. No written record.",
+  "evidenceType": "verbal, reported by the owner",
+  "reviewedAt": "2026-09-14T03:46:07.151Z",
+  "maxAgeDays": 365,
+  "groups": [
+    {
+      "key": "service:consulta-medica-online",
+      "approvedSha256": "bd9d7a712430c8d1fb151f64457c726a2aa00baabc90a580d685a8a4ced252a0",
+      "resultingStateSha256": "5f3961ca76cfc7afff7484264f711a9b66c6a20bf735863aed0b0654a1590be4",
+      "holdOverride": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+      "correction": null
+    },
+    {
+      "key": "doctor:dr-luz-marina-zuluaga-rios",
+      "approvedSha256": "d9dcc4412ce8babc468326847232bab4f14e668224df87500763efa2abec0018",
+      "resultingStateSha256": "9f9cdc7e79680be83cb01ac3f054b8802f32d607233d5976f5de8c680d13ca0d",
+      "holdOverride": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+      "correction": null
+    },
+    {
+      "key": "service:consulta-piel-online",
+      "approvedSha256": "275ccd579b031ece71aaaa80061e0361456349f93efeae5c5873e650abd003bf",
+      "resultingStateSha256": "fbd758fb4c2cbf70ce686defedd6909f3d78d77a79222e229338e31f2e544b59",
+      "holdOverride": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+      "correction": null
+    },
+    {
+      "key": "service:justificante-medico-online",
+      "approvedSha256": "ddda3bfa5e741d253507f35d936ee35a6752e4f6bcff5797bf918334cd48ed5f",
+      "resultingStateSha256": "49cde8248e26520fa54f11eec5192a2d93e3358a6e3506861c0faeb5aa87ae60",
+      "holdOverride": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+      "correction": null
+    },
+    {
+      "key": "service:segunda-opinion-medica",
+      "approvedSha256": "52c3e329facee4632d87aa3deaf0ebbba1b582d96839a96fa47cc77c9de6db52",
+      "resultingStateSha256": "15477b5231f7de0595a9b3ca7e1ac489947f5b8b7123e490da39f9462217445f",
+      "holdOverride": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+      "correction": null
+    },
+    {
+      "key": "service:caida-cabello-online",
+      "approvedSha256": "9302300ef912abea300c8dfe21cb4ceef80627ac84b04e83a3f146609ea32fdb",
+      "resultingStateSha256": "4e7327b4a353f2b16cce07be19fde453cff76d2ad4e6b7adf66336d4ff05da8f",
+      "holdOverride": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+      "correction": null
+    },
+    {
+      "key": "service:enfermedades-cronicas-online",
+      "approvedSha256": "0224522aa1dc00d1117758c2ba5fcdf679a368277ed31193d987708f5d4a60bf",
+      "resultingStateSha256": "e75a89878656d75c83399bc2c616093d8ba9796a8537071430318a75fd8345fe",
+      "holdOverride": "Owner (super admin) instruction 2026-09-14: publish Luz groups despite CGCOM 'ALTA sin ejercicio' (rechecked 2026-09-14); owner reports she is practising.",
+      "correction": null
+    },
+    {
+      "key": "correction:dr-tomas-ruiz-palacios:MU05691",
+      "approvedSha256": "5dbe7ef5de13107fb1ab8f9643f698277882eb65ad48905e026e56a22681b842",
+      "resultingStateSha256": "f50a0cdd9f18e7c813ab87d3bd9f72814afeb2dde2bc679f486fc54f52f2e97d",
+      "holdOverride": null,
+      "correction": {
+        "from": "MUO5691",
+        "to": "MU05691",
+        "evidence": "raw/registry-recheck-tomas-2026-09-14.json"
+      }
+    }
+  ]
+}
