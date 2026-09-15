@@ -1,0 +1,10 @@
+{
+  "deploymentId": "e4c51c99-c60b-41e3-84c2-1a1695832bff",
+  "service": "Backend (Railway Production)",
+  "status": "SUCCESS",
+  "commit": "7c5275c9",
+  "branch": "main",
+  "createdAt": "2026-09-15T02:14:39.891Z",
+  "readiness": "https://api.myglobalhealth.online/ready returned ok:true, database connected",
+  "note": "Carries the phase-6 approved Brazil state for manifest 57e67109 (Dr. Renato Sarmento bio/FAQ superlatives and stored PT same-day SEO line)."
+}
