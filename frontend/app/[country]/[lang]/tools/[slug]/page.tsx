@@ -5,7 +5,7 @@ import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { hreflangRegion, ogLocales } from "@/lib/seo/hreflang";
-import { isToolMarket, toolHreflangAlternates } from "@/lib/tools/markets";
+import { isToolMarket, marketToolDescription, toolHreflangAlternates } from "@/lib/tools/markets";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { ToolPage } from "@/lib/content/tool-page";
 import { getToolServiceSuggestions } from "@/lib/tools/service-suggestions";
@@ -61,7 +61,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     // "BMI Calculator Ireland", "Calculadora de IMC Brasil" — the market token
     // is what the head keyword (`bmi calculator ireland`) actually needs.
     title: fillPlaceholders(resolved.copy.metaTitle, { country: resolved.countryLabel }),
-    description: resolved.copy.metaDescription,
+    description: marketToolDescription(resolved.copy.metaDescription, resolved.countryLabel),
     kind: "page",
     subtitle: resolved.countryLabel,
     imageAlt: resolved.copy.cardTitle,

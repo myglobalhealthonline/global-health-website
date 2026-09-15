@@ -5,6 +5,7 @@ import es from "@/locales/es/common.json";
 import cs from "@/locales/cs/common.json";
 import ro from "@/locales/ro/common.json";
 import de from "@/locales/de/common.json";
+import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { EXTRAS } from "./country-home-copy";
 
 /**
@@ -74,6 +75,17 @@ describe("Ireland authored home titles stay within the crawler title budget", ()
     const title = EXTRAS["IE:en"]?.seoTitle;
     expect(title, "IE:en is missing its authored SEO title").toBeTruthy();
     expect(len(title ?? "")).toBeLessThanOrEqual(70);
+  });
+
+  // 2026-09-15 OpenSEO audit: /ireland/en served the 67-char authored title.
+  // The authored copy is unchanged; the served <title> is what must fit.
+  it.each(["en", "cs", "de", "es", "pt", "ro"])("IE:%s served title fits the 60-char search budget", (locale) => {
+    const title = EXTRAS[`IE:${locale}`]?.seoTitle ?? "";
+    const served = (buildPublicMetadata({ path: `/ireland/${locale}`, title, description: "d" }).title as {
+      absolute: string;
+    }).absolute;
+    expect(len(served)).toBeLessThanOrEqual(SEARCH_TITLE_LIMIT);
+    expect(served).not.toContain("…");
   });
 
   it.each(["cs", "de", "es", "pt", "ro"])("IE:%s stays at 60 characters or fewer", (locale) => {

@@ -1,6 +1,10 @@
 import { countries } from "@/data/countries";
 import { getPublicDoctorsForMarket } from "@/lib/content/get-public-doctors";
 import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
+import type { CountryConfig } from "@/data/countries";
+import { localeDisplayName } from "@/lib/i18n/locale-display";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { fitSearchTitle, SEARCH_TITLE_LIMIT } from "@/lib/seo/page-seo";
 
 /**
  * Country names this doctor slug is genuinely publishable in, across every
@@ -66,5 +70,56 @@ export function withMarketTitle(
   if (localizedCountryName && titleMentionsCountry(baseTitle, localizedCountryName)) {
     return baseTitle;
   }
-  return `${baseTitle} · ${currentCountry}`;
+  return withReservedSuffix(baseTitle, ` · ${currentCountry}`);
+}
+
+/**
+ * Append a disambiguating suffix without letting the 60-char search budget in
+ * `buildPublicMetadata` drop it again: that budget removes trailing segments
+ * first, which is exactly where the suffix sits. The base is fitted into the
+ * room left over instead (2026-09-15 metadata budget batch).
+ */
+function withReservedSuffix(baseTitle: string, suffix: string): string {
+  return `${fitSearchTitle(baseTitle, SEARCH_TITLE_LIMIT - Array.from(suffix).length)}${suffix}`;
+}
+
+/**
+ * Locale-variant titles of the same doctor in the same market. Reads the
+ * sibling locale rosters `doctorHreflangCluster` already loads (both are
+ * `cache()`-wrapped, so a request pays for them once).
+ */
+export async function doctorSiblingLocaleTitles(
+  config: CountryConfig,
+  doctorSlug: string,
+  currentLang: string,
+  fallbackTitle: (doctor: { fullName: string; title: string }) => string,
+): Promise<string[]> {
+  const current = currentLang.toLowerCase();
+  const defaultLocale = (config.defaultLocale ?? "en").toLowerCase();
+  const others = (config.supportedLocales ?? [defaultLocale])
+    .map((l) => l.toLowerCase())
+    .filter((lang) => lang !== current);
+  const rosters = await Promise.all(others.map((lang) => getPublicDoctorsForMarket(config.code, lang)));
+  return rosters.flatMap((roster) => {
+    const doc = roster.find((d) => d.slug === doctorSlug && isPublicDoctorRecordIndexable(d));
+    return doc ? [doc.seoTitle ?? fallbackTitle(doc)] : [];
+  });
+}
+
+/**
+ * Language disambiguation for a doctor whose title is identical in two locales
+ * of one market — job titles often translate the same in es and pt
+ * ("Psicóloga", "Pediatra consultor"). 2026-09-15 OpenSEO audit: 8
+ * duplicate-title rows, e.g. /ireland/es and /ireland/pt/doctors/dr-emmanuel-dabup.
+ * Only a real collision (after the search budget) gets the language name, in
+ * that language ("Español", "Português"); every other title is unchanged.
+ */
+export function withLanguageTitle(
+  title: string,
+  locale: string,
+  siblingLocaleTitles: readonly string[],
+): string {
+  const fitted = fitSearchTitle(title);
+  if (!siblingLocaleTitles.some((other) => fitSearchTitle(other) === fitted)) return title;
+  return withReservedSuffix(title, ` · ${localeDisplayName(locale as LocaleCode)}`);
 }

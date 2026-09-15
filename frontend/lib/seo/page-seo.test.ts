@@ -173,7 +173,7 @@ describe("buildPublicMetadata", () => {
     );
   });
 
-  it("keeps social titles within their word-safe budget while the search title stays complete", () => {
+  it("fits the search title to its budget by dropping trailing segments, never with an ellipsis", () => {
     const title =
       "Online Doctor Ireland | IMC-Registered General Practitioners and Specialists | Global Health";
     const metadata = buildPublicMetadata({
@@ -187,14 +187,9 @@ describe("buildPublicMetadata", () => {
     const openGraph = metadata.openGraph as OpenGraphMetadata;
     const ogTitle = openGraph.title as string;
 
-    // 2026-08-09 on-page SEO batch: the document title drops the trailing
-    // brand (Google appends the site name itself from `WebSite` schema) but
-    // keeps the complete meaningful phrase — no word-chop, no ellipsis, even
-    // though it runs past the 60-char SERP-display guideline. The social
-    // (OG/Twitter) card is a real bounded surface and still word-safe-truncates.
-    expect(documentTitle).toBe(
-      "Online Doctor Ireland | IMC-Registered General Practitioners and Specialists",
-    );
+    // 2026-09-15 budget batch: brand dropped first, then the trailing
+    // " | …" segments, so the served title fits 60 chars on a whole phrase.
+    expect(documentTitle).toBe("Online Doctor Ireland");
     expect(documentTitle).not.toContain("…");
     expect(documentTitle.toLowerCase()).not.toContain("global health");
 
@@ -202,7 +197,7 @@ describe("buildPublicMetadata", () => {
     expectWordSafeTruncation(ogTitle, title);
   });
 
-  it("keeps the search description complete while social descriptions stay within word-safe preview limits", () => {
+  it("fits the search description to 160 chars while social descriptions keep their own limits", () => {
     const description =
       "Book an online consultation with Irish Medical Council registered general practitioners and specialists, with multilingual support, transparent pricing, secure records, and convenient appointments throughout Ireland.";
     const metadata = buildPublicMetadata({
@@ -218,11 +213,12 @@ describe("buildPublicMetadata", () => {
     const ogDescription = openGraph.description as string;
     const twitterDescription = twitter.description as string;
 
-    // 2026-08-09 on-page SEO batch: the search <meta name="description"> is
-    // no longer word-chopped — it stays the complete, normalized authored
-    // sentence even past the 155-char SERP-snippet guideline. Social cards
-    // are a real bounded surface and keep their own word-safe budget.
-    expect(metaDescription).toBe(description);
+    // 2026-09-15 budget batch: one long sentence, so the cut falls on the
+    // last clause that fits and ends with a full stop — never "…".
+    expect(metaDescription).toBe(
+      "Book an online consultation with Irish Medical Council registered general practitioners and specialists, with multilingual support, transparent pricing.",
+    );
+    expect(Array.from(metaDescription).length).toBeLessThanOrEqual(160);
     expect(metaDescription).not.toContain("…");
 
     expect(ogDescription.length).toBeLessThanOrEqual(125);
@@ -250,7 +246,7 @@ describe("buildPublicMetadata", () => {
     }
   });
 
-  it("keeps a long, unbranded document title complete past the search budget", () => {
+  it("cuts a long, unbranded document title at a word boundary", () => {
     const source =
       "A very detailed specialist consultation service for patients throughout Ireland";
     const metadata = buildPublicMetadata({
@@ -260,7 +256,8 @@ describe("buildPublicMetadata", () => {
     });
 
     const title = rawDocumentTitle(metadata.title);
-    expect(title).toBe(source);
+    // 80 chars, no separators: last whole word that fits the 60-char budget.
+    expect(title).toBe("A very detailed specialist consultation service for patients");
     expect(title).not.toContain("…");
   });
 
@@ -293,12 +290,9 @@ describe("buildPublicMetadata", () => {
     const openGraph = metadata.openGraph as OpenGraphMetadata;
     const documentTitle = rawDocumentTitle(metadata.title);
 
-    // Document title: no brand added (source carries none), and — 2026-08-09
-    // on-page SEO batch — this 78-char source stays complete even though it
-    // runs past the ~60-char search-display guideline. `brandSuffix: false`
-    // only ever controlled whether OUR brand is appended, never whether the
-    // search title gets word-chopped.
-    expect(documentTitle).toBe(source);
+    // Document title: no brand added (source carries none); the 78-char
+    // source loses its trailing " | …" segment (2026-09-15 budget batch).
+    expect(documentTitle).toBe("Consulta Pediátrica de Medicina Geral na Irlanda");
     expect(documentTitle).not.toContain("Global Health");
     expect(documentTitle).not.toContain("…");
 
@@ -361,7 +355,7 @@ describe("compactSearchTitle", () => {
     expect(result).not.toContain("…");
   });
 
-  it("drops the brand but keeps the complete phrase when that still leaves it over the limit", () => {
+  it("drops the brand, then the trailing segment, when still over the limit", () => {
     const title =
       "Online Specialist Consultation Ireland | Cardiology, Neurology, Paediatrics | Global Health";
     const metadata = buildPublicMetadata({
@@ -371,14 +365,12 @@ describe("compactSearchTitle", () => {
     });
     const result = rawDocumentTitle(metadata.title);
 
-    expect(result).toBe(
-      "Online Specialist Consultation Ireland | Cardiology, Neurology, Paediatrics",
-    );
+    expect(result).toBe("Online Specialist Consultation Ireland");
     expect(result).not.toContain("…");
     expect(result.toLowerCase()).not.toContain("global health");
   });
 
-  it("keeps a long title complete when it carries no brand suffix at all", () => {
+  it("fits a long title that carries no brand suffix at all", () => {
     // Audit fixture minus its trailing brand, isolating the no-brand-present branch.
     const title = "Médico Online España | Médicos de Cabecera y Especialistas Colegiados";
     expect(Array.from(title).length).toBeGreaterThan(60);
@@ -386,8 +378,59 @@ describe("compactSearchTitle", () => {
     const metadata = buildPublicMetadata({ path: "/spain/es/x", title, description: "d" });
     const result = rawDocumentTitle(metadata.title);
 
-    expect(result).toBe(title);
+    expect(result).toBe("Médico Online España");
     expect(result).not.toContain("…");
+  });
+});
+
+// 2026-09-15 OpenSEO audit: real over-budget strings served on production.
+describe("search metadata budget (2026-09-15 audit fixtures)", () => {
+  const TITLES = [
+    "Avaliação de Risco de Osteoporose Irlanda | Preciso de uma Densitometria Óssea?",
+    "Online GP or In-Person? A Symptom Guide to Telemedicine and Urgent Care in Ireland",
+    "Consultație pentru afecțiuni ale pielii și dermatologie online în Irlanda",
+    "Online-Beratung zur psychischen Gesundheit in Irland mit registrierten Ärzten",
+    "Ondansetron, Omeprazol a další: jak funguje online opakovaný recept v Irsku",
+  ];
+  const DESCRIPTIONS = [
+    "Faça um teste gratuito de dor de garganta: responda a perguntas sobre sintomas como febre, tosse e gânglios inchados e veja o Centor/McIsaac. Não substitui uma consulta médica; se tiver dificuldade em respirar ou engolir, procure ajuda urgente.",
+    "Calculați-vă aportul caloric zilnic (TDEE) cu formula Mifflin-St Jeor, în funcție de vârstă, sex, înălțime, greutate și nivel de activitate fizică — apoi vedeți cât să mâncați pentru a slăbi, a vă menține sau a lua în greutate",
+    "Termine a Global Health e as condições de utilização da plataforma para pacientes, médicos e parceiros em todos os mercados onde operamos, incluindo pagamentos, reembolsos e responsabilidades",
+  ];
+
+  it.each(TITLES)("title fits 60 chars on a whole word: %s", (title) => {
+    const result = rawDocumentTitle(buildPublicMetadata({ path: "/x", title, description: "d" }).title);
+    expect(Array.from(result).length).toBeLessThanOrEqual(60);
+    expect(result).not.toContain("…");
+    expect(result).not.toMatch(/[\s,;:|·—–-]$/u);
+    expect(title.startsWith(result.replace(/\s+$/u, ""))).toBe(true);
+  });
+
+  it.each(DESCRIPTIONS)("description fits 70-160 chars and ends on punctuation: %s", (description) => {
+    const result = buildPublicMetadata({ path: "/x", title: "t", description }).description as string;
+    const length = Array.from(result).length;
+    expect(length).toBeLessThanOrEqual(160);
+    expect(length).toBeGreaterThanOrEqual(70);
+    expect(result).toMatch(/[.!?]$/u);
+    expect(result).not.toContain("…");
+  });
+
+  it("cuts a separator-free title at its leading question", () => {
+    const title = "Online GP or In Person? When to See a Doctor Online vs In Person (2026)";
+    const result = rawDocumentTitle(buildPublicMetadata({ path: "/x", title, description: "d" }).title);
+    expect(result).toBe("Online GP or In Person?");
+  });
+
+  it("drops a thin trailing segment rather than cutting a phrase mid-way", () => {
+    const title = "Saúde de Viagem Online Brasil | Consulta Médica Antes de Viajar";
+    const result = rawDocumentTitle(buildPublicMetadata({ path: "/x", title, description: "d" }).title);
+    expect(result).toBe("Saúde de Viagem Online Brasil");
+  });
+
+  it("leaves in-budget copy untouched", () => {
+    const description = "Meet licensed doctors and specialists online, in your country. Same-day appointments.";
+    const metadata = buildPublicMetadata({ path: "/x", title: "Online Doctor Ireland", description });
+    expect(metadata.description).toBe(description);
   });
 });
 

@@ -22,7 +22,7 @@ vi.mock("@/lib/content/get-public-doctors", () => ({
   getPublicDoctorsForMarket: vi.fn(async (code: string) => rosterByCountry.value[code] ?? []),
 }));
 
-const { doctorIndexableCountryNames, withMarketTitle } = await import(
+const { doctorIndexableCountryNames, doctorSiblingLocaleTitles, withLanguageTitle, withMarketTitle } = await import(
   "@/lib/seo/doctor-market-title"
 );
 const { getPublicDoctorsForMarket } = await import("@/lib/content/get-public-doctors");
@@ -155,5 +155,53 @@ describe("withMarketTitle", () => {
       "Česko",
     );
     expect(title).toBe("Dr Ahmed Maklad — Českoslovenština specialist · Czechia");
+  });
+});
+
+// 2026-09-15 OpenSEO audit: 8 duplicate-title rows, es/pt locale variants of
+// one Irish doctor sharing a title; 22 doctor titles over 60 chars.
+describe("withLanguageTitle", () => {
+  const ES = "Dr Emmanuel Dabup | Psiquiatra consultor | Irlanda";
+
+  it("same title in a sibling locale: each locale names its own language", () => {
+    const es = withLanguageTitle(ES, "es", [ES]);
+    const pt = withLanguageTitle(ES, "pt", [ES]);
+    expect(es).toBe(`${ES} · Español`); // 60 chars: fits whole
+    expect(pt).not.toBe(es);
+    expect(pt.endsWith("· Português")).toBe(true);
+  });
+
+  it("no collision: title unchanged", () => {
+    expect(withLanguageTitle(ES, "es", ["Dr Emmanuel Dabup | Consultant Psychiatrist | Ireland"])).toBe(ES);
+  });
+
+  it("titles that only collide after the 60-char budget still get disambiguated", () => {
+    const long = "Silvia Alexandre Fernandes | Terapeuta nutricional | Irlanda | Online";
+    const other = "Silvia Alexandre Fernandes | Terapeuta nutricional | Irlanda | En línea";
+    const result = withLanguageTitle(long, "pt", [other]);
+    expect(result.endsWith(" · Português")).toBe(true);
+    expect(Array.from(result).length).toBeLessThanOrEqual(60);
+  });
+});
+
+describe("market suffix survives the search budget", () => {
+  it("fits the base title into the room left beside the market name", () => {
+    const base = "Priscila Figueiredo | Consultora de reabilitação e bem-estar | Irlanda";
+    const title = withMarketTitle(base, "Portugal", ["Ireland", "Portugal"]);
+    expect(title.endsWith(" · Portugal")).toBe(true);
+    expect(Array.from(title).length).toBeLessThanOrEqual(60);
+  });
+});
+
+describe("doctorSiblingLocaleTitles", () => {
+  const IE = { code: "ie", defaultLocale: "en", supportedLocales: ["en", "es", "pt"] } as unknown as Parameters<
+    typeof doctorSiblingLocaleTitles
+  >[0];
+
+  it("reads every other locale roster and falls back when seoTitle is missing", async () => {
+    publishIn(["ie"]);
+    const titles = await doctorSiblingLocaleTitles(IE, "dr-ahmed-maklad", "es", (d) => `${d.fullName} · ${d.title}`);
+    expect(titles).toEqual(["Dr Ahmed Maklad · General Practitioner", "Dr Ahmed Maklad · General Practitioner"]);
+    expect(vi.mocked(getPublicDoctorsForMarket).mock.calls.map((call) => call[1])).toEqual(["en", "pt"]);
   });
 });

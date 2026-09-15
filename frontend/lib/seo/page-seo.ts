@@ -132,22 +132,138 @@ const TITLE_TEMPLATE_SUFFIX = ` · ${SITE_NAME}`;
  *   3. Over budget → drop the trailing brand. Google appends the site name
  *      itself from `WebSite` schema, so that space is better spent on the
  *      meaningful text ("IMC-Registered", "Colegiados", …).
- *   4. Still over budget unbranded → keep the complete meaningful title.
- *      Google may display it truncated in the SERP; the HTML never is.
+ *   4. Still over budget unbranded → fitSearchTitle (2026-09-15): drop
+ *      trailing separator segments, then cut at a word boundary. Never "…".
  */
 function compactSearchTitle(value: string): string {
   const normalized = normalizeCopy(value);
-  const len = (s: string) => Array.from(s).length;
   const hasBrand = BRAND_PATTERN.test(normalized);
 
-  if (len(normalized) <= SEARCH_TITLE_LIMIT) {
+  if (charLength(normalized) <= SEARCH_TITLE_LIMIT) {
     if (hasBrand) return normalized;
     const branded = `${normalized}${TITLE_TEMPLATE_SUFFIX}`;
-    return len(branded) <= SEARCH_TITLE_LIMIT ? branded : normalized;
+    return charLength(branded) <= SEARCH_TITLE_LIMIT ? branded : normalized;
   }
 
   const unbranded = hasBrand ? normalized.replace(BRAND_PATTERN, "").trim() : normalized;
-  return unbranded;
+  return fitSearchTitle(unbranded);
+}
+
+// ── 2026-09-15 metadata budget batch (OpenSEO audit, 117 title-too-long,
+// 150 meta-description-too-long) ────────────────────────────────────────────
+// Steps 3-4 above left over-budget titles/descriptions complete, and the CMS
+// and locale templates that feed this builder kept producing 61-80 char
+// titles and 161-274 char descriptions. The owner authorised (2026-09-15) a
+// template-level budget: cut at a natural boundary, never mid-word, and never
+// with a literal "…" (the 2026-08-09 rule still holds). Order of preference:
+//   title:       drop trailing " | … " / " · … " / " — … " segments, then
+//                cut at a word boundary.
+//   description: last full sentence that fits, then last clause, then last
+//                word — a cut ending gets a full stop.
+export const SEARCH_DESCRIPTION_MIN = 70;
+export const SEARCH_DESCRIPTION_LIMIT = 160;
+export { SEARCH_TITLE_LIMIT };
+
+const SEGMENT_SEPARATOR = /\s+[|·—–-]\s+/u;
+
+// Connector words a word-boundary cut must not end on (en/pt/es/cs/ro/de).
+const DANGLING_WORDS = new Set(
+  (
+    "a an and or of for to in on at by the with your from vs " +
+    "e ou o os as da do das dos de em na no nas nos um uma com para por sem sobre seu sua " +
+    "y u el la los las del al en con sin tu su " +
+    "i v ve s se z ze k ke na o pro pod nad bez nebo a " +
+    "și si sau cu în in la pe din pentru fără al ale un o " +
+    "und oder für mit im am vom zum zur der die das den dem des ein eine bei nach von zu"
+  ).split(" "),
+);
+
+function charLength(value: string): number {
+  return Array.from(value).length;
+}
+
+/** Longest word-boundary prefix of `value` within `limit` chars, trimmed of
+ *  trailing punctuation, dangling connector words and unclosed brackets. */
+function cutAtWord(value: string, limit: number): string {
+  const words = value.split(" ");
+  let out = "";
+  for (const word of words) {
+    const next = out ? `${out} ${word}` : word;
+    if (charLength(next) > limit) break;
+    out = next;
+  }
+  if (!out) out = Array.from(value).slice(0, limit).join("");
+  for (;;) {
+    const trimmed = out.replace(/[\s,;:|·—–(\-]+$/u, "");
+    const open = trimmed.lastIndexOf("(");
+    const unclosed = open >= 0 && trimmed.indexOf(")", open) < 0;
+    const withoutBracket = unclosed ? trimmed.slice(0, open) : trimmed;
+    const lastSpace = withoutBracket.lastIndexOf(" ");
+    const lastWord = withoutBracket.slice(lastSpace + 1);
+    const dangling = lastSpace > 0 && DANGLING_WORDS.has(lastWord.toLowerCase());
+    const next = dangling ? withoutBracket.slice(0, lastSpace) : withoutBracket;
+    if (next === out) return out;
+    out = next;
+  }
+}
+
+/** Fit an (already unbranded) search title inside `limit` chars
+ *  (SEARCH_TITLE_LIMIT unless a caller reserves room for a suffix). */
+export function fitSearchTitle(value: string, limit: number = SEARCH_TITLE_LIMIT): string {
+  const normalized = normalizeCopy(value);
+  if (charLength(normalized) <= limit) return normalized;
+  // A kept prefix shorter than this is too thin to carry the query; a
+  // word-boundary cut through the full title then loses less.
+  const minimum = Math.min(20, limit);
+
+  const segments = normalized.split(SEGMENT_SEPARATOR);
+  const separators = normalized.match(new RegExp(SEGMENT_SEPARATOR.source, "gu")) ?? [];
+  for (let keep = segments.length - 1; keep >= 1; keep -= 1) {
+    let candidate = segments[0];
+    for (let i = 1; i < keep; i += 1) candidate += `${separators[i - 1]}${segments[i]}`;
+    if (charLength(candidate) <= limit) {
+      if (charLength(candidate) >= minimum) return candidate;
+      break;
+    }
+  }
+
+  // "Online GP or In Person? When to See a Doctor …" → the question.
+  let sentence = "";
+  for (const match of normalized.matchAll(/[?!.](?=\s)/gu)) {
+    const prefix = normalized.slice(0, (match.index ?? 0) + 1);
+    if (charLength(prefix) > limit) break;
+    sentence = prefix;
+  }
+  if (charLength(sentence) >= minimum) return sentence;
+
+  return cutAtWord(normalized, limit);
+}
+
+/** Fit a search meta description inside SEARCH_DESCRIPTION_LIMIT. */
+export function fitSearchDescription(value: string): string {
+  const normalized = normalizeCopy(value);
+  if (charLength(normalized) <= SEARCH_DESCRIPTION_LIMIT) return normalized;
+
+  const prefixWithin = (pattern: RegExp, limit: number): string | null => {
+    let best: string | null = null;
+    for (const match of normalized.matchAll(pattern)) {
+      const end = (match.index ?? 0) + match[0].trimEnd().length;
+      const prefix = normalized.slice(0, end).trim();
+      if (charLength(prefix) > limit) break;
+      if (charLength(prefix) >= SEARCH_DESCRIPTION_MIN) best = prefix;
+    }
+    return best;
+  };
+
+  const sentence = prefixWithin(/[.!?](?=\s)/gu, SEARCH_DESCRIPTION_LIMIT);
+  if (sentence) return sentence;
+
+  const withStop = (prefix: string) =>
+    /[.!?]$/u.test(prefix) ? prefix : `${prefix.replace(/[\s,;:—–-]+$/u, "")}.`;
+  const clause = prefixWithin(/(?=[,;:]\s|\s[—–]\s)/gu, SEARCH_DESCRIPTION_LIMIT - 1);
+  if (clause) return withStop(clause);
+
+  return withStop(cutAtWord(normalized, SEARCH_DESCRIPTION_LIMIT - 1));
 }
 
 function normalizeCustomImage(url: string): string | undefined {
@@ -168,11 +284,9 @@ export function buildPublicMetadata(input: PublicMetadataInput): Metadata {
   const canonical = getPublicUrl(input.path);
   const title = compactSearchTitle(input.title);
   const socialTitle = compactSocialTitle(input.socialTitle ?? input.title);
-  // SEARCH description: normalize only, never word-chop — see the
-  // 2026-08-09 comment above compactSearchTitle. A description this long is
-  // a content-authoring issue to fix at the source, not something the shared
-  // metadata builder should silently truncate into an incomplete sentence.
-  const description = normalizeCopy(input.description);
+  // SEARCH description: fitted to 160 chars at a sentence/clause/word
+  // boundary (2026-09-15 budget batch, see fitSearchDescription). No "…".
+  const description = fitSearchDescription(input.description);
   const socialDescription = wordSafeLimit(
     input.socialDescription ?? input.description,
     SOCIAL_DESCRIPTION_LIMIT,

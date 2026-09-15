@@ -94,3 +94,19 @@ export function toolHreflangAlternates(suffix: string): Record<string, string> {
   out["x-default"] = `/${slugFor(X_DEFAULT.code)}/${X_DEFAULT.lang}${suffix}`;
   return out;
 }
+
+/**
+ * Search meta description for one market's tool page.
+ *
+ * Tool copy is per LANGUAGE, so `/ireland/pt/tools/bmi-calculator` and
+ * `/portugal/pt/tools/bmi-calculator` served the same description
+ * (2026-09-15 OpenSEO audit: 20 duplicate-meta-description rows). The title
+ * already carries `{country}`; the description gets the same market name, from
+ * the locale's own `countryNames`, when the copy does not already name it.
+ * Leading, so the 160-char budget cut in `buildPublicMetadata` never drops it.
+ */
+export function marketToolDescription(description: string, countryLabel: string): string {
+  const escaped = countryLabel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const mentions = new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, "iu");
+  return mentions.test(description) ? description : `${countryLabel}: ${description}`;
+}

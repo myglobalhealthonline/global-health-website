@@ -11,7 +11,13 @@ import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data"
 import { getCountryByCode } from "@/data/countries";
 import { ogLocales } from "@/lib/seo/hreflang";
 import { doctorHreflangCluster } from "@/lib/seo/doctor-hreflang";
-import { doctorIndexableCountryNames, withMarketTitle } from "@/lib/seo/doctor-market-title";
+import {
+  doctorIndexableCountryNames,
+  doctorSiblingLocaleTitles,
+  withLanguageTitle,
+  withMarketTitle,
+} from "@/lib/seo/doctor-market-title";
+import { marketDisplayName } from "@/lib/content/doctor-market-name";
 import { buildPublicMetadata, noindexFollow } from "@/lib/seo/page-seo";
 import {
   breadcrumbJsonLd,
@@ -102,12 +108,37 @@ export async function buildDoctorProfileMetadata(
   // when the doctor is genuinely indexable in more than one country; single-
   // market doctors (the vast majority) keep today's title exactly.
   const marketCountries = indexable ? await doctorIndexableCountryNames(doctorSlug) : [];
-  const title = withMarketTitle(
+  const marketTitle = withMarketTitle(
     baseTitle,
     routeCountryName,
     marketCountries,
     resolvedCode ? metaCommon.countryNames?.[resolvedCode] : null,
   );
+  // Same market, another locale, same title (es/pt job titles often match):
+  // name the language. Siblings get the identical market treatment, so
+  // comparing their base titles against this one's is enough.
+  const title =
+    indexable && config
+      ? withLanguageTitle(
+          marketTitle,
+          routeLang,
+          (
+            await doctorSiblingLocaleTitles(
+              config,
+              doctorSlug,
+              routeLang,
+              (d) => `${marketDisplayName(doctorSlug, resolvedCode ?? undefined, d.fullName)} · ${d.title} · ${routeCountryName}`,
+            )
+          ).map((sibling) =>
+            withMarketTitle(
+              sibling,
+              routeCountryName,
+              marketCountries,
+              resolvedCode ? metaCommon.countryNames?.[resolvedCode] : null,
+            ),
+          ),
+        )
+      : marketTitle;
   const description =
     data.profile.seoDescription ??
     fillProfileTemplate(
