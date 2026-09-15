@@ -10173,6 +10173,19 @@ Frontend deployment for `7f878d0a`: `b33f195d-7d56-4f75-b5dc-a3569f46a89d` SUCCE
   so a guarded runner is required first. Open owner facts: signing workflow, Renato
   author consent and review date, follow-up booking, contact inbox, legal citations.
 
+### 59.2 Brazil execution handoff — 15 September 2026
+
+Read-only inventory of every remaining Brazil action against the live site and code.
+Handoff: [execution handoff](../../seo/brazil/execution-handoff-2026-09-15.md);
+article packet: [article review packet](../../seo/brazil/content-briefs/article-review-packet-2026-09-15.md).
+Highest-priority open defect: `/brazil/{pt,en,es}/doctors` still promises same-day
+booking from stored DOCTORS_INDEX content. Ready without new facts: doctors
+directory, homepage verified-professionals prop (Brazil-gated), pt-BR locale layer,
+English "Brazil" on PT templates, `br:en` step text, 4 broken `/br/*` links in the
+diabetes articles (DB write, owner go-ahead). Phase-5 cohort: measure 2026-10-15,
+2026-11-14, 2026-12-14. Blocked: articles, service-body legal claims, FAQ signing
+answer, pricing, biography facts, dr-renato indexing, legal pages.
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
