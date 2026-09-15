@@ -10186,6 +10186,30 @@ diabetes articles (DB write, owner go-ahead). Phase-5 cohort: measure 2026-10-15
 2026-11-14, 2026-12-14. Blocked: articles, service-body legal claims, FAQ signing
 answer, pricing, biography facts, dr-renato indexing, legal pages.
 
+### 59.3 R1: Brazil doctors directory without same-day promise — 15 September 2026
+
+**Status: LIVE.** Code only, no database write. Commit `51bd6fc0`; Frontend deployment
+`7c7442e9-25fa-4259-a9d0-0f72a40a83b4` SUCCESS.
+
+- **Change.** `country-doctors-copy.ts` gains `br:pt/en/es` SEO title/description
+  (code SEO already beats stored DOCTORS_INDEX fields through `doctorDirectorySeo`, so
+  `doctors/page.tsx` needed no change) and Brazil overrides for `trustCard3Title/Subtitle`,
+  `floatCard1Title/Subtitle` and `bottomCtaTitle/Accent`. Removed: "Agende no mesmo dia" /
+  "Book same-day" / "Agende el mismo día", "Disponibilidade no mesmo dia", "Consultas
+  hoje", "Disponível hoje", "A maioria das consultas em 24 horas", "Marque no mesmo dia",
+  and "Cuidados Paliativos / Palliative Care" in the description.
+- **Proof.** Frontend `tsc --noEmit` exit 0; `check-locale-keys` passed; vitest 487/488
+  (new Brazil test passes; the one failure, `same-day-booking-state.test.ts`, is
+  pre-existing and untouched by this batch). Local render against the production API.
+  Production 15 September: `/brazil/{pt,en,es}/doctors` 200, self-canonical, new
+  title/description, 0 same-day/today/24-hour hits. Control `/portugal/pt/doctors`
+  unchanged (title "Médicos Online em Portugal | Global Health", same-day strings still
+  present from the shared PT bundle).
+- **Follow-up.** Stored DOCTORS_INDEX `seoTitle`/`seoDescription` for Brazil still hold the
+  old text (hidden by code SEO); clear them under D1. Renato's profile FAQ still says
+  "Consultas no mesmo dia geralmente estão disponíveis" (doctor copy, D2 scope).
+- **Cohort.** `/brazil/{pt,en,es}/doctors`: measure 2026-10-15, 2026-11-14, 2026-12-14.
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
