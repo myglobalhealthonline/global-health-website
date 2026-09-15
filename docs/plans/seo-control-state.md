@@ -10330,6 +10330,23 @@ incremental build: run it with `--incremental false` before pushing.
   `booking_confirmed` with `market = brazil` or a `/brazil/` page path in property
   `547083375` before the December 90-day reads.
 
+### 59.10 R6: diabetes article /br/ links — 15 September 2026
+
+**Status: LIVE.** Database write, owner-run, not clinically gated (blog). Runner
+`backend/scripts/patch-brazil-diabetes-links.mjs` (commits `708e009f`, `05aefc8c`).
+
+- **Change.** `diabetes-doenca-silenciosa` PT body (3 links) and EN/ES `BlogTranslation`
+  content (4 links each): `/br/blog` → `/brazil/{lang}/blog`, `/br/medicos/dr-renato-sarmento`
+  → `/brazil/{lang}/doctors/dr-renato-sarmento`, `/br/clinica-geral` →
+  `/brazil/{lang}/gp-consultation-online`; the link on "Dr. Tiago Miguel Figueira" removed,
+  name kept. Link text unchanged. CS/RO/DE translations also hold `/br/` links but are not
+  served on Brazil routes; skipped. `lastReviewedAt` untouched (admin form not used).
+- **Proof.** Snapshot 15 September; manifest `0c1b882b…`; owner dry-run 3/3 ready; owner apply
+  3/3 `apply`. Production: all three articles 200, self-canonical, 0 `/br/` links, no Tiago
+  href; every `/brazil/...` link on them returns 200 (the PT page served one cached copy
+  with the old links before refreshing). Rollback: `rollback` mode with the same manifest.
+- **Cohort.** Three diabetes articles: measure 2026-10-15, 2026-11-14, 2026-12-14.
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
