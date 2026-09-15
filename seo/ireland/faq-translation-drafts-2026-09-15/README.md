@@ -1,6 +1,6 @@
 # Ireland FAQ translation drafts (2026-09-15)
 
-**Status: DRAFT. Not reviewed. Not published.**
+**Status: clinician-approved (Dr Tiago, confirmed by the owner 2026-09-15) and wired into `frontend/locales/<lang>/faq-markets.json`. The draft files keep their original `_status` and reviewer notes as the review record.**
 
 These files translate the Irish market FAQ (`frontend/locales/en/faq-markets.json`, key `ie`, 6 groups, 18 questions) into Spanish, Portuguese, Czech, Romanian and German. They were drafted by AI on 2026-09-15 at the owner's request.
 

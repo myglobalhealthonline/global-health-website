@@ -110,5 +110,117 @@
         ]
       }
     ]
+  },
+  "ie": {
+    "groups": [
+      {
+        "eyebrow": "Irlanda",
+        "title": "Irlanda",
+        "items": [
+          {
+            "question": "¿Los médicos están registrados en el Irish Medical Council?",
+            "answer": "Sí. Todos los médicos que atienden a pacientes a través de Global Health en Irlanda están registrados en el Irish Medical Council (el organismo que regula el ejercicio de la medicina en Irlanda), la misma condición que se exige a cualquier médico de cabecera o especialista que ejerza en el país. Si quieres comprobarlo por ti mismo, puedes pedir los datos de registro del médico antes o durante tu consulta. El registro significa que el médico ha cumplido los requisitos del Council en cuanto a titulación, aptitud para ejercer y estándares profesionales continuos, y que responde ante él del mismo modo que cualquier médico al que acudirías en una clínica. Esto se aplica tanto si reservas una consulta general como una derivación a especialista o un certificado de baja."
+          },
+          {
+            "question": "¿Tengo que ser ya paciente para reservar una consulta?",
+            "answer": "No es necesaria ninguna relación previa con nosotros. Puedes crear una cuenta y reservar tu primera consulta del mismo modo que cualquier paciente habitual — no hay lista de espera a la que apuntarse ni se necesita derivación para empezar con una consulta general. Durante la reserva se te pedirán datos básicos y tus síntomas o el motivo de la consulta, que el médico revisa antes o durante la llamada. Si procede una atención continuada, la opinión de un especialista o una prueba de laboratorio, el médico puede organizar el siguiente paso a partir de ahí. Cualquier persona que se encuentre en Irlanda puede usar el servicio sin haber sido atendida antes por uno de nuestros médicos."
+          },
+          {
+            "question": "¿Qué debo hacer ante una emergencia médica?",
+            "answer": "Global Health es un servicio de consultas online, no un servicio de emergencias, y no está supervisado para situaciones urgentes o que pongan en peligro la vida. Si tú o alguien que está contigo sufre una emergencia médica, llama inmediatamente al 112 o al 999, o acude directamente al servicio de urgencias más cercano — no esperes a una cita online. Nuestros médicos pueden valorar síntomas no urgentes, emitir un certificado de baja cuando proceda o derivarte a otro profesional, pero las videoconsultas no son adecuadas para dolor en el pecho, dificultad respiratoria grave, hemorragia abundante, pérdida de conocimiento u otras emergencias. Si durante una consulta un médico considera que tus síntomas requieren atención presencial urgente, te indicará que la busques de inmediato."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Reservas",
+        "title": "Cómo reservar tu cita",
+        "items": [
+          {
+            "question": "¿Cómo reservo una cita online?",
+            "answer": "La reserva se hace directamente en la web: elige el tipo de consulta que necesitas, escoge un horario disponible e introduce tus datos y el motivo de la consulta. Verás el precio de esa consulta antes de confirmar y pagar, así que no habrá sorpresas al finalizar el pago. Una vez reservada, recibirás una confirmación con la hora y cómo conectarte — normalmente por vídeo, a veces por teléfono. Si no tienes claro qué tipo de consulta se ajusta a tu situación, el proceso de reserva te guiará, y siempre puedes contactarnos antes con dudas sobre horarios, pagos o tu cuenta."
+          },
+          {
+            "question": "¿Con qué rapidez puedo ver a un médico en Irlanda?",
+            "answer": "Normalmente hay citas disponibles para el mismo día, y muchos pacientes son atendidos a las pocas horas de reservar, aunque la disponibilidad exacta depende de la demanda y del tipo de consulta que necesites. Las solicitudes que resultan urgentes, como necesitar un certificado de baja antes de un turno, suelen ser más fáciles de encajar rápidamente que una consulta de especialista más larga. La página de reservas siempre muestra los horarios realmente disponibles, no una estimación, así que sabrás exactamente cuándo pueden atenderte antes de pagar. Si un día no aparece ningún horario adecuado, volver a mirar poco después o probar un horario a primera hora de la mañana suele permitir encontrar una opción para el mismo día."
+          },
+          {
+            "question": "¿Puedo reservar o hacer preguntas por teléfono además de online?",
+            "answer": "La reserva en sí se hace online, pero nuestra línea telefónica está disponible para preguntas sobre tu cuenta, una reserva existente o un pago, y se atiende en inglés. No se utiliza para dar consejo clínico ni para diagnosticarte por teléfono — eso ocurre durante tu consulta con un médico, ya sea por vídeo o por llamada telefónica según el tipo de cita que reserves. Si no sabes qué servicio elegir o tienes algún problema al completar una reserva, llamarnos o escribirnos por correo electrónico es la forma más rápida de resolverlo antes de que llegue la hora de tu cita."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultas",
+        "title": "Tu consulta",
+        "items": [
+          {
+            "question": "¿La consulta es por vídeo o por teléfono?",
+            "answer": "La mayoría de las consultas se realizan por videollamada segura, lo que permite al médico verte y valorar directamente los síntomas visibles, de forma similar a una visita presencial. Algunos tipos de consulta, sobre todo los seguimientos breves o determinadas solicitudes de certificado de baja, pueden ofrecerse por teléfono — la página de reservas te indica qué formato corresponde antes de confirmar. En cualquier caso, la llamada tiene lugar a la hora programada a través de un enlace privado o un número que se envía con tu confirmación, y no necesitas descargar ningún software especial más allá de un navegador básico o una conexión telefónica. Si un médico considera que tus síntomas deben valorarse en persona, te lo dirá durante la llamada."
+          },
+          {
+            "question": "¿Qué ocurre durante una consulta online con un médico de cabecera?",
+            "answer": "El médico te preguntará por tus síntomas, tus antecedentes médicos y la medicación que tomas, igual que haría en una clínica, y después valorará lo que razonablemente puede evaluarse por vídeo o teléfono. En función de esa valoración, puede darte consejo, emitir un certificado de baja, enviar una receta a tu farmacia o derivarte para una prueba de laboratorio o la opinión de un especialista cuando ese sea el siguiente paso adecuado — nada de esto está garantizado de antemano y depende por completo de lo que el médico observe durante tu consulta. Las citas están programadas para que haya tiempo para preguntas, y después recibirás instrucciones de seguimiento por escrito que resumen lo que se habló y acordó."
+          },
+          {
+            "question": "¿Y si el médico no puede ayudarme por videollamada?",
+            "answer": "No todas las afecciones pueden valorarse de forma segura a distancia, y un médico puede indicarte durante tu consulta que necesitas que te vean en persona — ya sea tu médico de cabecera habitual, un especialista o un servicio de urgencias, según lo urgente que sea. En esa situación, el médico te explicará por qué y qué ocurre a continuación, en lugar de aventurar un diagnóstico por videollamada. Es un resultado normal y esperable de la valoración online, no un fallo del servicio: las videoconsultas son adecuadas para una amplia variedad de síntomas, pero algunas cosas realmente requieren una exploración física o pruebas presenciales para valorarse de forma adecuada y segura."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Certificados de baja",
+        "title": "Certificados de baja y recetas",
+        "items": [
+          {
+            "question": "¿Cómo obtengo un certificado de baja online?",
+            "answer": "Reserva una consulta general y explica tus síntomas al médico por vídeo o teléfono, igual que harías en la consulta de un médico de cabecera. Si la valoración del médico lo justifica, emitirá un certificado de baja en formato electrónico, que normalmente se envía a tu correo electrónico el mismo día. Un certificado de baja solo se emite cuando es clínicamente apropiado después de que el médico te haya valorado realmente — no es algo que puedas solicitar y recibir de forma automática, y el médico puede hacerte preguntas adicionales o negarse a emitirlo si tu descripción no lo justifica. No necesitas ser ya paciente para reservar este tipo de consulta."
+          },
+          {
+            "question": "¿Cuánto tardo en recibir mi certificado de baja?",
+            "answer": "Una vez finalizada tu consulta, y si el médico ha decidido que procede un certificado de baja, normalmente se emite y se te envía por correo electrónico el mismo día, a menudo en pocas horas. El plazo depende de lo rápido que te atiendan y de la carga del servicio en ese momento, por lo que reservar más temprano en el día suele significar un resultado más rápido. El propio certificado indica las fechas que cubre según lo que el médico valoró — no se antedata más allá de lo clínicamente justificado. Si lo necesitas con urgencia para un turno o una fecha límite, indícalo al reservar para que puedas elegir la primera cita disponible."
+          },
+          {
+            "question": "¿Aceptará mi empresa un certificado de baja emitido online?",
+            "answer": "Un certificado de baja emitido por un médico registrado en el Irish Medical Council tras una valoración adecuada tiene la misma consideración tanto si la consulta fue online como si fue presencial — la legislación irlandesa no exige que un certificado proceda de una visita presencial. Dicho esto, cada empresa establece su propia política de bajas por enfermedad, así que conviene comprobar qué espera la tuya si tienes dudas. Los derechos reconocidos por ley, como el Illness Benefit (prestación por enfermedad), son un asunto aparte: los evalúa el Department of Social Protection (el ministerio irlandés de protección social) según sus propios criterios y requisitos de certificación, y nuestros médicos pueden emitir un certificado médico, pero no pueden presentar ni resolver una solicitud de prestación en tu nombre."
+          },
+          {
+            "question": "¿Puede el médico enviar una receta a mi farmacia?",
+            "answer": "Cuando una receta es clínicamente apropiada, el médico puede enviarla electrónicamente a la farmacia que elijas, de modo que a menudo está lista para recoger poco después de que termine tu consulta. Durante la cita o después se te preguntará qué farmacia quieres utilizar. No todas las consultas terminan en una receta — el médico decide en función de tus síntomas y tus antecedentes, y algunos medicamentos no son adecuados para recetarse sin una exploración presencial o pruebas adicionales. Si una receta no es apropiada, el médico te explicará el motivo y te propondrá otras opciones, que pueden incluir un seguimiento, una derivación o simplemente consejos de autocuidado."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacidad",
+        "title": "Privacidad e historial",
+        "items": [
+          {
+            "question": "¿Se mantiene la confidencialidad de mi información médica?",
+            "answer": "Sí. Los datos de tu consulta se tratan como información médica sensible conforme a la legislación irlandesa y de la UE sobre protección de datos, y solo se utilizan para prestarte asistencia y para cualquier gestión administrativa directamente relacionada, como emitir un certificado de baja o enviar una receta a tu farmacia. Los médicos están sujetos a las mismas obligaciones de confidencialidad que se aplican a cualquier profesional registrado en Irlanda. Tu información no se comparte con tu empresa, tus familiares ni nadie más sin tu consentimiento, salvo en los casos poco frecuentes en que la ley exige su divulgación, como un riesgo grave para la seguridad. Nuestra política de privacidad detalla por completo qué datos se recogen y cómo se utilizan."
+          },
+          {
+            "question": "¿Quién puede ver mi historial de consultas?",
+            "answer": "Tu historial es accesible para el médico que te atendió y para el personal administrativo limitado que lo necesita para prestar el servicio, por ejemplo para gestionar una receta o emitir la documentación que hayas solicitado. No se comparte con tu empresa ni con nadie más salvo que nos lo pidas expresamente, por ejemplo solicitando que se envíe una copia a algún sitio. Si un médico decide que necesitas una derivación a un especialista o una prueba de laboratorio, los datos pertinentes se comparten con ese proveedor para que tu atención pueda continuar, pero solo lo necesario para ese fin. El acceso queda registrado y restringido de acuerdo con nuestras obligaciones de protección de datos."
+          },
+          {
+            "question": "¿Puedo obtener una copia de mi historial médico?",
+            "answer": "Sí, tienes derecho a solicitar una copia de tu historial de consultas y de cualquier certificado o receta que se te haya emitido, en virtud de tus derechos de protección de datos. Puedes hacerlo desde tu cuenta o contactándonos directamente, y te confirmaremos qué se necesita para verificar tu identidad antes de facilitar nada, ya que se trata de registros sanitarios sensibles. No necesitas tener un motivo concreto para pedirlo — acceder a tu propio historial es tu derecho. Si quieres que el historial se envíe a otro médico, a una nueva empresa o a una aseguradora, indícanoslo y podemos gestionarlo con tu consentimiento."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Pagos",
+        "title": "Pagos",
+        "items": [
+          {
+            "question": "¿Cuánto cuesta una consulta?",
+            "answer": "El precio depende del tipo de consulta que necesites — una consulta general, una derivación a especialista y una visita centrada en un certificado de baja no tienen necesariamente el mismo precio. En lugar de indicar aquí cifras que podrían quedar desactualizadas, el precio exacto de la cita que elijas se muestra siempre con claridad durante la reserva, antes de que confirmes o pagues nada. Si tienes uno de nuestros planes de membresía, algunas consultas pueden estar ya incluidas en tu plan en lugar de cobrarse por separado — esto también se muestra al pagar. Si tienes alguna pregunta sobre el coste antes de reservar, contacta con nosotros y te indicaremos el tipo de consulta adecuado."
+          },
+          {
+            "question": "¿Qué métodos de pago aceptan?",
+            "answer": "El pago se realiza online de forma segura con tarjeta en el momento de la reserva, de modo que tu cita queda confirmada y pagada antes de que te atienda el médico. Si eres miembro de uno de nuestros planes, las consultas que cumplan los requisitos pueden quedar cubiertas por tu membresía en lugar de cobrarse aparte — esto se aplica automáticamente al pagar cuando corresponde. No aceptamos pagos por teléfono ni por ningún método ajeno al proceso de reserva, lo que mantiene los datos de tu tarjeta fuera de correos electrónicos o llamadas. Si un pago no se completa, la página de reserva te avisará de inmediato para que puedas intentarlo de nuevo o usar otra tarjeta."
+          }
+        ]
+      }
+    ]
   }
 }

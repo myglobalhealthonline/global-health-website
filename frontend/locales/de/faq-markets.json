@@ -1,1 +1,114 @@
-{}
+{
+  "ie": {
+    "groups": [
+      {
+        "eyebrow": "Irland",
+        "title": "Irland",
+        "items": [
+          {
+            "question": "Sind die Ärzte beim Irish Medical Council registriert?",
+            "answer": "Ja. Jeder Arzt, der über Global Health in Irland Patienten behandelt, ist beim Irish Medical Council (der irischen Ärzteaufsichtsbehörde) registriert — dieselbe Voraussetzung, die für jeden Hausarzt oder Facharzt gilt, der im Land praktiziert. Sie können darum bitten, die Registrierungsdaten eines Arztes vor oder während Ihrer Konsultation einzusehen, wenn Sie dies selbst überprüfen möchten. Die Registrierung bedeutet, dass der Arzt die Anforderungen des Council an Qualifikation, Eignung zur Berufsausübung und fortlaufende berufliche Standards erfüllt hat und ihm gegenüber auf die gleiche Weise rechenschaftspflichtig ist wie jeder Arzt, den Sie in einer Praxis aufsuchen würden. Dies gilt unabhängig davon, ob Sie eine allgemeine Konsultation, eine Facharztüberweisung oder eine ärztliche Krankheitsbescheinigung (in Irland „sick cert“ genannt) buchen."
+          },
+          {
+            "question": "Muss ich bereits Patient sein, um eine Konsultation zu buchen?",
+            "answer": "Eine vorherige Beziehung zu uns ist nicht erforderlich. Sie können ein Konto erstellen und Ihre erste Konsultation genauso buchen wie jeder wiederkehrende Patient — für den Einstieg mit einer allgemeinen Konsultation müssen Sie sich weder auf eine Warteliste setzen lassen noch benötigen Sie eine Überweisung. Bei der Buchung werden Sie nach grundlegenden Angaben und Ihren Symptomen bzw. dem Grund Ihres Besuchs gefragt, die der Arzt vor oder während des Gesprächs prüft. Wenn eine weiterführende Betreuung, eine fachärztliche Einschätzung oder ein Labortest angebracht ist, kann der Arzt von dort aus den nächsten Schritt veranlassen. Alle, die in Irland ansässig sind, können den Service nutzen, ohne zuvor bei einem unserer Ärzte gewesen zu sein."
+          },
+          {
+            "question": "Was soll ich bei einem medizinischen Notfall tun?",
+            "answer": "Global Health ist ein Online-Konsultationsdienst und kein Notdienst, und er wird nicht auf dringende oder lebensbedrohliche Situationen hin überwacht. Wenn Sie oder eine Person bei Ihnen einen medizinischen Notfall hat, rufen Sie sofort 112 oder 999 an oder begeben Sie sich direkt in die nächste Notaufnahme — warten Sie nicht auf einen Online-Termin. Unsere Ärzte können nicht dringliche Symptome beurteilen, sofern angemessen eine Krankheitsbescheinigung ausstellen oder Sie weiterüberweisen, aber Videokonsultationen sind nicht geeignet bei Brustschmerzen, schweren Atembeschwerden, starken Blutungen, Bewusstseinsverlust oder anderen Notfällen. Wenn ein Arzt während einer Konsultation der Ansicht ist, dass Ihre Symptome eine dringende persönliche Versorgung vor Ort erfordern, wird er Ihnen sagen, dass Sie diese sofort in Anspruch nehmen sollen."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Buchung",
+        "title": "Ihren Termin buchen",
+        "items": [
+          {
+            "question": "Wie buche ich online einen Termin?",
+            "answer": "Die Buchung erfolgt direkt über die Website: Wählen Sie die Art der Konsultation, die Sie benötigen, suchen Sie sich einen verfügbaren Termin aus und geben Sie Ihre Daten sowie den Grund Ihres Besuchs ein. Sie sehen den Preis für diese Konsultation, bevor Sie bestätigen und bezahlen, sodass es beim Bezahlvorgang keine Überraschungen gibt. Nach der Buchung erhalten Sie eine Bestätigung mit der Uhrzeit und den Informationen, wie Sie teilnehmen — meist per Video, manchmal per Telefon. Wenn Sie nicht sicher sind, welche Konsultationsart zu Ihrer Situation passt, leitet Sie der Buchungsablauf an, und Sie können uns vorab jederzeit bei Fragen zu Terminplanung, Zahlung oder Ihrem Konto kontaktieren."
+          },
+          {
+            "question": "Wie schnell kann ich in Irland einen Arzt sprechen?",
+            "answer": "Termine am selben Tag sind in der Regel verfügbar, und viele Patienten kommen innerhalb weniger Stunden nach der Buchung dran, wobei die genaue Verfügbarkeit von der Nachfrage und der benötigten Konsultationsart abhängt. Anliegen, die sich dringend anfühlen, etwa wenn Sie vor einer Schicht eine Krankheitsbescheinigung benötigen, lassen sich im Allgemeinen leichter kurzfristig einplanen als eine längere fachärztliche Konsultation. Die Buchungsseite zeigt immer tatsächlich verfügbare Zeiten statt einer Schätzung an, sodass Sie genau wissen, wann Sie drankommen, bevor Sie bezahlen. Wenn an einem bestimmten Tag nichts Passendes angezeigt wird, findet sich oft noch eine Option am selben Tag, wenn Sie kurz darauf erneut nachsehen oder einen Termin am frühen Morgen wählen."
+          },
+          {
+            "question": "Kann ich neben der Online-Buchung auch telefonisch buchen oder Fragen stellen?",
+            "answer": "Die Buchung selbst erfolgt online, aber unsere Telefonleitung steht Ihnen für Fragen zu Ihrem Konto, einer bestehenden Buchung oder zur Zahlung zur Verfügung und wird auf Englisch betreut. Sie dient nicht der medizinischen Beratung oder einer Diagnose am Telefon — das geschieht während Ihrer eigentlichen Konsultation mit einem Arzt, je nach gebuchter Terminart per Video oder per Telefonanruf. Wenn Sie unsicher sind, welchen Service Sie wählen sollen, oder beim Abschließen einer Buchung auf ein Problem stoßen, ist ein Anruf oder eine E-Mail an uns der schnellste Weg, dies vor Ihrem Termin zu klären."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Konsultationen",
+        "title": "Ihre Konsultation",
+        "items": [
+          {
+            "question": "Findet die Konsultation per Video oder per Telefon statt?",
+            "answer": "Die meisten Konsultationen finden per sicherem Videoanruf statt, sodass der Arzt Sie sehen und sichtbare Symptome direkt beurteilen kann, ähnlich wie bei einem persönlichen Besuch. Einige Konsultationsarten, insbesondere kurze Folgetermine oder bestimmte Anfragen nach einer Krankheitsbescheinigung, werden unter Umständen stattdessen telefonisch angeboten — die Buchungsseite zeigt Ihnen vor der Bestätigung, welches Format gilt. In jedem Fall findet das Gespräch zu Ihrem gebuchten Termin über einen privaten Link oder eine Telefonnummer statt, die Sie mit Ihrer Bestätigung erhalten, und Sie müssen außer einem einfachen Browser oder einer Telefonverbindung keine spezielle Software herunterladen. Wenn ein Arzt der Meinung ist, dass Ihre Symptome eine persönliche Vorstellung erfordern, teilt er Ihnen das während des Gesprächs mit."
+          },
+          {
+            "question": "Was passiert bei einer Online-Hausarztkonsultation?",
+            "answer": "Der Arzt fragt nach Ihren Symptomen, Ihrer Krankengeschichte und etwaigen Medikamenten, die Sie einnehmen, ähnlich wie in einer Praxis, und beurteilt dann, was sich per Video oder Telefon sinnvoll einschätzen lässt. Auf Grundlage dieser Beurteilung kann er Sie beraten, eine Krankheitsbescheinigung ausstellen, ein Rezept an Ihre Apotheke senden oder Sie für einen Labortest oder eine fachärztliche Einschätzung überweisen, wenn dies der angemessene nächste Schritt ist — nichts davon ist im Voraus garantiert, und es hängt ganz davon ab, was der Arzt während Ihrer Konsultation feststellt. Die Termine sind zeitlich so bemessen, dass Raum für Fragen bleibt, und Sie erhalten anschließend schriftliche Anweisungen zum weiteren Vorgehen, die zusammenfassen, was besprochen und vereinbart wurde."
+          },
+          {
+            "question": "Was ist, wenn der Arzt mir per Videoanruf nicht helfen kann?",
+            "answer": "Nicht jede Erkrankung lässt sich aus der Ferne sicher beurteilen, und ein Arzt kann Ihnen während Ihrer Konsultation mitteilen, dass Sie sich persönlich vorstellen müssen — je nach Dringlichkeit bei Ihrem regulären Hausarzt, einem Facharzt oder in einer Notaufnahme. In diesem Fall erklärt Ihnen der Arzt die Gründe und wie es weitergeht, statt per Videoanruf eine Diagnose zu erraten. Dies ist ein normales und zu erwartendes Ergebnis einer Online-Beurteilung und kein Versagen des Service: Videokonsultationen eignen sich für ein breites Spektrum an Symptomen, aber manches erfordert tatsächlich eine körperliche Untersuchung oder Tests vor Ort, um es richtig und sicher zu beurteilen."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Krankheitsbescheinigungen",
+        "title": "Krankheitsbescheinigungen und Rezepte",
+        "items": [
+          {
+            "question": "Wie erhalte ich online eine Krankheitsbescheinigung?",
+            "answer": "Buchen Sie eine allgemeine Konsultation und schildern Sie dem Arzt Ihre Symptome per Video oder Telefon, genauso wie Sie es in einer Hausarztpraxis tun würden. Wenn die Beurteilung des Arztes dies stützt, stellt er eine Krankheitsbescheinigung elektronisch aus, die Ihnen in der Regel noch am selben Tag per E-Mail zugesendet wird. Eine Krankheitsbescheinigung wird nur ausgestellt, wenn dies klinisch angemessen ist, nachdem der Arzt Sie tatsächlich beurteilt hat — Sie können sie nicht einfach anfordern und automatisch erhalten, und der Arzt kann Rückfragen stellen oder die Ausstellung ablehnen, wenn Ihre Schilderung dies nicht stützt. Sie müssen kein bestehender Patient sein, um diese Art von Konsultation zu buchen."
+          },
+          {
+            "question": "Wie lange dauert es, bis ich meine Krankheitsbescheinigung erhalte?",
+            "answer": "Sobald Ihre Konsultation abgeschlossen ist und der Arzt entschieden hat, dass eine Krankheitsbescheinigung angemessen ist, wird sie in der Regel noch am selben Tag ausgestellt und Ihnen per E-Mail zugesendet, oft innerhalb weniger Stunden. Die Bearbeitungszeit hängt davon ab, wie schnell Sie drankommen und wie ausgelastet der Service zu diesem Zeitpunkt ist, daher bedeutet eine Buchung früher am Tag im Allgemeinen ein schnelleres Ergebnis. Die Bescheinigung selbst nennt die Daten, die sie abdeckt, auf Grundlage dessen, was der Arzt beurteilt hat — sie wird nicht über das klinisch Gerechtfertigte hinaus rückdatiert. Wenn Sie sie dringend für eine Schicht oder eine Frist benötigen, erwähnen Sie dies bei der Buchung, damit Sie den frühesten verfügbaren Termin wählen können."
+          },
+          {
+            "question": "Akzeptiert mein Arbeitgeber eine online ausgestellte Krankheitsbescheinigung?",
+            "answer": "Eine Krankheitsbescheinigung, die von einem beim Irish Medical Council registrierten Arzt nach einer ordnungsgemäßen Beurteilung ausgestellt wurde, hat denselben Stellenwert, unabhängig davon, ob die Konsultation online oder in einer Praxis stattgefunden hat — das irische Recht verlangt nicht, dass eine Bescheinigung aus einem persönlichen Termin stammt. Allerdings legen Arbeitgeber jeweils eigene Regelungen für krankheitsbedingte Abwesenheiten fest, daher lohnt es sich, im Zweifel nachzufragen, was Ihr Arbeitgeber erwartet. Gesetzliche Ansprüche wie Illness Benefit (irische staatliche Geldleistung bei Krankheit) sind eine separate Angelegenheit: Sie werden vom Department of Social Protection (dem irischen Ministerium für Sozialschutz) nach dessen eigenen Kriterien und Bescheinigungsanforderungen geprüft, und unsere Ärzte können zwar eine ärztliche Bescheinigung ausstellen, aber keinen Leistungsantrag in Ihrem Namen einreichen oder darüber entscheiden."
+          },
+          {
+            "question": "Kann der Arzt ein Rezept an meine Apotheke senden?",
+            "answer": "Wenn ein Rezept klinisch angemessen ist, kann der Arzt es elektronisch an eine Apotheke Ihrer Wahl senden, sodass es oft kurz nach Ende Ihrer Konsultation zur Abholung bereitliegt. Während oder nach dem Termin werden Sie gefragt, welche Apotheke Sie nutzen möchten. Nicht jede Konsultation führt zu einem Rezept — der Arzt entscheidet anhand Ihrer Symptome und Vorgeschichte, und manche Medikamente eignen sich nicht zur Verschreibung ohne eine persönliche Untersuchung oder weitere Tests. Wenn ein Rezept nicht angemessen ist, erklärt der Arzt die Gründe und schlägt andere Möglichkeiten vor, etwa einen Folgetermin, eine Überweisung oder stattdessen einfache Hinweise zur Selbstbehandlung."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Datenschutz",
+        "title": "Datenschutz und Patientenunterlagen",
+        "items": [
+          {
+            "question": "Werden meine medizinischen Daten vertraulich behandelt?",
+            "answer": "Ja. Ihre Konsultationsdaten werden nach irischem und EU-Datenschutzrecht als sensible medizinische Daten behandelt und nur verwendet, um Ihre Versorgung zu erbringen, sowie für unmittelbar damit verbundene Verwaltungsaufgaben, etwa die Ausstellung einer Krankheitsbescheinigung oder die Übermittlung eines Rezepts an Ihre Apotheke. Die Ärzte unterliegen denselben Vertraulichkeitspflichten, die für jeden registrierten Arzt in Irland gelten. Ihre Daten werden ohne Ihre Einwilligung nicht an Ihren Arbeitgeber, Familienangehörige oder andere Personen weitergegeben, außer in den seltenen Fällen, in denen das Gesetz eine Offenlegung verlangt, etwa bei einer ernsthaften Gefahr für die Sicherheit. Unsere Datenschutzerklärung legt genau und vollständig dar, welche Daten erhoben und wie sie verwendet werden."
+          },
+          {
+            "question": "Wer kann meine Konsultationsunterlagen einsehen?",
+            "answer": "Zugriff auf Ihre Unterlagen haben der Arzt, der Sie behandelt hat, sowie ein begrenzter Kreis von Verwaltungsmitarbeitern, die sie für den Betrieb des Service benötigen, etwa um ein Rezept abzuwickeln oder von Ihnen angeforderte Dokumente auszustellen. Sie werden nicht an Ihren Arbeitgeber oder andere weitergegeben, es sei denn, Sie bitten uns ausdrücklich darum, zum Beispiel indem Sie die Zusendung einer Kopie an eine bestimmte Stelle anfordern. Wenn ein Arzt entscheidet, dass Sie an einen Facharzt oder für einen Labortest überwiesen werden müssen, werden relevante Angaben an diesen Anbieter weitergegeben, damit Ihre Versorgung fortgesetzt werden kann, jedoch nur das, was für diesen Zweck erforderlich ist. Der Zugriff wird protokolliert und im Einklang mit unseren Datenschutzpflichten beschränkt."
+          },
+          {
+            "question": "Kann ich eine Kopie meiner Patientenunterlagen erhalten?",
+            "answer": "Ja, im Rahmen Ihrer Datenschutzrechte haben Sie Anspruch darauf, eine Kopie Ihrer Konsultationsunterlagen sowie aller Ihnen ausgestellten Bescheinigungen oder Rezepte anzufordern. Dies können Sie über Ihr Konto oder durch direkte Kontaktaufnahme mit uns tun, und wir teilen Ihnen mit, was zur Überprüfung Ihrer Identität erforderlich ist, bevor wir etwas herausgeben, da es sich um sensible Gesundheitsunterlagen handelt. Sie müssen keinen bestimmten Grund für Ihre Anfrage angeben — der Zugang zu Ihren eigenen Unterlagen ist Ihr Recht. Wenn Sie möchten, dass Unterlagen an einen anderen Arzt, einen neuen Arbeitgeber oder eine Versicherung weitergeleitet werden, teilen Sie uns dies mit, und wir können das mit Ihrer Einwilligung veranlassen."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Zahlungen",
+        "title": "Zahlungen",
+        "items": [
+          {
+            "question": "Was kostet eine Konsultation?",
+            "answer": "Der Preis hängt von der Art der benötigten Konsultation ab — eine allgemeine Konsultation, eine Facharztüberweisung und ein Termin, bei dem es vorrangig um eine Krankheitsbescheinigung geht, kosten nicht unbedingt gleich viel. Statt hier Beträge aufzuführen, die veralten könnten, wird der genaue Preis für Ihren gewählten Termin bei der Buchung immer deutlich angezeigt, bevor Sie etwas bestätigen oder bezahlen. Wenn Sie einen unserer Mitgliedschaftspläne haben, sind einige Konsultationen möglicherweise bereits in Ihrem Plan enthalten, statt einzeln berechnet zu werden — auch dies wird beim Bezahlvorgang angezeigt. Wenn Sie vor der Buchung eine Frage zu den Kosten haben, kontaktieren Sie uns, und wir weisen Ihnen den Weg zur richtigen Konsultationsart."
+          },
+          {
+            "question": "Welche Zahlungsmethoden akzeptieren Sie?",
+            "answer": "Die Zahlung erfolgt sicher online per Karte zum Zeitpunkt der Buchung, sodass Ihr Termin bestätigt und bezahlt ist, bevor Sie mit dem Arzt sprechen. Wenn Sie Mitglied in einem unserer Pläne sind, können dafür infrage kommende Konsultationen statt einer separaten Gebühr über Ihre Mitgliedschaft abgedeckt sein — dies wird, sofern zutreffend, beim Bezahlvorgang automatisch angewendet. Wir nehmen keine Zahlungen per Telefon oder über andere Wege außerhalb des Buchungsablaufs entgegen, damit Ihre Kartendaten nicht in E-Mails oder Telefonaten auftauchen. Wenn eine Zahlung nicht durchgeht, informiert Sie die Buchungsseite sofort, sodass Sie es erneut versuchen oder eine andere Karte verwenden können."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -110,5 +110,117 @@
         ]
       }
     ]
+  },
+  "ie": {
+    "groups": [
+      {
+        "eyebrow": "Irsko",
+        "title": "Irsko",
+        "items": [
+          {
+            "question": "Jsou lékaři registrovaní u Irish Medical Council?",
+            "answer": "Ano. Každý lékař, který přes Global Health v Irsku přijímá pacienty, je registrován u Irish Medical Council (irská lékařská komora, která vede registr lékařů), což je stejný status, jaký se vyžaduje u každého praktického lékaře nebo specialisty vykonávajícího praxi v této zemi. Pokud si to chcete ověřit sami, můžete před konzultací nebo během ní požádat o údaje o registraci lékaře. Registrace znamená, že lékař splnil požadavky této instituce na kvalifikaci, způsobilost k výkonu praxe a průběžné profesní standardy a že se jí zodpovídá stejně jako kterýkoli lékař, ke kterému byste šli na kliniku. To platí bez ohledu na to, zda si objednáváte všeobecnou konzultaci, doporučení ke specialistovi, nebo potvrzení o pracovní neschopnosti."
+          },
+          {
+            "question": "Je k objednání konzultace nutné být již vaším pacientem?",
+            "answer": "Žádný předchozí vztah s námi není nutný. Můžete si vytvořit účet a objednat svou první konzultaci stejně jako kterýkoli vracející se pacient — k zahájení všeobecné konzultace se nemusíte zapisovat na žádný čekací seznam ani nepotřebujete doporučení. Při objednání budete požádáni o základní údaje a o vaše příznaky nebo důvod návštěvy, které lékař projde před hovorem nebo během něj. Pokud je vhodná navazující péče, názor specialisty nebo laboratorní vyšetření, lékař může odtud zajistit další krok. Službu může využít kdokoli, kdo se zdržuje v Irsku, aniž by předtím byl u některého z našich lékařů."
+          },
+          {
+            "question": "Co mám dělat v případě zdravotní nouze?",
+            "answer": "Global Health je služba online konzultací, nikoli pohotovostní služba, a není monitorována pro naléhavé nebo život ohrožující situace. Pokud vy nebo někdo s vámi potřebujete neodkladnou lékařskou pomoc, okamžitě volejte 112 nebo 999, nebo jděte přímo na nejbližší urgentní příjem — nečekejte na online termín. Naši lékaři mohou posoudit nenaléhavé příznaky, je-li to vhodné, vystavit potvrzení o pracovní neschopnosti nebo vás odeslat dál, videokonzultace však nejsou vhodné při bolesti na hrudi, závažných dýchacích obtížích, silném krvácení, ztrátě vědomí nebo jiných naléhavých stavech. Pokud lékař během konzultace usoudí, že vaše příznaky vyžadují naléhavou osobní péči, řekne vám, abyste ji okamžitě vyhledali."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Objednání",
+        "title": "Objednání termínu",
+        "items": [
+          {
+            "question": "Jak si objednám termín online?",
+            "answer": "Objednání probíhá přímo na webu: zvolte typ konzultace, který potřebujete, vyberte volný čas a zadejte své údaje a důvod návštěvy. Cenu dané konzultace uvidíte ještě před potvrzením a zaplacením, takže vás při placení nic nepřekvapí. Po objednání obdržíte potvrzení s časem a informacemi, jak se připojit — obvykle videohovorem, někdy telefonicky. Pokud si nejste jisti, který typ konzultace odpovídá vaší situaci, rezervační proces vás provede, a s dotazy k termínům, platbě nebo účtu se na nás můžete předem kdykoli obrátit."
+          },
+          {
+            "question": "Jak rychle se mohu v Irsku dostat k lékaři?",
+            "answer": "Obvykle jsou k dispozici termíny na tentýž den a mnoho pacientů se k lékaři dostane během několika hodin od objednání, přesná dostupnost však závisí na poptávce a na typu konzultace, kterou potřebujete. Požadavky, které působí naléhavě, například potřeba potvrzení o pracovní neschopnosti před směnou, se obecně dají zařadit rychleji než delší konzultace se specialistou. Stránka objednání vždy zobrazuje skutečné volné časy, nikoli odhad, takže ještě před zaplacením přesně víte, kdy se k lékaři dostanete. Pokud se v daný den nezobrazuje nic vhodného, opětovná kontrola o něco později nebo vyzkoušení časného ranního termínu často přinese možnost na tentýž den."
+          },
+          {
+            "question": "Mohu se objednat nebo se na něco zeptat telefonicky, nejen online?",
+            "answer": "Samotné objednání probíhá online, naše telefonní linka je však k dispozici pro dotazy k vašemu účtu, stávající rezervaci nebo platbě a hovory jsou vedeny v angličtině. Neslouží ke klinickému poradenství ani ke stanovení diagnózy po telefonu — to probíhá během vaší skutečné konzultace s lékařem, ať už videohovorem, nebo telefonicky, podle typu termínu, který si objednáte. Pokud si nejste jisti, kterou službu zvolit, nebo narazíte na problém při dokončování objednávky, zavolat nám nebo napsat e-mail je nejrychlejší způsob, jak vše vyřešit, než nastane čas vašeho termínu."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Konzultace",
+        "title": "Vaše konzultace",
+        "items": [
+          {
+            "question": "Probíhá konzultace videohovorem, nebo telefonicky?",
+            "answer": "Většina konzultací probíhá zabezpečeným videohovorem, díky kterému vás lékař vidí a může přímo posoudit viditelné příznaky, podobně jako při osobní návštěvě. Některé typy konzultací, zejména krátké kontrolní konzultace nebo určité žádosti o potvrzení o pracovní neschopnosti, mohou být místo toho nabízeny telefonicky — stránka objednání vám před potvrzením sdělí, která forma platí. V obou případech hovor proběhne v naplánovaném čase přes soukromý odkaz nebo číslo zaslané spolu s potvrzením a kromě běžného prohlížeče nebo telefonního spojení nemusíte stahovat žádný speciální software. Pokud lékař usoudí, že vaše příznaky je nutné posoudit osobně, řekne vám to během hovoru."
+          },
+          {
+            "question": "Co se děje během online konzultace s praktickým lékařem?",
+            "answer": "Lékař se vás zeptá na příznaky, zdravotní anamnézu a léky, které užíváte, podobně jako na klinice, a poté posoudí, co lze rozumně vyhodnotit prostřednictvím videa nebo telefonu. Na základě tohoto posouzení vám může poradit, vystavit potvrzení o pracovní neschopnosti, zaslat recept do vaší lékárny nebo vás odeslat na laboratorní vyšetření či k posouzení specialistou, pokud je to vhodný další krok — nic z toho není předem zaručeno a vše závisí výhradně na tom, co lékař během vaší konzultace zjistí. Termíny jsou časově nastaveny tak, aby zbyl prostor na dotazy, a poté obdržíte písemné pokyny k dalšímu postupu shrnující, co bylo probráno a dohodnuto."
+          },
+          {
+            "question": "Co když mi lékař přes videohovor nemůže pomoci?",
+            "answer": "Ne každý stav lze bezpečně posoudit na dálku a lékař vám během konzultace může sdělit, že je nutné osobní vyšetření — ať už u vašeho běžného praktického lékaře, specialisty, nebo na urgentním příjmu, podle toho, jak je situace naléhavá. V takovém případě vám lékař vysvětlí proč a co bude následovat, místo aby diagnózu odhadoval přes videohovor. Jde o běžný a očekávaný výsledek online posouzení, nikoli o selhání služby: videokonzultace se hodí pro širokou škálu příznaků, ale některé věci skutečně vyžadují fyzické vyšetření nebo osobně provedené testy, aby je bylo možné posoudit řádně a bezpečně."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Potvrzení o neschopnosti",
+        "title": "Potvrzení o pracovní neschopnosti a recepty",
+        "items": [
+          {
+            "question": "Jak získám potvrzení o pracovní neschopnosti online?",
+            "answer": "Objednejte si všeobecnou konzultaci a popište lékaři své příznaky videohovorem nebo telefonicky, stejně jako byste to udělali v ordinaci praktického lékaře. Pokud to posouzení lékaře podporuje, vystaví potvrzení o pracovní neschopnosti elektronicky a obvykle vám ho zašle e-mailem ještě tentýž den. Potvrzení o pracovní neschopnosti se vystavuje pouze tehdy, je-li to klinicky vhodné poté, co vás lékař skutečně posoudil — nelze o ně jen požádat a automaticky ho obdržet a lékař může položit doplňující otázky nebo vystavení odmítnout, pokud to váš popis nepodporuje. K objednání tohoto typu konzultace nemusíte být stávajícím pacientem."
+          },
+          {
+            "question": "Jak dlouho trvá, než obdržím potvrzení o pracovní neschopnosti?",
+            "answer": "Jakmile je konzultace dokončena a lékař rozhodne, že potvrzení o pracovní neschopnosti je vhodné, je obvykle vystaveno a zasláno vám e-mailem tentýž den, často během několika hodin. Doba vyřízení závisí na tom, jak rychle se k lékaři dostanete a jak vytížená je služba v danou chvíli, takže objednání dříve během dne obecně znamená rychlejší výsledek. Samotné potvrzení uvádí data, na která se vztahuje, na základě toho, co lékař posoudil — zpětné datování nepřesahuje rámec toho, co je klinicky odůvodněné. Pokud ho potřebujete naléhavě kvůli směně nebo termínu, uveďte to při objednání, abyste si mohli zvolit nejbližší volný termín."
+          },
+          {
+            "question": "Přijme můj zaměstnavatel potvrzení o pracovní neschopnosti vystavené online?",
+            "answer": "Potvrzení o pracovní neschopnosti vystavené lékařem registrovaným u Irish Medical Council po řádném posouzení má stejnou váhu bez ohledu na to, zda konzultace proběhla online, nebo v ordinaci — irské právo nevyžaduje, aby potvrzení pocházelo z osobní návštěvy. Jednotliví zaměstnavatelé si však stanovují vlastní pravidla pro pracovní volno z důvodu nemoci, takže pokud si nejste jisti, vyplatí se ověřit, co váš zaměstnavatel očekává. Zákonné nároky, jako je Illness Benefit (irská státní nemocenská dávka), jsou samostatnou záležitostí: posuzuje je Department of Social Protection (irské ministerstvo sociální ochrany) podle vlastních kritérií a požadavků na potvrzení a naši lékaři mohou vystavit lékařské potvrzení, nemohou však za vás žádost o dávku podat ani o ní rozhodnout."
+          },
+          {
+            "question": "Může lékař zaslat recept do mé lékárny?",
+            "answer": "Pokud je recept klinicky vhodný, lékař ho může elektronicky zaslat do lékárny podle vašeho výběru, takže bývá často připraven k vyzvednutí krátce po skončení konzultace. Během termínu nebo po něm budete dotázáni, kterou lékárnu chcete využít. Ne každá konzultace končí vystavením receptu — lékař rozhoduje na základě vašich příznaků a anamnézy a některé léky není vhodné předepisovat bez osobního vyšetření nebo dalších testů. Pokud recept vhodný není, lékař vysvětlí důvody a navrhne jiné možnosti, které mohou místo toho zahrnovat kontrolní konzultaci, doporučení k dalšímu vyšetření nebo jednoduché rady k péči o sebe."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Soukromí",
+        "title": "Soukromí a záznamy",
+        "items": [
+          {
+            "question": "Jsou mé zdravotní údaje důvěrné?",
+            "answer": "Ano. Údaje z vaší konzultace jsou podle irských a unijních předpisů o ochraně osobních údajů považovány za citlivé zdravotní informace a používají se pouze k poskytování vaší péče a k přímo související administrativě, jako je vystavení potvrzení o pracovní neschopnosti nebo zaslání receptu do vaší lékárny. Lékaři jsou vázáni stejnými povinnostmi mlčenlivosti, které platí pro každého registrovaného lékaře v Irsku. Vaše údaje nejsou bez vašeho souhlasu sdíleny se zaměstnavatelem, rodinnými příslušníky ani nikým jiným, s výjimkou vzácných případů, kdy zákon vyžaduje jejich zpřístupnění, například při vážném ohrožení bezpečnosti. Naše zásady ochrany osobních údajů podrobně a úplně popisují, co shromažďujeme a jak to používáme."
+          },
+          {
+            "question": "Kdo může vidět záznamy z mé konzultace?",
+            "answer": "K vašim záznamům má přístup lékař, který vás ošetřil, a omezený okruh administrativních pracovníků, kteří je potřebují k provozu služby, například k vyřízení receptu nebo vystavení dokumentů, o které jste požádali. Se zaměstnavatelem ani nikým jiným nejsou sdíleny, pokud nás o to výslovně nepožádáte, například žádostí o zaslání kopie na určité místo. Pokud lékař rozhodne, že potřebujete doporučení ke specialistovi nebo laboratorní vyšetření, jsou příslušné údaje sdíleny s tímto poskytovatelem, aby vaše péče mohla pokračovat, ale pouze v rozsahu nezbytném pro tento účel. Přístup je zaznamenáván a omezen v souladu s našimi povinnostmi v oblasti ochrany osobních údajů."
+          },
+          {
+            "question": "Mohu získat kopii své zdravotnické dokumentace?",
+            "answer": "Ano, na základě svých práv v oblasti ochrany osobních údajů máte nárok požádat o kopii záznamů ze svých konzultací a všech potvrzení nebo receptů, které vám byly vystaveny. Můžete tak učinit prostřednictvím svého účtu nebo nás přímo kontaktovat a my vám před poskytnutím čehokoli sdělíme, co je potřeba k ověření vaší totožnosti, protože jde o citlivé zdravotní záznamy. Pro žádost nemusíte mít žádný konkrétní důvod — přístup k vlastním záznamům je vaše právo. Pokud chcete záznamy předat jinému lékaři, novému zaměstnavateli nebo pojišťovně, dejte nám vědět a s vaším souhlasem to můžeme zajistit."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Platby",
+        "title": "Platby",
+        "items": [
+          {
+            "question": "Kolik stojí konzultace?",
+            "answer": "Cena závisí na typu konzultace, kterou potřebujete — všeobecná konzultace, doporučení ke specialistovi a návštěva zaměřená na potvrzení o pracovní neschopnosti nemusí mít nutně stejnou cenu. Místo abychom zde uváděli částky, které by mohly zastarat, se přesná cena zvoleného termínu vždy jasně zobrazí během objednání, ještě než cokoli potvrdíte nebo zaplatíte. Pokud máte některý z našich členských plánů, mohou být některé konzultace již zahrnuty ve vašem plánu, místo aby byly účtovány jednotlivě — i to se zobrazí při placení. Máte-li před objednáním dotaz k ceně, kontaktujte nás a pomůžeme vám najít správný typ konzultace."
+          },
+          {
+            "question": "Jaké způsoby platby přijímáte?",
+            "answer": "Platba probíhá bezpečně online kartou v okamžiku objednání, takže váš termín je potvrzen a zaplacen dříve, než se s lékařem spojíte. Pokud jste členem některého z našich plánů, mohou být způsobilé konzultace místo samostatné platby hrazeny v rámci vašeho členství — to se v příslušných případech automaticky uplatní při placení. Platby nepřijímáme po telefonu ani žádným jiným způsobem mimo rezervační proces, díky čemuž se údaje o vaší kartě neobjevují v e-mailech ani hovorech. Pokud platba neprojde, stránka objednání vás na to okamžitě upozorní, abyste to mohli zkusit znovu nebo použít jinou kartu."
+          }
+        ]
+      }
+    ]
   }
 }
