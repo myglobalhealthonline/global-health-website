@@ -1,0 +1,477 @@
+{
+  "snapshot": "seo/brazil/raw/page-content-snapshot-2026-09-15.json",
+  "source": "Brazil SEO handoff D1 (2026-09-15): stored HOME and DOCTORS_INDEX copy — remove specialist/home-test/same-day promises, pt-BR wording, CRM/CFM naming; clear stored SEO fields (code SEO already serves). Brazil pt/en/es only.",
+  "entries": [
+    {
+      "pageKey": "HOME",
+      "locale": "EN",
+      "field": "seoTitle",
+      "to": null
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "EN",
+      "field": "seoDescription",
+      "to": null
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "PT",
+      "field": "seoDescription",
+      "to": null
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "ES",
+      "field": "seoDescription",
+      "to": null
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "EN",
+      "field": "intro",
+      "to": "Welcome to Global Health in Brazil — online medical care provided by doctors registered with the Regional Council of Medicine (CRM), under the supervision of the Federal Council of Medicine (CFM). Book a consultation with a general practitioner, request medical tests when indicated, and manage your healthcare safely, entirely online and in the language in which you feel most comfortable."
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "EN",
+      "field": "whoForItems",
+      "to": [
+        "Everyday illnesses such as infections, fevers and minor injuries",
+        "Ongoing management of chronic conditions such as diabetes, hypertension and asthma",
+        "Medical certificates when clinically appropriate",
+        "Requests for blood tests or imaging where clinically indicated",
+        "Follow-up care and second opinions on an existing diagnosis or treatment plan",
+        "Family healthcare across multiple languages, for both adults and children"
+      ]
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "EN",
+      "field": "whyChooseItems",
+      "to": [
+        "Doctors registered with the CRM, under the supervision of the CFM",
+        "Secure video consultations conducted to national telemedicine standards",
+        "Open appointment slots shown during booking, subject to clinician availability",
+        "Consultations available in multiple languages, subject to clinician availability",
+        "Clinical documentation and follow-up guidance provided by email after every consultation",
+        "Transparent pricing — no hidden fees, no membership required"
+      ]
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "EN",
+      "field": "faq",
+      "to": [
+        {
+          "answer": "Book an appointment online, choose an available time, and join your consultation by secure video from your phone or computer. Your doctor will review your symptoms and history and advise on next steps.",
+          "question": "How does an online consultation work?"
+        },
+        {
+          "answer": "All doctors on Global Health Brazil are registered with the Regional Council of Medicine (CRM) of their state, under the supervision of the Federal Council of Medicine (CFM). Registration details are shown on each doctor's profile.",
+          "question": "Who are the doctors?"
+        },
+        {
+          "answer": "Consultations are available in multiple languages, subject to clinician availability. You can select a doctor by language when booking.",
+          "question": "Which languages are available?"
+        },
+        {
+          "answer": "Yes. All consultations are conducted over secure video to national telemedicine standards, and your clinical information is handled confidentially.",
+          "question": "Is an online consultation secure?"
+        },
+        {
+          "answer": "Choose a service, pick an available time slot, and complete your booking online. You will receive confirmation by email before your appointment.",
+          "question": "How do I book an appointment?"
+        }
+      ]
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "EN",
+      "field": "disclaimerShort",
+      "from": "registered with Conselho Federal de Medicina (CFM) / CRM",
+      "to": "registered with the CRM, under the supervision of the CFM"
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "PT",
+      "field": "intro",
+      "to": "Bem-vindo à Global Health no Brasil — atendimento médico online realizado por médicos registrados no Conselho Regional de Medicina (CRM), sob supervisão do Conselho Federal de Medicina (CFM). Agende uma consulta com um médico de clínica geral, solicite exames quando indicados e acompanhe sua saúde com segurança, tudo online e no idioma em que você se sentir mais confortável."
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "PT",
+      "field": "whoForIntro",
+      "to": "A Global Health atende pacientes com diversas necessidades de saúde do dia a dia e de acompanhamento contínuo, incluindo:"
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "PT",
+      "field": "whoForItems",
+      "to": [
+        "Doenças do dia a dia, como infecções, febre e pequenas lesões",
+        "Acompanhamento de doenças crônicas, como diabetes, hipertensão e asma",
+        "Atestados médicos quando clinicamente apropriado",
+        "Pedidos de exames de sangue ou de imagem quando clinicamente indicado",
+        "Consultas de retorno e segunda opinião sobre um diagnóstico ou plano de tratamento existente",
+        "Cuidados de saúde para a família em vários idiomas, para adultos e crianças"
+      ]
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "PT",
+      "field": "whyChooseTitle",
+      "to": "Por que escolher a Global Health"
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "PT",
+      "field": "whyChooseItems",
+      "to": [
+        "Médicos registrados no CRM, sob supervisão do CFM",
+        "Consultas por vídeo seguras, realizadas de acordo com as normas nacionais de telemedicina",
+        "Horários disponíveis exibidos durante o agendamento, conforme a disponibilidade do médico",
+        "Consultas disponíveis em vários idiomas, conforme a disponibilidade do médico",
+        "Documentação clínica e orientações de acompanhamento enviadas por e-mail após cada consulta",
+        "Preços transparentes — sem custos ocultos, sem assinatura obrigatória"
+      ]
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "PT",
+      "field": "faq",
+      "to": [
+        {
+          "question": "Como funciona uma consulta online?",
+          "answer": "Agende uma consulta online, escolha um horário disponível e entre na consulta por vídeo seguro pelo celular ou computador. O médico vai avaliar seus sintomas e seu histórico e orientar os próximos passos."
+        },
+        {
+          "question": "Quem são os médicos?",
+          "answer": "Todos os médicos da Global Health Brasil são registrados no Conselho Regional de Medicina (CRM) do seu estado, sob supervisão do Conselho Federal de Medicina (CFM). Os dados de registro aparecem no perfil de cada médico."
+        },
+        {
+          "question": "Quais idiomas estão disponíveis?",
+          "answer": "As consultas estão disponíveis em vários idiomas, conforme a disponibilidade do médico. Você pode escolher o médico pelo idioma ao agendar."
+        },
+        {
+          "question": "A consulta online é segura?",
+          "answer": "Sim. Todas as consultas são realizadas por vídeo seguro, de acordo com as normas nacionais de telemedicina, e suas informações clínicas são tratadas com confidencialidade."
+        },
+        {
+          "question": "Como agendo uma consulta?",
+          "answer": "Escolha um serviço, selecione um horário disponível e conclua o agendamento online. Você receberá uma confirmação por e-mail antes da consulta."
+        }
+      ]
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "PT",
+      "field": "disclaimerShort",
+      "to": "Todos os serviços médicos da Global Health são prestados por médicos registrados no CRM, sob supervisão do CFM. Recomendações de tratamento, encaminhamentos e atestados médicos só são emitidos quando clinicamente apropriado e a critério do médico. Nossos médicos não prescrevem rotineiramente substâncias controladas em consultas online. Em caso de emergência médica, ligue para o SAMU 192."
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "ES",
+      "field": "intro",
+      "to": "Bienvenido a Global Health en Brasil — atención médica online prestada por médicos registrados en el Conselho Regional de Medicina (CRM), bajo la supervisión del Conselho Federal de Medicina (CFM). Reserve una consulta con un médico general, solicite exámenes médicos cuando estén indicados y gestione su atención médica de forma segura, completamente online y en el idioma en el que se sienta más cómodo."
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "ES",
+      "field": "whoForItems",
+      "to": [
+        "Enfermedades cotidianas como infecciones, fiebre y lesiones leves",
+        "Manejo continuado de afecciones crónicas como diabetes, hipertensión y asma",
+        "Certificados médicos cuando sea clínicamente apropiado",
+        "Solicitud de análisis de sangre o pruebas de imagen cuando esté clínicamente indicado",
+        "Seguimiento y segundas opiniones sobre un diagnóstico o plan de tratamiento existente",
+        "Atención sanitaria familiar en varios idiomas, para adultos y niños"
+      ]
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "ES",
+      "field": "whyChooseItems",
+      "to": [
+        "Médicos registrados en el CRM, bajo la supervisión del CFM",
+        "Videoconsultas seguras conforme a los estándares nacionales de telemedicina",
+        "Horarios disponibles mostrados durante la reserva, según disponibilidad del médico",
+        "Consultas disponibles en varios idiomas, según disponibilidad del médico",
+        "Documentación clínica y orientación de seguimiento enviada por correo electrónico tras cada consulta",
+        "Precios transparentes — sin costes ocultos, sin suscripción obligatoria"
+      ]
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "ES",
+      "field": "faq",
+      "to": [
+        {
+          "answer": "Reserve una cita online, elija un horario disponible y únase a su consulta por videollamada segura desde su teléfono u ordenador. Su médico revisará sus síntomas e historial y le aconsejará los siguientes pasos.",
+          "question": "¿Cómo funciona una consulta online?"
+        },
+        {
+          "answer": "Todos los médicos de Global Health Brasil están registrados en el Conselho Regional de Medicina (CRM) de su estado, bajo la supervisión del Conselho Federal de Medicina (CFM). Los datos de registro se muestran en el perfil de cada médico.",
+          "question": "¿Quiénes son los médicos?"
+        },
+        {
+          "answer": "Las consultas están disponibles en varios idiomas, según disponibilidad del médico. Puede elegir médico por idioma al reservar.",
+          "question": "¿Qué idiomas están disponibles?"
+        },
+        {
+          "answer": "Sí. Todas las consultas se realizan mediante videollamada segura conforme a los estándares nacionales de telemedicina, y su información clínica se trata de forma confidencial.",
+          "question": "¿Es segura una consulta online?"
+        },
+        {
+          "answer": "Elija un servicio, seleccione un horario disponible y complete su reserva online. Recibirá confirmación por correo electrónico antes de la cita.",
+          "question": "¿Cómo reservo una cita?"
+        }
+      ]
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "ES",
+      "field": "disclaimerShort",
+      "from": "colegiados a través de Conselho Federal de Medicina (CFM) / CRM",
+      "to": "registrados en el CRM, bajo la supervisión del CFM"
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "EN",
+      "field": "seoTitle",
+      "to": null
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "EN",
+      "field": "seoDescription",
+      "to": null
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "PT",
+      "field": "seoTitle",
+      "to": null
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "PT",
+      "field": "seoDescription",
+      "to": null
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "ES",
+      "field": "seoTitle",
+      "to": null
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "ES",
+      "field": "seoDescription",
+      "to": null
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "EN",
+      "field": "intro",
+      "to": "Our doctor network brings together clinicians registered with the CRM, under the supervision of the CFM, in general practice. Browse profiles by language and availability to find the right doctor for your consultation."
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "EN",
+      "field": "whoForItems",
+      "to": [
+        "See a specific doctor again for continuity of care",
+        "Choose a doctor who speaks your preferred language",
+        "Check a doctor's registration, qualifications and areas of practice before booking",
+        "Compare available appointment times across doctors",
+        "Book a follow-up with the same doctor who saw you previously"
+      ]
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "EN",
+      "field": "whyChooseItems",
+      "to": [
+        "Registration numbers and credentials shown on every doctor profile",
+        "Doctors registered with the CRM, under the supervision of the CFM",
+        "Secure video consultations conducted to national telemedicine standards",
+        "Consultations available in multiple languages, subject to clinician availability",
+        "Transparent pricing — no hidden fees, no membership required"
+      ]
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "EN",
+      "field": "faq",
+      "to": [
+        {
+          "answer": "Browse doctor profiles by language and available appointment times to find the best match for your needs, or book directly with the next available doctor.",
+          "question": "How do I choose the right doctor?"
+        },
+        {
+          "answer": "Each profile shows the doctor's registration details. All doctors on Global Health Brazil are registered with the Regional Council of Medicine (CRM) of their state, under the supervision of the Federal Council of Medicine (CFM).",
+          "question": "How do I know a doctor is properly qualified?"
+        },
+        {
+          "answer": "Yes. Consultations are available in multiple languages, subject to clinician availability, and you can filter or select a doctor by language when booking.",
+          "question": "Can I choose a doctor by language?"
+        },
+        {
+          "answer": "Open the doctor's profile and select an available appointment time to book directly with them.",
+          "question": "How do I book with a specific doctor?"
+        },
+        {
+          "answer": "Yes. You can book a follow-up appointment with the same doctor, subject to their availability.",
+          "question": "Can I see the same doctor for a follow-up?"
+        },
+        {
+          "answer": "Yes. CRM-registered doctors on the Global Health platform can issue medical certificates, prescriptions and referrals where clinically indicated, at the treating doctor's professional discretion following assessment. Telemedicine consultations follow CFM rules for teleconsultation in Brazil (CFM Resolution No. 2,314/2022). After each consultation you'll receive the doctor's clinical notes by email, with conclusions and recommendations.",
+          "question": "Can Global Health Brazil doctors issue medical certificates and prescriptions?"
+        },
+        {
+          "answer": "Yes. Telemedicine in Brazil is regulated by the Conselho Federal de Medicina (CFM) through CFM Resolution No. 2,314/2022, which sets the criteria for medical teleconsultation in the country. All Global Health Brazil doctors are registered with the CRM and follow CFM guidelines for remote care — so your online consultation carries the same legal and clinical weight as an in-person visit.",
+          "question": "Is telemedicine regulated in Brazil?"
+        },
+        {
+          "answer": "Yes. Global Health Brazil doctors can see Brazilian patients living abroad or travelling, as long as the doctor is CRM-registered and the consultation follows CFM teleconsultation rules. Dr. Renato Sarmento consults in Portuguese, English and Spanish — making him accessible to Brazilians in any country.",
+          "question": "Can I consult a Global Health Brazil doctor while outside Brazil?"
+        }
+      ]
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "EN",
+      "field": "disclaimerShort",
+      "from": "registered with Conselho Federal de Medicina (CFM) / CRM",
+      "to": "registered with the CRM, under the supervision of the CFM"
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "PT",
+      "field": "intro",
+      "to": "Nossa rede de médicos reúne clínicos registrados no CRM, sob supervisão do CFM, em clínica geral. Veja os perfis por idioma e disponibilidade para encontrar o médico certo para sua consulta."
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "PT",
+      "field": "whoForIntro",
+      "to": "Use nosso diretório de médicos quando quiser:"
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "PT",
+      "field": "whoForItems",
+      "to": [
+        "Consultar de novo um médico específico para dar continuidade ao cuidado",
+        "Escolher um médico que fale seu idioma preferido",
+        "Verificar o registro, as qualificações e as áreas de atuação de um médico antes de agendar",
+        "Comparar horários disponíveis entre médicos",
+        "Agendar uma consulta de retorno com o mesmo médico que atendeu você"
+      ]
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "PT",
+      "field": "faq",
+      "to": [
+        {
+          "answer": "Veja os perfis dos médicos por idioma e horários disponíveis para encontrar a melhor opção para você, ou agende diretamente com o próximo médico disponível.",
+          "question": "Como escolho o médico certo?"
+        },
+        {
+          "answer": "Cada perfil exibe os dados de registro do médico. Todos os médicos da Global Health Brasil são registrados no Conselho Regional de Medicina (CRM) do seu estado, sob supervisão do Conselho Federal de Medicina (CFM). Você pode verificar qualquer registro de forma independente em portal.cfm.org.br.",
+          "question": "Como sei que um médico está devidamente qualificado?"
+        },
+        {
+          "answer": "Sim. As consultas estão disponíveis em vários idiomas, conforme a disponibilidade do médico, e você pode filtrar ou escolher o médico pelo idioma ao agendar.",
+          "question": "Posso escolher um médico por idioma?"
+        },
+        {
+          "answer": "Abra o perfil do médico e selecione um horário disponível para agendar diretamente com ele.",
+          "question": "Como agendo consulta com um médico específico?"
+        },
+        {
+          "answer": "Sim. Você pode agendar uma consulta de retorno com o mesmo médico, conforme a disponibilidade dele.",
+          "question": "Posso ser atendido pelo mesmo médico em uma consulta de retorno?"
+        },
+        {
+          "answer": "Sim. Os médicos registrados no CRM na plataforma Global Health podem emitir atestados médicos, receitas e encaminhamentos onde clinicamente indicado, a critério profissional do médico após avaliação. As consultas de telemedicina seguem as normas do CFM para teleconsulta no Brasil (Resolução CFM nº 2.314/2022). Após cada consulta, você receberá por e-mail as anotações clínicas do médico com conclusões e recomendações.",
+          "question": "Os médicos da Global Health Brasil podem emitir atestados médicos e receitas?"
+        },
+        {
+          "answer": "Sim. A telemedicina no Brasil é regulamentada pelo Conselho Federal de Medicina (CFM) por meio da Resolução CFM nº 2.314/2022, que estabelece os critérios para a prática de teleconsulta médica no país. Todos os médicos da Global Health Brasil são registrados no CRM e seguem as diretrizes do CFM para atendimento remoto — garantindo que sua consulta online tenha o mesmo valor legal e clínico de uma consulta presencial.",
+          "question": "A telemedicina é regulamentada no Brasil?"
+        },
+        {
+          "answer": "Sim. Os médicos da Global Health Brasil podem atender pacientes brasileiros residentes ou em viagem ao exterior, desde que o médico esteja registrado no CRM e o atendimento siga as normas do CFM para teleconsulta. O Dr. Renato Sarmento consulta em português, inglês e espanhol — o que o torna acessível para brasileiros em qualquer país do mundo.",
+          "question": "Posso consultar um médico da Global Health Brasil estando fora do Brasil?"
+        }
+      ]
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "PT",
+      "field": "disclaimerShort",
+      "to": "Todos os serviços médicos da Global Health são prestados por médicos registrados no CRM, sob supervisão do CFM. Recomendações de tratamento, encaminhamentos e atestados médicos só são emitidos quando clinicamente apropriado e a critério do médico. Nossos médicos não prescrevem rotineiramente substâncias controladas em consultas online. Em caso de emergência médica, ligue para o SAMU 192."
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "ES",
+      "field": "intro",
+      "to": "Nuestra red de médicos reúne a profesionales registrados en el CRM, bajo la supervisión del CFM, en medicina general. Explore los perfiles por idioma y disponibilidad para encontrar el médico adecuado para su consulta."
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "ES",
+      "field": "whoForItems",
+      "to": [
+        "Volver a ver a un médico concreto para dar continuidad a su atención",
+        "Elegir un médico que hable su idioma preferido",
+        "Comprobar el registro, las cualificaciones y las áreas de práctica de un médico antes de reservar",
+        "Comparar los horarios disponibles entre distintos médicos",
+        "Reservar un seguimiento con el mismo médico que le atendió anteriormente"
+      ]
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "ES",
+      "field": "faq",
+      "to": [
+        {
+          "answer": "Explore los perfiles de los médicos por idioma y horarios disponibles para encontrar la mejor opción para sus necesidades, o reserve directamente con el próximo médico disponible.",
+          "question": "¿Cómo elijo al médico adecuado?"
+        },
+        {
+          "answer": "Cada perfil muestra los datos de registro del médico. Todos los médicos de Global Health Brasil están registrados en el Conselho Regional de Medicina (CRM) de su estado, bajo la supervisión del Conselho Federal de Medicina (CFM). Puede verificar cualquier registro de forma independiente en portal.cfm.org.br.",
+          "question": "¿Cómo sé que un médico está debidamente cualificado?"
+        },
+        {
+          "answer": "Sí. Las consultas están disponibles en varios idiomas, según disponibilidad del médico, y puede filtrar o elegir médico por idioma al reservar.",
+          "question": "¿Puedo elegir médico por idioma?"
+        },
+        {
+          "answer": "Abra el perfil del médico y seleccione un horario disponible para reservar directamente con él.",
+          "question": "¿Cómo reservo con un médico concreto?"
+        },
+        {
+          "answer": "Sí. Puede reservar una cita de seguimiento con el mismo médico, según su disponibilidad.",
+          "question": "¿Puedo ver al mismo médico para un seguimiento?"
+        },
+        {
+          "answer": "Sí. Los médicos registrados en el CRM en la plataforma Global Health pueden emitir atestados médicos, recetas y derivaciones cuando esté clínicamente indicado, a criterio profesional del médico tras la evaluación. Las consultas de telemedicina siguen las normas del CFM para teleconsulta en Brasil (Resolución CFM n.º 2.314/2022). Tras cada consulta recibirá por correo electrónico las notas clínicas del médico con conclusiones y recomendaciones.",
+          "question": "¿Los médicos de Global Health Brasil pueden emitir atestados médicos y recetas?"
+        },
+        {
+          "answer": "Sí. La telemedicina en Brasil está regulada por el Conselho Federal de Medicina (CFM) mediante la Resolución CFM n.º 2.314/2022, que establece los criterios para la teleconsulta médica en el país. Todos los médicos de Global Health Brasil están registrados en el CRM y siguen las directrices del CFM para la atención remota — garantizando que su consulta online tenga el mismo valor legal y clínico que una consulta presencial.",
+          "question": "¿La telemedicina está regulada en Brasil?"
+        },
+        {
+          "answer": "Sí. Los médicos de Global Health Brasil pueden atender a pacientes brasileños residentes o de viaje en el extranjero, siempre que el médico esté registrado en el CRM y la consulta siga las normas del CFM para teleconsulta. El Dr. Renato Sarmento atiende en portugués, inglés y español, lo que lo hace accesible para brasileños en cualquier país.",
+          "question": "¿Puedo consultar a un médico de Global Health Brasil estando fuera de Brasil?"
+        }
+      ]
+    }
+  ]
+}
