@@ -312,7 +312,26 @@ A full local crawl was not feasible. The dev server took 5 minutes per doctor pa
 
 **Verification (owner-triggered, after deploy):** run `python seo/tracking/scripts/verify_metadata_fix.py`. It re-probes the 323 rows at ≤ 4 req/s and writes `seo/tracking/data/metadata_fix_verification.csv` (url, issueType, before_length, after_length, resolved). Rerun the OpenSEO site audit (project `7804f362-5891-417e-9c3a-d9e8d4d7dc6b`) only when the owner asks, and estimate credits first.
 
-**Next measurement:** deploy date + 28 days. Compare GSC CTR for the 267 length-flagged URLs against the 28 days before deploy.
+**Verified on production (2026-09-15, after deploy of `cfbfa4db`):** `python seo/tracking/scripts/verify_metadata_fix.py` re-probed all 323 rows with lxml on the served HTML. Output: `seo/tracking/data/metadata_fix_verification.csv`.
+
+| issueType | rows | resolved | not resolved | by design |
+| --- | --- | --- | --- | --- |
+| title-too-long | 117 | 117 | 0 | 0 |
+| meta-description-too-long | 150 | 150 | 0 | 0 |
+| duplicate-meta-description | 20 | 20 | 0 | 0 |
+| duplicate-title | 8 | 6 | 2 | 0 |
+| meta-description-too-short | 4 | 4 | 0 | 0 |
+| thin-content | 1 | 1 | 0 | 0 |
+| noindex-page | 23 | 5 | 0 | 18 |
+| **total** | **323** | **303** | **2** | **18** |
+
+- The 2 unresolved `duplicate-title` rows are `/ireland/{es,pt}/doctors/dr-raafat-ibrahim`. They now return 404 because the production API no longer has this doctor in the Ireland roster ("Doctor not found" in every locale), and the live sitemap dropped all 6 of his URLs. The duplicate is gone by removal, not by the title fix. If the removal was not intended, restore the doctor in admin.
+- The 5 resolved `noindex-page` rows are `/ireland/{es,pt,cs,ro,de}/faq`. Each now serves `index, follow`, its own `html lang`, a 7-entry hreflang cluster, and appears in the live sitemap. Before the deploy, only `/ireland/en/faq` was in the sitemap.
+- Whole-site replay of the pre-deploy crawl of all 2,265 sitemap URLs through the new budget: titles over 60 chars went from 277 to 0 and descriptions over 160 from 469 to 0, across all six markets. Two leftovers sit in admin copy, not templates: the hand-foot-and-mouth blog description has a literal "…" typed in (Ireland and Portugal), and `/brazil/en/pricing` has a 68-char description.
+- Workbook `19_Issues`: META-001 is "Resolved - verified on production 2026-09-15"; META-002 is "Partially resolved", because the wider 412/769 same-language duplicate set stays open. Recalculated; `check_formula_errors.py` exit 0.
+- Still open by design (18): 4 transactional pages that must stay noindex; 5 Irish medical disclaimer locales that need translations in admin (database); 9 URLs for 4 doctors without bios.
+
+**Next measurement:** 2026-10-13 (28 days after the 2026-09-15 deploy).  deploy date + 28 days. Compare GSC CTR for the 267 length-flagged URLs against the 28 days before deploy.
 
 **Workbook:** in `19_Issues`, META-001 is now "Implemented - awaiting deploy". META-002 is "Partially implemented - awaiting deploy", because only the 28 audit duplicate pairs are covered and the wider 412/769 same-language duplicate set stays open. The workbook was recalculated with `recalc_excel.ps1`, and `check_formula_errors.py` exit 0.
 

@@ -69,7 +69,11 @@ def main():
             same = groups[("desc", desc)]
             after, resolved = len(same), not same.intersection(det.get("otherUrls", []))
         elif kind == "noindex-page":
-            after, resolved = page["robots"], "no-change-by-design"
+            # Indexable now = fixed (e.g. Irish FAQ after the approved translations).
+            # Still noindex = recorded by design in ledger §7 (cart/login, missing
+            # bios, untranslated disclaimer), not a regression.
+            after = page["robots"]
+            resolved = "noindex" not in after.lower() or "no-change-by-design"
         else:  # thin-content
             after, resolved = page["words"], page["words"] >= THIN_MIN_WORDS
         if isinstance(resolved, bool):
