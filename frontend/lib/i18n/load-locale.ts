@@ -3,6 +3,7 @@ import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import { deepMergeLocale } from "@/lib/i18n/deep-merge-locale";
 import romaniaEditorialCopy from "@/lib/i18n/romania-editorial-copy.json";
 import spainEditorialCopy from "@/lib/i18n/spain-editorial-copy.json";
+import brazilEditorialCopy from "@/lib/i18n/brazil-editorial-copy.json";
 
 import enHome from "@/locales/en/home.json";
 import ptHome from "@/locales/pt/home.json";
@@ -156,11 +157,22 @@ function buildLocaleBundle(locale: LocaleCode) {
 // request/render (missing keys in a non-en JSON fall back to English).
 const bundleCache = new Map<string, ReturnType<typeof buildLocaleBundle>>();
 
+/**
+ * Returns `country` only for Brazil. Call sites that never passed a country
+ * use this so they gain the Brazil pt-BR layer without also picking up the
+ * Romania/Spain layers on pages where those markets never had them.
+ */
+export function brazilOnly(country?: string | null): string | undefined {
+  return country === "br" || country === "brazil" ? country : undefined;
+}
+
 export function loadLocaleBundle(locale: LocaleCode, country?: string) {
   const isRomania = country === "ro" || country === "romania";
   // Spain-only sick-leave wording (ledger §56.11): the shared templates stay unchanged for other markets.
   const isSpain = country === "es" || country === "spain";
-  const cacheKey = isRomania ? `${locale}:ro` : isSpain ? `${locale}:es` : locale;
+  // Brazil-only pt-BR wording (ledger §59.5): the shared pt bundle is Portugal's PT-PT copy.
+  const isBrazil = brazilOnly(country) !== undefined;
+  const cacheKey = isRomania ? `${locale}:ro` : isSpain ? `${locale}:es` : isBrazil ? `${locale}:br` : locale;
   const cached = bundleCache.get(cacheKey);
   if (cached) return cached;
   const shared = buildLocaleBundle(locale);
@@ -168,7 +180,12 @@ export function loadLocaleBundle(locale: LocaleCode, country?: string) {
     ? deepMergeLocale<Record<string, unknown>>(shared, romaniaEditorialCopy[locale]) as typeof shared
     : isSpain
       ? deepMergeLocale<Record<string, unknown>>(shared, spainEditorialCopy[locale]) as typeof shared
-      : shared;
+      : isBrazil
+        ? deepMergeLocale<Record<string, unknown>>(
+            shared,
+            (brazilEditorialCopy as Partial<Record<LocaleCode, Record<string, unknown>>>)[locale],
+          ) as typeof shared
+        : shared;
   bundleCache.set(cacheKey, bundle);
   return bundle;
 }

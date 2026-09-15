@@ -149,6 +149,17 @@ const PHRASES: Record<string, Phrases> = {
   },
 };
 
+// Brazil pt-BR; PHRASES.pt is Portugal's PT-PT wording ("Registo", "doentes", "marcam").
+const BR_PT_PHRASES: Phrases = {
+  ...PHRASES.pt,
+  eyebrow: "Atendimento regulado e verificado",
+  headline: "Médicos registrados, verificados localmente.",
+  body: "Registro, privacidade e orientações de emergência para pacientes que agendam neste mercado.",
+  kMedical: "Registro médico",
+  kProvider: "Registro do prestador",
+  reviewsText: "Recomendado por pacientes no Doctify",
+};
+
 function labelOf(link: { abbreviation: string | null; name: string }): string {
   return link.abbreviation ?? link.name;
 }
@@ -160,7 +171,11 @@ export function CountryTrustBar({
   trust: CountryTrust;
   locale?: string;
 }) {
-  const t = PHRASES[(locale ?? "en").toLowerCase()] ?? PHRASES.en;
+  const lang = (locale ?? "en").toLowerCase();
+  const t =
+    trust.country.code.toLowerCase() === "br" && lang === "pt"
+      ? BR_PT_PHRASES
+      : (PHRASES[lang] ?? PHRASES.en);
   const footerLinks = trust.authorityLinks.filter((l) => l.showInFooter);
 
   const registry =

@@ -1,0 +1,150 @@
+{
+  "pt": {
+    "common": {
+      "navigation": {
+        "bookOnline": "Agendar online",
+        "contact": "Contato",
+        "bookAppointment": "Agendar consulta",
+        "bookShort": "Agendar"
+      },
+      "cta": {
+        "primaryBooking": "Agendar online"
+      },
+      "footer": {
+        "ourDoctors": "Nossos médicos",
+        "tagline": "Medicina a qualquer hora e em qualquer lugar. Consultas médicas online com médicos registrados localmente nos mercados onde atuamos.",
+        "newsletterPrivacy": "Respeitamos sua privacidade. Cancele a inscrição quando quiser."
+      },
+      "a11y": {
+        "skipToBooking": "Pular para o agendamento"
+      },
+      "homeCatalog": {
+        "trustLive": "Ao vivo"
+      },
+      "legalPage": {
+        "medicalRegistration": "Registro médico"
+      },
+      "doctors": {
+        "theTeamBadge": "Nossos médicos",
+        "ourTeamEyebrow": "Nossa equipe",
+        "onboardingBodyTemplate": "Nossa equipe médica no {country} está sendo verificada. Volte em breve — ou agende com nossos especialistas internacionais.",
+        "bookAppointment": "Agendar consulta",
+        "bookWithTemplate": "Agendar com {name}",
+        "bioFallbackTemplate": "Clínico registrado disponível para consultas online no {country}.",
+        "verifyRegistrationAria": "Verificar registro no cadastro oficial",
+        "registrationLabel": "Registro"
+      },
+      "doctorProfile": {
+        "backToTeam": "Voltar à equipe do {country}",
+        "bookConsultation": "Agendar consulta",
+        "bookThisClinicianLabel": "Agendar com este profissional",
+        "bookWithDoctor": "Agendar com {name}",
+        "bottomCtaDescription": "Agende sua consulta e a equipe da clínica confirmará o melhor caminho de agendamento com base na disponibilidade.",
+        "calendarInviteBody": "Você receberá um convite de calendário logo após o agendamento, sem idas e vindas.",
+        "heroDescription": "Veja os detalhes do perfil do médico, as áreas de consulta e as opções de agendamento antes de fazer o agendamento.",
+        "registeredIn": "Registrado no {country}",
+        "startBooking": "Começar agendamento",
+        "verifyRegistration": "Verificar registro"
+      },
+      "bookPage": {
+        "title": "Agende sua consulta",
+        "bookingSteps": "Etapas do agendamento",
+        "availabilityNote": "A maioria das consultas é confirmada em poucos minutos. Enviaremos a confirmação por e-mail assim que você concluir o agendamento.",
+        "servicesEnabledNote": "Os serviços gerais e de especialidade só aparecem quando estão ativados para o seu país."
+      },
+      "gpPage": {
+        "heroSubtitle": "Clínicos gerais registrados para atuar no {country}.",
+        "heroAccent": "registrados",
+        "gpConsultationsIntro": "{count} {consultation} que você pode agendar online com um médico de família da nossa rede no {country}. Perfis atualizados à medida que a equipe cresce.",
+        "doctorsSectionIntro": "Clínicos gerais registrados disponíveis para consultas online. Cada perfil mostra qualificações, idiomas e registro.",
+        "hero": {
+          "feature1Subtitle": "Consulte um clínico geral registrado no conforto da sua casa.",
+          "feature2Subtitle": "Suas conversas são privadas, seguras e criptografadas.",
+          "feature3Title": "Agendamento simples",
+          "feature3Subtitle": "Agende consultas no horário que for melhor para você.",
+          "stat1Title": "Registrados no {country}",
+          "stat1Subtitle": "Todos os clínicos gerais são registrados para atuar no {country}."
+        }
+      },
+      "specialistPage": {
+        "heroAccent": "registrados",
+        "specialistConsultationsIntro": "Perfis atualizados à medida que a equipe cresce.",
+        "hero": {
+          "feature2Title": "Registrados no {country}",
+          "stat1Title": "Registrados no {country}"
+        }
+      },
+      "testsPage": {
+        "hero": {
+          "feature3Title": "Registrados no {country}",
+          "feature3Subtitle": "Nossos médicos são registrados para atuar no {country}."
+        }
+      },
+      "pricingPage": {
+        "trustLicensedTitle": "Médicos registrados",
+        "trustLicensedSubtitle": "Registrados localmente"
+      },
+      "serviceDetailPage": {
+        "bookLabel": "Agendar este serviço",
+        "bookOnline": "Agendar online",
+        "trustRegistered": "Médicos registrados · {country}",
+        "doctorRegistered": "Médico registrado no {country}",
+        "bookHeading": "Agendar {service} no {country}",
+        "disclaimer": "As informações desta página são gerais e não substituem aconselhamento, diagnóstico ou tratamento médico profissional. Agende uma consulta para conversar sobre sua situação com um médico registrado para atuar no {country}."
+      },
+      "blogPage": {
+        "heroTitleAccent": "médicos registrados.",
+        "heroLede": "Guias baseados em evidências, escritos e revisados pela nossa equipe médica. Sem anúncios, sem exageros.",
+        "heroLedeCountryTemplate": "Guias de saúde baseados em evidências para o {country}, escritos e revisados pela nossa equipe médica. Sem anúncios."
+      }
+    },
+    "home": {
+      "countryHero": {
+        "subtitle": "Escolha um serviço, selecione um horário e fale com médicos registrados no Conselho Regional de Medicina (CRM).",
+        "cta": "Agendar consulta",
+        "trustLicensed": "Registrados no"
+      },
+      "team": {
+        "eyebrow": "Nossa equipe",
+        "body": "Cada consulta é com um profissional registrado no seu país. Sem call centers nem rodízio de desconhecidos. O médico na tela é o médico do perfil.",
+        "registeredSingular": "clínico registrado",
+        "registeredPlural": "clínicos registrados"
+      },
+      "trust": {
+        "licensedSingular": "Médico registrado",
+        "licensedPlural": "Médicos registrados"
+      },
+      "howItWorks": {
+        "step1Title": "Escolha seu serviço",
+        "step2Body": "Selecione um clínico registrado no seu país e escolha um horário disponível no calendário em tempo real."
+      },
+      "finalCta": {
+        "body": "Pesquise médicos registrados no Conselho Regional de Medicina (CRM) e escolha um horário de consulta disponível.",
+        "primaryCta": "Agendar consulta"
+      },
+      "statsBand": {
+        "body": "Acesse clínicos registrados com horários disponíveis, perfis claros e etapas de agendamento específicas para cada serviço.",
+        "stat3Value": "Ao vivo"
+      }
+    },
+    "faq": {
+      "hero_lede": "Agendamentos, pagamentos, consultas, privacidade e quando o atendimento online não é a opção certa. Não encontrou o que precisa? Fale com a gente.",
+      "hero_cta": "Fale com a equipe",
+      "stuck_h2_accent": "Fale com a gente.",
+      "stuck_cta": "Fale com a equipe",
+      "g1_eyebrow": "Agendamentos"
+    },
+    "services": {
+      "catalog": {
+        "headline": "Cuidado para o que realmente está acontecendo.",
+        "featuredDescription": "A maioria dos pacientes começa aqui. Escolha um horário de consulta disponível com um médico registrado no seu país.",
+        "bookConsultation": "Agendar consulta"
+      }
+    },
+    "company": {
+      "medicalReview": {
+        "indexLinkTitle": "Todos os artigos aqui são escritos e revisados por médicos registrados"
+      }
+    }
+  }
+}

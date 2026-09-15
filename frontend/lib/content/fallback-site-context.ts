@@ -1,5 +1,5 @@
 ﻿import { buildSiteNavigationData } from "@/data/navigation";
-import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { brazilOnly, loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import type { CountryRuntimeContext } from "@/lib/routing/types";
 import { getCountryContent } from "./get-country-content";
@@ -8,7 +8,8 @@ export async function getFallbackSiteContext(
   countryContext: CountryRuntimeContext,
   locale: LocaleCode,
 ) {
-  const localeBundle = loadLocaleBundle(locale);
+  // Brazil only: header/footer navigation labels get the pt-BR layer.
+  const localeBundle = loadLocaleBundle(locale, brazilOnly(countryContext.country.code));
   const countryContent = await getCountryContent(countryContext.country);
 
   return {

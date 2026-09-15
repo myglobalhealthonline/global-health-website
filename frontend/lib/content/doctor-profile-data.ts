@@ -8,7 +8,7 @@ import { fetchDoctorByCountryAndSlug } from "@/lib/api/site-content-api";
 import { isPublicDoctorRecordIndexable } from "@/lib/content/publication-validation";
 import { resolveDoctorProfileImageUrl } from "@/lib/content/get-public-assets";
 import { marketDisplayName } from "@/lib/content/doctor-market-name";
-import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { brazilOnly, loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { applyCzechiaApprovedDoctorFaqs } from "@/lib/content/czechia-approved-doctor-faqs";
@@ -194,11 +194,13 @@ const doctorSeed: Record<
 export function getDoctorProfileData(
   doctorSlug: string,
   locale?: string,
+  countryCode?: string,
 ): DoctorProfilePageData {
   const fallbackName = toLabel(doctorSlug);
   const seeded = doctorSeed[doctorSlug];
   const { common } = loadLocaleBundle(
     locale && isSupportedLocale(locale) ? (locale as LocaleCode) : "en",
+    brazilOnly(countryCode),
   );
   const dp = common.doctorProfile;
 
@@ -262,9 +264,10 @@ export const resolveDoctorProfilePageData = cache(async function resolveDoctorPr
   locale?: string,
   countryCode?: string,
 ): Promise<DoctorProfilePageData> {
-  const base = getDoctorProfileData(doctorSlug, locale);
+  const base = getDoctorProfileData(doctorSlug, locale, countryCode);
   const { common } = loadLocaleBundle(
     locale && isSupportedLocale(locale) ? (locale as LocaleCode) : "en",
+    brazilOnly(countryCode),
   );
   const backToTeam = common.doctorProfile.backToTeam;
   // `status` distinguishes a real 404 from an outage — only the former may

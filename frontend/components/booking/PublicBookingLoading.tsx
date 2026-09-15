@@ -12,8 +12,10 @@ const COPY: Record<string, string> = {
 };
 
 export function PublicBookingLoading() {
-  const { lang } = useParams<{ lang?: string }>();
-  const label = COPY[lang ?? ""] ?? COPY.en;
+  const { country, lang } = useParams<{ country?: string; lang?: string }>();
+  // Brazil pt-BR; the shared pt label is Portugal's PT-PT wording.
+  const label =
+    country === "brazil" && lang === "pt" ? "Carregando agendamento…" : (COPY[lang ?? ""] ?? COPY.en);
   return (
     <section className="gh2-section-ivory py-[clamp(48px,6vw,88px)]" aria-busy="true">
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">

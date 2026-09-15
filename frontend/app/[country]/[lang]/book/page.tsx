@@ -42,7 +42,7 @@ import { PortalReturnBand } from "./_components/portal-return-band";
 import { InsuranceStep } from "./_components/insurance-step";
 import { BookingSectionHeader } from "./_components/booking-section-header";
 import type { LocaleCode } from "@/lib/i18n/types";
-import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { brazilOnly, loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { doctorCardI18n } from "@/components/cards/doctor-card-i18n";
 import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
 import { localizedLanguageLabel } from "@/lib/content/languages";
@@ -186,7 +186,7 @@ export async function generateMetadata({
     return applyBookingWorkflowIndexing({ title: SITE_NAME }, await searchParams);
   }
 
-  const { common } = loadLocaleBundle(lang as LocaleCode);
+  const { common } = loadLocaleBundle(lang as LocaleCode, brazilOnly(code));
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "book");
   // `config.name` is English-only. Use the locale's own country name, as every
   // sibling template does, so a Portuguese page does not read "Brazil".
@@ -219,7 +219,7 @@ export default async function CountryLangBookPage({
   const code = countryCodeFromSlug(slug);
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) notFound();
-  const { common: c, home } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c, home } = loadLocaleBundle(lang as LocaleCode, brazilOnly(code));
   const bf = c.bookingForm;
   const bp = marketBookPage(code, lang, c.bookPage);
   const czechiaSeo = czechiaStaticPageSeo(code, lang, "book");
@@ -954,8 +954,8 @@ async function SelectedServiceFlow({
               at={at}
               month={monthOffset}
               bp={bp}
-              cardI18n={doctorCardI18n(loadLocaleBundle(lang as LocaleCode).common.doctors)}
-              bookingAvailability={loadLocaleBundle(lang as LocaleCode).common.bookingAvailability}
+              cardI18n={doctorCardI18n(c.doctors)}
+              bookingAvailability={c.bookingAvailability}
               bookingTimezone={bookingTimezone}
               benefit={benefitHrefParam}
             />

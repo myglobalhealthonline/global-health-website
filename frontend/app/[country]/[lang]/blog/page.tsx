@@ -6,7 +6,7 @@ import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { buildPublicMetadata } from "@/lib/seo/page-seo";
 import { hreflangAlternates, ogLocales } from "@/lib/seo/hreflang";
-import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { brazilOnly, loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { SITE_NAME } from "@/lib/constants";
 import { czechiaStaticPageSeo } from "@/lib/content/czechia-static-page-seo";
@@ -23,7 +23,7 @@ export async function generateMetadata({
   const config = code ? await getPublicCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const common = loadLocaleBundle(lang as LocaleCode).common;
+  const common = loadLocaleBundle(lang as LocaleCode, brazilOnly(country)).common;
   const blog = common.blogPage;
   // The country name must come from the locale bundle, not `config.name` —
   // that field is English-only (data/countries.ts), so a Spanish hub read

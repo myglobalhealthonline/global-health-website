@@ -36,7 +36,7 @@ import { SectionSeam } from "@/components/ui/SectionSeam";
 import type { CountryTrust } from "@/lib/content/get-country-trust";
 import { formatPriceRounded } from "@/lib/format-currency";
 import type { LocaleCode } from "@/lib/i18n/types";
-import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { brazilOnly, loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { DoctifyReviewsSectionLazy as DoctifyReviewsSection } from "@/components/sections/DoctifyReviewsLazy";
 import { fillDoctorProfileSeoTemplate } from "@/lib/content/doctor-profile-seo";
 
@@ -71,7 +71,7 @@ export async function buildDoctorProfileMetadata(
   const slug = routeCountrySlug ?? countryNameToSlug[data.profile.country] ?? "ireland";
   const routeLang = lang ?? "en";
   const canonical = `/${slug}/${routeLang}/doctors/${doctorSlug}`;
-  const { common: metaCommon } = loadLocaleBundle(routeLang as LocaleCode);
+  const { common: metaCommon } = loadLocaleBundle(routeLang as LocaleCode, brazilOnly(slug));
   const metaDp = metaCommon.doctorProfile;
   const resolvedCode = countryCodeFromSlug(slug);
   const config = resolvedCode ? getCountryByCode(resolvedCode) : null;
@@ -186,7 +186,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   // without route context).
   const slug = routeCountrySlug ?? countryNameToSlug[data.profile.country] ?? "ireland";
   const lang = routeLang ?? "en";
-  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c } = loadLocaleBundle(lang as LocaleCode, brazilOnly(slug));
   const dp = c.doctorProfile;
   const teamHref = `/${slug}/${lang}/doctors`;
   const profileHref = `${teamHref}/${doctorSlug}`;

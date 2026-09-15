@@ -10,7 +10,7 @@ import { EMERGENCY_NOTICE } from "@/lib/constants";
 import type { SiteNavigationData } from "@/data/navigation";
 import type { CountryConfig } from "@/data/countries";
 import type { LocaleCode } from "@/lib/i18n/types";
-import { getCommonLocale } from "@/lib/i18n/get-common-locale";
+import { brazilOnly, loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { registerCountrySlugs } from "@/lib/routing/country-slug";
 import type { ParsedSitePath } from "@/lib/routing/path-rewrites";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
@@ -63,7 +63,7 @@ export function SiteChrome({
 
   // Chrome a11y labels, resolved once server-side. The client components below
   // take them as props rather than importing the bundles themselves.
-  const a11y = getCommonLocale(currentLocale ?? "en").a11y;
+  const a11y = loadLocaleBundle(currentLocale ?? "en", brazilOnly(parsed.country)).common.a11y;
 
   return (
     <>

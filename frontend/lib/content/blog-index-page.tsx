@@ -7,8 +7,7 @@ import { HeroPlusImage } from "@/components/sections/HeroPlusImage";
 import { SectionSeam } from "@/components/ui/SectionSeam";
 import { Stethoscope, ShieldCheck, BookOpen, BadgeCheck } from "lucide-react";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
-import { getCommonLocale } from "@/lib/i18n/get-common-locale";
-import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { brazilOnly, loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { CommonLocale } from "@/lib/i18n/types";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { getCountryByCode, type CountryCode } from "@/data/countries";
@@ -44,9 +43,8 @@ export async function renderBlogIndexPage({ countrySlug, lang, page }: BlogIndex
     listBlogPosts(countryCode ?? undefined, lang),
     getPageLocale(lang),
   ]);
-  const common = getCommonLocale(locale);
+  const { common, home, company } = loadLocaleBundle(locale, brazilOnly(countrySlug));
   const bp = common.blogPage;
-  const { home } = loadLocaleBundle(locale);
   const blogI18n = home.blog;
   const czechiaSeo = czechiaStaticPageSeo(countryCode, locale, "blog");
 
@@ -73,7 +71,7 @@ export async function renderBlogIndexPage({ countrySlug, lang, page }: BlogIndex
   // index. The bare hub has no market to resolve against — and 301s to Ireland
   // anyway (next.config.ts), where the link is present.
   const reviewPolicyHref = countrySlug && lang ? `${blogHref}/medical-review-policy` : null;
-  const reviewPolicyI18n = loadLocaleBundle(locale).company.medicalReview;
+  const reviewPolicyI18n = company.medicalReview;
 
   const totalPages = Math.max(1, Math.ceil(ordered.length / PAGE_SIZE));
   const currentPage = Math.min(Math.max(1, page ?? 1), totalPages);
