@@ -10146,6 +10146,30 @@ Frontend deployment for `7f878d0a`: `b33f195d-7d56-4f75-b5dc-a3569f46a89d` SUCCE
   - Ireland `BUNDLE` entries in `country-home-copy.ts` are keyed "IE:en" but looked
     up with lowercase codes, so they likely never render (separate task raised).
 
+### 59.1 Scope correction and phase 5 — 15 September 2026
+
+- **Scope correction.** The owner confirmed this work is Brazil-only. Commits
+  `7f878d0a` and `a061e407` had also changed other markets: translated booking-link
+  text in pt/es/cs/ro/de (Portugal, Spain, Czechia, Romania) and translated
+  availability-panel keys on those homepages. Reverted in `4aed039e`: the five
+  non-English `home.json` files match `8ef6ddd7` again, and `bookPage.sameDayLink`
+  holds the original English text in those locales, so non-Brazil pages render as
+  before. Brazil keeps its own wording through `br:*` overrides. `check-locale-keys`
+  is back to its pre-existing failure on `countryHero.sameDay.*`.
+- **Phase 5: LIVE.** The `solicitacao-exames-online` summary (PT/EN/ES) no longer
+  says tests are valid at laboratories throughout Brazil. Manifest `e48b9296…`, one
+  group, four summary writes. Super-admin-confirmed verbal approval by Dr. Renato
+  Sarmento (`clinical-approval-phase5.json`, commit `8d451341`). Backend deployment
+  `4f5c2713-d59b-4df3-b7a5-aff5b75772af` SUCCESS, `/ready` ok. Applied and publicly
+  verified 15 September 00:05 UTC (3 locales). Planning snapshot was the phase-4
+  snapshot with the 19 phase-4 groups rehearsed; the runner's read-only dry-run
+  matched live storage.
+- **Articles (not started).** Read-only packet prepared with Renato as reviewer:
+  about 150 replacements across 4 articles × 3 locales, plus the policy page. Blog
+  writes are outside the clinical gate and the admin form resets `lastReviewedAt`,
+  so a guarded runner is required first. Open owner facts: signing workflow, Renato
+  author consent and review date, follow-up booking, contact inbox, legal citations.
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
@@ -10469,3 +10493,6 @@ Frontend deployment for `7f878d0a`: `b33f195d-7d56-4f75-b5dc-a3569f46a89d` SUCCE
 
 - brazil group service:segunda-opiniao-medica: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/service-segunda-opiniao-medica-applied.json.
 - seo/brazil phase 4 group service:segunda-opiniao-medica: public verification passed 2026-09-14T22:02:56.4157458Z. Receipt: seo/brazil/raw/rollout/phase4/service-segunda-opiniao-medica-public.json.
+
+- brazil group copy:solicitacao-exames-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-solicitacao-exames-online-applied.json.
+- seo/brazil phase 5 group copy:solicitacao-exames-online: public verification passed 2026-09-15T00:05:52.5764899Z. Receipt: seo/brazil/raw/rollout/phase5/copy-solicitacao-exames-online-public.json.
