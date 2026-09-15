@@ -1,0 +1,219 @@
+{
+  "_status": "DRAFT — machine-drafted translation, NOT reviewed. Requires native-language editorial review and clinical review before it may be copied into frontend/locales/pt/faq-markets.json under the key \"ie\".",
+  "_source": "frontend/locales/en/faq-markets.json#ie",
+  "_locale": "pt",
+  "_reviewNotes": [
+    {
+      "group": 0,
+      "item": null,
+      "note": "VARIANT: drafted in European Portuguese (pt-PT) to match the site's existing Ireland pt pages, but the Portuguese-speaking audience in Ireland is largely Brazilian. Please confirm pt-PT vs pt-BR for this market (note frontend/locales/pt/faq-markets.json already has a separate 'br' key). Wording that would read oddly or formally to a Brazilian reader: 'doente' (BR: paciente), 'marcar/marcação' (agendar/agendamento), 'registado' (registrado), 'contactar' (contatar), 'eletrónico/telefónica' (eletrônico/telefônica), 'ligação' for a link (link), 'descarregar' (baixar), 'levantar' a prescription (retirar), 'entidade patronal' (empregador), 'serviço de urgência' (pronto-socorro), 'análise laboratorial' (exame laboratorial), 'historial' (histórico), 'pormenor' (detalhe), 'por vezes' (às vezes), 'adesão' (assinatura/plano), 'Preciso de ser' (Preciso ser), and mesoclitic forms 'ser-lhe-á', 'dir-lhe-á', 'dir-lho-á', 'indicar-lhe-emos' (BR would use proclisis: 'vai lhe dizer', 'vamos indicar')."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'Irish Medical Council' kept in English as the official name; added the gloss '(a entidade reguladora da profissão médica na Irlanda)' on first use only. 'the Council's requirements' rendered with the full name repeated ('do Irish Medical Council') because a bare 'do Council' reads badly in Portuguese."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'fitness to practise' translated as 'aptidão para exercer' and 'ongoing professional standards' as 'padrões profissionais contínuos'. Please check that these read as regulatory terms rather than general ability."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "Terminology choice across the file: the noun 'referral' / 'specialist referral' is 'referenciação' (the pt-PT health-system term the site already uses); the verb 'refer (you onward)' is 'encaminhar'. A Brazilian reader would expect 'encaminhamento' for both."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "Terminology choice across the file: 'sick cert' is 'atestado médico', or 'atestado' when repeated, following the site's 'Atestados e receitas' and 'Atestado de ausência'. 'Baixa médica' and 'Certificado de Incapacidade Temporária' were deliberately avoided: they are Portuguese Social Security instruments and would suggest the wrong legal document for Ireland."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "'Anyone based in Ireland' translated as 'Qualquer pessoa que esteja na Irlanda', which means physically in Ireland. 'Based in' could also mean resident ('residente na Irlanda'). Please confirm which eligibility meaning is intended."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "'general consultation' translated as 'consulta geral' (literal). The site elsewhere names the GP service 'clínica geral'; please confirm whether 'consulta de clínica geral' should be used instead (this affects 0/0, 0/1, 3/0 and 5/0)."
+    },
+    {
+      "group": 0,
+      "item": 2,
+      "note": "'emergency department' translated as 'serviço de urgência' (pt-PT; BR: pronto-socorro). 'life-threatening' translated as 'com risco de vida'. The numbers 112 and 999 are unchanged. 'you or someone with you' rephrased as 'Se tiver, ou se alguém que esteja consigo tiver' to avoid 'você', which can sound abrupt in pt-PT."
+    },
+    {
+      "group": 1,
+      "item": 1,
+      "note": "Service-level claims ('same-day appointments are usually available', 'seen within a few hours') are translated exactly as written. The Portugal FAQ deliberately avoids such claims, so please check editorially that they are still accurate for Ireland."
+    },
+    {
+      "group": 1,
+      "item": 2,
+      "note": "Kept the fact that the phone line is answered in English only ('o atendimento é feito em inglês'). This matters for Portuguese-speaking readers and was neither softened nor dropped."
+    },
+    {
+      "group": 2,
+      "item": 1,
+      "note": "'online GP consultation' translated as 'consulta online de clínica geral'. 'your regular GP' (2/2) is 'o seu médico de família habitual'. An Irish GP is not the same as a Portuguese SNS-assigned 'médico de família', but this is the site's existing term. 'GP surgery' (3/0) is 'consultório de clínica geral'."
+    },
+    {
+      "group": 2,
+      "item": 2,
+      "note": "'hands-on examination or in-person tests' translated as 'exame físico ou exames presenciais'. Please check clinically that 'exames' is not read as lab tests only. 'guessing at a diagnosis' is 'arriscar um diagnóstico'."
+    },
+    {
+      "group": 3,
+      "item": 1,
+      "note": "Clinical/legal wording: 'it isn't backdated beyond what's clinically justified' translated as 'não é retroativo para além do que for clinicamente justificado'. Please confirm this keeps the meaning that some backdating can be justified, and no more."
+    },
+    {
+      "group": 3,
+      "item": 2,
+      "note": "Legal wording: 'carries the same standing' translated as 'tem o mesmo valor' (alternatives: 'a mesma validade', 'o mesmo estatuto'). The claim about Irish law is translated without change. 'sick-leave policies' is 'política de faltas por doença' (avoiding 'baixa', see note on 0/0). 'Statutory entitlements' is 'prestações previstas na lei'."
+    },
+    {
+      "group": 3,
+      "item": 2,
+      "note": "'Illness Benefit' and 'Department of Social Protection' kept in English as official names, with the Portuguese glosses '(subsídio de doença)' and '(o ministério irlandês da Proteção Social)' on first use. The source uses both 'sick cert' and 'medical cert' in this answer; both are 'atestado médico', on the assumption that they are the same document. Please confirm."
+    },
+    {
+      "group": 3,
+      "item": 3,
+      "note": "'ready to collect' translated as 'pronta para levantar' (pt-PT; BR: retirar). 'in-person examination or further tests' is 'observação presencial ou exames adicionais', to avoid repeating 'exame'."
+    },
+    {
+      "group": 4,
+      "item": null,
+      "note": "'records' translated as 'registos clínicos' and 'consultation records' as 'registos das consultas'. The Portugal FAQ uses 'processo clínico' for the patient record; please choose which one to standardise on (BR: prontuário)."
+    },
+    {
+      "group": 4,
+      "item": 0,
+      "note": "'Irish and EU data protection law' translated literally ('legislação irlandesa e da UE em matéria de proteção de dados'). GDPR/RGPD is not named because the source does not name it. 'medical information' is 'informação médica'."
+    },
+    {
+      "group": 4,
+      "item": 1,
+      "note": "'fulfilling a prescription' translated as 'processar uma receita'. Please check that this does not suggest dispensing. 'the limited administrative staff' is 'um número limitado de funcionários administrativos'."
+    },
+    {
+      "group": 5,
+      "item": 0,
+      "note": "'membership plans' translated as 'planos de adesão' and 'member on one of our plans' (5/1) as 'Se tiver uma adesão a um dos nossos planos', following the site's existing 'adesão' terminology. 'sick cert-focused visit' is 'consulta centrada num atestado médico'. 'checkout' is kept as in the Portugal FAQ."
+    }
+  ],
+  "ie": {
+    "groups": [
+      {
+        "eyebrow": "Irlanda",
+        "title": "Irlanda",
+        "items": [
+          {
+            "question": "Os médicos estão registados no Irish Medical Council?",
+            "answer": "Sim. Todos os médicos que atendem doentes na Irlanda através da Global Health estão registados no Irish Medical Council (a entidade reguladora da profissão médica na Irlanda), o mesmo estatuto exigido a qualquer médico de família ou especialista que exerça no país. Se quiser confirmá-lo por si próprio, pode pedir para ver os dados de registo do médico antes ou durante a consulta. O registo significa que o médico cumpriu os requisitos do Irish Medical Council em matéria de qualificações, aptidão para exercer e padrões profissionais contínuos, e que responde perante ele da mesma forma que qualquer médico que consultaria numa clínica. Isto aplica-se quer marque uma consulta geral, uma referenciação para especialista ou um atestado médico."
+          },
+          {
+            "question": "Preciso de ser já doente para marcar uma consulta?",
+            "answer": "Não é necessária qualquer relação prévia connosco. Pode criar uma conta e marcar a sua primeira consulta da mesma forma que qualquer doente que já utilize o serviço — não há lista de espera a que aderir nem é necessária referenciação para começar com uma consulta geral. Durante a marcação, ser-lhe-ão pedidos dados básicos e os seus sintomas ou o motivo da consulta, que o médico analisa antes ou durante a chamada. Se forem adequados cuidados continuados, uma opinião de especialista ou uma análise laboratorial, o médico pode organizar o passo seguinte a partir daí. Qualquer pessoa que esteja na Irlanda pode utilizar o serviço sem ter sido consultada anteriormente por um dos nossos médicos."
+          },
+          {
+            "question": "O que devo fazer numa emergência médica?",
+            "answer": "A Global Health é um serviço de consultas online, não um serviço de emergência, e não é monitorizado para situações urgentes ou com risco de vida. Se tiver, ou se alguém que esteja consigo tiver, uma emergência médica, ligue imediatamente para o 112 ou o 999, ou dirija-se diretamente ao serviço de urgência mais próximo — não espere por uma consulta online. Os nossos médicos podem avaliar sintomas não urgentes, emitir um atestado médico quando adequado ou encaminhá-lo para outros cuidados, mas as videoconsultas não são adequadas para dor no peito, dificuldade respiratória grave, hemorragia abundante, perda de consciência ou outras emergências. Se, durante uma consulta, o médico considerar que os seus sintomas exigem cuidados presenciais urgentes, dir-lhe-á para os procurar de imediato."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Marcações",
+        "title": "Marcar a sua consulta",
+        "items": [
+          {
+            "question": "Como marco uma consulta online?",
+            "answer": "A marcação é feita diretamente no site: escolha o tipo de consulta de que precisa, selecione um horário disponível e introduza os seus dados e o motivo da consulta. Verá o preço dessa consulta antes de confirmar e pagar, para que não haja surpresas no checkout. Depois de marcar, receberá uma confirmação com a hora e a forma de aceder — normalmente por vídeo, por vezes por telefone. Se não tiver a certeza de qual o tipo de consulta mais adequado à sua situação, o processo de marcação irá orientá-lo, e pode sempre contactar-nos antecipadamente com dúvidas sobre horários, pagamento ou a sua conta."
+          },
+          {
+            "question": "Com que rapidez posso ser atendido por um médico na Irlanda?",
+            "answer": "Normalmente há consultas disponíveis no próprio dia, e muitos doentes são atendidos poucas horas depois de marcarem, embora a disponibilidade exata dependa da procura e do tipo de consulta de que precisa. Pedidos que parecem urgentes, como precisar de um atestado médico antes de um turno, são geralmente mais fáceis de encaixar rapidamente do que uma consulta de especialidade mais longa. A página de marcação mostra sempre os horários realmente disponíveis, e não uma estimativa, para que saiba exatamente quando pode ser atendido antes de pagar. Se não aparecer nenhum horário adequado num determinado dia, voltar a verificar pouco depois ou experimentar um horário de manhã cedo permite muitas vezes encontrar uma opção no próprio dia."
+          },
+          {
+            "question": "Posso marcar ou tirar dúvidas por telefone, além de online?",
+            "answer": "A marcação em si é feita online, mas a nossa linha telefónica está disponível para questões sobre a sua conta, uma marcação existente ou pagamentos, e o atendimento é feito em inglês. Não é utilizada para aconselhamento clínico nem para o diagnosticar por telefone — isso acontece durante a consulta propriamente dita com um médico, seja por vídeo ou por chamada telefónica, consoante o tipo de consulta que marcar. Se não tiver a certeza de que serviço escolher ou tiver algum problema ao concluir uma marcação, ligar-nos ou enviar-nos um email é a forma mais rápida de resolver a situação antes da hora da sua consulta."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultas",
+        "title": "A sua consulta",
+        "items": [
+          {
+            "question": "A consulta é por vídeo ou por telefone?",
+            "answer": "A maioria das consultas decorre por videochamada segura, o que permite ao médico vê-lo e avaliar diretamente os sintomas visíveis, de forma semelhante a uma consulta presencial. Alguns tipos de consulta, sobretudo seguimentos rápidos ou determinados pedidos de atestado médico, podem ser disponibilizados por telefone — a página de marcação indica qual o formato aplicável antes de confirmar. Em qualquer dos casos, a chamada realiza-se à hora marcada através de uma ligação privada ou de um número enviado com a sua confirmação, e não precisa de descarregar nenhum software especial além de um navegador básico ou de uma ligação telefónica. Se o médico considerar que os seus sintomas precisam de ser observados presencialmente, dir-lho-á durante a chamada."
+          },
+          {
+            "question": "O que acontece durante uma consulta online de clínica geral?",
+            "answer": "O médico fará perguntas sobre os seus sintomas, o seu historial clínico e a medicação que esteja a tomar, tal como faria numa clínica, e depois avaliará o que é razoavelmente possível avaliar por vídeo ou telefone. Com base nessa avaliação, pode dar-lhe aconselhamento, emitir um atestado médico, enviar uma receita para a sua farmácia ou encaminhá-lo para uma análise laboratorial ou para uma opinião de especialista, quando esse for o passo seguinte adequado — nada disto é garantido antecipadamente e depende inteiramente do que o médico concluir durante a consulta. A duração das consultas é definida de forma a deixar tempo para perguntas, e depois receberá instruções de seguimento por escrito que resumem o que foi discutido e acordado."
+          },
+          {
+            "question": "E se o médico não me puder ajudar por videochamada?",
+            "answer": "Nem todas as situações clínicas podem ser avaliadas à distância com segurança, e o médico pode dizer-lhe durante a consulta que precisa de ser observado presencialmente — seja pelo seu médico de família habitual, por um especialista ou num serviço de urgência, consoante o grau de urgência. Nessa situação, o médico explicará porquê e o que acontece a seguir, em vez de arriscar um diagnóstico por videochamada. Este é um resultado normal e esperado de uma avaliação online, e não uma falha do serviço: as videoconsultas são adequadas para uma grande variedade de sintomas, mas algumas situações exigem realmente um exame físico ou exames presenciais para serem avaliadas de forma adequada e segura."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Atestados",
+        "title": "Atestados médicos e receitas",
+        "items": [
+          {
+            "question": "Como obtenho um atestado médico online?",
+            "answer": "Marque uma consulta geral e explique os seus sintomas ao médico por vídeo ou telefone, tal como faria num consultório de clínica geral. Se a avaliação do médico o justificar, este emitirá um atestado médico em formato eletrónico, normalmente enviado para o seu email no próprio dia. Um atestado médico só é emitido quando é clinicamente adequado, depois de o médico o ter efetivamente avaliado — não é algo que possa pedir e receber automaticamente, e o médico pode fazer perguntas adicionais ou recusar-se a emiti-lo se a sua descrição não o justificar. Não precisa de ser já doente do serviço para marcar este tipo de consulta."
+          },
+          {
+            "question": "Quanto tempo demora a receber o meu atestado médico?",
+            "answer": "Depois de concluída a consulta e de o médico decidir que um atestado médico é adequado, este é normalmente emitido e enviado por email no próprio dia, muitas vezes em poucas horas. O tempo de resposta depende da rapidez com que é atendido e do volume de trabalho do serviço nesse momento, pelo que marcar mais cedo no dia significa geralmente um resultado mais rápido. O próprio atestado indica as datas que abrange com base no que o médico avaliou — não é retroativo para além do que for clinicamente justificado. Se precisar dele com urgência para um turno ou um prazo, mencione-o ao marcar para poder escolher a primeira consulta disponível."
+          },
+          {
+            "question": "A minha entidade patronal vai aceitar um atestado médico emitido online?",
+            "answer": "Um atestado médico emitido por um médico registado no Irish Medical Council, após uma avaliação adequada, tem o mesmo valor quer a consulta tenha sido online ou num consultório — a lei irlandesa não exige que um atestado resulte de uma consulta presencial. Dito isto, cada entidade patronal define a sua própria política de faltas por doença, pelo que vale a pena confirmar o que a sua entidade patronal exige se tiver dúvidas. As prestações previstas na lei, como o Illness Benefit (subsídio de doença), são uma questão distinta: são avaliadas pelo Department of Social Protection (o ministério irlandês da Proteção Social) segundo os seus próprios critérios e requisitos de certificação, e os nossos médicos podem emitir um atestado médico, mas não podem apresentar nem decidir um pedido de prestação em seu nome."
+          },
+          {
+            "question": "O médico pode enviar uma receita para a minha farmácia?",
+            "answer": "Quando uma receita for clinicamente adequada, o médico pode enviá-la em formato eletrónico para uma farmácia à sua escolha, pelo que muitas vezes fica pronta para levantar pouco depois de terminar a consulta. Ser-lhe-á perguntado que farmácia pretende utilizar durante ou após a consulta. Nem todas as consultas resultam numa receita — o médico decide com base nos seus sintomas e historial, e alguns medicamentos não são adequados para prescrição sem uma observação presencial ou exames adicionais. Se uma receita não for adequada, o médico explicará a razão e sugerirá outras opções, que podem incluir uma consulta de seguimento, uma referenciação ou simplesmente conselhos de autocuidado."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacidade",
+        "title": "Privacidade e registos clínicos",
+        "items": [
+          {
+            "question": "A minha informação médica é mantida confidencial?",
+            "answer": "Sim. Os dados das suas consultas são tratados como informação médica sensível ao abrigo da legislação irlandesa e da UE em matéria de proteção de dados, e só são utilizados para lhe prestar cuidados e para tarefas administrativas diretamente relacionadas, como emitir um atestado médico ou enviar uma receita para a sua farmácia. Os médicos estão sujeitos às mesmas obrigações de confidencialidade que se aplicam a qualquer profissional registado na Irlanda. A sua informação não é partilhada com a sua entidade patronal, familiares ou qualquer outra pessoa sem o seu consentimento, exceto nas raras circunstâncias em que a lei exija a sua divulgação, como um risco grave para a segurança. A nossa política de privacidade explica em pormenor exatamente que dados são recolhidos e como são utilizados."
+          },
+          {
+            "question": "Quem pode ver os registos das minhas consultas?",
+            "answer": "Os seus registos são acessíveis ao médico que o tratou e a um número limitado de funcionários administrativos que deles necessitam para assegurar o funcionamento do serviço, por exemplo para processar uma receita ou emitir documentação que tenha pedido. Não são partilhados com a sua entidade patronal nem com qualquer outra pessoa, a menos que nos peça expressamente, por exemplo ao solicitar que seja enviada uma cópia para algum lado. Se o médico decidir que precisa de ser encaminhado para um especialista ou para uma análise laboratorial, os dados relevantes são partilhados com esse prestador para que os seus cuidados possam continuar, mas apenas o necessário para esse fim. O acesso é registado e restringido de acordo com as nossas obrigações de proteção de dados."
+          },
+          {
+            "question": "Posso obter uma cópia dos meus registos clínicos?",
+            "answer": "Sim, tem o direito de pedir uma cópia dos registos das suas consultas e de quaisquer atestados ou receitas que lhe tenham sido emitidos, ao abrigo dos seus direitos de proteção de dados. Pode fazê-lo através da sua conta ou contactando-nos diretamente, e indicar-lhe-emos o que é necessário para verificar a sua identidade antes de facultarmos qualquer informação, uma vez que se trata de registos de saúde sensíveis. Não precisa de ter um motivo específico para o pedido — o acesso aos seus próprios registos é um direito seu. Se quiser que os registos sejam enviados para outro médico, uma nova entidade patronal ou uma seguradora, informe-nos e podemos tratar disso com o seu consentimento."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Pagamentos",
+        "title": "Pagamentos",
+        "items": [
+          {
+            "question": "Quanto custa uma consulta?",
+            "answer": "O preço depende do tipo de consulta de que precisa — uma consulta geral, uma referenciação para especialista e uma consulta centrada num atestado médico não têm necessariamente o mesmo preço. Em vez de indicarmos aqui valores que podem ficar desatualizados, o preço exato da consulta escolhida é sempre apresentado de forma clara durante a marcação, antes de confirmar ou pagar o que quer que seja. Se tiver um dos nossos planos de adesão, algumas consultas podem já estar incluídas no seu plano em vez de serem cobradas individualmente — isto também é indicado no checkout. Se tiver alguma dúvida sobre o custo antes de marcar, contacte-nos e indicar-lhe-emos o tipo de consulta adequado."
+          },
+          {
+            "question": "Que métodos de pagamento aceitam?",
+            "answer": "O pagamento é feito online, de forma segura, com cartão no momento da marcação, pelo que a sua consulta fica confirmada e paga antes de ser atendido pelo médico. Se tiver uma adesão a um dos nossos planos, as consultas elegíveis podem ficar cobertas pela sua adesão em vez de serem cobradas à parte — quando aplicável, isto é aplicado automaticamente no checkout. Não aceitamos pagamentos por telefone nem por qualquer outro meio fora do processo de marcação, o que mantém os dados do seu cartão fora de emails ou chamadas. Se um pagamento não for aceite, a página de marcação informa-o de imediato para que possa tentar novamente ou utilizar outro cartão."
+          }
+        ]
+      }
+    ]
+  }
+}

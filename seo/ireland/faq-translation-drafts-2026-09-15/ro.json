@@ -1,0 +1,219 @@
+{
+  "_status": "DRAFT — machine-drafted translation, NOT reviewed. Requires native-language editorial review and clinical review before it may be copied into frontend/locales/ro/faq-markets.json under the key \"ie\".",
+  "_source": "frontend/locales/en/faq-markets.json#ie",
+  "_locale": "ro",
+  "_reviewNotes": [
+    {
+      "group": 0,
+      "item": 0,
+      "note": "Irish Medical Council kept in English (matches ro/common.json aboutBody1). Romanian gloss added in parentheses on first use only: 'the authority that regulates the medical profession in Ireland'."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'Sick cert' rendered as 'certificat medical' throughout, with the English term glossed once as („sick cert”). Rejected: 'adeverință medicală' (the site's Romania-market term, tied to the CNAS context) and 'certificat de concediu medical' (evokes the Romanian sick-leave form). Reviewer to confirm."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'GP' rendered as 'medic de familie' (site terms: bookGp, feature1Title); 'general consultation' as 'consultație de medicină generală' (site term). An Irish GP is not a CNAS-contracted family doctor; the translation does not imply that."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'Fitness to practise' rendered as 'aptitudinea de a profesa' (regulatory term of art; confirm preferred wording). 'The Council' repeated as 'Irish Medical Council' to avoid an ambiguous 'Consiliul'."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'Specialist referral' rendered as 'trimitere către un medic specialist' (site: 'trimiteri către specialiști')."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "'Anyone based in Ireland' rendered as 'oricine se află în Irlanda' (is located in). 'Based' could also mean resident ('cu reședința în Irlanda'). Eligibility meaning may shift; confirm against the service's actual rule."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "'If ongoing care ... is appropriate' rendered with 'oportună' (appropriate/advisable). Must not read as 'required'."
+    },
+    {
+      "group": 0,
+      "item": 2,
+      "note": "112 and 999 kept exactly (both valid in Ireland). 'Emergency department' rendered as 'unitate de primiri urgențe' (same term as ro/faq-markets.json#ro). Clinical reviewer to confirm the red-flag symptom list wording."
+    },
+    {
+      "group": 0,
+      "item": 2,
+      "note": "'Refer you onward' rendered as 'vă pot îndruma mai departe' rather than 'trimite', to keep 'trimitere' for a formal referral."
+    },
+    {
+      "group": 1,
+      "item": 2,
+      "note": "Phone line 'answered in English' kept as 'în limba engleză'. A Romanian reader may expect Romanian support; the source makes no such promise and none was added."
+    },
+    {
+      "group": 2,
+      "item": 1,
+      "note": "'Online GP consultation' rendered as 'consultație online cu medicul de familie'. 'Lab test' as 'analiză de laborator' (site uses 'analize de laborator'). 'Refer you for a lab test' as 'vă poate trimite pentru o analiză de laborator'."
+    },
+    {
+      "group": 2,
+      "item": 2,
+      "note": "'Hands-on examination or in-person tests' rendered as 'examen fizic sau investigații în persoană'. 'Your regular GP' as 'medicul dumneavoastră de familie obișnuit'."
+    },
+    {
+      "group": 3,
+      "item": 1,
+      "note": "'Isn't backdated beyond what's clinically justified' rendered as 'nu este antedatat dincolo de ceea ce este justificat clinic'. Legally sensitive; confirm it preserves that limited backdating may occur where clinically justified. 'States the dates it covers' rendered as 'menționează perioada pe care o acoperă'."
+    },
+    {
+      "group": 3,
+      "item": 2,
+      "note": "Illness Benefit and Department of Social Protection kept in English, each glossed on first use: 'indemnizația de boală acordată de statul irlandez' and 'ministerul irlandez al protecției sociale'. No CNAS equivalent substituted."
+    },
+    {
+      "group": 3,
+      "item": 2,
+      "note": "Source switches from 'sick cert' to 'medical cert' in the last sentence; both rendered as 'certificat medical'. 'Carries the same standing' rendered as 'are aceeași valoare'; 'Irish law doesn't require...' kept as a legal statement; legal reviewer to confirm. 'Statutory entitlements' rendered as 'drepturile prevăzute de lege'."
+    },
+    {
+      "group": 3,
+      "item": 3,
+      "note": "'Some medications aren't suitable to prescribe without an in-person examination' rendered as 'nu sunt potrivite pentru a fi prescrise fără o examinare față în față' (deliberately not 'nu pot fi prescrise', which would strengthen the claim)."
+    },
+    {
+      "group": 4,
+      "item": null,
+      "note": "'Records' rendered as 'documente medicale' / 'documentele consultațiilor' (site UI: 'Documentele consultației'). Avoided 'înregistrări', which also means audio/video recordings and could imply consultations are recorded."
+    },
+    {
+      "group": 4,
+      "item": 0,
+      "note": "'Registered practitioner' rendered as 'medic înregistrat'. 'Irish and EU data protection law' as 'legislația irlandeză și a Uniunii Europene privind protecția datelor'."
+    },
+    {
+      "group": 4,
+      "item": 1,
+      "note": "'Access is logged' rendered as 'accesul este consemnat în jurnale'. 'Fulfilling a prescription' as 'procesarea unei rețete'. 'Requesting a copy be sent somewhere' as 'expedierea unei copii către o anumită destinație' (avoids 'trimitere' = referral)."
+    },
+    {
+      "group": 5,
+      "item": 0,
+      "note": "'Membership plans' rendered as 'planurile noastre de abonament'; 'member' as 'membru' (site: 'Membru', 'Abonament'). 'Checkout' rendered as 'finalizarea plății'."
+    }
+  ],
+  "ie": {
+    "groups": [
+      {
+        "eyebrow": "Irlanda",
+        "title": "Irlanda",
+        "items": [
+          {
+            "question": "Medicii sunt înregistrați la Irish Medical Council?",
+            "answer": "Da. Fiecare medic care consultă pacienți prin Global Health în Irlanda este înregistrat la Irish Medical Council (autoritatea care reglementează profesia medicală în Irlanda), același statut cerut oricărui medic de familie sau medic specialist care profesează în această țară. Dacă doriți să verificați singur acest lucru, puteți cere să vedeți datele de înregistrare ale medicului înainte sau în timpul consultației. Înregistrarea înseamnă că medicul a îndeplinit cerințele Irish Medical Council privind calificarea, aptitudinea de a profesa și standardele profesionale continue și că răspunde în fața acestuia la fel ca orice medic la care ați merge într-un cabinet. Acest lucru este valabil fie că programați o consultație de medicină generală, o trimitere către un medic specialist sau un certificat medical („sick cert”)."
+          },
+          {
+            "question": "Trebuie să fiu deja pacient pentru a programa o consultație?",
+            "answer": "Nu este necesară o relație anterioară cu noi. Vă puteți crea un cont și vă puteți programa prima consultație la fel ca orice pacient care revine — nu există o listă de așteptare la care să vă înscrieți și nici nu este nevoie de o trimitere pentru a începe cu o consultație de medicină generală. La programare vi se vor cere câteva date de bază și simptomele sau motivul consultației, pe care medicul le analizează înainte sau în timpul apelului. Dacă este oportună îngrijirea continuă, opinia unui medic specialist sau o analiză de laborator, medicul poate stabili de acolo pasul următor. Oricine se află în Irlanda poate folosi serviciul fără să fi fost consultat anterior de unul dintre medicii noștri."
+          },
+          {
+            "question": "Ce fac în cazul unei urgențe medicale?",
+            "answer": "Global Health este un serviciu de consultații online, nu un serviciu de urgență, și nu este monitorizat pentru situații urgente sau care pun viața în pericol. Dacă dumneavoastră sau cineva aflat împreună cu dumneavoastră are o urgență medicală, sunați imediat la 112 sau 999 ori mergeți direct la cea mai apropiată unitate de primiri urgențe — nu așteptați o programare online. Medicii noștri pot evalua simptomele care nu sunt urgente, pot emite un certificat medical atunci când este potrivit sau vă pot îndruma mai departe, însă consultațiile video nu sunt potrivite pentru durere în piept, dificultăți severe de respirație, sângerare abundentă, pierderea cunoștinței sau alte urgențe. Dacă, în timpul unei consultații, medicul consideră că simptomele dumneavoastră necesită îngrijire urgentă acordată față în față, vă va spune să o solicitați imediat."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Programări",
+        "title": "Programarea consultației",
+        "items": [
+          {
+            "question": "Cum fac o programare online?",
+            "answer": "Programarea se face direct pe site: alegeți tipul de consultație de care aveți nevoie, selectați un interval orar disponibil și introduceți datele dumneavoastră și motivul consultației. Veți vedea prețul consultației respective înainte de a confirma și a plăti, așa că nu există surprize la finalizarea plății. După programare, veți primi o confirmare cu ora și modul în care vă conectați — de obicei prin video, uneori prin telefon. Dacă nu sunteți sigur ce tip de consultație se potrivește situației dumneavoastră, procesul de programare vă va ghida și ne puteți contacta oricând în prealabil cu întrebări despre programare, plată sau contul dumneavoastră."
+          },
+          {
+            "question": "Cât de repede pot ajunge la un medic în Irlanda?",
+            "answer": "De obicei sunt disponibile programări în aceeași zi, iar mulți pacienți sunt consultați în câteva ore de la programare, deși disponibilitatea exactă depinde de cerere și de tipul de consultație de care aveți nevoie. Solicitările care par urgente, cum ar fi nevoia unui certificat medical înainte de o tură de lucru, sunt în general mai ușor de încadrat rapid decât o consultație de specialitate mai lungă. Pagina de programare afișează întotdeauna intervalele reale disponibile, nu o estimare, astfel încât știți exact când puteți fi consultat înainte de a plăti. Dacă într-o anumită zi nu apare nimic potrivit, o nouă verificare puțin mai târziu sau alegerea unui interval devreme dimineața scoate adesea la iveală o opțiune în aceeași zi."
+          },
+          {
+            "question": "Pot programa sau pune întrebări și telefonic, nu doar online?",
+            "answer": "Programarea propriu-zisă se face online, însă linia noastră telefonică vă stă la dispoziție pentru întrebări despre cont, o programare existentă sau plată, iar apelurile sunt preluate în limba engleză. Aceasta nu este folosită pentru sfaturi clinice sau pentru a vă pune un diagnostic la telefon — acestea au loc în cadrul consultației propriu-zise cu medicul, fie prin video, fie prin apel telefonic, în funcție de tipul de programare pe care îl alegeți. Dacă nu sunteți sigur ce serviciu să alegeți sau întâmpinați o problemă la finalizarea programării, un apel sau un e-mail către noi este cea mai rapidă cale de a o rezolva înainte de ora programării."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultații",
+        "title": "Consultația dumneavoastră",
+        "items": [
+          {
+            "question": "Consultația are loc prin video sau prin telefon?",
+            "answer": "Majoritatea consultațiilor au loc prin apel video securizat, care îi permite medicului să vă vadă și să evalueze direct simptomele vizibile, asemănător unei vizite față în față. Unele tipuri de consultații, în special controalele scurte de urmărire sau anumite solicitări de certificat medical, pot fi oferite în schimb prin telefon — pagina de programare vă arată ce format se aplică înainte de a confirma. În ambele cazuri, apelul are loc la ora programată, printr-un link privat sau un număr trimis împreună cu confirmarea, și nu trebuie să descărcați niciun software special în afară de un browser obișnuit sau o conexiune telefonică. Dacă medicul consideră că simptomele dumneavoastră trebuie văzute în persoană, vă va spune acest lucru în timpul apelului."
+          },
+          {
+            "question": "Ce se întâmplă în timpul unei consultații online cu medicul de familie?",
+            "answer": "Medicul vă va întreba despre simptome, istoricul medical și medicamentele pe care le luați, la fel ca într-un cabinet, apoi va evalua ceea ce poate fi evaluat în mod rezonabil prin video sau telefon. Pe baza acestei evaluări, medicul vă poate oferi sfaturi, poate emite un certificat medical, poate trimite o rețetă la farmacia dumneavoastră sau vă poate trimite pentru o analiză de laborator ori pentru opinia unui medic specialist, atunci când acesta este pasul următor potrivit — nimic din toate acestea nu este garantat dinainte și depinde în întregime de constatările medicului în timpul consultației. Programările sunt planificate astfel încât să rămână timp pentru întrebări, iar ulterior veți primi instrucțiuni scrise de urmărire care rezumă ceea ce s-a discutat și s-a stabilit."
+          },
+          {
+            "question": "Ce se întâmplă dacă medicul nu mă poate ajuta printr-un apel video?",
+            "answer": "Nu orice afecțiune poate fi evaluată în siguranță la distanță, iar în timpul consultației medicul vă poate spune că trebuie să fiți consultat în persoană — fie de medicul dumneavoastră de familie obișnuit, fie de un specialist, fie la o unitate de primiri urgențe, în funcție de cât de urgentă este situația. În acest caz, medicul vă va explica de ce și ce urmează, în loc să încerce să ghicească un diagnostic printr-un apel video. Acesta este un rezultat normal și previzibil al evaluării online, nu un eșec al serviciului: consultațiile video sunt potrivite pentru o gamă largă de simptome, dar unele situații necesită cu adevărat un examen fizic sau investigații în persoană pentru a fi evaluate corect și în siguranță."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Certificate medicale",
+        "title": "Certificate medicale și rețete",
+        "items": [
+          {
+            "question": "Cum obțin online un certificat medical?",
+            "answer": "Programați o consultație de medicină generală și explicați-i medicului simptomele prin video sau telefon, la fel cum ați face în cabinetul unui medic de familie. Dacă evaluarea medicului o justifică, acesta vă va emite un certificat medical în format electronic, trimis de obicei pe e-mail în aceeași zi. Un certificat medical se emite doar atunci când este adecvat din punct de vedere clinic, după ce medicul v-a evaluat efectiv — nu este ceva ce puteți solicita și primi automat, iar medicul vă poate pune întrebări suplimentare sau poate refuza emiterea lui dacă descrierea dumneavoastră nu o justifică. Nu trebuie să fiți deja pacientul nostru pentru a programa acest tip de consultație."
+          },
+          {
+            "question": "Cât durează până primesc certificatul medical?",
+            "answer": "După încheierea consultației și după ce medicul a decis că un certificat medical este adecvat, acesta este de obicei emis și trimis pe e-mail în aceeași zi, adesea în câteva ore. Timpul de procesare depinde de cât de repede sunteți consultat și de cât de aglomerat este serviciul în acel moment, așa că o programare mai devreme în cursul zilei înseamnă, în general, un rezultat mai rapid. Certificatul menționează perioada pe care o acoperă, pe baza evaluării medicului — nu este antedatat dincolo de ceea ce este justificat clinic. Dacă aveți nevoie urgent de el pentru o tură de lucru sau un termen-limită, menționați acest lucru la programare, astfel încât să puteți alege cea mai apropiată programare disponibilă."
+          },
+          {
+            "question": "Angajatorul meu va accepta un certificat medical emis online?",
+            "answer": "Un certificat medical emis de un medic înregistrat la Irish Medical Council, în urma unei evaluări corespunzătoare, are aceeași valoare indiferent dacă consultația a avut loc online sau în cabinet — legislația irlandeză nu impune ca un certificat să provină dintr-o vizită față în față. Cu toate acestea, fiecare angajator își stabilește propriile politici privind concediul medical, așa că merită să verificați ce așteaptă angajatorul dumneavoastră dacă nu sunteți sigur. Drepturile prevăzute de lege, precum Illness Benefit (indemnizația de boală acordată de statul irlandez), sunt o chestiune separată: acestea sunt evaluate de Department of Social Protection (ministerul irlandez al protecției sociale) pe baza propriilor criterii și cerințe de certificare, iar medicii noștri pot emite un certificat medical, dar nu pot depune sau decide o cerere de indemnizație în numele dumneavoastră."
+          },
+          {
+            "question": "Poate medicul să trimită o rețetă la farmacia mea?",
+            "answer": "Atunci când o rețetă este adecvată din punct de vedere clinic, medicul o poate trimite electronic la o farmacie aleasă de dumneavoastră, astfel încât aceasta este adesea gata de ridicat la scurt timp după încheierea consultației. Veți fi întrebat ce farmacie doriți să folosiți în timpul consultației sau după aceasta. Nu orice consultație se încheie cu o rețetă — medicul decide în funcție de simptomele și istoricul dumneavoastră, iar unele medicamente nu sunt potrivite pentru a fi prescrise fără o examinare față în față sau investigații suplimentare. Dacă o rețetă nu este adecvată, medicul vă va explica motivele și vă va sugera alte opțiuni, care pot include o consultație de urmărire, o trimitere sau, în schimb, simple sfaturi de autoîngrijire."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Confidențialitate",
+        "title": "Confidențialitate și documente medicale",
+        "items": [
+          {
+            "question": "Informațiile mele medicale sunt păstrate confidențial?",
+            "answer": "Da. Detaliile consultației dumneavoastră sunt tratate ca informații medicale sensibile, conform legislației irlandeze și a Uniunii Europene privind protecția datelor, și sunt folosite doar pentru a vă acorda îngrijirea și pentru activitățile administrative direct legate de aceasta, cum ar fi emiterea unui certificat medical sau trimiterea unei rețete la farmacia dumneavoastră. Medicii au aceleași obligații de confidențialitate care se aplică oricărui medic înregistrat în Irlanda. Informațiile dumneavoastră nu sunt partajate cu angajatorul, cu membrii familiei sau cu altcineva fără consimțământul dumneavoastră, cu excepția situațiilor rare în care legea impune divulgarea lor, cum ar fi un risc grav pentru siguranță. Politica noastră de confidențialitate prezintă integral și exact ce date sunt colectate și cum sunt folosite."
+          },
+          {
+            "question": "Cine poate vedea documentele consultațiilor mele?",
+            "answer": "Documentele dumneavoastră sunt accesibile medicului care v-a tratat și personalului administrativ restrâns care are nevoie de ele pentru funcționarea serviciului, de exemplu pentru procesarea unei rețete sau emiterea documentelor pe care le-ați solicitat. Acestea nu sunt partajate cu angajatorul dumneavoastră sau cu altcineva decât dacă ne cereți în mod expres acest lucru, de exemplu solicitând expedierea unei copii către o anumită destinație. Dacă medicul decide că aveți nevoie de o trimitere mai departe către un specialist sau pentru o analiză de laborator, detaliile relevante sunt transmise furnizorului respectiv pentru ca îngrijirea dumneavoastră să poată continua, dar numai cele necesare în acest scop. Accesul este consemnat în jurnale și restricționat în conformitate cu obligațiile noastre privind protecția datelor."
+          },
+          {
+            "question": "Pot obține o copie a documentelor mele medicale?",
+            "answer": "Da, în temeiul drepturilor dumneavoastră privind protecția datelor, aveți dreptul să solicitați o copie a documentelor consultațiilor dumneavoastră, precum și a oricăror certificate sau rețete care v-au fost emise. Puteți face acest lucru din contul dumneavoastră sau contactându-ne direct, iar noi vă vom comunica ce este necesar pentru verificarea identității înainte de a elibera ceva, deoarece acestea sunt documente medicale sensibile. Nu este nevoie să aveți un motiv anume pentru solicitare — accesul la propriile documente este dreptul dumneavoastră. Dacă doriți ca documentele să fie transmise unui alt medic, unui nou angajator sau unui asigurător, anunțați-ne și putem organiza acest lucru cu consimțământul dumneavoastră."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Plăți",
+        "title": "Plăți",
+        "items": [
+          {
+            "question": "Cât costă o consultație?",
+            "answer": "Prețul depinde de tipul de consultație de care aveți nevoie — o consultație de medicină generală, o trimitere către un specialist și o consultație axată pe un certificat medical nu au neapărat același preț. În loc să enumerăm aici sume care s-ar putea învechi, prețul exact al programării alese este întotdeauna afișat clar în timpul programării, înainte să confirmați sau să plătiți ceva. Dacă aveți unul dintre planurile noastre de abonament, unele consultații pot fi deja incluse în planul dumneavoastră, în loc să fie taxate separat — acest lucru este afișat tot la finalizarea plății. Dacă aveți o întrebare despre cost înainte de programare, contactați-ne și vă putem îndruma către tipul de consultație potrivit."
+          },
+          {
+            "question": "Ce metode de plată acceptați?",
+            "answer": "Plata se face online, în siguranță, cu cardul, în momentul programării, astfel încât programarea dumneavoastră este confirmată și plătită înainte de consultația cu medicul. Dacă sunteți membru al unuia dintre planurile noastre, consultațiile eligibile pot fi acoperite de abonament în locul unei taxe separate — acest lucru se aplică automat la finalizarea plății, acolo unde este cazul. Nu acceptăm plăți prin telefon sau prin orice altă metodă din afara procesului de programare, ceea ce vă ține datele cardului departe de e-mailuri sau apeluri. Dacă o plată nu reușește, pagina de programare vă va anunța imediat, astfel încât să puteți încerca din nou sau să folosiți un alt card."
+          }
+        ]
+      }
+    ]
+  }
+}

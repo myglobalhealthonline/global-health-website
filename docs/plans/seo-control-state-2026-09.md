@@ -300,7 +300,7 @@ A full local crawl was not feasible. The dev server took 5 minutes per doctor pa
 
 **Owner actions that would clear the remaining 19 noindex rows (no code change can do it correctly):**
 
-- Ireland FAQ in es/pt/cs/ro/de (5 rows): translate the 18-question, 2,006-word Irish market FAQ into `locales/<lang>/faq-markets.json`. It is YMYL copy, so editorial plan 2026-08-19 requires native-language review first. Without that, the fallback noindex must stay.
+- Ireland FAQ in es/pt/cs/ro/de (5 rows): AI-drafted translations of the 18-question Irish market FAQ are in `seo/ireland/faq-translation-drafts-2026-09-15/` (2026-09-15, owner request). Each has 6 groups and 18 items and passes `check_drafts.py` with 0 problems: es 2,220 words and 26 review notes, pt 2,229 and 20, cs 1,863 and 21, ro 2,237 and 20, de 2,083 and 21. They are NOT wired into `frontend/locales/<lang>/faq-markets.json`. Editorial plan 2026-08-19 requires native-language and clinical review first; the folder README has the publish steps. Until then the fallback noindex stays.
 - Ireland medical disclaimer in es/pt/cs/ro/de (5 rows): add `CountryDisclaimerTranslation` rows in admin. The text lives in the production database, and `backend/scripts/seed-country-disclaimers.ts` notes legal and clinical sign-off is still required.
 - Doctor profiles (9 rows): add a bio of at least 120 characters, plus specialties and a real title, for Dr Arooj Iqbal Lodhi, Dr Gabriele Felici, Dr Michael Nytra and MUDr Nataliya Kharlamova. The profiles turn indexable on their own once the bios exist.
 
