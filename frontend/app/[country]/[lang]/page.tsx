@@ -789,7 +789,13 @@ export default async function CountryLangHomePage({
       ) : null}
       {countryTrust ? (
         <>
-          <VerifiedProfessionals trust={countryTrust} locale={lang} />
+          {/* Brazil only: passing `country` for every market would switch
+              Portugal's homepage to PT_PT_COPY (Brazil SEO handoff R2). */}
+          <VerifiedProfessionals
+            trust={countryTrust}
+            locale={lang}
+            country={code === "br" ? code : undefined}
+          />
           <CountryCertificationLogos trust={countryTrust} locale={lang} />
         </>
       ) : null}

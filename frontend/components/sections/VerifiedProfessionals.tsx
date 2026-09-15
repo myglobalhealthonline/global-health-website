@@ -175,8 +175,9 @@ const BR_PT_COPY: Copy = {
   eyebrow: "Profissionais médicos verificados",
   heading: "O médico que você agenda é o médico que te",
   headingAccent: "atende",
-  body: (r) =>
-    `Cada clínico na plataforma é identificado pelo nome, tem foto e está registrado no ${r} do seu estado. Você agenda com um médico específico — não um call center, não uma escala anônima — e é esse médico que realiza a sua consulta.`,
+  // Trust regulator for Brazil is the federal CFM; state registration is the CRM.
+  body: () =>
+    `Cada clínico na plataforma é identificado pelo nome, tem foto e está registrado no Conselho Regional de Medicina (CRM) do seu estado. Você agenda com um médico específico — não um call center, não uma escala anônima — e é esse médico que realiza a sua consulta.`,
   verifyAt: "Verifique qualquer registro em",
   points: [
     {
