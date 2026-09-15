@@ -253,3 +253,56 @@ Cadence unchanged: one `inspect_urls` pass every 2-3 weeks; next global pass **2
 **Watchlist (updates §4):** after the flag is back on, inspect `/ireland/en/lab-tests` plus five detail URLs 14 days later; expect "Submitted and indexed" with a post-re-enable crawl date. The 40 legacy `/product-page/*` and `/home-health-tests*/*` redirects stay as they are (they resolve once the pages return). Re-run `SEO_CHECK_BASE=https://www.myglobalhealth.online` `seo-live-urls.test.ts` the day the flag is on: expect 9/9.
 
 **Not done:** deploy (owner pipeline); the flag flip itself (operations); MIG-*, MEAS-*, INTL-002 and the coupling programme remain proposals in §3.
+
+## 7. OpenSEO metadata batch (META-001 / META-002) — 2026-09-15
+
+**Scope (owner-authorised 2026-09-15):** the 323 rows in `seo/tracking/raw/2026-09-15/A2-probe/openseo-audit/audit-issues-export-2026-09-15.json`. Template-level only: length fitting at natural boundaries, brand-suffix trimming, and market/language disambiguation where locale variants collided. No per-page rewrites, no clinical body copy, no noindex removed. This is the authorised exception to the frozen ledger's §27.5 "no blanket title/description rewrites" rule. It does not reopen that rule for other batches.
+
+**Implemented (code, not yet deployed by this session):** commit `1325c673` on `Dev-hassaan`.
+
+- `frontend/lib/seo/page-seo.ts`: `buildPublicMetadata` fits every public search `<title>` to 60 chars. It drops the trailing brand, then trailing ` | ` / ` · ` / ` — ` segments, then cuts at a leading question or a whole word. Every meta description is fitted to 160 chars at the last full sentence, then clause, then word. There is no literal "…", so the 2026-08-09 rule still holds. In-budget copy is untouched. Social (OG/Twitter) budgets are unchanged.
+- `frontend/lib/tools/markets.ts` (`marketToolDescription`) plus the tool page: the description names the market from the locale's `countryNames` when the copy does not. This fixes the 20 same-language duplicates across markets.
+- `frontend/lib/seo/doctor-market-title.ts` (`withLanguageTitle`, `doctorSiblingLocaleTitles`) plus the doctor profile page: when a title is identical in two locales of one market, it gets the native language name ("· Español", "· Português"). The market and language suffixes reserve room in the budget, so the fitter cannot drop them.
+
+**Tests:** `tsc --noEmit` exit 0. The vitest files below pass, 9 files and 432 tests: `tests/unit/seo/sitemap.test.ts`, `lib/seo/page-seo.test.ts`, the new `lib/tools/tool-metadata-budget.test.ts` (every market × locale × tool, 266 cases: title ≤ 60, description 70–160, no duplicate title or description), `lib/seo/doctor-market-title.test.ts`, `lib/content/country-home-title-budget.test.ts`, `lib/tools/markets.test.ts`, `lib/tools/registry.test.ts`, `lib/seo/blog-pagination-robots.test.ts` and `lib/seo/doctor-hreflang.test.ts`.
+
+**Pre-deploy served-HTML check (local `next dev` against the production API, lxml):**
+
+| URL | title | description |
+| --- | --- | --- |
+| /ireland/es/doctors/dr-emmanuel-dabup | 60 "… Psiquiatra consultor \| Irlanda · Español" | 142 |
+| /ireland/pt/doctors/dr-emmanuel-dabup | 52 "… Psiquiatra consultor · Português" | 145 |
+| /ireland/pt/tools/bmi-calculator | 45 | 89, starts "Irlanda:" |
+| /portugal/pt/tools/bmi-calculator | 49 | 90, starts "Portugal:" |
+| /ireland/de/services/mental-health-consultation | 52 (was 76) | 143 |
+
+A full local crawl was not feasible. The dev server took 5 minutes per doctor page against the shared 300/min API bucket.
+
+**Counts by issue type (expected on deploy; confirm with the re-probe):**
+
+| issueType | rows | fixed by template | no change by design |
+| --- | --- | --- | --- |
+| title-too-long | 117 | 117 | 0 |
+| meta-description-too-long | 150 | 150 | 0 |
+| duplicate-meta-description | 20 | 20 | 0 |
+| duplicate-title | 8 | 8 | 0 |
+| meta-description-too-short | 4 | 0 | 4 |
+| noindex-page | 23 | 0 | 23 |
+| thin-content | 1 | 0 | 1 |
+| **total** | **323** | **295** | **28** |
+
+**No change by design (recorded, not fixed):**
+
+- `noindex-page` `/cart`, `/login`, `/register`, `/forgot-password`: transactional and auth pages pass `noindex: true` to `buildPublicMetadata` (`noindex, nofollow`). The same 4 URLs carry the `meta-description-too-short` rows. Their short descriptions are never shown in search, so they are left as written.
+- `noindex-page` `/ireland/{es,pt,cs,ro,de}/faq`: fallback-locale FAQ content (`marketFaq.exact` false) is demoted with `noindexFollow`.
+- `noindex-page` `/ireland/{es,pt,cs,ro,de}/legal/medical-disclaimer`: the locale is not in `exactLocalesForLegalType`, so the page serves fallback-language legal text and is demoted with `noindexFollow`.
+- `noindex-page` doctor profiles `/ireland/{en,pt,es,cs,ro,de}/doctors/dr-arooj-iqbal-lodhi` and `/czechia/cs/doctors/{dr-gabriele-felici,dr-michael-nytra,mudr-nataliya-kharlamova}`: the production API returns `readyToIndex: true` and a registration number for all four, but an empty `bio`. `validatePublicDoctorRecord` requires a bio of at least 120 characters, so `isPublicDoctorRecordIndexable` is false and the page serves `noindex, follow`. The same predicate drives the sitemap. The fix is editorial, by adding the bios in admin, not a metadata change.
+- `thin-content` `/` (92 words): product decision. The root is the country picker (`CountryEntryGate`), not a content page.
+
+**Verification (owner-triggered, after deploy):** run `python seo/tracking/scripts/verify_metadata_fix.py`. It re-probes the 323 rows at ≤ 4 req/s and writes `seo/tracking/data/metadata_fix_verification.csv` (url, issueType, before_length, after_length, resolved). Rerun the OpenSEO site audit (project `7804f362-5891-417e-9c3a-d9e8d4d7dc6b`) only when the owner asks, and estimate credits first.
+
+**Next measurement:** deploy date + 28 days. Compare GSC CTR for the 267 length-flagged URLs against the 28 days before deploy.
+
+**Workbook:** in `19_Issues`, META-001 is now "Implemented - awaiting deploy". META-002 is "Partially implemented - awaiting deploy", because only the 28 audit duplicate pairs are covered and the wider 412/769 same-language duplicate set stays open. The workbook was recalculated with `recalc_excel.ps1`, and `check_formula_errors.py` exit 0.
+
+**Not done:** deploy and push (owner), the post-deploy re-probe, and the OpenSEO re-audit.
