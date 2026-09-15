@@ -827,6 +827,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-15T02:01:51.959Z",
       "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-15 that Dr. Renato Sarmento verbally approved the phase-6 deletions in manifest 57e67109039339f4bd2f44f34bdb1bad1a0a4010002be6f21e675f0207010285 (superlatives \"um dos profissionais mais completos\" / \"um dos poucos médicos de família\" and EN/ES equivalents in bio and FAQ; \"Consulta no mesmo dia.\" in the stored PT SEO description). No written record."
+    },
+    {
+      "stateSha256": "aa6576593d3adc1900cf2e0cb3aa06fc32545a1af9322fa8e55afb04146f72f3",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-15T04:51:51.115Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-15 that Dr. Renato Sarmento approves the phase-7 deletion in manifest c1bea18fbaa035de92eed709637fd497e8a10494cd2ff0c3b89cfaf063163fed (\"um dos formatos mais inovadores de telemedicina no SUS\" and EN/ES equivalents in the profile FAQ). No written record."
     }
   ]
 };

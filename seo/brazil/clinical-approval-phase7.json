@@ -1,0 +1,17 @@
+{
+  "status": "owner-confirmed approval",
+  "manifestSha256": "c1bea18fbaa035de92eed709637fd497e8a10494cd2ff0c3b89cfaf063163fed",
+  "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+  "reviewerName": "Dr. Renato Sarmento",
+  "reviewedAt": "2026-09-15T04:51:51.115Z",
+  "maxAgeDays": 365,
+  "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-15 that Dr. Renato Sarmento approves the phase-7 deletion in manifest c1bea18fbaa035de92eed709637fd497e8a10494cd2ff0c3b89cfaf063163fed (\"um dos formatos mais inovadores de telemedicina no SUS\" and EN/ES equivalents in the profile FAQ). No written record.",
+  "groups": [
+    {
+      "key": "text:doctor:cmqyzr0fb000o01lu9deh6mf5",
+      "approvedSha256": "ffd0ae7f84ff29270efa9f5687e449ef04723118b85ea3b5290a304825a4d7a1",
+      "stateKey": "doctor:cmqyzr0fb000o01lu9deh6mf5",
+      "resultingStateSha256": "aa6576593d3adc1900cf2e0cb3aa06fc32545a1af9322fa8e55afb04146f72f3"
+    }
+  ]
+}
