@@ -191,7 +191,7 @@ export async function generateMetadata({
     safeMeta.title && safeMeta.title !== h1Fallback
       ? safeMeta.title
       : config?.name
-        ? `${h1Fallback} | ${config.name}`
+        ? `${h1Fallback} | ${code === "br" ? (loadLocaleBundle(lang as LocaleCode, country).common.countryNames?.[code] ?? config.name) : config.name}`
         : h1Fallback;
   const baseDescription =
     safeMeta.description ?? `Learn about ${title} and book a consultation.`;
@@ -257,6 +257,8 @@ export default async function ServiceDetailPage({
 
   const { common: c, home } = loadLocaleBundle(lang as LocaleCode, country);
   const t = c.serviceDetailPage;
+  // Brazil only: `config.name` is English ("Brazil") on the pt/es pages.
+  const visibleCountryName = code === "br" ? (c.countryNames?.[code] ?? config.name) : config.name;
   const serviceActionProps = getBookabilityActionProps(
     detail.bookability,
     lang,
@@ -313,7 +315,7 @@ export default async function ServiceDetailPage({
     // made — feeds AlsoAvailableIn below, cache()-deduped against that call.
     indexableServiceLocales(config, code, serviceSlug),
   ]);
-  const disclaimerText = shortDisclaimer ?? t.disclaimer.replace("{country}", config.name);
+  const disclaimerText = shortDisclaimer ?? t.disclaimer.replace("{country}", visibleCountryName);
   const serviceCard =
     generals.find((s) => s.slug === serviceSlug) ??
     specialists.find((s) => s.slug === serviceSlug);
@@ -662,7 +664,7 @@ export default async function ServiceDetailPage({
                 className="mt-4 flex flex-wrap items-center gap-y-2 border-t border-white/10 pt-4"
               >
                 {[
-                  { icon: ShieldCheck, label: t.trustRegistered.replace("{country}", config.name) },
+                  { icon: ShieldCheck, label: t.trustRegistered.replace("{country}", visibleCountryName) },
                   { icon: Video, label: t.trustVideo },
                   { icon: Lock, label: t.trustConfidential },
                 ].map(({ icon: Icon, label }, i) => (
@@ -727,7 +729,7 @@ export default async function ServiceDetailPage({
                       detail.durationMinutes != null
                         ? { icon: Clock, label: t.minuteAppointment.replace("{count}", String(detail.durationMinutes)) }
                         : null,
-                      { icon: Stethoscope, label: t.doctorRegistered.replace("{country}", config.name) },
+                      { icon: Stethoscope, label: t.doctorRegistered.replace("{country}", visibleCountryName) },
                       detail.bookability.state === "BOOKABLE"
                         ? { icon: CalendarCheck, label: t.instantConfirmation }
                         : null,
@@ -938,7 +940,7 @@ export default async function ServiceDetailPage({
               <h2
                 className="mt-5 max-w-[18ch] text-[clamp(2rem,4vw,3.4rem)] font-extrabold leading-[1.0] tracking-[-0.035em] text-white/95"
               >
-                {t.bookHeading.replace("{service}", detail.name).replace("{country}", config.name)}
+                {t.bookHeading.replace("{service}", detail.name).replace("{country}", visibleCountryName)}
               </h2>
               <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed text-[var(--gh2-on-dark-muted)]">
                 {priceLabel ? t.fromPricePrefix.replace("{price}", priceLabel) : ""}

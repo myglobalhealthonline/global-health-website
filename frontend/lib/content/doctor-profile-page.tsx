@@ -206,7 +206,9 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   // patient reads or a crawler indexes on THIS page must name the market the
   // route is actually serving — same fix as buildDoctorProfileMetadata above.
   const routeConfig = code ? getCountryByCode(code) : undefined;
-  const routeCountryName = routeConfig?.name ?? data.profile.country;
+  // Brazil only: visible copy uses the localized name ("Brasil"), not English "Brazil".
+  const routeCountryName =
+    (code === "br" ? c.countryNames?.[code] : undefined) ?? routeConfig?.name ?? data.profile.country;
   const bookingTimezone = routeConfig?.bookingTimezone ?? "UTC";
   // Breadcrumb-only localized country label — deliberately NOT used for
   // `routeCountryName` above, which drives visible copy (country pill,
