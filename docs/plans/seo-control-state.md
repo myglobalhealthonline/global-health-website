@@ -10210,6 +10210,25 @@ answer, pricing, biography facts, dr-renato indexing, legal pages.
   "Consultas no mesmo dia geralmente estão disponíveis" (doctor copy, D2 scope).
 - **Cohort.** `/brazil/{pt,en,es}/doctors`: measure 2026-10-15, 2026-11-14, 2026-12-14.
 
+### 59.4 R2: Brazil verified-professionals copy on the homepage — 15 September 2026
+
+**Status: LIVE.** Code only. Commit `9549b20d`; Frontend deployment
+`81acf900-2742-494e-82c9-4d5c31cb85c3` SUCCESS.
+
+- **Change.** `app/[country]/[lang]/page.tsx` passes `country` to `<VerifiedProfessionals>`
+  only when `code === "br"`, so `/brazil/pt` renders `BR_PT_COPY` ("O médico que você agenda
+  é o médico que te atende", pt-BR). Passing it for every market would have switched
+  Portugal to `PT_PT_COPY`. `BR_PT_COPY.body` said "registrado no Conselho Federal de
+  Medicina do seu estado" (trust regulator is the federal CFM); it now names the state
+  "Conselho Regional de Medicina (CRM)". The body change also shows on `/brazil/pt/doctors`.
+- **Proof.** `tsc --noEmit` exit 0; `check-locale-keys` passed; vitest unchanged (487/488,
+  same pre-existing `same-day-booking-state` failure). Local render: Brazil PT new copy,
+  Portugal PT unchanged. Production: `/brazil/pt` and `/brazil/pt/doctors` 200,
+  self-canonical, new copy; `/brazil/en` unchanged ("The doctor you book"); control
+  `/portugal/pt` 200 with "O médico que marca é o médico que o atende" (one transient 500
+  right after the deploy; three rechecks 200, along with `/portugal/en`, `/ireland/en`).
+- **Cohort.** `/brazil/pt`: already in the §59 homepage cohort (2026-10-13, 11-10, 12-08).
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
