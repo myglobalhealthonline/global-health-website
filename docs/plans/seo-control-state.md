@@ -10347,6 +10347,26 @@ incremental build: run it with `--incremental false` before pushing.
   with the old links before refreshing). Rollback: `rollback` mode with the same manifest.
 - **Cohort.** Three diabetes articles: measure 2026-10-15, 2026-11-14, 2026-12-14.
 
+### 59.11 D1: stored HOME and DOCTORS_INDEX copy — 15 September 2026
+
+**Status: LIVE, one field missed.** Database write, owner-run. Runner
+`backend/scripts/brazil-page-content.mjs` (commit `aa8800dc`); plan and review
+`seo/brazil/content-briefs/d1-page-content-{plan,review}-2026-09-15.*` (commit `e1a7d18d`).
+
+- **Change.** Six `PageContentTranslation` rows (HOME and DOCTORS_INDEX × pt/en/es): specialist
+  review, guided home tests and "specialties" removed; PT rewritten in pt-BR; "Conselho
+  Federal de Medicina (CFM) / CRM" → "CRM, sob supervisão do CFM" (and EN/ES); stored
+  `seoTitle`/`seoDescription` cleared (code SEO serves, §59, §59.3). Legal claims in the
+  DOCTORS_INDEX FAQ ("same legal weight", consulting from abroad) unchanged.
+- **Proof.** Manifest `b7f682bc…`; owner dry-run 6/6 ready; owner apply 6/6. Backend API
+  `/api/countries/br/page-content/{HOME,DOCTORS_INDEX}?locale={EN,PT,ES}`: seoTitle null, new
+  text, no specialist/same-day/PT-PT markers. Production after the 60 s cache: `/brazil/{en,pt,es}`
+  and `/brazil/en/doctors` show the new text and 0 specialist phrases; titles unchanged.
+- **Missed.** `disclaimerParagraphs[0]` still says "Conselho Federal de Medicina (CFM) / CRM"
+  (HOME en/pt/es, DOCTORS_INDEX en; PT uses "inscritos em"). Needs a follow-up plan with the
+  same runner.
+- **Cohort.** Covered by §59 homepage and §59.3 doctors cohorts.
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
