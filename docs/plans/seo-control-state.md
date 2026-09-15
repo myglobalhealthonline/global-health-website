@@ -10166,7 +10166,8 @@ Frontend deployment for `7f878d0a`: `b33f195d-7d56-4f75-b5dc-a3569f46a89d` SUCCE
   `4f5c2713-d59b-4df3-b7a5-aff5b75772af` SUCCESS, `/ready` ok. Applied and publicly
   verified 15 September 00:05 UTC (3 locales). Planning snapshot was the phase-4
   snapshot with the 19 phase-4 groups rehearsed; the runner's read-only dry-run
-  matched live storage.
+  matched live storage. Cohort (`/brazil/{pt,en,es}/services/solicitacao-exames-online`
+  summary on booking cards): measure 2026-10-15, 2026-11-14, 2026-12-14.
 - **Articles (not started).** Read-only packet prepared with Renato as reviewer:
   about 150 replacements across 4 articles × 3 locales, plus the policy page. Blog
   writes are outside the clinical gate and the admin form resets `lastReviewedAt`,
@@ -10285,6 +10286,49 @@ incremental build: run it with `--incremental false` before pushing.
   unchanged. Controls `/portugal/pt/services/consulta-medica` and
   `/portugal/pt/doctors/beatriz-carvalho` unchanged ("Registado em Portugal").
 - **Cohort.** Covered by the §59.5 cohort (2026-10-15, 2026-11-14, 2026-12-14).
+
+### 59.7 R5: Brazil homepage step 1 text — 15 September 2026
+
+**Status: LIVE.** Code only. Commit `a4f864c3`; Frontend deployment
+`19a5f0b7-a290-4159-94d9-233c0f1fdc0c` SUCCESS.
+
+- **Change.** `country-home-copy.ts` BUNDLE `br:pt/en/es` gain `howItWorks.step1Body`. The
+  shared text promised "specialist referrals" and "home-test services" (home tests off,
+  specialist services inactive in Brazil). Now: EN "Browse general practice consultations,
+  prescription renewals and test requests. Filter by language, urgency, or price."; PT "Veja
+  consultas de clínica geral, renovação de receita e pedido de exames. Filtre por idioma,
+  urgência ou preço."; ES "Consulta opciones de medicina general, renovación de recetas y
+  solicitud de exámenes. Filtra por idioma, urgencia o precio." Staged with
+  `git apply --cached`; the uncommitted Ireland `BUNDLE_NORMALIZED` hunk stays out.
+- **Proof.** `tsc --noEmit --incremental false` exit 0; new `country-home-copy.brazil.test.ts`
+  passes. Production: `/brazil/{en,pt,es}` 200, self-canonical, new text. Controls
+  `/portugal/en`, `/portugal/pt`, `/spain/es` keep the shared text.
+- **Cohort.** In the §59 homepage cohort (2026-10-13, 11-10, 12-08).
+
+### 59.8 R7: Brazil review register and phase-5 cohort — 15 September 2026
+
+- `seo/brazil/clinical-review-register.csv`: `reviewed_at` filled for the 57 phase-4 rows from
+  the recorded `clinical-approval-phase4.json` `reviewedAt` (2026-09-14T21:24:30.383Z); evidence
+  now points at that file; dependency "Live since phase 4 rollout; 365-day review-age policy".
+  Three rows added for the phase-5 `solicitacao-exames-online` summary (pt/en/es) with
+  `clinical-approval-phase5.json` `reviewedAt` 2026-09-14T23:55:35.761Z and its group hash.
+  No date was created; both come from the approval files.
+- Phase-5 cohort dates added to §59.1: 2026-10-15, 2026-11-14, 2026-12-14.
+
+### 59.9 R8: GA4 Brazil booking funnel — 15 September 2026
+
+**Status: code verified; live GA4 read NOT done.**
+
+- **Code.** `begin_booking` fires from `BookCta` (`BookNowButton.tsx`) on every public booking
+  entry, no market filter. `book_appointment_click`, `select_time_slot` and
+  `booking_confirmed` go through `trackBookingEvent`, whose market allowlist includes
+  `br`/`brazil`; the `/brazil/...` path segment normalises to `brazil`. All events need
+  analytics consent and the production measurement ID (`trackAnalyticsEvent`).
+- **Not verified.** No Google credentials in the agent shell (`google_auth.py --check`:
+  "Credential Tier: -1"; `ga4_report.py` lacks `google-analytics-data`) and the OpenSEO MCP
+  needs re-authorisation. Someone with GA4 access must confirm `begin_booking` and
+  `booking_confirmed` with `market = brazil` or a `/brazil/` page path in property
+  `547083375` before the December 90-day reads.
 
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
