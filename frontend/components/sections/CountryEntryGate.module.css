@@ -638,6 +638,29 @@
   color: rgba(255, 255, 255, 0.4);
 }
 
+/* About block under the hero (2026-09-15 thin-content fix). */
+.about {
+  z-index: 3;
+  padding: clamp(24px, 4vw, 48px) clamp(20px, 4vw, 48px) 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.aboutTitle {
+  margin: 0;
+  font-size: clamp(18px, 1vw + 0.8rem, 22px);
+  font-weight: 600;
+  line-height: 1.3;
+  color: #fff;
+}
+
+.aboutText {
+  margin: 12px 0 0;
+  max-width: 72ch;
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.68);
+}
+
 /* Below the 1024px two-column grid the panel is not pinned beside the hero, so
    the whole page scrolls. Nothing inside the panel should open its own
    scrollbar (that stacked a nested list-scroll on top of the page scroll).

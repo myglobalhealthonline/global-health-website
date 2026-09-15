@@ -122,7 +122,10 @@
     "trustGdpr": "Îngrijire conformă cu GDPR",
     "euProvider": "Platformă de telemedicină licențiată",
     "gdprNote": "Conform GDPR · Medici înregistrați local",
-    "statLine": "{count} medici înregistrați în 6 țări europene și Brazilia, consultații în 6 limbi."
+    "statLine": "{count} medici înregistrați în 6 țări europene și Brazilia, consultații în 6 limbi.",
+    "aboutTitle": "Despre Global Health",
+    "aboutBody1": "Global Health este o clinică medicală online pentru pacienți din Irlanda, Portugalia, Spania, Cehia, România și Brazilia. Medicii de pe platformă sunt înregistrați în țara în care primești îngrijire: la Irish Medical Council, Ordem dos Médicos, Colegio Oficial de Médicos competent din Spania, Camera Medicală Cehă (ČLK), Colegiul Medicilor din România sau la un Conselho Regional de Medicina (CRM) din Brazilia. Fiecare profil de medic afișează datele de înregistrare, specializările și limbile vorbite.",
+    "aboutBody2": "Alege țara ta mai sus pentru a vedea serviciile, prețurile și medicii disponibili. În funcție de țară și de evaluarea clinică a medicului, îngrijirea poate include consultații online, rețete, trimiteri și certificate medicale. Site-ul este disponibil în engleză, portugheză, spaniolă, cehă, română și germană. Datele pacienților sunt protejate de GDPR în Uniunea Europeană și de LGPD în Brazilia. Îngrijirea online nu înlocuiește serviciile de urgență: în caz de urgență, sună la numărul local de urgență."
   },
   "cta": {
     "primaryBooking": "Programează online"
@@ -891,6 +894,7 @@
   "flow": {
     "cartOpeningTitle": "Se deschide coșul dvs.",
     "cartOpeningBody": "Se deschide coșul dvs. ...",
+    "cartMetaDescription": "Verifică consultațiile, testele și serviciile din coșul tău Global Health înainte de a continua spre plata securizată.",
     "checkoutOpeningTitle": "Se deschide finalizarea comenzii",
     "checkoutOpeningBody": "Se deschide finalizarea comenzii...",
     "checkoutCancelledTitle": "Revenire la coș",

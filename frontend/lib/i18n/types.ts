@@ -185,6 +185,9 @@ export type CommonLocale = {
     trustGdpr: string;
     euProvider: string;
     gdprNote: string;
+    aboutTitle: string;
+    aboutBody1: string;
+    aboutBody2: string;
   };
   cta: {
     primaryBooking: string;
@@ -980,6 +983,7 @@ export type CommonLocale = {
   flow: {
     cartOpeningTitle: string;
     cartOpeningBody: string;
+    cartMetaDescription: string;
     checkoutOpeningTitle: string;
     checkoutOpeningBody: string;
     checkoutCancelledTitle: string;

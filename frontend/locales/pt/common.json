@@ -122,7 +122,10 @@
     "trustGdpr": "Cuidados conformes com o RGPD",
     "euProvider": "Plataforma de telemedicina licenciada",
     "gdprNote": "Conforme com o RGPD · Médicos registados localmente",
-    "statLine": "{count} médicos registados em 6 países europeus e no Brasil, consultas em 6 idiomas."
+    "statLine": "{count} médicos registados em 6 países europeus e no Brasil, consultas em 6 idiomas.",
+    "aboutTitle": "Sobre a Global Health",
+    "aboutBody1": "A Global Health é uma clínica médica online que presta cuidados a doentes na Irlanda, em Portugal, Espanha, Chéquia, Roménia e no Brasil. Os médicos da plataforma estão registados no país onde recebe os cuidados: no Irish Medical Council, na Ordem dos Médicos, no Colegio Oficial de Médicos competente em Espanha, na Câmara Médica Checa (ČLK), no Colegiul Medicilor din România ou num Conselho Regional de Medicina (CRM) no Brasil. Cada perfil de médico indica os dados de registo, as especialidades e os idiomas falados.",
+    "aboutBody2": "Escolha o seu país acima para ver os serviços, preços e médicos disponíveis. Consoante o país e a avaliação clínica do médico, os cuidados podem incluir consultas online, receitas, referenciações e atestados médicos. O site está disponível em inglês, português, espanhol, checo, romeno e alemão. Os dados dos doentes são protegidos pelo RGPD na União Europeia e pela LGPD no Brasil. Os cuidados online não substituem os serviços de emergência: em caso de emergência, ligue para o número de emergência local."
   },
   "cta": {
     "primaryBooking": "Marcar Online"
@@ -891,6 +894,7 @@
   "flow": {
     "cartOpeningTitle": "A abrir o seu carrinho",
     "cartOpeningBody": "A abrir o seu carrinho...",
+    "cartMetaDescription": "Reveja as consultas, testes e serviços no seu carrinho Global Health antes de avançar para o pagamento seguro.",
     "checkoutOpeningTitle": "A abrir o checkout",
     "checkoutOpeningBody": "A abrir o checkout...",
     "checkoutCancelledTitle": "A regressar ao carrinho",

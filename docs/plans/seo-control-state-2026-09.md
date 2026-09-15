@@ -286,18 +286,29 @@ A full local crawl was not feasible. The dev server took 5 minutes per doctor pa
 | meta-description-too-long | 150 | 150 | 0 |
 | duplicate-meta-description | 20 | 20 | 0 |
 | duplicate-title | 8 | 8 | 0 |
-| meta-description-too-short | 4 | 0 | 4 |
+| meta-description-too-short | 4 | 4 (follow-up, below) | 0 |
 | noindex-page | 23 | 0 | 23 |
-| thin-content | 1 | 0 | 1 |
-| **total** | **323** | **295** | **28** |
+| thin-content | 1 | 1 (follow-up, below) | 0 |
+| **total** | **323** | **300** | **23** |
 
 **No change by design (recorded, not fixed):**
 
-- `noindex-page` `/cart`, `/login`, `/register`, `/forgot-password`: transactional and auth pages pass `noindex: true` to `buildPublicMetadata` (`noindex, nofollow`). The same 4 URLs carry the `meta-description-too-short` rows. Their short descriptions are never shown in search, so they are left as written.
+- `noindex-page` `/cart`, `/login`, `/register`, `/forgot-password`: transactional and auth pages pass `noindex: true` to `buildPublicMetadata` (`noindex, nofollow`). They must stay out of the index. OpenSEO lists every noindexed URL it crawls, so these 4 rows can never clear without a wrong change.
 - `noindex-page` `/ireland/{es,pt,cs,ro,de}/faq`: fallback-locale FAQ content (`marketFaq.exact` false) is demoted with `noindexFollow`.
 - `noindex-page` `/ireland/{es,pt,cs,ro,de}/legal/medical-disclaimer`: the locale is not in `exactLocalesForLegalType`, so the page serves fallback-language legal text and is demoted with `noindexFollow`.
 - `noindex-page` doctor profiles `/ireland/{en,pt,es,cs,ro,de}/doctors/dr-arooj-iqbal-lodhi` and `/czechia/cs/doctors/{dr-gabriele-felici,dr-michael-nytra,mudr-nataliya-kharlamova}`: the production API returns `readyToIndex: true` and a registration number for all four, but an empty `bio`. `validatePublicDoctorRecord` requires a bio of at least 120 characters, so `isPublicDoctorRecordIndexable` is false and the page serves `noindex, follow`. The same predicate drives the sitemap. The fix is editorial, by adding the bios in admin, not a metadata change.
-- `thin-content` `/` (92 words): product decision. The root is the country picker (`CountryEntryGate`), not a content page.
+
+**Owner actions that would clear the remaining 19 noindex rows (no code change can do it correctly):**
+
+- Ireland FAQ in es/pt/cs/ro/de (5 rows): translate the 18-question, 2,006-word Irish market FAQ into `locales/<lang>/faq-markets.json`. It is YMYL copy, so editorial plan 2026-08-19 requires native-language review first. Without that, the fallback noindex must stay.
+- Ireland medical disclaimer in es/pt/cs/ro/de (5 rows): add `CountryDisclaimerTranslation` rows in admin. The text lives in the production database, and `backend/scripts/seed-country-disclaimers.ts` notes legal and clinical sign-off is still required.
+- Doctor profiles (9 rows): add a bio of at least 120 characters, plus specialties and a real title, for Dr Arooj Iqbal Lodhi, Dr Gabriele Felici, Dr Michael Nytra and MUDr Nataliya Kharlamova. The profiles turn indexable on their own once the bios exist.
+
+**Follow-up in the same batch (the commit directly after `fde04226`):**
+
+- `meta-description-too-short`: new 104–128 char descriptions for login, register and forgot-password in `locales/<lang>/auth.json`, and a new `flow.cartMetaDescription` key for `/cart`, in all six locales. The pages stay noindex.
+- `thin-content` `/`: a visible "About Global Health" section under the country picker, in all six locales, reusing only claims already on the site (markets, registration bodies, site languages, GDPR/LGPD, emergency caveat). Local served page: 338 words, up from 92.
+- Test: `frontend/lib/seo/short-page-meta-budget.test.ts` (descriptions 70–160 chars in every locale; about copy at least 120 words).
 
 **Verification (owner-triggered, after deploy):** run `python seo/tracking/scripts/verify_metadata_fix.py`. It re-probes the 323 rows at ≤ 4 req/s and writes `seo/tracking/data/metadata_fix_verification.csv` (url, issueType, before_length, after_length, resolved). Rerun the OpenSEO site audit (project `7804f362-5891-417e-9c3a-d9e8d4d7dc6b`) only when the owner asks, and estimate credits first.
 

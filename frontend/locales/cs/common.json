@@ -122,7 +122,10 @@
     "trustGdpr": "Péče v souladu s GDPR",
     "euProvider": "Licencovaná telemedicínská platforma",
     "gdprNote": "V souladu s GDPR · Lékaři registrovaní lokálně",
-    "statLine": "{count} registrovaných lékařů v 6 evropských zemích a Brazílii, konzultace v 6 jazycích."
+    "statLine": "{count} registrovaných lékařů v 6 evropských zemích a Brazílii, konzultace v 6 jazycích.",
+    "aboutTitle": "O Global Health",
+    "aboutBody1": "Global Health je online lékařská klinika pro pacienty v Irsku, Portugalsku, Španělsku, Česku, Rumunsku a Brazílii. Lékaři na platformě jsou registrováni v zemi, kde péči čerpáte: u Irish Medical Council, Ordem dos Médicos, příslušné Colegio Oficial de Médicos ve Španělsku, České lékařské komory (ČLK), Colegiul Medicilor din România nebo u Conselho Regional de Medicina (CRM) v Brazílii. Každý profil lékaře uvádí údaje o registraci, specializace a jazyky, kterými lékař mluví.",
+    "aboutBody2": "Výše vyberte svou zemi a zobrazte služby, ceny a lékaře, kteří jsou tam k dispozici. Podle země a klinického posouzení lékaře může péče zahrnovat online konzultace, recepty, doporučení ke specialistům a lékařská potvrzení. Web je dostupný v angličtině, portugalštině, španělštině, češtině, rumunštině a němčině. Údaje pacientů chrání GDPR v Evropské unii a LGPD v Brazílii. Online péče nenahrazuje záchrannou službu: v naléhavém případě volejte místní číslo tísňového volání."
   },
   "cta": {
     "primaryBooking": "Rezervovat online"
@@ -891,6 +894,7 @@
   "flow": {
     "cartOpeningTitle": "Otevírá se váš košík",
     "cartOpeningBody": "Otevírá se váš košík...",
+    "cartMetaDescription": "Zkontrolujte konzultace, testy a služby ve svém košíku Global Health, než přejdete k zabezpečené platbě.",
     "checkoutOpeningTitle": "Otevírá se pokladna",
     "checkoutOpeningBody": "Otevírá se pokladna...",
     "checkoutCancelledTitle": "Návrat do košíku",

@@ -62,6 +62,10 @@ export type EntryGateCopy = {
    *  `{count}` is replaced with the real live doctor count. Optional so
    *  callers that can't compute it yet (or fail open) just omit the line. */
   statLine?: string;
+  /** Visible about block under the hero (2026-09-15 thin-content fix). */
+  aboutTitle: string;
+  aboutBody1: string;
+  aboutBody2: string;
 };
 
 type Props = {
@@ -513,6 +517,22 @@ export function CountryEntryGate({ countries, detectedLocale, copy, doctorCount 
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/*
+        About block — 2026-09-15 OpenSEO thin-content row on `/` (92 words).
+        Visible, factual copy only: markets, the registration body per market,
+        site languages, data-protection law and the emergency caveat. Every
+        claim already appears elsewhere on the site (faq-markets.json, home).
+      */}
+      <section aria-labelledby="entry-gate-about" className={`${styles.about} relative`}>
+        <div className={styles.content}>
+          <h2 id="entry-gate-about" className={styles.aboutTitle}>
+            {copy.aboutTitle}
+          </h2>
+          <p className={styles.aboutText}>{copy.aboutBody1}</p>
+          <p className={styles.aboutText}>{copy.aboutBody2}</p>
         </div>
       </section>
 

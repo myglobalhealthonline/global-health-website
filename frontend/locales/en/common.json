@@ -122,7 +122,10 @@
     "trustGdpr": "GDPR-compliant care",
     "euProvider": "Licensed telemedicine platform",
     "gdprNote": "GDPR compliant · Doctors registered locally",
-    "statLine": "{count} registered doctors across 6 European countries and Brazil, consultations in 6 languages."
+    "statLine": "{count} registered doctors across 6 European countries and Brazil, consultations in 6 languages.",
+    "aboutTitle": "About Global Health",
+    "aboutBody1": "Global Health is an online medical clinic serving patients in Ireland, Portugal, Spain, Czechia, Romania and Brazil. Doctors on the platform are registered in the country where you receive care: with the Irish Medical Council, the Ordem dos Médicos, the relevant Colegio Oficial de Médicos in Spain, the Czech Medical Chamber (ČLK), the Colegiul Medicilor din România or a Conselho Regional de Medicina (CRM) in Brazil. Each doctor profile shows registration details, specialties and spoken languages.",
+    "aboutBody2": "Choose your country above to see the services, prices and doctors available there. Depending on the country and the doctor's clinical assessment, care can include online consultations, prescriptions, referrals and medical certificates. The site is available in English, Portuguese, Spanish, Czech, Romanian and German. Patient data is protected under the GDPR in the European Union and the LGPD in Brazil. Online care does not replace emergency services: in an emergency, call your local emergency number."
   },
   "cta": {
     "primaryBooking": "Book Online"
@@ -891,6 +894,7 @@
   "flow": {
     "cartOpeningTitle": "Opening your cart",
     "cartOpeningBody": "Opening your cart...",
+    "cartMetaDescription": "Review the consultations, tests and services in your Global Health cart before continuing to secure checkout.",
     "checkoutOpeningTitle": "Opening checkout",
     "checkoutOpeningBody": "Opening checkout...",
     "checkoutCancelledTitle": "Returning to cart",

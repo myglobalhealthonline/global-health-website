@@ -20,6 +20,8 @@ EXPORT = ROOT / "seo/tracking/raw/2026-09-15/A2-probe/openseo-audit/audit-issues
 OUT = ROOT / "seo/tracking/data/metadata_fix_verification.csv"
 UA = "Mozilla/5.0 (compatible; GlobalHealthAudit/1.0)"
 TITLE_MAX, DESC_MIN, DESC_MAX = 60, 70, 160
+# OpenSEO flagged `/` at 92 words; the about block brings it to ~330 locally.
+THIN_MIN_WORDS = 200
 
 
 def fetch(url):
@@ -59,7 +61,7 @@ def main():
         elif kind == "meta-description-too-long":
             after, resolved = len(desc), len(desc) <= DESC_MAX
         elif kind == "meta-description-too-short":
-            after, resolved = len(desc), DESC_MIN <= len(desc) <= DESC_MAX or "no-change-by-design"
+            after, resolved = len(desc), DESC_MIN <= len(desc) <= DESC_MAX
         elif kind == "duplicate-title":
             same = groups[("title", title)]
             after, resolved = len(same), not same.intersection(det.get("otherUrls", []))
@@ -69,7 +71,7 @@ def main():
         elif kind == "noindex-page":
             after, resolved = page["robots"], "no-change-by-design"
         else:  # thin-content
-            after, resolved = page["words"], "no-change-by-design"
+            after, resolved = page["words"], page["words"] >= THIN_MIN_WORDS
         if isinstance(resolved, bool):
             resolved = "yes" if resolved else "no"
         rows.append({"url": issue["url"], "issueType": kind, "before_length": before,

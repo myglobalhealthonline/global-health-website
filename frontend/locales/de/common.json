@@ -122,7 +122,10 @@
     "trustGdpr": "DSGVO-konforme Versorgung",
     "euProvider": "Lizenzierte Telemedizin-Plattform",
     "gdprNote": "DSGVO-konform · Ärzte lokal registriert",
-    "statLine": "{count} registrierte Ärzte in 6 europäischen Ländern und Brasilien, Beratungen in 6 Sprachen."
+    "statLine": "{count} registrierte Ärzte in 6 europäischen Ländern und Brasilien, Beratungen in 6 Sprachen.",
+    "aboutTitle": "Über Global Health",
+    "aboutBody1": "Global Health ist eine Online-Arztpraxis für Patientinnen und Patienten in Irland, Portugal, Spanien, Tschechien, Rumänien und Brasilien. Die Ärztinnen und Ärzte der Plattform sind in dem Land registriert, in dem Sie behandelt werden: beim Irish Medical Council, bei der Ordem dos Médicos, beim zuständigen Colegio Oficial de Médicos in Spanien, bei der Tschechischen Ärztekammer (ČLK), beim Colegiul Medicilor din România oder bei einem Conselho Regional de Medicina (CRM) in Brasilien. Jedes Arztprofil zeigt Registrierungsdaten, Fachgebiete und gesprochene Sprachen.",
+    "aboutBody2": "Wählen Sie oben Ihr Land, um die dort verfügbaren Leistungen, Preise und Ärzte zu sehen. Je nach Land und ärztlicher Beurteilung kann die Versorgung Online-Sprechstunden, Rezepte, Überweisungen und ärztliche Bescheinigungen umfassen. Die Website ist auf Englisch, Portugiesisch, Spanisch, Tschechisch, Rumänisch und Deutsch verfügbar. Patientendaten sind in der Europäischen Union durch die DSGVO und in Brasilien durch das LGPD geschützt. Online-Versorgung ersetzt keinen Notdienst: Rufen Sie im Notfall die örtliche Notrufnummer an."
   },
   "cta": {
     "primaryBooking": "Online buchen"
@@ -891,6 +894,7 @@
   "flow": {
     "cartOpeningTitle": "Ihr Warenkorb wird geöffnet",
     "cartOpeningBody": "Ihr Warenkorb wird geöffnet …",
+    "cartMetaDescription": "Prüfen Sie die Konsultationen, Tests und Leistungen in Ihrem Global Health-Warenkorb, bevor Sie zur sicheren Kasse gehen.",
     "checkoutOpeningTitle": "Kasse wird geöffnet",
     "checkoutOpeningBody": "Kasse wird geöffnet …",
     "checkoutCancelledTitle": "Rückkehr zum Warenkorb",
