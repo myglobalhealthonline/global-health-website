@@ -156,10 +156,12 @@ seo/README.md
 docs/plans/seo-handover-codex.md
 docs/plans/seo-control-state.md
 
-The ledger is about 4,000 lines. Grep its section headings, read §0
-(operating rules), the §27 heading block and §§48–50 in full, and open
-other sections only when a task needs them. The next free ledger section
-number is §51.
+The ledger is 10,792 lines. Grep its section headings, read §0
+(operating rules), the §27 forward plan, §6 (watchlist), the §7 NOW /
+NEXT / MONITOR / MANUAL / DEFERRED / CLOSED lists and §§48–50, and open
+other sections only when a task needs them. This audit replaces it with a
+new ledger (see §15, "Ledger reset"); nothing is appended to the old file
+except a freeze banner.
 
 Follow the workspace links to relevant seo/<country>/ packages, original
 audits, dated exports, completion matrices, keyword ownership maps, briefs,
@@ -172,7 +174,8 @@ the country package already holds unless it is older than 30 days.
 Use docs/audits/seo/google-access-review-2026-09-09.md as a historical
 measurement checkpoint.
 
-The canonical SEO ledger remains the operational source of truth.
+The canonical SEO ledger remains the operational source of truth until
+the new ledger created in §15 replaces it at the end of this run.
 Historical reports support evidence but do not silently reopen completed
 fixes. Items in the ledger's CLOSED list and the "explicitly not doing"
 list of docs/plans/seo-indexation-plan-2026-07-28.md §5 stay closed unless
@@ -1085,13 +1088,45 @@ seo/tracking/data/            normalized CSV exports and manifests
 seo/tracking/raw/2026-09-15/  raw responses per agent
 seo/tracking/scripts/         refresh scripts and refresh prompts
 docs/audits/seo/seo-master-audit-2026-09-15.md   executive report
-docs/plans/seo-control-state.md   append §51 in the working tree:
-  dated, concise, "audit recorded, no implementation", linking the
-  report, workbook and raw folder; do not edit older sections
-seo/README.md   one row pointing at the tracker
+docs/plans/seo-control-state-2026-09.md   NEW operational ledger, see
+  "Ledger reset" below
+docs/plans/seo-control-state.md   frozen: add only a banner at the top
+seo/README.md, CLAUDE.md, AGENTS.md   repoint to the new ledger
+
+Ledger reset. The current ledger is 10,792 lines and no agent can read it
+whole. Start a new one and freeze the old one:
+
+1. Create `docs/plans/seo-control-state-2026-09.md` as the single
+   operational ledger from this audit forward. Structure: §0 operating
+   rules (copy the rules from the old §0 verbatim, plus the rule below),
+   §1 carried-forward open items, §2 this audit (dated, "audit recorded,
+   no implementation", links to the report, workbook, raw folder and
+   coverage statement), §3 roadmap, §4 indexation and recrawl watchlist,
+   §5 document map. Numbering restarts at §0; every later batch appends
+   one section.
+2. §1 carried-forward open items must be extracted from the old ledger,
+   not invented: every item in the old §27 forward plan, §6 indexation
+   watchlist and the NOW / NEXT / MONITOR / MANUAL / DEFERRED lists of §7
+   that is still open, each as one line with its original identifier,
+   status, due date and a link to the old section. Do not carry closed
+   items; link the old CLOSED list once and state that it stays binding.
+3. Size rule, written into the new §0: the new ledger links to evidence
+   files, it never embeds them; one concise dated section per batch; if
+   it passes 1,500 lines, split evidence out before adding more.
+4. Freeze the old file. Add one banner at the top of
+   `docs/plans/seo-control-state.md`: frozen on the audit date, historical
+   evidence only, superseded by the new file. Change nothing else in it;
+   its section numbers are referenced from 78 documents.
+5. Repoint the three entry files: the SEO section of `CLAUDE.md`, the
+   ledger line in `AGENTS.md`, and the source-of-truth contract and
+   recovery table in `seo/README.md`. Add the tracker row to
+   `seo/README.md` at the same time. Leave every other historical
+   document as it is.
 
 Commit policy: run `git status` first, stage only the paths listed above
-plus the raw and data folders by explicit path, never `git add -A` or
+(including the new ledger, the frozen ledger's banner, `CLAUDE.md`,
+`AGENTS.md` and `seo/README.md`) plus the raw and data folders by explicit
+path, never `git add -A` or
 `git add .`, and never include another session's modified files. Commit on
 the current branch with a conventional message ending in the Claude
 attribution line this session requires. Do not push. Finish with the
