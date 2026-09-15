@@ -33,9 +33,11 @@ export function prepare(snapshot) {
   const p = posts[0];
   assert.equal(p.status, 'PUBLISHED'); assert.equal(p.isActive, true);
   assert.deepEqual([...new Set([p.country, ...(p.countries ?? [])].filter(Boolean))], ['br']);
-  const changes = [];
+  const changes = [], skipped = [];
   const add = (table, field, id, locale, before, updatedAt) => {
     if (!/\/br\//.test(before ?? '')) return;
+    // Brazil serves pt/en/es only; cs/ro/de rows are never rendered on a Brazil route.
+    if (!['PT', 'EN', 'ES'].includes(locale)) { skipped.push(locale); return; }
     const { html: after, count } = rewrite(before, locale.toLowerCase());
     assert(count > 0 && after !== before, `No rewrite for ${table} ${locale}`);
     changes.push({ table, field, id, postId: p.id, slug: SLUG, locale, links: count, before, after, updatedAt });
@@ -43,7 +45,7 @@ export function prepare(snapshot) {
   add('BlogPost', 'body', p.id, p.locale, p.body, p.updatedAt);
   for (const t of p.translations ?? []) add('BlogTranslation', 'content', t.id, t.locale, t.content, t.updatedAt);
   assert(changes.length > 0, 'Nothing to change');
-  return { version: 1, changes };
+  return { version: 1, skippedLocales: skipped, changes };
 }
 
 export async function run(client, manifest, mode) {
