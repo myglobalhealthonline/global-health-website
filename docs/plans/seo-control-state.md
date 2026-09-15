@@ -10367,6 +10367,42 @@ incremental build: run it with `--incremental false` before pushing.
   same runner.
 - **Cohort.** Covered by §59 homepage and §59.3 doctors cohorts.
 
+### 59.12 D2 / phase 6: Dr. Renato Sarmento profile superlatives — 15 September 2026
+
+**Status: LIVE.** Clinical database phase 6, owner-run.
+
+- **Change.** Deleted from bio (base, PT/EN/ES translations and market rows) "…uma combinação
+  rara que o posiciona como um dos profissionais mais completos…" and EN/ES equivalents; from
+  the profile FAQ "É um dos poucos médicos de família com experiência simultânea…" and EN/ES;
+  from the stored PT SEO description (base and PT translation) " Consulta no mesmo dia."
+  Deletions only. Plan `content-briefs/phase6-plan.json` (commit `12008a33`); manifest
+  `57e67109…`, 1 group, 10 row updates.
+- **Approval.** Super-admin-confirmed verbal approval by Dr. Renato Sarmento
+  (`clinical-approval-phase6.json`, reviewedAt 2026-09-15T02:01:51.959Z, 365 days; commit
+  `7c5275c9`). Backend `e4c51c99-c60b-41e3-84c2-1a1695832bff` SUCCESS, `/ready` ok; receipt
+  `enforcement-deployment-phase6.json`.
+- **Incident.** First apply stopped with "Unapproved field" and rolled back (no write): the shared
+  `apply-spain-seo.mjs` allowlist permits only `bio` on `DoctorTranslation`. The permission
+  classifier refused the widening until the owner approved it explicitly; commit `24bde24d`
+  adds `seoDescription` for Brazil runs only (Spain keeps `bio`).
+- **Proof.** Rollout 02:58 UTC: dry-run, apply, public verification 3/3, "All 1 phase 6 groups
+  applied and publicly verified". Production: `/brazil/{pt,en,es}/doctors/dr-renato-sarmento`
+  200, self-canonical, 0 superlative phrases, 0 "Consulta no mesmo dia".
+- **Cohort.** Renato profile ×3: measure 2026-10-15, 2026-11-14, 2026-12-14 (September 24
+  global doctor recrawl unchanged).
+
+### 59.13 Owner answers to the blocked list — 15 September 2026
+
+- Articles: show Dr. Renato Sarmento (not Dr. Tiago) on the Brazil articles; contact inbox is
+  `info@myglobalhealth.online` (`globalhealth@` is an admin account). Signing provider not
+  answered.
+- Service-body legal/speed claims (B2): owner states the claims are true; retained.
+- Pricing (B4): memberships are sold in Brazil — public API lists Plano Essencial R$150,
+  Completo R$250, Premium R$300 (1/2/3 GP credits per month).
+- Renato biography (B5): do not change.
+- `/brazil/*/dr-renato` (B6): answer "no" — meaning to be confirmed.
+- Legal (B7): correct it — footer compliance line changed from EU GDPR/RGPD to LGPD on Brazil.
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
@@ -10693,3 +10729,6 @@ incremental build: run it with `--incremental false` before pushing.
 
 - brazil group copy:solicitacao-exames-online: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/copy-solicitacao-exames-online-applied.json.
 - seo/brazil phase 5 group copy:solicitacao-exames-online: public verification passed 2026-09-15T00:05:52.5764899Z. Receipt: seo/brazil/raw/rollout/phase5/copy-solicitacao-exames-online-public.json.
+
+- brazil group text:doctor:cmqyzr0fb000o01lu9deh6mf5: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/text-doctor-cmqyzr0fb000o01lu9deh6mf5-applied.json.
+- seo/brazil phase 6 group text:doctor:cmqyzr0fb000o01lu9deh6mf5: public verification passed 2026-09-15T02:58:55.7652207Z. Receipt: seo/brazil/raw/rollout/phase6/text-doctor-cmqyzr0fb000o01lu9deh6mf5-public.json.
