@@ -273,8 +273,12 @@ const BUNDLE: Record<string, DeepPartial<HomeBundle>> = {
       sameDay: {
         title: "Horarios de consulta disponibles",
         titleNextAvailable: "Próxima consulta disponible",
+        languagePlaceholder: "Selecciona tu idioma…",
         tomorrow: "Mañana",
         nextAvailable: "Próximo horario",
+        pickLanguageFirst: "Elige un idioma para ver los horarios disponibles.",
+        loading: "Buscando horarios…",
+        noSlots: "No hay horarios hoy ni mañana en este idioma. Prueba con otro idioma.",
         reassure: "Elige tu idioma y un horario. Te dirigiremos al médico adecuado.",
       },
     },

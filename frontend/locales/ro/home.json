@@ -27,16 +27,9 @@
     "sameDay": {
       "eyebrow": "Aveți nevoie de ajutor?",
       "title": "Consultație în aceeași zi",
-      "titleNextAvailable": "Următoarea consultație disponibilă",
       "languageLabel": "Limba consultației",
-      "languagePlaceholder": "Selectați limba…",
       "pickTime": "Alegeți o oră",
       "today": "Astăzi",
-      "tomorrow": "Mâine",
-      "nextAvailable": "Următorul disponibil",
-      "pickLanguageFirst": "Alegeți o limbă pentru a vedea orele disponibile.",
-      "loading": "Căutăm ore disponibile…",
-      "noSlots": "Nu există ore azi sau mâine pentru această limbă. Încercați altă limbă.",
       "continue": "Continuați",
       "minSuffix": "min",
       "reassure": "Alegeți limba și selectați o oră. Vă vom aloca medicul de familie potrivit."

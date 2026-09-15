@@ -1,0 +1,10 @@
+{
+  "deploymentId": "4f5c2713-d59b-4df3-b7a5-aff5b75772af",
+  "service": "Backend (Railway Production)",
+  "status": "SUCCESS",
+  "commit": "8d451341",
+  "branch": "main",
+  "createdAt": "2026-09-15T00:01:00.816Z",
+  "readiness": "https://api.myglobalhealth.online/ready returned ok:true, database connected",
+  "note": "Carries the phase-5 approved Brazil state for manifest e48b9296 (solicitacao-exames-online summary, PT/EN/ES)."
+}

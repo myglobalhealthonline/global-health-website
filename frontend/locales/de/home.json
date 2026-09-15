@@ -27,16 +27,9 @@
     "sameDay": {
       "eyebrow": "Brauchen Sie Hilfe?",
       "title": "Konsultation am selben Tag",
-      "titleNextAvailable": "Nächste verfügbare Konsultation",
       "languageLabel": "Sprache der Konsultation",
-      "languagePlaceholder": "Sprache auswählen…",
       "pickTime": "Wählen Sie eine Zeit",
       "today": "Heute",
-      "tomorrow": "Morgen",
-      "nextAvailable": "Nächster freier Termin",
-      "pickLanguageFirst": "Wählen Sie eine Sprache, um freie Zeiten zu sehen.",
-      "loading": "Freie Zeiten werden gesucht…",
-      "noSlots": "Heute und morgen keine Zeiten in dieser Sprache. Versuchen Sie eine andere Sprache.",
       "continue": "Fortfahren",
       "minSuffix": "min",
       "reassure": "Wählen Sie Ihre Sprache, wählen Sie eine Zeit – wir weisen Ihnen den richtigen Hausarzt zu."
