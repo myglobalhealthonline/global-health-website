@@ -349,8 +349,10 @@ A full local crawl was not feasible. The dev server took 5 minutes per doctor pa
 
 **Flagged in the LIVE native FAQs (for clinical and legal review, independent of the drafts):**
 
-- Spain `es` 0.1: prescriptions and reports "con la misma validez legal que una consulta presencial". This is the kind of claim the Portugal safety test bans.
+- Spain `es` 0.1: prescriptions and reports "con la misma validez legal que una consulta presencial". **Resolved 2026-09-15 by the owner's clinical position:** online prescriptions and reports carry the same validity as in-person ones because they rest on the attending physician's judgement, and where a report states a physical exam is needed to confirm the diagnosis, a referral to an in-person clinic can be provided. That caveat is now the sentence after the claim in `es` and `en` 0.1 and in the four Spain drafts. The Portugal safety test stays Portugal-only.
 - Spain `es` 1.1, Czechia `cz` 1.1, Romania `ro` 0.0 and 1.1: hedged same-day appointment wording ("en muchos casos", "bývají k dispozici", "de obicei").
 - Spain `es` 0.1: Colegio Oficial de Médicos membership described "by specialty and province". The councils are provincial.
 
 The drafts reproduce each of these at the source's strength and flag it.
+
+**Sick leave wording (owner note 2026-09-15):** patients book private sick certificates, not illness benefit, and that distinction belongs in the disclaimer. The live `/spain/es/legal/medical-disclaimer` (version 2, 24 July 2026) already says so: private justificantes document the clinical assessment, the service does not issue partes de baja, confirmación or alta for incapacidad temporal, and under Real Decreto 625/2014 those come from the public health service doctor or the mutua. So the platform cannot issue a baja médica, and the FAQ "No directamente" answers (`es` 3.0, 3.1, 3.3) match the disclaimer. No change was made there.

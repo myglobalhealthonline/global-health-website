@@ -3,21 +3,78 @@
   "_source": "frontend/locales/es/faq-markets.json#es",
   "_locale": "ro",
   "_keywordsUsed": [
-    { "keyword": "medic online în spania", "volume": null, "where": "group 2 title" }
+    {
+      "keyword": "medic online în spania",
+      "volume": null,
+      "where": "group 2 title"
+    }
   ],
   "_reviewNotes": [
-    { "group": 0, "item": 0, "note": "Register: the Spanish source uses informal 'tú'; rendered in the formal 'dumneavoastră' register used by ro/faq-markets.json. 'Colegiados' glossed as 'înscriși în colegiul medical'." },
-    { "group": 0, "item": 1, "note": "Colegio Oficial de Médicos kept in Spanish with the gloss 'colegiul oficial al medicilor'. YMYL: 'con la misma validez legal que una consulta presencial' is in the native source and was translated at the same strength ('aceeași valabilitate legală'). Neither softened nor strengthened; clinical reviewer to confirm the claim still stands." },
-    { "group": 0, "item": 2, "note": "'Comunidad autónoma' rendered as 'comunitate autonomă' with the gloss 'regiunile autonome ale Spaniei'. INSS glossed once as 'Instituto Nacional de la Seguridad Social'. 'Incapacidad temporal' kept in quotes with the gloss 'incapacitate temporară de muncă'. 'Circuitos de derivación' rendered as 'circuitele de trimitere'." },
-    { "group": 1, "item": 1, "note": "YMYL: the native source says same-day appointments are available 'en muchos casos' and 'con frecuencia'. Rendered as 'În multe cazuri' and 'adesea', with no stronger promise. 'Lo que ves al reservar es lo que hay' rendered literally." },
-    { "group": 2, "item": null, "note": "Keyword placement: the group title 'Cómo son las consultas online' became 'Cum decurg consultațiile cu un medic online în Spania'. 'În Spania' is implicit because this is the Spain market page. No facts were added." },
-    { "group": 2, "item": 1, "note": "'Médico de familia' rendered as 'medic de familie' (site term). A Spanish médico de familia is not a CNAS family doctor; the text does not imply that." },
-    { "group": 2, "item": 2, "note": "Languages: the source offers Spanish and English only. Given the large Romanian community in Spain, the reviewer should note that no Romanian-language consultations are promised or implied. No change made." },
-    { "group": 3, "item": null, "note": "Group eyebrow/title: 'Bajas' rendered as 'Incapacitate de muncă'. The Romanian 'concediu medical' is deliberately avoided so readers do not assume a Romanian or CNAS process." },
-    { "group": 3, "item": 0, "note": "'Baja médica', 'parte de baja', 'justificante médico' and 'incapacidad temporal' kept in Spanish in quotes, with Romanian glosses. 'Justificante médico' is glossed as 'document medical justificativ'; 'adeverință medicală' was rejected (site uses it for the Romania/CNAS context). 'Informe médico' is rendered as 'raport medical'. 'Prestación económica' is rendered as 'prestația financiară'." },
-    { "group": 3, "item": 2, "note": "'Tarjeta sanitaria' glossed as 'cardul de sănătate'. 'Medicamentos de mayor control' rendered as 'cele cu regim strict de control'; clinical reviewer to confirm." },
-    { "group": 4, "item": 0, "note": "RGPD kept as 'RGPD' (the Romanian official abbreviation matches the Spanish one)." },
-    { "group": 5, "item": 1, "note": "'Justificante del cobro' rendered as 'dovada plății' (proof of payment), not 'factură'. 'Plan de suscripción' rendered as 'abonament'." }
+    {
+      "group": 0,
+      "item": 0,
+      "note": "Register: the Spanish source uses informal 'tú'; rendered in the formal 'dumneavoastră' register used by ro/faq-markets.json. 'Colegiados' glossed as 'înscriși în colegiul medical'."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "Colegio Oficial de Médicos kept in Spanish with the gloss 'colegiul oficial al medicilor'. YMYL: 'con la misma validez legal que una consulta presencial' is in the native source and was translated at the same strength ('aceeași valabilitate legală'). Neither softened nor strengthened; clinical reviewer to confirm the claim still stands."
+    },
+    {
+      "group": 0,
+      "item": 2,
+      "note": "'Comunidad autónoma' rendered as 'comunitate autonomă' with the gloss 'regiunile autonome ale Spaniei'. INSS glossed once as 'Instituto Nacional de la Seguridad Social'. 'Incapacidad temporal' kept in quotes with the gloss 'incapacitate temporară de muncă'. 'Circuitos de derivación' rendered as 'circuitele de trimitere'."
+    },
+    {
+      "group": 1,
+      "item": 1,
+      "note": "YMYL: the native source says same-day appointments are available 'en muchos casos' and 'con frecuencia'. Rendered as 'În multe cazuri' and 'adesea', with no stronger promise. 'Lo que ves al reservar es lo que hay' rendered literally."
+    },
+    {
+      "group": 2,
+      "item": null,
+      "note": "Keyword placement: the group title 'Cómo son las consultas online' became 'Cum decurg consultațiile cu un medic online în Spania'. 'În Spania' is implicit because this is the Spain market page. No facts were added."
+    },
+    {
+      "group": 2,
+      "item": 1,
+      "note": "'Médico de familia' rendered as 'medic de familie' (site term). A Spanish médico de familia is not a CNAS family doctor; the text does not imply that."
+    },
+    {
+      "group": 2,
+      "item": 2,
+      "note": "Languages: the source offers Spanish and English only. Given the large Romanian community in Spain, the reviewer should note that no Romanian-language consultations are promised or implied. No change made."
+    },
+    {
+      "group": 3,
+      "item": null,
+      "note": "Group eyebrow/title: 'Bajas' rendered as 'Incapacitate de muncă'. The Romanian 'concediu medical' is deliberately avoided so readers do not assume a Romanian or CNAS process."
+    },
+    {
+      "group": 3,
+      "item": 0,
+      "note": "'Baja médica', 'parte de baja', 'justificante médico' and 'incapacidad temporal' kept in Spanish in quotes, with Romanian glosses. 'Justificante médico' is glossed as 'document medical justificativ'; 'adeverință medicală' was rejected (site uses it for the Romania/CNAS context). 'Informe médico' is rendered as 'raport medical'. 'Prestación económica' is rendered as 'prestația financiară'."
+    },
+    {
+      "group": 3,
+      "item": 2,
+      "note": "'Tarjeta sanitaria' glossed as 'cardul de sănătate'. 'Medicamentos de mayor control' rendered as 'cele cu regim strict de control'; clinical reviewer to confirm."
+    },
+    {
+      "group": 4,
+      "item": 0,
+      "note": "RGPD kept as 'RGPD' (the Romanian official abbreviation matches the Spanish one)."
+    },
+    {
+      "group": 5,
+      "item": 1,
+      "note": "'Justificante del cobro' rendered as 'dovada plății' (proof of payment), not 'factură'. 'Plan de suscripción' rendered as 'abonament'."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "Owner/clinical position 2026-09-15: online prescriptions and reports carry the same validity as in-person ones because they rest on the attending physician's judgement; where a report states a physical exam is needed to confirm the diagnosis, a referral to an in-person clinic can be provided. Caveat sentence added to the Spanish source and mirrored here."
+    }
   ],
   "es": {
     "groups": [
@@ -31,7 +88,7 @@
           },
           {
             "question": "Medicii sunt înscriși în colegiul medicilor din Spania?",
-            "answer": "Da. Toți medicii care consultă pacienți din Spania sunt înscriși în Colegio Oficial de Médicos (colegiul oficial al medicilor) corespunzător specialității și provinciei lor și îndeplinesc aceleași cerințe de formare și autorizare ca orice medic care profesează față în față în țară. Profilul fiecărui medic de pe platforma noastră indică înscrierea sa în colegiu, astfel încât să o puteți verifica înainte de programare. Colaborarea cu medici înscriși în colegiu ne permite să oferim evaluări clinice, rapoarte medicale și, atunci când este cazul, rețete, cu aceeași valabilitate legală ca o consultație față în față. Dacă aveți nelămuriri privind înscrierea în colegiu a unui anumit medic, ne puteți întreba prin e-mail înainte de consultație."
+            "answer": "Da. Toți medicii care consultă pacienți din Spania sunt înscriși în Colegio Oficial de Médicos (colegiul oficial al medicilor) corespunzător specialității și provinciei lor și îndeplinesc aceleași cerințe de formare și autorizare ca orice medic care profesează față în față în țară. Profilul fiecărui medic de pe platforma noastră indică înscrierea sa în colegiu, astfel încât să o puteți verifica înainte de programare. Colaborarea cu medici înscriși în colegiu ne permite să oferim evaluări clinice, rapoarte medicale și, atunci când este cazul, rețete, cu aceeași valabilitate legală ca o consultație față în față. Această valabilitate se bazează pe judecata clinică a medicului care vă consultă: dacă raportul precizează că este necesar un examen fizic pentru confirmarea diagnosticului, medicul vă poate trimite către o clinică pentru o consultație față în față. Dacă aveți nelămuriri privind înscrierea în colegiu a unui anumit medic, ne puteți întreba prin e-mail înainte de consultație."
           },
           {
             "question": "Procesul este același în toate comunitățile autonome?",

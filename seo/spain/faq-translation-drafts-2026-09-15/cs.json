@@ -94,6 +94,11 @@
       "group": 5,
       "item": 1,
       "note": "'plan de suscripción' is translated as 'předplatné'. Please confirm this matches the cs billing labels (the Ireland cs draft used 'členství' for 'membership'). 'justificante del cobro' is translated as 'doklad o platbě'."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "Owner/clinical position 2026-09-15: online prescriptions and reports carry the same validity as in-person ones because they rest on the attending physician's judgement; where a report states a physical exam is needed to confirm the diagnosis, a referral to an in-person clinic can be provided. Caveat sentence added to the Spanish source and mirrored here."
     }
   ],
   "es": {
@@ -108,7 +113,7 @@
           },
           {
             "question": "Jsou lékaři členy španělské lékařské komory?",
-            "answer": "Ano. Všichni lékaři, kteří přijímají pacienty ve Španělsku, jsou členy Colegio Oficial de Médicos (španělská lékařská komora) příslušného podle jejich specializace a provincie a splňují stejné požadavky na vzdělání a oprávnění k výkonu praxe jako kterýkoli lékař, který v zemi pracuje osobně. Profil každého lékaře na naší platformě uvádí jeho členství v komoře, takže si ho můžete ověřit před rezervací. Spolupráce s lékaři, kteří jsou členy komory, nám umožňuje nabízet klinická posouzení, lékařské zprávy a v odůvodněných případech i recepty se stejnou právní platností jako při osobní konzultaci. Máte-li pochybnosti o členství konkrétního lékaře v komoře, můžete se nás před konzultací zeptat e-mailem."
+            "answer": "Ano. Všichni lékaři, kteří přijímají pacienty ve Španělsku, jsou členy Colegio Oficial de Médicos (španělská lékařská komora) příslušného podle jejich specializace a provincie a splňují stejné požadavky na vzdělání a oprávnění k výkonu praxe jako kterýkoli lékař, který v zemi pracuje osobně. Profil každého lékaře na naší platformě uvádí jeho členství v komoře, takže si ho můžete ověřit před rezervací. Spolupráce s lékaři, kteří jsou členy komory, nám umožňuje nabízet klinická posouzení, lékařské zprávy a v odůvodněných případech i recepty se stejnou právní platností jako při osobní konzultaci. Tato platnost vychází z klinického úsudku ošetřujícího lékaře: pokud zpráva uvádí, že k potvrzení diagnózy je nutné fyzické vyšetření, lékař vás může odkázat na kliniku k osobní návštěvě. Máte-li pochybnosti o členství konkrétního lékaře v komoře, můžete se nás před konzultací zeptat e-mailem."
           },
           {
             "question": "Je postup stejný ve všech autonomních společenstvích?",

@@ -69,6 +69,11 @@
       "group": 5,
       "item": 1,
       "note": "'plan de suscripción' rendered 'plano de subscrição' (literal). The site's Ireland draft uses 'planos de adesão'; please standardise. 'justificante del cobro' is 'comprovativo do pagamento' (not 'declaração', to avoid confusion with the medical document)."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "Owner/clinical position 2026-09-15: online prescriptions and reports carry the same validity as in-person ones because they rest on the attending physician's judgement; where a report states a physical exam is needed to confirm the diagnosis, a referral to an in-person clinic can be provided. Caveat sentence added to the Spanish source and mirrored here."
     }
   ],
   "es": {
@@ -83,7 +88,7 @@
           },
           {
             "question": "Os médicos estão inscritos na ordem dos médicos em Espanha?",
-            "answer": "Sim. Todos os médicos que atendem doentes em Espanha estão inscritos no Colegio Oficial de Médicos (a ordem dos médicos) correspondente à sua especialidade e província, cumprindo os mesmos requisitos de formação e habilitação que qualquer médico que exerça presencialmente no país. O perfil de cada profissional na nossa plataforma indica a sua inscrição, para que possa confirmá-la antes de marcar. Trabalhar com médicos inscritos permite-nos oferecer avaliações clínicas, relatórios e, quando se justifica, receitas, com a mesma validade legal que uma consulta presencial. Se tiver dúvidas sobre a inscrição de um médico em concreto, pode contactar-nos por email antes da sua consulta."
+            "answer": "Sim. Todos os médicos que atendem doentes em Espanha estão inscritos no Colegio Oficial de Médicos (a ordem dos médicos) correspondente à sua especialidade e província, cumprindo os mesmos requisitos de formação e habilitação que qualquer médico que exerça presencialmente no país. O perfil de cada profissional na nossa plataforma indica a sua inscrição, para que possa confirmá-la antes de marcar. Trabalhar com médicos inscritos permite-nos oferecer avaliações clínicas, relatórios e, quando se justifica, receitas, com a mesma validade legal que uma consulta presencial. Essa validade assenta no juízo clínico do médico que o atende: se o relatório indicar que é necessário um exame físico para confirmar o diagnóstico, o médico pode encaminhá-lo para uma clínica presencial. Se tiver dúvidas sobre a inscrição de um médico em concreto, pode contactar-nos por email antes da sua consulta."
           },
           {
             "question": "O processo é igual em todas as comunidades autónomas?",
