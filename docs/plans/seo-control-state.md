@@ -10229,6 +10229,43 @@ answer, pricing, biography facts, dr-renato indexing, legal pages.
   right after the deploy; three rechecks 200, along with `/portugal/en`, `/ireland/en`).
 - **Cohort.** `/brazil/pt`: already in the §59 homepage cohort (2026-10-13, 11-10, 12-08).
 
+### 59.5 R3: Brazil pt-BR locale layer — 15 September 2026
+
+**Status: LIVE.** Code only. Commit `81fff256` (build FAILED, deployment
+`9bd8bdbc-0798-4a7e-8b59-19ba89d9221b`: `c` out of scope in `SelectedServiceFlow`; production
+kept serving the R2 build) and fix `0f9af178`; Frontend deployment
+`f6eed5cd-e225-4d84-bc61-b450578a3330` SUCCESS. Local `tsc --noEmit` had passed on a stale
+incremental build: run it with `--incremental false` before pushing.
+
+- **Change.** New `frontend/lib/i18n/brazil-editorial-copy.json` (pt only), layered by
+  `loadLocaleBundle` for `br`/`brazil` like the Romania/Spain layers. Call sites that never
+  passed a country (site navigation context, `SiteChrome`, book page, doctor profile page and
+  data, blog index and metadata) now pass `brazilOnly(...)`, so Romania/Spain layers do not
+  spread to those pages. Brazil branches in `CountryTrustBar` (pt-BR regulatory panel) and
+  `PublicBookingLoading` ("Carregando agendamento…"). About 90 strings: navigation, footer,
+  trust bar, doctors, doctor profile, booking, GP hub, service detail, blog index, home, FAQ
+  hero, catalog. `subscription.json` excluded (B4).
+- **Meaning changes to note.** Home `countryHero.subtitle` and `finalCta.body` named
+  "conselhos médicos nacionais em toda a Europa" on Brazil; now "Conselho Regional de
+  Medicina (CRM)". GP hub `feature3Subtitle` "incluindo no próprio dia" removed (same-day,
+  consistent with R1). No other claim added or removed.
+- **Proof.** `tsc --noEmit --incremental false` exit 0; `check-locale-keys` passed; eslint clean;
+  vitest 558/560 before the fix (pre-existing `same-day-booking-state` failure; one Spain-scope
+  test failure resolved by dropping a Brazil `about.country` override). New
+  `brazil-editorial-copy.test.ts`: every override maps to an existing pt key, keeps
+  placeholders, has no PT-PT markers, and non-Brazil bundles are identical objects.
+  PT-PT marker words, live before → after: home 67→23, book 22→6, doctors 24→12, faq 16→5,
+  pricing 43→32, gp hub 51→6, blog 16→1, atestado service 30→9. Portugal PT home, book, faq,
+  blog, a doctor profile and a service page: same PT-PT strings live as before (local render
+  matched live before push). `/brazil/pt/book?service=atestado-medico-online` 200 with
+  "Etapas do agendamento". One transient 500 on the Renato profile (backend "upstream
+  unavailable"); nine rechecks 200.
+- **Left (not code).** Remaining Brazil PT-PT is stored HOME/DOCTORS_INDEX PageContent (D1),
+  subscription/pricing strings (B4), country FAQ answers (B3), the footer "Conforme com o RGPD"
+  compliance line (legal, not changed), and English "Brazil" in `{country}` fills (R4).
+- **Cohort.** Brazil PT home, book, doctors, faq, gp hub, blog, doctor profile, service pages:
+  measure 2026-10-15, 2026-11-14, 2026-12-14.
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
