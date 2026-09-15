@@ -55,6 +55,8 @@ export async function executeSpainGroup(client,expected,group,{apply=false,befor
 }
 if(process.argv[1]?.endsWith('apply-spain-seo.mjs')){
  const market=process.argv.includes('--brazil')?'brazil':'spain',root=`seo/${market}`,read=p=>JSON.parse(fs.readFileSync(`${root}/${p}`)),arg=n=>process.argv.find(v=>v.startsWith(`--${n}=`))?.slice(n.length+3);
+ // Brazil phase 6 (owner-approved 2026-09-15) clears a stored PT DoctorTranslation seoDescription line; Spain keeps bio only.
+ if(market==='brazil')updates.doctorTranslations=[...updates.doctorTranslations,'seoDescription'];
  // Phase N>1: follow-up groups planned against a later snapshot, with their own plan, approval and receipts.
  const phase=Number(arg('phase')??1),suffix=phase>1?`-phase${phase}`:'',rolloutDir=phase>1?`raw/rollout/phase${phase}`:'raw/rollout';
  const manifest=read(`content-briefs/storage-mutation-manifest${suffix}.json`);assert.equal(manifest.status,'storage prepared; no approval or publication','Authenticated storage preparation required');
