@@ -1,0 +1,17 @@
+{
+  "status": "owner-confirmed approval",
+  "manifestSha256": "57e67109039339f4bd2f44f34bdb1bad1a0a4010002be6f21e675f0207010285",
+  "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+  "reviewerName": "Dr. Renato Sarmento",
+  "reviewedAt": "2026-09-15T02:01:51.959Z",
+  "maxAgeDays": 365,
+  "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-15 that Dr. Renato Sarmento verbally approved the phase-6 deletions in manifest 57e67109039339f4bd2f44f34bdb1bad1a0a4010002be6f21e675f0207010285 (superlatives \"um dos profissionais mais completos\" / \"um dos poucos médicos de família\" and EN/ES equivalents in bio and FAQ; \"Consulta no mesmo dia.\" in the stored PT SEO description). No written record.",
+  "groups": [
+    {
+      "key": "text:doctor:cmqyzr0fb000o01lu9deh6mf5",
+      "approvedSha256": "b5223ac6d0a759726df9a2476ead72a0acf7c7c728ccfa525eddabb3f689926d",
+      "stateKey": "doctor:cmqyzr0fb000o01lu9deh6mf5",
+      "resultingStateSha256": "3ed285a689a868bc0e6d06374315c1afa169867d3a077c2441dfdfcafae7a8b3"
+    }
+  ]
+}

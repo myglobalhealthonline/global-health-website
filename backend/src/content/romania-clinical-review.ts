@@ -821,6 +821,12 @@ export const APPROVED_BRAZIL_STATES: Record<string, SpainApproval[]> = {
       "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
       "reviewedAt": "2026-09-14T21:24:30.383Z",
       "evidence": "Owner confirmation 2026-09-15 in this session (\"I approve\"): reviews of the Brazil packet (57 page drafts, 19 groups, reviewed manifest c7c575373b597efffb66b8e24aa7775fb4567bc98b3d381119df8e320d707640) were done by Dr. Renato Sarmento and Dr tiago; re-planned unchanged as phase-4 manifest f87bf107c934bd2f0faee36d0c589777bf94c663dd66b7b1456c82351ba33880 after phase 3. No written record."
+    },
+    {
+      "stateSha256": "3ed285a689a868bc0e6d06374315c1afa169867d3a077c2441dfdfcafae7a8b3",
+      "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+      "reviewedAt": "2026-09-15T02:01:51.959Z",
+      "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-15 that Dr. Renato Sarmento verbally approved the phase-6 deletions in manifest 57e67109039339f4bd2f44f34bdb1bad1a0a4010002be6f21e675f0207010285 (superlatives \"um dos profissionais mais completos\" / \"um dos poucos médicos de família\" and EN/ES equivalents in bio and FAQ; \"Consulta no mesmo dia.\" in the stored PT SEO description). No written record."
     }
   ]
 };
