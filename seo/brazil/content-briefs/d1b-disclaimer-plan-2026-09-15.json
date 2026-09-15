@@ -1,0 +1,61 @@
+{
+  "snapshot": "seo/brazil/raw/page-content-snapshot-2026-09-15b.json",
+  "source": "D1 follow-up 2026-09-15: stored disclaimerParagraphs still said \"Conselho Federal de Medicina (CFM) / CRM\"; PT rows rewritten in pt-BR. Meaning unchanged.",
+  "entries": [
+    {
+      "pageKey": "HOME",
+      "locale": "EN",
+      "field": "disclaimerParagraphs",
+      "to": [
+        "All medical services provided through Global Health are delivered by doctors registered with the CRM, under the supervision of the CFM.",
+        "Our online doctors conduct remote clinical assessments and may provide treatment recommendations, referrals, or medical certificates only where clinically appropriate and at the treating doctor's professional discretion. Clinical decisions remain entirely at the doctor's discretion following assessment.",
+        "Our doctors do not routinely prescribe controlled substances through online consultations.",
+        "Online consultations are not suitable for medical emergencies. If you are experiencing a medical emergency, please contact emergency services immediately by calling SAMU 192 or attend your nearest emergency department."
+      ]
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "ES",
+      "field": "disclaimerParagraphs",
+      "to": [
+        "Todos los servicios médicos prestados a través de Global Health son proporcionados por médicos registrados en el CRM, bajo la supervisión del CFM.",
+        "Nuestros médicos online realizan evaluaciones clínicas remotas y pueden proporcionar recomendaciones de tratamiento, derivaciones o certificados médicos únicamente cuando sea clínicamente apropiado, a criterio profesional del médico tratante. Las decisiones clínicas permanecen enteramente a criterio del médico tras la evaluación.",
+        "Nuestros médicos no prescriben de forma rutinaria sustancias controladas a través de consultas online.",
+        "Las consultas online no son adecuadas para emergencias médicas. Si tiene una emergencia médica, contacte inmediatamente con los servicios de emergencia llamando al SAMU 192 o acuda a su servicio de urgencias más cercano."
+      ]
+    },
+    {
+      "pageKey": "HOME",
+      "locale": "PT",
+      "field": "disclaimerParagraphs",
+      "to": [
+        "Todos os serviços médicos prestados por meio da Global Health são realizados por médicos registrados no CRM, sob supervisão do CFM.",
+        "Nossos médicos online realizam avaliações clínicas remotas e podem fornecer recomendações de tratamento, encaminhamentos ou atestados médicos apenas quando clinicamente apropriado, a critério profissional do médico responsável. As decisões clínicas permanecem inteiramente a critério do médico após a avaliação.",
+        "Nossos médicos não prescrevem rotineiramente substâncias controladas em consultas online.",
+        "As consultas online não são adequadas para emergências médicas. Em caso de emergência médica, ligue imediatamente para o SAMU 192 ou vá ao pronto-socorro mais próximo."
+      ]
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "EN",
+      "field": "disclaimerParagraphs",
+      "to": [
+        "All medical services provided through Global Health are delivered by doctors registered with the CRM, under the supervision of the CFM.",
+        "Our online doctors conduct remote clinical assessments and may provide treatment recommendations, referrals, or medical certificates only where clinically appropriate and at the treating doctor's professional discretion. Clinical decisions remain entirely at the doctor's discretion following assessment.",
+        "Our doctors do not routinely prescribe controlled substances through online consultations.",
+        "Online consultations are not suitable for medical emergencies. If you are experiencing a medical emergency, please contact emergency services immediately by calling SAMU 192 or attend your nearest emergency department."
+      ]
+    },
+    {
+      "pageKey": "DOCTORS_INDEX",
+      "locale": "PT",
+      "field": "disclaimerParagraphs",
+      "to": [
+        "Todos os serviços médicos prestados por meio da Global Health são realizados por médicos registrados no CRM, sob supervisão do CFM.",
+        "Nossos médicos online realizam avaliações clínicas remotas e podem fornecer recomendações de tratamento, encaminhamentos ou atestados médicos apenas quando clinicamente apropriado, a critério profissional do médico responsável. As decisões clínicas permanecem inteiramente a critério do médico após a avaliação.",
+        "Nossos médicos não prescrevem rotineiramente substâncias controladas em consultas online.",
+        "As consultas online não são adequadas para emergências médicas. Em caso de emergência médica, ligue imediatamente para o SAMU 192 ou vá ao pronto-socorro mais próximo."
+      ]
+    }
+  ]
+}
