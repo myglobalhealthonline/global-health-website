@@ -188,8 +188,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // Lab-test detail pages.
+  // Lab-test detail pages. Same gate as the hub below and as
+  // `[country]/[lang]/tests/page.tsx` — a market with `health-tests` off
+  // renders 404 for these, so the sitemap must not advertise them
+  // (2026-09-15 audit: Ireland shipped 84 sitemapped 404s this way).
   for (const country of countries) {
+    if (!isCountryFeatureEnabled(country, "health-tests")) continue;
     try {
       const tests = await getCountryHealthTests(country.code);
       for (const t of tests) {

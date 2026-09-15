@@ -186,7 +186,9 @@ const F = vi.hoisted(() => {
 
   const healthTestsByCountry: Record<string, unknown[]> = {
     ie: [{ id: "t1", slug: "blood-panel", title: "Blood panel", updatedAt: TS.testIe }],
-    es: [],
+    // Catalogue rows exist while the market's `health-tests` feature is off:
+    // the detail pages 404, so the sitemap must skip them (2026-09-15 audit).
+    es: [{ id: "t2", slug: "perfil-sangre", title: "Perfil de sangre", updatedAt: TS.testIe }],
     cz: [],
   };
 
@@ -492,6 +494,9 @@ describe("sitemap — feature-gated hub routes", () => {
     expect(urls).toContain(`${base}/ireland/en/see-a-specialist`);
     // Spain has only general-consultations: the rest 404 at request time.
     expect(urls).not.toContain(`${base}/spain/es/lab-tests`);
+    // Detail pages follow the same gate as the hub, even when catalogue rows exist.
+    expect(urls).toContain(`${base}/ireland/en/lab-tests/blood-panel`);
+    expect(urls).not.toContain(`${base}/spain/es/lab-tests/perfil-sangre`);
     expect(urls).not.toContain(`${base}/spain/es/pricing`);
     expect(urls).not.toContain(`${base}/spain/es/see-a-specialist`);
     expect(urls).toContain(`${base}/spain/es/gp-consultation-online`);
