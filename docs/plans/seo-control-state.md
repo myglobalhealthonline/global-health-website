@@ -10156,6 +10156,9 @@ Frontend deployment for `7f878d0a`: `b33f195d-7d56-4f75-b5dc-a3569f46a89d` SUCCE
   holds the original English text in those locales, so non-Brazil pages render as
   before. Brazil keeps its own wording through `br:*` overrides. `check-locale-keys`
   is back to its pre-existing failure on `countryHero.sameDay.*`.
+  **Superseded the same day:** the owner asked to keep the translations, so the
+  locale files were restored to their `a061e407` state (translated booking link and
+  availability-panel keys in pt/es/cs/ro/de). `check-locale-keys` passes again.
 - **Phase 5: LIVE.** The `solicitacao-exames-online` summary (PT/EN/ES) no longer
   says tests are valid at laboratories throughout Brazil. Manifest `e48b9296…`, one
   group, four summary writes. Super-admin-confirmed verbal approval by Dr. Renato

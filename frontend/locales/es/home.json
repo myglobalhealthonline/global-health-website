@@ -27,9 +27,16 @@
     "sameDay": {
       "eyebrow": "¿Necesita ayuda?",
       "title": "Consulta el mismo día",
+      "titleNextAvailable": "Próxima consulta disponible",
       "languageLabel": "Idioma de la consulta",
+      "languagePlaceholder": "Seleccione su idioma…",
       "pickTime": "Elija una hora",
       "today": "Hoy",
+      "tomorrow": "Mañana",
+      "nextAvailable": "Próxima disponible",
+      "pickLanguageFirst": "Elija un idioma para ver las horas disponibles.",
+      "loading": "Buscando horas disponibles…",
+      "noSlots": "No hay horas hoy ni mañana en este idioma. Pruebe con otro idioma.",
       "continue": "Continuar",
       "minSuffix": "min",
       "reassure": "Elija su idioma, seleccione una hora: le asignaremos el médico general adecuado."
