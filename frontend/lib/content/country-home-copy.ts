@@ -259,6 +259,11 @@ const BUNDLE: Record<string, DeepPartial<HomeBundle>> = {
       stat1Label: "Médicos registrados",
       stat1Caption: "Registrados no Conselho Regional de Medicina (CRM).",
     },
+    // Brazil SEO handoff R5: home tests are off and specialist services inactive in Brazil.
+    howItWorks: {
+      step1Body:
+        "Veja consultas de clínica geral, renovação de receita e pedido de exames. Filtre por idioma, urgência ou preço.",
+    },
   },
   "br:en": {
     countryHero: {
@@ -266,6 +271,10 @@ const BUNDLE: Record<string, DeepPartial<HomeBundle>> = {
         title: "Available Consultation Times",
         reassure: "Choose your language and pick a time. We will direct you to the right doctor.",
       },
+    },
+    howItWorks: {
+      step1Body:
+        "Browse general practice consultations, prescription renewals and test requests. Filter by language, urgency, or price.",
     },
   },
   "br:es": {
@@ -281,6 +290,10 @@ const BUNDLE: Record<string, DeepPartial<HomeBundle>> = {
         noSlots: "No hay horarios hoy ni mañana en este idioma. Prueba con otro idioma.",
         reassure: "Elige tu idioma y un horario. Te dirigiremos al médico adecuado.",
       },
+    },
+    howItWorks: {
+      step1Body:
+        "Consulta opciones de medicina general, renovación de recetas y solicitud de exámenes. Filtra por idioma, urgencia o precio.",
     },
   },
   "IE:en": {
