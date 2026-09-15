@@ -1,0 +1,30 @@
+{
+  "snapshot": "raw/storage-phase6-2026-09-15.json",
+  "source": "Brazil SEO handoff D2 (2026-09-15): remove unverifiable superlatives from Dr. Renato Sarmento's biography and profile FAQ, and the same-day claim from his stored PT SEO description (consistent with phases 4-5 and R1). Deletions only; no new wording.",
+  "replacements": [
+    { "table": "doctors", "id": "cmqyzr0fb000o01lu9deh6mf5", "field": "bio",
+      "from": ", uma combinação rara que o posiciona como um dos profissionais mais completos disponíveis para consulta online no Brasil", "to": "" },
+    { "table": "doctors", "id": "cmqyzr0fb000o01lu9deh6mf5", "field": "seoDescription",
+      "from": " Consulta no mesmo dia.", "to": "" },
+    { "table": "doctorTranslations", "id": "cmqyzr0go000p01lu3l2uesm7", "field": "bio",
+      "from": ", uma combinação rara que o posiciona como um dos profissionais mais completos disponíveis para consulta online no Brasil", "to": "" },
+    { "table": "doctorTranslations", "id": "cmqyzr0go000p01lu3l2uesm7", "field": "seoDescription",
+      "from": " Consulta no mesmo dia.", "to": "" },
+    { "table": "doctorTranslations", "id": "cmrfinmva01cpywjur30mt0p0", "field": "bio",
+      "from": ", a rare combination that makes him one of the most complete clinicians available for online consultation in Brazil", "to": "" },
+    { "table": "doctorTranslations", "id": "cmrfinnnm01cqywjuieyn79yg", "field": "bio",
+      "from": ", una combinación poco frecuente que lo sitúa entre los profesionales más completos disponibles para consulta en línea en Brasil", "to": "" },
+    { "table": "doctorMarketTranslations", "id": "dcmt_3a5cbefa6161bcdcc132", "field": "bio",
+      "from": ", uma combinação rara que o posiciona como um dos profissionais mais completos disponíveis para consulta online no Brasil", "to": "" },
+    { "table": "doctorMarketTranslations", "id": "cmrfm4eaz0000ncju0vg69jgs", "field": "bio",
+      "from": ", a rare combination that makes him one of the most complete clinicians available for online consultation in Brazil", "to": "" },
+    { "table": "doctorMarketTranslations", "id": "cmrfm4f2p0001ncjurfu3ah6p", "field": "bio",
+      "from": ", una combinación poco frecuente que lo sitúa entre los profesionales más completos disponibles para consulta en línea en Brasil", "to": "" },
+    { "table": "doctorFaqs", "id": "cmrmj60ns0003n4jurcztrvm8", "field": "answer",
+      "from": " É um dos poucos médicos de família com experiência simultânea em telemedicina pública e suplementar, o que lhe dá uma visão abrangente das necessidades de diferentes perfis de pacientes.", "to": "" },
+    { "table": "doctorFaqs", "id": "cmrny5qwy008pbsjuo4fxmr08", "field": "answer",
+      "from": " He is one of the few family doctors with simultaneous experience in public and supplementary telemedicine, which gives him a comprehensive view of the needs of different patient profiles.", "to": "" },
+    { "table": "doctorFaqs", "id": "cmrny64fj008vbsjujkwkhwf6", "field": "answer",
+      "from": " Es uno de los pocos médicos de familia con experiencia simultánea en telemedicina pública y suplementaria, lo que le da una visión amplia de las necesidades de diferentes perfiles de pacientes.", "to": "" }
+  ]
+}
