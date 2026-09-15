@@ -10266,6 +10266,26 @@ incremental build: run it with `--incremental false` before pushing.
 - **Cohort.** Brazil PT home, book, doctors, faq, gp hub, blog, doctor profile, service pages:
   measure 2026-10-15, 2026-11-14, 2026-12-14.
 
+### 59.6 R4: localized "Brasil" on Brazil service and profile templates — 15 September 2026
+
+**Status: LIVE.** Code only. Commit `60822b7d`; Frontend deployment
+`9660c76d-b0a1-4579-85bd-38f085b0c649` SUCCESS.
+
+- **Change.** `services/[serviceSlug]/page.tsx`: disclaimer, "Médicos registrados · {country}",
+  "Médico registrado no {country}", booking heading and the fallback `<title>` suffix use
+  `common.countryNames.br` for `code === "br"` instead of English `config.name`.
+  `doctor-profile-page.tsx`: the visible country label ("Registrado no …", "Voltar à equipe
+  do …", physician JSON-LD `countryName`) does the same for Brazil. Profile metadata unchanged.
+- **Proof.** `tsc --noEmit --incremental false` exit 0; vitest 562/563 (pre-existing
+  `same-day-booking-state` failure). Local render and production 15 September:
+  `/brazil/pt/services/atestado-medico-online` "Médicos registrados · Brasil", "Médico
+  registrado no Brasil", "Agendar Atestado Médico no Brasil"; ES "Médicos colegiados · Brasil",
+  "Reservar Certificado Médico en Brasil"; `/brazil/pt/doctors/dr-renato-sarmento`
+  "Registrado no Brasil", "Voltar à equipe do Brasil". All 200, self-canonical, titles
+  unchanged. Controls `/portugal/pt/services/consulta-medica` and
+  `/portugal/pt/doctors/beatriz-carvalho` unchanged ("Registado em Portugal").
+- **Cohort.** Covered by the §59.5 cohort (2026-10-15, 2026-11-14, 2026-12-14).
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
