@@ -63,6 +63,20 @@ function isConsultationOver(a: Pick<DoctorAppointment, "status">): boolean {
   return a.status === "COMPLETED" || a.status === "CANCELLED";
 }
 
+// Unlike "Notify ready" above, Join genuinely has nothing to do once the
+// slot's real end time (or the row's terminal status) has passed — there's
+// no "join a call that's already over" case worth keeping enabled for.
+// Uses the same `endAt` the backend resolves from the claimed slot / service
+// duration (see resolveConsultationEndAt) rather than a fixed window, so a
+// 4:00–4:15 consult disables Join at 4:15, not at some fixed cutoff. Fails
+// open (never disables) when there's no scheduledAt or no resolvable endAt —
+// an unscheduled or duration-unknown row shouldn't get silently locked out.
+function isJoinWindowOver(a: Pick<DoctorAppointment, "scheduledAt" | "endAt" | "status">): boolean {
+  if (a.status === "COMPLETED" || a.status === "CANCELLED") return true;
+  if (!a.scheduledAt || !a.endAt) return false;
+  return Date.now() > new Date(a.endAt).getTime();
+}
+
 function statusToneForAppointmentCard(status: string): AppointmentCardTone {
   if (status === "COMPLETED") return "success";
   if (status === "CANCELLED") return "danger";
@@ -235,11 +249,18 @@ export default async function DoctorAppointmentsPage({
   // only applies on the Upcoming tab with no other filter stacked on top.
   // eslint-disable-next-line react-hooks/purity -- Server Component: evaluated once per request, no client re-render
   const nowMs = Date.now();
+  // A row counts as upcoming through its actual end time (4:00–4:15 stays
+  // upcoming until 4:15, not some fixed window past 4:00) — `endAt` is the
+  // same backend-resolved slot/service duration Join's cutoff uses below.
+  // Falls back to LIVE_WINDOW_MS off scheduledAt when endAt can't be
+  // resolved (legacy rows), so a duration-unknown row doesn't fall out of
+  // Upcoming instantly at its start time.
   const isUpcomingRow = (a: DoctorAppointment) =>
     a.status !== "CANCELLED" &&
     a.status !== "COMPLETED" &&
     (!a.scheduledAt ||
-      new Date(a.scheduledAt).getTime() + LIVE_WINDOW_MS >= nowMs);
+      (a.endAt ? new Date(a.endAt).getTime() : new Date(a.scheduledAt).getTime() + LIVE_WINDOW_MS) >=
+        nowMs);
   const upcomingRows = appointments.filter(isUpcomingRow);
   const isUpcomingTab = !view && activeSection === "upcoming";
   // On the Upcoming tab, past/concluded rows the backend padded the page
@@ -529,16 +550,27 @@ export default async function DoctorAppointmentsPage({
                         action={
                           a.meetingUrl ? (
                             <span className="inline-flex items-center gap-2">
-                              <Btn
-                                href={a.meetingUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                variant="primary"
-                                size="sm"
-                                iconLeft={<Video className="size-3.5" aria-hidden />}
-                              >
-                                {d.common.join}
-                              </Btn>
+                              {isJoinWindowOver(a) ? (
+                                <Btn
+                                  disabled
+                                  variant="primary"
+                                  size="sm"
+                                  iconLeft={<Video className="size-3.5" aria-hidden />}
+                                >
+                                  {d.common.join}
+                                </Btn>
+                              ) : (
+                                <Btn
+                                  href={a.meetingUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  variant="primary"
+                                  size="sm"
+                                  iconLeft={<Video className="size-3.5" aria-hidden />}
+                                >
+                                  {d.common.join}
+                                </Btn>
+                              )}
                               <Btn href={`/doctor/appointments/${a.id}`} variant="secondary" size="sm">
                                 {d.common.open}
                               </Btn>
@@ -627,7 +659,14 @@ export default async function DoctorAppointmentsPage({
                         ]}
                         actions={
                           <>
-                            {a.meetingUrl ? (
+                            {a.meetingUrl && isJoinWindowOver(a) ? (
+                              <span
+                                aria-disabled="true"
+                                className="gh-btn gh-btn-primary text-sm pointer-events-none opacity-40"
+                              >
+                                <Video className="size-3.5" aria-hidden /> {d.appointments.joinSession}
+                              </span>
+                            ) : a.meetingUrl ? (
                               <a
                                 href={a.meetingUrl}
                                 target="_blank"
