@@ -1,0 +1,17 @@
+{
+  "snapshot": "raw/storage-phase5-derived-2026-09-15.json",
+  "source": "Owner instruction 2026-09-15: remove 'valid at laboratories throughout Brazil' from the solicitacao-exames-online summary, matching the phase-4 FAQ and description wording. Snapshot = phase-4 snapshot with the 19 applied phase-4 groups rehearsed; the runner's read-only dry-run checks it against live storage.",
+  "patches": {
+    "solicitacao-exames-online": {
+      "PT": {
+        "summary": "Converse com um médico por vídeo sobre a necessidade de exames. A solicitação depende da avaliação clínica; confirme requisitos e custos com o laboratório."
+      },
+      "EN": {
+        "summary": "Discuss with a doctor by video whether you need tests. Any request depends on the clinical assessment; check requirements and costs with the laboratory."
+      },
+      "ES": {
+        "summary": "Habla por videollamada con un médico sobre si necesitas exámenes. La solicitud depende de la evaluación clínica; confirma costos con el laboratorio."
+      }
+    }
+  }
+}

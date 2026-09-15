@@ -1,0 +1,17 @@
+{
+  "status": "owner-confirmed approval",
+  "manifestSha256": "e48b9296c20fdb634b70a81ea497244c9843308c5beb9dc5ddce6bf4f59654ae",
+  "reviewerDoctorId": "cmqyzr0fb000o01lu9deh6mf5",
+  "reviewerName": "Dr. Renato Sarmento",
+  "reviewedAt": "2026-09-14T23:55:35.761Z",
+  "maxAgeDays": 365,
+  "evidence": "verbal, reported by the owner: super admin confirmed on 2026-09-15 that Dr. Renato Sarmento verbally approved the solicitacao-exames-online summary (PT/EN/ES) in phase-5 manifest e48b9296c20fdb634b70a81ea497244c9843308c5beb9dc5ddce6bf4f59654ae, removing \"valid at laboratories throughout Brazil\". No written record.",
+  "groups": [
+    {
+      "key": "copy:solicitacao-exames-online",
+      "approvedSha256": "2776d34308ddaecffd05668433bfc3d9740e6c3412bb37624ba46a9c0778a216",
+      "stateKey": "service:cmrf53wsr003bmwjuz15y0o32",
+      "resultingStateSha256": "1b459f151560032707dea2a5c33914ce2cb4abf37ca4b5313bffe376c6bff8fb"
+    }
+  ]
+}
