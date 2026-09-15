@@ -10425,6 +10425,22 @@ incremental build: run it with `--incremental false` before pushing.
   owner-run). Plan names/benefits on pricing are PT-PT in the plans table.
 - **Cohort.** Brazil pricing ×3: measure 2026-10-15, 2026-11-14, 2026-12-14.
 
+### 59.15 Brazil LGPD law name (data) — 15 September 2026
+
+**Status: LIVE.** Database write, owner-run. Script `backend/scripts/brazil-lgpd-law-name.mjs`
+(commit `243cfe4e`).
+
+- **Change.** Brazil `CountryLegalProfileTrustTranslation.dataProtectionLawName`: EN "GDPR" → "LGPD",
+  ES "RGPD" → "LGPD" (PT base already "LGPD"). Feeds the trust bar, homepage trust ribbon and
+  legal page for Brazil only.
+- **Proof.** Owner dry-run 2 rows; owner apply 2 rows with readback. Public API
+  `/api/public/countries/br/trust?locale={EN,ES}` returns "LGPD". Production after the 60 s cache:
+  `/brazil/en` and `/brazil/es` 0 GDPR/RGPD strings; `/brazil/en/pricing`, `/brazil/pt` LGPD only.
+  Controls `/portugal/en` and `/ireland/en` still GDPR.
+- **Pending.** D1 disclaimer follow-up (manifest `9c345f42…`, owner dry-run 5/5 ready); article
+  attribution batch blocked by the permission classifier (plan not written); `/brazil/*/dr-renato`
+  indexing answer to confirm.
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
