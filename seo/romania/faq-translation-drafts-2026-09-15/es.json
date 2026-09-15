@@ -1,0 +1,139 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/es/faq-markets.json under the market key.",
+  "_source": "frontend/locales/ro/faq-markets.json#ro",
+  "_locale": "es",
+  "_keywordsUsed": [],
+  "_reviewNotes": [
+    { "group": 0, "item": null, "note": "Translated from the native Romanian copy, not the English. Register is 'tú' to match es/faq-markets.json#es and #ie, although the Romanian source uses the formal 'dumneavoastră'. Em dashes kept spaced (' — ') as in the source." },
+    { "group": 0, "item": null, "note": "Keywords: no tested Spanish phrase (médico online, médico en Rumanía, urgencias/hospital Bucarest, sanidad, seguro médico) had measurable volume, and none fits the source without adding words, so _keywordsUsed is empty. 'Clínica online' and 'consulta online' are plain translations of the source." },
+    { "group": 0, "item": null, "note": "Spain-leaning vocabulary (ordenador, vídeo, costes) to match the existing Spanish locale, since the Spanish-speaking audience in Romania is not known to be Latin American." },
+    { "group": 0, "item": 0, "note": "'Cabinet medical' rendered 'consultorio (médico)' and 'cabinet fizic' 'consultorio físico', to avoid confusion with 'consulta' (= consultation) used throughout. es#es uses 'consulta física' for the same idea." },
+    { "group": 0, "item": 0, "note": "Same-day wording is in the native source ('de multe ori, chiar în ziua...') and is kept at the same strength: 'muchas veces, incluso el mismo día'. Not strengthened." },
+    { "group": 0, "item": 1, "note": "'Înregistrați la Colegiul Medicilor din România' rendered 'registrados en el Colegiul Medicilor din România' — NOT 'colegiados', which the site reserves for Spain. Official Romanian name kept; no gloss added because the source already explains it ('la autoridad que regula la profesión médica en el país')." },
+    { "group": 0, "item": 2, "note": "'Unii medici' = 'algunos médicos' (the English reference says 'several'; native wording followed)." },
+    { "group": 1, "item": 2, "note": "'Reprograma' rendered 'cambiar la fecha' in the question and 'reprogramar' in the answer; 'fără penalizare' = 'sin penalización'." },
+    { "group": 2, "item": 0, "note": "'Câteva zeci de minute' rendered literally as 'varias decenas de minutos'. It reads slightly unusual in Spanish, but a natural range (e.g. 20-40 minutes) would add numbers not in the source." },
+    { "group": 2, "item": 0, "note": "'Adeverință medicală' rendered 'certificado médico' throughout (also 3.0, 3.1). Spain's 'justificante médico' was avoided because es#es uses it for a Spain-specific private document. Clinical/legal reviewer should confirm." },
+    { "group": 2, "item": 2, "note": "'Urgență' = 'urgencia'; 'unitate de primiri urgențe' = 'servicio de urgencias'; 'serviciile de urgență' = 'los servicios de urgencia'. 112 unchanged. 'Medicul de familie' = 'médico de familia' (the Romanian concept; es#es also uses it), not 'médico de cabecera'." },
+    { "group": 3, "item": 0, "note": "'Concediu medical' rendered 'baja médica (concediu medical)' on first use, then 'baja médica'. In Spain 'baja médica' implies the public 'parte de baja'; here it means the Romanian official scheme. Reviewer should confirm the gloss is clear enough." },
+    { "group": 3, "item": 0, "note": "CNAS glossed on first use only: 'Casa Națională de Asigurări de Sănătate, el seguro público de salud de Rumanía'. The native source uses only the acronym. 'Casa de asigurări' = 'la casa de seguros de salud' (also 3.3). 'Indemnizația aferentă' = 'la prestación económica correspondiente' (site term)." },
+    { "group": 3, "item": 0, "note": "'Angajator' = 'empleador' throughout (es#es says 'tu empresa'). Chosen for precision; either would work." },
+    { "group": 3, "item": 0, "note": "'Nu le putem garanta noi' kept as a plain non-guarantee ('no podemos garantizar'). 'Presa juridică' = 'prensa jurídica'." },
+    { "group": 3, "item": 2, "note": "'Medicamente cu regim special' rendered 'medicamentos sujetos a régimen especial' (controlled substances). 'Act de identitate' = 'documento de identidad'." },
+    { "group": 3, "item": 3, "note": "'Compensată' / 'compensarea' rendered 'financia' / 'financiación' (the Spanish term for public drug subsidy at the pharmacy). 'Reembolso' was avoided because the patient does not claim the money back afterwards. Reviewer should confirm." },
+    { "group": 4, "item": 1, "note": "'Fișa medicală' = 'historia clínica'; 'istoricul consultațiilor' = 'historial de consultas'. 'Asigurători' = 'aseguradoras'." },
+    { "group": 5, "item": 0, "note": "'Plan sau abonament' = 'plan o suscripción'; 'beneficii' = 'beneficios'." }
+  ],
+  "ro": {
+    "groups": [
+      {
+        "eyebrow": "Rumanía",
+        "title": "Sobre nuestro servicio en Rumanía",
+        "items": [
+          {
+            "question": "¿Tienen consultorio médico en Rumanía?",
+            "answer": "Global Health funciona en Rumanía exclusivamente como clínica online. No tenemos consultorio físico en Rumanía, y la sede social de la empresa está en Irlanda. Todas las consultas se realizan por videollamada segura, directamente desde el teléfono, la tableta o el ordenador, sin necesidad de desplazarte. Este modelo online te permite hablar con un médico sin sala de espera y, muchas veces, incluso el mismo día en que pides la cita. Si prefieres una visita presencial, un consultorio local puede adaptarse mejor a ti — nuestra plataforma está pensada para pacientes que se sienten cómodos con una consulta a distancia, por vídeo."
+          },
+          {
+            "question": "¿Los médicos están registrados en el Colegiul Medicilor din România?",
+            "answer": "Sí. Todos los médicos que atienden a pacientes de Rumanía a través de nuestra plataforma están registrados en el Colegiul Medicilor din România, la autoridad que regula la profesión médica en el país. El registro de cada médico puede comprobarse directamente en su perfil de la plataforma, donde también encontrarás su especialidad y los idiomas en los que ofrece consultas. Esto significa que el médico con el que hablas cumple las mismas normas profesionales y éticas que un médico al que se consulta presencialmente, en un consultorio de Rumanía. Si tienes dudas sobre el registro de un médico concreto, puedes contactarnos por correo electrónico antes de reservar, y el equipo puede confirmarte los detalles pertinentes."
+          },
+          {
+            "question": "¿Las consultas se realizan en rumano?",
+            "answer": "Sí. Las consultas para pacientes de Rumanía se realizan en rumano, y algunos médicos también ofrecen consultas en inglés. Los idiomas que habla cada médico aparecen en su perfil, para que puedas elegir de antemano un médico adecuado a tus necesidades lingüísticas. También la asistencia administrativa — citas, facturación, preguntas sobre la cuenta — está disponible por correo electrónico, en rumano e inglés. Si prefieres un idioma concreto para la conversación médica propiamente dicha, revisa el perfil del médico antes de confirmar la cita, o escríbenos y te recomendaremos un médico adecuado a tu necesidad."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Citas",
+        "title": "Cómo reservar una consulta",
+        "items": [
+          {
+            "question": "¿Cómo reservo una consulta online?",
+            "answer": "La reserva se hace directamente desde la plataforma: eliges el tipo de consulta que necesitas y, después, un horario disponible de una lista de médicos. Completas un breve formulario con tus datos y el motivo de la consulta, para que el médico tenga contexto antes de la llamada. El precio de la consulta se muestra con claridad antes de confirmar la reserva, sin costes ocultos. Tras el pago recibes una confirmación con el enlace a la consulta por vídeo, por correo electrónico y en tu cuenta de la plataforma. Todo el proceso suele durar unos minutos y no requiere desplazarte a ningún consultorio físico."
+          },
+          {
+            "question": "¿Puedo conseguir cita el mismo día?",
+            "answer": "En muchos casos, sí — la plataforma muestra la disponibilidad en tiempo real y, para las consultas generales, con frecuencia hay horarios libres ese mismo día, según la agenda de los médicos activos. Sin embargo, la disponibilidad varía de un día a otro y de un tipo de consulta a otro, sobre todo en especialidades con menos médicos en la plataforma. Te recomendamos revisar la lista de horarios disponibles directamente en la página de reserva, para ver la hora libre más próxima. Si no encuentras un horario adecuado hoy, puedes reservar con la misma facilidad para los días siguientes."
+          },
+          {
+            "question": "¿Puedo cancelar o cambiar la fecha de una consulta?",
+            "answer": "Sí, una consulta puede cancelarse o reprogramarse desde tu cuenta, antes de la hora fijada. El plazo exacto para cancelar sin penalización y las posibles condiciones de reembolso se muestran en la plataforma en el mismo momento de la reserva, para que las conozcas antes de confirmar. Si tienes un problema técnico o necesitas ayuda para cambiar la hora de la consulta, el equipo de soporte puede ayudarte por correo electrónico. Reprogramar resulta útil sobre todo si surge un imprevisto de última hora o si tu estado de salud cambia antes de la consulta."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultas",
+        "title": "Cómo es una consulta online",
+        "items": [
+          {
+            "question": "¿Cómo es una consulta por videollamada?",
+            "answer": "A la hora programada, accedes a una videollamada segura directamente desde la plataforma o mediante el enlace enviado por correo electrónico. El médico te pregunta por tus síntomas, tu historial médico y los tratamientos que has seguido, igual que en una consulta presencial, y después te ofrece una valoración y recomendaciones. Según la situación, el médico puede emitir una receta o un certificado médico, o recomendarte una consulta adicional. La consulta suele durar varias decenas de minutos, tiempo suficiente para hablar del problema en detalle. Solo necesitas una conexión estable a internet y un lugar tranquilo."
+          },
+          {
+            "question": "¿Qué equipo necesito para una consulta?",
+            "answer": "Solo necesitas un teléfono, una tableta o un ordenador con cámara, micrófono y conexión a internet — no hace falta ningún software especializado, la consulta se realiza directamente desde el navegador o desde la aplicación. Te recomendamos un lugar tranquilo y bien iluminado, para que el médico pueda verte y oírte con claridad. Si tienes documentos médicos relevantes — análisis recientes, recetas anteriores — conviene tenerlos a mano durante la llamada. Prueba la cámara y el micrófono antes de la hora, y si tienes problemas técnicos, el equipo de soporte puede guiarte por correo electrónico."
+          },
+          {
+            "question": "¿Qué hago si tengo una urgencia médica?",
+            "answer": "Global Health no es un servicio de urgencias, y las consultas online no sustituyen la atención de urgencia. Si tienes síntomas graves o estás en peligro, llama de inmediato al 112 o acude al servicio de urgencias más cercano. Nuestra plataforma es adecuada para problemas de salud habituales, no urgentes — resfriados, infecciones leves, renovación de tratamientos, preguntas médicas generales. Si no estás seguro de si tu situación es una urgencia, lo más seguro es contactar con tu médico de familia o con los servicios de urgencia, en lugar de esperar a una cita online."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Bajas y recetas",
+        "title": "Baja médica y recetas",
+        "items": [
+          {
+            "question": "¿Pueden emitir una baja médica (concediu medical) online?",
+            "answer": "Un médico que te valora en una consulta online puede emitir un certificado médico que acredita la valoración realizada, cuando está clínicamente indicado. Su reconocimiento como base para una baja médica oficial y para la prestación económica correspondiente depende de la CNAS (Casa Națională de Asigurări de Sănătate, el seguro público de salud de Rumanía) y de la relación contractual de ese médico con la casa de seguros de salud, así como de las normas de tu propio empleador — aspectos que nosotros no podemos garantizar. De hecho, el tema de las bajas médicas obtenidas online se debate activamente en la prensa jurídica de Rumanía. Si necesitas una baja reconocida oficialmente por la CNAS, compruébalo de antemano con tu empleador y, si procede, con tu médico de familia."
+          },
+          {
+            "question": "¿Acepta mi empleador el certificado emitido online?",
+            "answer": "El certificado lo emite el médico que te ha valorado y acredita la consulta y los hallazgos médicos. Sin embargo, cada empleador establece sus propios requisitos sobre los documentos que acepta como justificación de la ausencia, y algunos piden documentos emitidos conforme a los procedimientos de la CNAS. Te recomendamos comprobar con tiempo la política interna de tu empleador, sobre todo si necesitas que la ausencia se reconozca y se pague como prestación por baja médica. Nuestro equipo puede facilitarte el certificado emitido por el médico, pero no puede garantizar que una institución o un empleador concreto lo acepte — la decisión es suya, según su propia normativa."
+          },
+          {
+            "question": "¿Pueden emitir una receta online?",
+            "answer": "Sí. Si, tras la valoración, el médico considera que está indicado un tratamiento farmacológico, puede emitir una receta que podrás retirar en cualquier farmacia presentando un documento de identidad. No todas las afecciones requieren o permiten tratamiento a distancia — la decisión corresponde siempre al médico, según tus síntomas y tu historial médico. Algunas categorías de medicamentos, como los sujetos a régimen especial, no pueden recetarse en una consulta online y requieren una valoración presencial. Si tienes una receta anterior que quieras comentar, puedes mencionársela al médico durante la consulta."
+          },
+          {
+            "question": "¿La CNAS financia la receta emitida online?",
+            "answer": "Depende del tipo de receta y de la situación del médico respecto a la CNAS. Una receta electrónica emitida por el médico que te ha atendido puede retirarse en la farmacia, pero la financiación a través del sistema de la CNAS sigue las normas propias de la casa de seguros de salud y requiere, por lo general, que el médico emisor tenga contrato con la CNAS para ese tipo de prescripción. No podemos garantizar la financiación de una receta emitida a través de nuestra plataforma. Si esto es importante para ti, pregunta al farmacéutico al retirar la receta o consúltalo directamente con la CNAS antes de reservar una consulta."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacidad",
+        "title": "Privacidad y datos médicos",
+        "items": [
+          {
+            "question": "¿Cómo se protegen mis datos médicos?",
+            "answer": "Tus datos médicos se almacenan cifrados y solo accede a ellos el personal autorizado que participa directamente en tu atención — principalmente el médico que te atiende. Las videollamadas se realizan mediante una conexión segura, y la información que introduces en la plataforma, como síntomas, historial o documentos subidos, no se comparte con terceros con fines comerciales. Cumplimos los requisitos legales de protección de datos personales aplicables en la Unión Europea. Si tienes preguntas concretas sobre cómo se usan tus datos o sobre nuestra política de privacidad, puedes escribirnos en cualquier momento a la dirección de correo electrónico de contacto."
+          },
+          {
+            "question": "¿Quién tiene acceso a mi historial médico?",
+            "answer": "El acceso a tu historia clínica se limita a los médicos que participan directamente en tu atención y al personal estrictamente necesario para el funcionamiento de la plataforma, por ejemplo para el soporte técnico relacionado con tu cuenta. Un nuevo médico, en una consulta futura, puede ver el historial de consultas anteriores en la plataforma para ofrecerte una atención coherente, salvo que elijas lo contrario. Los datos no se venden ni se comparten con empleadores, aseguradoras u otras instituciones sin tu consentimiento explícito o sin una obligación legal clara que nos lo exija en un caso concreto."
+          },
+          {
+            "question": "¿Puedo descargar o eliminar mis datos?",
+            "answer": "Sí. Puedes solicitar una copia de tus datos médicos almacenados en la plataforma, así como la eliminación de tu cuenta y de la información asociada, con sujeción a los plazos de conservación que la ley impone a la documentación médica. Estas solicitudes se tramitan por correo electrónico, en nuestra dirección de contacto, y se gestionan conforme a los derechos que la legislación europea de protección de datos reconoce a los pacientes. Ten en cuenta que determinados registros médicos pueden conservarse durante un periodo mínimo obligatorio, incluso después de una solicitud de eliminación, cuando la ley lo exige, con independencia de tu preferencia personal."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Pagos",
+        "title": "Pagos y facturación",
+        "items": [
+          {
+            "question": "¿Cuánto cuesta una consulta?",
+            "answer": "El precio de cada consulta se muestra con claridad en la plataforma antes de confirmar la reserva, según el tipo de consulta y el médico elegido. No publicamos precios fijos aquí, porque pueden variar con el tiempo y según el servicio solicitado — la versión actualizada es siempre la que aparece en la página de reserva. No hay costes ocultos: el importe que ves antes de pagar es el importe final que pagarás. Si tienes un plan o una suscripción activa, los posibles beneficios incluidos se aplican automáticamente antes de que se te pida el pago."
+          },
+          {
+            "question": "¿Qué métodos de pago aceptan?",
+            "answer": "Aceptamos el pago online con tarjeta, directamente en la plataforma, en el momento de confirmar la reserva. El procesamiento del pago es seguro, y nosotros no almacenamos los datos de tu tarjeta. Si tienes una suscripción o un plan que cubre determinados servicios, el coste de la consulta puede reducirse o cubrirse por completo, según los beneficios incluidos — esto se muestra automáticamente antes del pago. Si tienes preguntas sobre una factura o sobre un pago que no se procesó correctamente, puedes contactarnos por correo electrónico y nuestro equipo te responderá con los detalles de la transacción."
+          }
+        ]
+      }
+    ]
+  }
+}

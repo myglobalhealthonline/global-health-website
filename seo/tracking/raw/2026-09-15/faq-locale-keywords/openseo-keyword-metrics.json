@@ -1,0 +1,31 @@
+{
+  "collected_at": "2026-09-15",
+  "tool": "OpenSEO get_keyword_metrics (DataForSEO), includeMonthlyTrends=false, no clickstream",
+  "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+  "purpose": "Keyword evidence for the 17 non-native market FAQ translations (/{portugal,spain,czechia,romania}/{other langs}/faq and /brazil/es/faq).",
+  "method": "DataForSEO only serves a country's primary language for that country (Portugal location rejects languageCode es). So each pair is measured where the language is spoken, searching about the target market: es from Spain (2724) and Argentina (2032); pt from Portugal (2620) and Brazil (2076); cs from Czechia (2203); ro from Romania (2642); de from Germany (2276). 12 candidate phrases per call (online doctor, doctor in X, doctor who speaks <lang>, online consultation, GP, prescription, medical certificate, emergency, healthcare in X, telemedicine, health insurance, hospital). Keywords absent from a response had no measurable volume.",
+  "results": [
+    {"market": "portugal", "lang": "es", "location": 2620, "language": "pt", "keywords": [["telemedicina portugal", 170], ["médico online portugal", 10], ["consulta médica online portugal", null]]},
+    {"market": "portugal", "lang": "es", "location": 2724, "language": "es", "keywords": [["sanidad en portugal", 50], ["urgencias portugal", 10]]},
+    {"market": "portugal", "lang": "cs", "location": 2203, "language": "cs", "keywords": []},
+    {"market": "portugal", "lang": "ro", "location": 2642, "language": "ro", "keywords": []},
+    {"market": "portugal", "lang": "de", "location": 2276, "language": "de", "keywords": [["krankenversicherung portugal", 110], ["rezept portugal", 110], ["gesundheitssystem portugal", 90], ["krankenhaus portugal", 30], ["arzt portugal", 10]]},
+    {"market": "spain", "lang": "pt", "location": 2620, "language": "pt", "keywords": []},
+    {"market": "spain", "lang": "pt", "location": 2076, "language": "pt", "keywords": [["seguro saúde espanha", 170], ["saúde na espanha", 110], ["médico na espanha", 50]]},
+    {"market": "spain", "lang": "cs", "location": 2203, "language": "cs", "keywords": []},
+    {"market": "spain", "lang": "ro", "location": 2642, "language": "ro", "keywords": []},
+    {"market": "spain", "lang": "de", "location": 2276, "language": "de", "keywords": [["krankenversicherung spanien", 480], ["gesundheitssystem spanien", 320], ["krankenhaus spanien", 50], ["hausarzt spanien", 10]]},
+    {"market": "czechia", "lang": "pt", "location": 2620, "language": "pt", "keywords": []},
+    {"market": "czechia", "lang": "pt", "location": 2076, "language": "pt", "keywords": [["morar na república tcheca", 10]]},
+    {"market": "czechia", "lang": "es", "location": 2724, "language": "es", "keywords": []},
+    {"market": "czechia", "lang": "ro", "location": 2642, "language": "ro", "keywords": []},
+    {"market": "czechia", "lang": "de", "location": 2276, "language": "de", "keywords": [["krankenhaus prag", 110], ["krankenversicherung tschechien", 110], ["gesundheitssystem tschechien", 20], ["notaufnahme prag", null]]},
+    {"market": "romania", "lang": "pt", "location": 2620, "language": "pt", "keywords": []},
+    {"market": "romania", "lang": "pt", "location": 2076, "language": "pt", "keywords": [["morar na romênia", 10]]},
+    {"market": "romania", "lang": "es", "location": 2724, "language": "es", "keywords": []},
+    {"market": "romania", "lang": "cs", "location": 2203, "language": "cs", "keywords": []},
+    {"market": "romania", "lang": "de", "location": 2276, "language": "de", "keywords": [["krankenversicherung rumänien", 140], ["gesundheitssystem rumänien", 50], ["krankenhaus bukarest", 10]]},
+    {"market": "brazil", "lang": "es", "location": 2724, "language": "es", "keywords": [["sanidad en brasil", 20], ["seguro médico brasil", 20], ["hospital são paulo", 10], ["telemedicina brasil", 10]]},
+    {"market": "brazil", "lang": "es", "location": 2032, "language": "es", "keywords": [["seguro médico brasil", 30], ["salud en brasil", 20], ["consulta médica online brasil", 10], ["telemedicina brasil", 10]]}
+  ]
+}

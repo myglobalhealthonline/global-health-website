@@ -1,0 +1,216 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/es/faq-markets.json under the market key.",
+  "_source": "frontend/locales/pt/faq-markets.json#pt",
+  "_locale": "es",
+  "_keywordsUsed": [
+    {
+      "keyword": "sanidad en portugal",
+      "volume": 50,
+      "where": "0.1 answer (gloss on first use of Serviço Nacional de Saúde)"
+    },
+    {
+      "keyword": "telemedicina en portugal",
+      "volume": null,
+      "where": "1.0 question"
+    }
+  ],
+  "_reviewNotes": [
+    {
+      "group": 0,
+      "item": null,
+      "note": "WHOLE FILE: translated from the native Portuguese copy only. Claims present in en/faq-markets.json#pt but removed from the native copy (e.g. 'same legal standing', 'earliest same-day slot', professional/ethical standards, English-language documents) were NOT reintroduced."
+    },
+    {
+      "group": 0,
+      "item": null,
+      "note": "Register follows es/faq-markets.json#es: questions address the company in the plural ('¿Emiten...?', '¿Pueden...?'), answers use 'tú'. The Portuguese source uses the formal third person; switch to 'usted' if the reviewer prefers the register of about.json/company.json."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'Inscritos na Ordem dos Médicos' rendered 'inscritos en la Ordem dos Médicos', NOT 'colegiados' (reserved for doctors in Spain). Short gloss added on first use only: '(la corporación profesional de los médicos en Portugal)'. Not in the source; delete if the reviewer wants zero additions."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "KEYWORD: 'sanidad en portugal' (50/mo, Spain) placed in a gloss on first use of Serviço Nacional de Saúde: '(SNS, el sistema público de sanidad en Portugal)'. The source names the SNS without explaining it; the gloss only explains the name and adds no claim. 'Triagem' rendered 'triaje'. SNS24 kept unglossed because the answer itself describes it."
+    },
+    {
+      "group": 0,
+      "item": 2,
+      "note": "'Serviço de urgência hospitalar' rendered 'servicio de urgencias hospitalarias'. Keyword 'urgencias portugal' (10/mo) NOT used: it would need rewording the question ('ajuda urgente' = 'ayuda urgente') in a safety-critical item."
+    },
+    {
+      "group": 1,
+      "item": 0,
+      "note": "KEYWORD: 'Consulta online em Portugal' rendered 'consulta de telemedicina en Portugal' in the question only (the answer body keeps plain 'consulta'). Measured phrase is 'telemedicina portugal' (170/mo, searched in Portugal); the Spanish text contains the variant 'telemedicina en portugal', so volume is left null rather than attributing 170 to it. Revert to 'consulta online' if the reviewer finds it unnatural."
+    },
+    {
+      "group": 1,
+      "item": 1,
+      "note": "Kept fully cautious: no same-day or 'earliest slot' wording, matching the native source. 'Contacte o 112' rendered 'llama al 112'."
+    },
+    {
+      "group": 1,
+      "item": 2,
+      "note": "'Horário de expediente' rendered 'horario laboral' in the question and 'horário comercial habitual' as 'horario comercial habitual' in the answer."
+    },
+    {
+      "group": 2,
+      "item": 0,
+      "note": "'Historial relevante' rendered 'antecedentes relevantes' (clinical history), to avoid confusion with 'historial' used for the account record elsewhere. Keyword 'médico online portugal' (10/mo) NOT used: the only matching question ('consulta médica online') does not mention Portugal."
+    },
+    {
+      "group": 2,
+      "item": 2,
+      "note": "Languages kept as Portuguese and English only. Do not add Spanish: the source does not offer Spanish-language consultations in Portugal."
+    },
+    {
+      "group": 3,
+      "item": null,
+      "note": "'Atestado' rendered 'certificado' (site term, e.g. company.json 'certificados médicos'), not 'justificante' (Spain FAQ uses 'justificante' for a private non-official note, which would understate the Portuguese document)."
+    },
+    {
+      "group": 3,
+      "item": 0,
+      "note": "Official name 'Certificado de Incapacidade Temporária' kept with gloss '(certificado de incapacidad temporal para el trabajo)'; 'baixa médica' kept with gloss '(baja médica)'. 'Subsídio de doença' rendered 'subsidio por enfermedad'. Segurança Social kept unglossed. Legal reviewer: confirm 'baja médica' gloss does not suggest the Spanish INSS process."
+    },
+    {
+      "group": 3,
+      "item": 1,
+      "note": "'Carta de condução' rendered 'carné de conducir'. IMT expanded on first use as '(Instituto da Mobilidade e dos Transportes)' — official Portuguese name only, no Spanish description added."
+    },
+    {
+      "group": 3,
+      "item": 3,
+      "note": "The question asks whether the certificate is accepted; the answer deliberately does not say yes. Kept that way — no 'same legal value' wording. 'Entidade patronal' rendered 'empresa', as in es/faq-markets.json#es."
+    },
+    {
+      "group": 4,
+      "item": null,
+      "note": "'Processo clínico' rendered 'historial clínico' (es/faq-markets.json#es term), not 'historia clínica' (specific legal meaning in Spain). 'Área de doente' rendered 'área de paciente'."
+    },
+    {
+      "group": 4,
+      "item": 2,
+      "note": "'Apagamento' rendered 'supresión' (GDPR Spanish text term), and 'apagar' in the question as 'borren'. 'Regulamento Geral de Proteção de Dados' written out in full as the source does, not abbreviated to RGPD."
+    },
+    {
+      "group": 5,
+      "item": 1,
+      "note": "'Checkout' rendered 'al pagar'; 'cartão de pagamento' rendered 'tarjeta de pago'; 'comprovativo' rendered 'comprobante'. Insurance sentence kept conditional; no claim that insurers reimburse."
+    }
+  ],
+  "pt": {
+    "groups": [
+      {
+        "eyebrow": "Portugal",
+        "title": "Preguntas sobre Portugal",
+        "items": [
+          {
+            "question": "¿Los médicos están inscritos en la Ordem dos Médicos?",
+            "answer": "Sí. Los médicos que atienden a pacientes en Portugal a través de Global Health están inscritos en la Ordem dos Médicos (la corporación profesional de los médicos en Portugal). Antes de proponer cualquier tratamiento, certificado o receta, el médico realiza una valoración clínica por videollamada. Si quieres comprobar una inscripción antes de reservar, puedes buscarla directamente en la web de la Ordem dos Médicos."
+          },
+          {
+            "question": "¿Qué diferencia hay entre Global Health y SNS24?",
+            "answer": "Global Health es un servicio privado y SNS24 es el servicio público de triaje y asesoramiento del Serviço Nacional de Saúde (SNS, el sistema público de sanidad en Portugal). Puedes usar SNS24 para el triaje y la orientación inicial, y Global Health para reservar una consulta médica privada por videollamada. Si la situación requiere atención urgente u observación presencial, SNS24, el 112 o el servicio de urgencias siguen siendo la vía correcta."
+          },
+          {
+            "question": "¿Qué debo hacer si necesito ayuda urgente en Portugal?",
+            "answer": "Global Health no es un servicio de emergencias y nuestra línea telefónica no está preparada para emergencias clínicas. Si tienes síntomas graves, dolor en el pecho, dificultad para respirar, una hemorragia importante, pérdida de consciencia u otra situación de riesgo, llama al 112 o acude al servicio de urgencias hospitalarias más cercano. Las consultas online están destinadas a situaciones no urgentes."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Reservas",
+        "title": "Cómo reservar una consulta",
+        "items": [
+          {
+            "question": "¿Cómo reservar una consulta de telemedicina en Portugal?",
+            "answer": "Puedes reservar una consulta directamente en la web, eligiendo el tipo de consulta que buscas, por ejemplo medicina general, una especialidad o un certificado médico. Después de indicar tus datos y el motivo de la consulta, eliges un horario disponible en el calendario y confirmas el pago. El precio de la consulta se muestra antes de completar la reserva. Tras la reserva, recibes la confirmación con la hora de la videollamada y las instrucciones de acceso, por correo electrónico y en tu área de paciente."
+          },
+          {
+            "question": "¿Cuánto tiempo pasa hasta que me atienden en una consulta online en Portugal?",
+            "answer": "El tiempo hasta que te atienden depende del tipo de consulta y de la disponibilidad que muestra el calendario en el momento en que reservas. El calendario presenta los horarios libres en ese momento. Si tu situación es grave, no esperes a una consulta online: llama al 112 o acude a un servicio de urgencias."
+          },
+          {
+            "question": "¿Puedo reservar consultas fuera del horario laboral?",
+            "answer": "Puedes reservar online a cualquier hora del día. Los horarios de consulta disponibles dependen de la agenda clínica que muestra el calendario en ese momento y pueden incluir franjas fuera del horario comercial habitual. Si no encuentras un horario conveniente, vuelve a consultarlo más tarde."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultas",
+        "title": "Cómo funcionan las consultas",
+        "items": [
+          {
+            "question": "¿Cómo funciona una consulta médica online?",
+            "answer": "La consulta se realiza por videollamada segura, desde el ordenador, la tableta o el móvil, a la hora que reservaste. El médico confirma tu identidad y el motivo de la consulta, te pregunta por los síntomas y los antecedentes relevantes y decide los pasos siguientes en función de la valoración clínica. Según la situación, puedes recibir orientación, una receta, un certificado o la indicación de buscar atención presencial. Al final, tienes un resumen de la consulta disponible en tu área de paciente, incluido cualquier documento emitido."
+          },
+          {
+            "question": "¿Tengo que preparar algo antes de la consulta?",
+            "answer": "Ayuda tener a mano una lista de los medicamentos que tomas actualmente, con la dosis, y una breve descripción de los síntomas y desde cuándo los tienes. Si tienes pruebas, análisis o informes médicos recientes relacionados con el motivo de la consulta, tenerlos a mano permite al médico valorar tu caso con más información. Asegúrate también de tener una conexión a internet estable y un lugar tranquilo, para que la videollamada transcurra sin interrupciones."
+          },
+          {
+            "question": "¿Los médicos hablan portugués e inglés?",
+            "answer": "La oferta incluye consultas en portugués y en inglés. Consulta los idiomas indicados en el perfil de cada médico antes de reservar."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Certificados",
+        "title": "Certificados y recetas",
+        "items": [
+          {
+            "question": "¿Emiten certificado médico (baixa médica)?",
+            "answer": "Sí, es uno de los servicios disponibles. Si, tras la valoración, el médico lo considera clínicamente adecuado, puede emitir un Certificado de Incapacidade Temporária (certificado de incapacidad temporal para el trabajo), también conocido como baixa médica (baja médica). El documento depende siempre de la valoración clínica y no es automático. El posible subsidio por enfermedad lo decide por separado la Segurança Social, según sus propias normas."
+          },
+          {
+            "question": "¿Emiten certificado médico para el carné de conducir?",
+            "answer": "Existe un servicio propio de certificado médico para el carné de conducir. Antes de reservar, consulta la página del servicio para ver el alcance de la atención y los pasos previstos. Los certificados para el carné de conducir siguen los requisitos del IMT (Instituto da Mobilidade e dos Transportes)."
+          },
+          {
+            "question": "¿Pueden renovar mi receta o mi tratamiento habitual?",
+            "answer": "Sí, la renovación del tratamiento es un motivo de consulta frecuente. En una consulta de renovación, el médico revisa la medicación que ya tomas y confirma si sigue siendo clínicamente adecuada. No es una renovación automática: el médico puede pedir más información, sugerir un ajuste o recomendar una consulta presencial si la situación lo justifica."
+          },
+          {
+            "question": "¿Aceptan el certificado la empresa y la Segurança Social?",
+            "answer": "El certificado lo emite un médico inscrito en la Ordem dos Médicos tras una valoración clínica. La forma de comunicar la ausencia a la empresa y la concesión del subsidio por enfermedad siguen las normas de la empresa y de la Segurança Social. Si tienes dudas sobre tu caso, confirma los requisitos directamente con esas entidades."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacidad",
+        "title": "Privacidad e historial clínico",
+        "items": [
+          {
+            "question": "¿Están protegidos mis datos clínicos?",
+            "answer": "Sí. Tus datos de salud se tratan como información clínica sensible, con acceso restringido a las personas implicadas en tu atención, y se protegen conforme al Reglamento General de Protección de Datos. Las videollamadas se realizan mediante conexiones seguras y el registro de la consulta se guarda en tu área de paciente, salvo obligación legal en contrario."
+          },
+          {
+            "question": "¿Quién tiene acceso a mi historial clínico?",
+            "answer": "Tu historial clínico es accesible para el médico que te está atendiendo y, cuando corresponda, para el equipo directamente implicado en tu atención. No compartimos tus datos de salud con empresas, aseguradoras ni terceros sin tu consentimiento explícito, salvo cuando lo exija la ley. Puedes consultar el historial de tus consultas, certificados y recetas en tu área de paciente."
+          },
+          {
+            "question": "¿Puedo pedir que se borren mis datos clínicos?",
+            "answer": "Sí. Como titular de los datos, puedes solicitar el acceso, la rectificación o la supresión de tus datos personales, en los términos del Reglamento General de Protección de Datos. Parte de la información clínica puede tener que conservarse por la obligación legal aplicable a los registros de salud. Para ejercer este derecho, puedes contactarnos a través de los canales indicados en la página de contacto."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Pagos",
+        "title": "Precios y pago",
+        "items": [
+          {
+            "question": "¿Cuánto cuesta una consulta?",
+            "answer": "El precio de cada tipo de consulta, ya sea medicina general, una especialidad o un certificado, se muestra antes de confirmar la reserva. Los precios varían según el tipo de consulta y pueden actualizarse con el tiempo, por eso mostramos el importe vigente en el momento de reservar. Si tienes dudas sobre un servicio concreto, puedes confirmar el precio en su página."
+          },
+          {
+            "question": "¿Qué métodos de pago aceptan?",
+            "answer": "El pago se realiza online, en el momento de la reserva, mediante los métodos que se muestran al pagar, normalmente tarjeta de pago. Tras el pago, recibes un comprobante asociado a tu reserva, disponible también en tu área de paciente. Si quieres pedir un reembolso a un seguro de salud, confirma primero las condiciones de tu póliza."
+          }
+        ]
+      }
+    ]
+  }
+}

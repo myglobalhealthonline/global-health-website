@@ -1,0 +1,142 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/de/faq-markets.json under the market key.",
+  "_source": "frontend/locales/pt/faq-markets.json#pt",
+  "_locale": "de",
+  "_keywordsUsed": [
+    { "keyword": "gesundheitssystems in portugal", "volume": 90, "where": "0.1 answer" },
+    { "keyword": "krankenversicherung", "volume": 110, "where": "5.1 answer" },
+    { "keyword": "rezept", "volume": 110, "where": "group 3 title; 3.2 question" },
+    { "keyword": "krankenhauses", "volume": 30, "where": "0.2 answer" }
+  ],
+  "_reviewNotes": [
+    { "group": 0, "item": null, "note": "Register: formal 'Sie'; em dash '—' as in existing de locale strings. Masculine generic 'Arzt'/'Patient' as in most de copy. Terms matched to site: 'Konsultation' (home.json), 'Rezept' (account.json), 'Attest' (faq.json g2), 'Allgemeinmedizin' (common.json). 'área de doente' = 'Patientenbereich'; 'videochamada' = 'Videoanruf' (faq-markets.json de)." },
+    { "group": 0, "item": 0, "note": "'Ordem dos Médicos' kept, gloss '(der portugiesischen Ärztekammer)' on first use. The Ordem is a mandatory-membership professional chamber, so 'Ärztekammer' fits; home.json already says 'nationalen Ärztekammern'. 'inscritos' = 'eingetragen'. Keyword 'arzt portugal' (10) NOT placed: no natural source sentence contains that phrase without rewriting." },
+    { "group": 0, "item": 1, "note": "KEYWORD: 'Serviço Nacional de Saúde' kept and glossed '(des staatlichen Gesundheitssystems in Portugal)' — contains 'gesundheitssystems in portugal' (closest measured: 'gesundheitssystem portugal', 90). The SNS is strictly a national health SERVICE; confirm 'Gesundheitssystem' is an acceptable gloss. 'triagem' kept as 'Triage' (German alternative 'Ersteinschätzung'). 'observação presencial' = 'Untersuchung vor Ort'." },
+    { "group": 0, "item": 2, "note": "KEYWORD: 'serviço de urgência hospitalar mais próximo' = 'Notaufnahme des nächstgelegenen Krankenhauses' (closest measured: 'krankenhaus portugal', 30; phrase without 'portugal'). Symptom list literal: 'dificuldade respiratória' = 'Atembeschwerden', 'hemorragia importante' = 'starke Blutung', 'situação de risco' = 'gefährliche Situation'. Clinical review: confirm nothing softened. 112 unchanged." },
+    { "group": 1, "item": 1, "note": "'O tempo até ser atendido' = 'Die Zeit, bis Sie an der Reihe sind'. No speed or same-day promise added; the source makes none." },
+    { "group": 1, "item": 2, "note": "'a qualquer hora do dia' = 'zu jeder Tageszeit' (deliberately not 'rund um die Uhr', which could read as 24/7 care). 'podem incluir' kept as 'können ... einschließen' — no guarantee of out-of-hours slots." },
+    { "group": 2, "item": 0, "note": "'orientação' = 'Hinweise'; 'a indicação para procurar cuidados presenciais' = 'die Empfehlung, sich vor Ort persönlich versorgen zu lassen'. 'pode receber' kept conditional ('können Sie ... erhalten')." },
+    { "group": 2, "item": 2, "note": "Source offers Portuguese and English consultations only; no German-language consultation is implied. Reviewer may want to confirm this is clear enough for German-speaking readers." },
+    { "group": 3, "item": null, "note": "KEYWORD: title 'Atteste und Rezepte' and 3.2 question use 'Rezept' (closest measured: 'rezept portugal', 110). 'Rezept' also appears elsewhere because it is the only correct rendering of 'receita' — those are translation, not keyword placements. 'atestado' = 'Attest' (site term)." },
+    { "group": 3, "item": 0, "note": "'Certificado de Incapacidade Temporária' kept with gloss '(Bescheinigung über die vorübergehende Arbeitsunfähigkeit)' and 'baixa médica' kept in Portuguese. Deliberately NOT 'Krankschreibung', 'Krankenschein' or 'AU-Bescheinigung' (German statutory process). 'subsídio de doença' kept with gloss 'Krankengeld' — confirm the gloss does not suggest the German benefit. 'Segurança Social' glossed '(portugiesische Sozialversicherung)'. Question made passive ('Werden ... ausgestellt?') to avoid the ambiguous formal 'Stellen Sie'." },
+    { "group": 3, "item": 1, "note": "Source does not answer 'yes'; the neutral 'there is a dedicated service, check its page' framing is preserved. 'IMT' glossed '(Instituto da Mobilidade e dos Transportes, der portugiesischen Verkehrsbehörde)' — verify gloss. 'carta de condução' = 'Führerschein'." },
+    { "group": 3, "item": 2, "note": "'renovar' = 'verlängern'; 'tratamento habitual' = 'regelmäßige Behandlung'; 'consulta de renovação' = 'Verlängerungskonsultation'. The 'not automatic' caveat kept verbatim in meaning." },
+    { "group": 3, "item": 3, "note": "Source does not confirm acceptance; answer kept non-committal. 'atribuição de subsídio de doença' = 'ob Krankengeld gewährt wird'." },
+    { "group": 4, "item": 0, "note": "'Regulamento Geral de Proteção de Dados' = 'Datenschutz-Grundverordnung (DSGVO)' — the official German name of the same EU regulation, not a substitution. 'registo da consulta' = 'Dokumentation der Konsultation' (deliberately NOT 'Aufzeichnung', which implies a video recording). 'dados clínicos' = 'medizinische Daten'; 'dados de saúde' = 'Gesundheitsdaten'." },
+    { "group": 4, "item": 1, "note": "'seguradoras' = 'Versicherer' — deliberately NOT narrowed to 'Krankenversicherungen', which would shrink the no-sharing promise. 'processo clínico' = 'Patientenakte'." },
+    { "group": 4, "item": 2, "note": "'titular dos dados' = 'betroffene Person' (GDPR term in German). 'obrigação legal aplicável aos registos de saúde' = 'gesetzliche Aufbewahrungspflichten für Gesundheitsunterlagen'." },
+    { "group": 5, "item": 1, "note": "KEYWORD: 'seguro de saúde' = 'Krankenversicherung' (closest measured: 'krankenversicherung portugal', 110; phrase without 'portugal'). Not specified as private or public, matching source. 'cartão de pagamento' = 'Zahlungskarte'; 'apólice' = 'Police'; 'comprovativo' = 'Zahlungsbeleg'." }
+  ],
+  "pt": {
+    "groups": [
+      {
+        "eyebrow": "Portugal",
+        "title": "Fragen zu Portugal",
+        "items": [
+          {
+            "question": "Sind die Ärzte bei der Ordem dos Médicos eingetragen?",
+            "answer": "Ja. Die Ärzte, die über Global Health Patienten in Portugal behandeln, sind bei der Ordem dos Médicos (der portugiesischen Ärztekammer) eingetragen. Bevor der Arzt eine Behandlung, ein Attest oder ein Rezept vorschlägt, nimmt er per Videoanruf eine klinische Beurteilung vor. Wenn Sie eine Eintragung vor der Buchung überprüfen möchten, können Sie direkt auf der Website der Ordem dos Médicos danach suchen."
+          },
+          {
+            "question": "Was ist der Unterschied zwischen Global Health und SNS24?",
+            "answer": "Global Health ist ein privater Dienst, SNS24 ist der öffentliche Triage- und Beratungsdienst des Serviço Nacional de Saúde (des staatlichen Gesundheitssystems in Portugal). Sie können SNS24 für die Triage und eine erste Orientierung nutzen und Global Health, um eine private ärztliche Konsultation per Videoanruf zu buchen. Wenn Ihre Situation dringende Versorgung oder eine Untersuchung vor Ort erfordert, bleiben SNS24, die 112 oder die Notaufnahme der richtige Weg."
+          },
+          {
+            "question": "Was soll ich tun, wenn ich in Portugal dringend Hilfe brauche?",
+            "answer": "Global Health ist kein Notfalldienst, und unsere Telefonleitung ist nicht auf medizinische Notfälle ausgelegt. Wenn Sie schwere Symptome, Brustschmerzen, Atembeschwerden, eine starke Blutung, Bewusstseinsverlust oder eine andere gefährliche Situation haben, rufen Sie die 112 an oder begeben Sie sich in die Notaufnahme des nächstgelegenen Krankenhauses. Online-Konsultationen sind für nicht dringende Situationen gedacht."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Terminbuchung",
+        "title": "Wie Sie eine Konsultation buchen",
+        "items": [
+          {
+            "question": "Wie buche ich in Portugal eine Online-Konsultation?",
+            "answer": "Sie können eine Konsultation direkt auf der Website buchen, indem Sie die gewünschte Art der Konsultation auswählen, zum Beispiel Allgemeinmedizin, ein Fachgebiet oder ein ärztliches Attest. Nachdem Sie Ihre Daten und den Grund der Konsultation angegeben haben, wählen Sie einen freien Termin im Kalender aus und bestätigen die Zahlung. Der Preis der Konsultation wird angezeigt, bevor Sie die Buchung abschließen. Nach der Buchung erhalten Sie die Bestätigung mit der Uhrzeit des Videoanrufs und den Zugangsanweisungen per E-Mail und in Ihrem Patientenbereich."
+          },
+          {
+            "question": "Wie lange dauert es, bis ich bei einer Online-Konsultation in Portugal an der Reihe bin?",
+            "answer": "Die Zeit, bis Sie an der Reihe sind, hängt von der Art der Konsultation und von der Verfügbarkeit ab, die der Kalender zum Zeitpunkt Ihrer Buchung anzeigt. Der Kalender zeigt die zu diesem Zeitpunkt freien Termine. Wenn Ihre Situation ernst ist, warten Sie nicht auf eine Online-Konsultation: Wenden Sie sich an die 112 oder begeben Sie sich in eine Notaufnahme."
+          },
+          {
+            "question": "Kann ich Konsultationen außerhalb der Geschäftszeiten buchen?",
+            "answer": "Sie können zu jeder Tageszeit online buchen. Die verfügbaren Konsultationszeiten hängen vom ärztlichen Terminplan ab, der zu diesem Zeitpunkt im Kalender angezeigt wird, und können Zeiten außerhalb der üblichen Geschäftszeiten einschließen. Wenn Sie keinen passenden Termin finden, schauen Sie später noch einmal nach."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Konsultationen",
+        "title": "Wie die Konsultationen ablaufen",
+        "items": [
+          {
+            "question": "Wie läuft eine ärztliche Online-Konsultation ab?",
+            "answer": "Die Konsultation findet zur gebuchten Uhrzeit per sicherem Videoanruf über Computer, Tablet oder Smartphone statt. Der Arzt bestätigt Ihre Identität und den Grund der Konsultation, stellt Fragen zu Ihren Symptomen und zur relevanten Vorgeschichte und entscheidet auf Grundlage der klinischen Beurteilung über die nächsten Schritte. Je nach Situation können Sie Hinweise, ein Rezept, ein Attest oder die Empfehlung erhalten, sich vor Ort persönlich versorgen zu lassen. Am Ende steht Ihnen eine Zusammenfassung der Konsultation in Ihrem Patientenbereich zur Verfügung, einschließlich aller ausgestellten Dokumente."
+          },
+          {
+            "question": "Muss ich vor der Konsultation etwas vorbereiten?",
+            "answer": "Es hilft, eine Liste der Medikamente, die Sie derzeit einnehmen, einschließlich der Dosierung, sowie eine kurze Beschreibung Ihrer Symptome und seit wann Sie diese haben, bereitzuhalten. Wenn Sie aktuelle Untersuchungen, Laborbefunde oder ärztliche Berichte haben, die mit dem Grund der Konsultation zusammenhängen, kann der Arzt Ihren Fall mit mehr Informationen beurteilen, wenn Sie diese griffbereit haben. Sorgen Sie außerdem für eine stabile Internetverbindung und einen ruhigen Ort, damit der Videoanruf ohne Unterbrechungen verläuft."
+          },
+          {
+            "question": "Sprechen die Ärzte Portugiesisch und Englisch?",
+            "answer": "Das Angebot umfasst Konsultationen auf Portugiesisch und auf Englisch. Prüfen Sie vor der Buchung die im Profil des jeweiligen Arztes angegebenen Sprachen."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Atteste",
+        "title": "Atteste und Rezepte",
+        "items": [
+          {
+            "question": "Werden ärztliche Atteste (baixa médica) ausgestellt?",
+            "answer": "Ja, das ist einer der verfügbaren Dienste. Wenn der Arzt es nach der Beurteilung für klinisch angemessen hält, kann er ein Certificado de Incapacidade Temporária (Bescheinigung über die vorübergehende Arbeitsunfähigkeit) ausstellen, auch „baixa médica“ genannt. Das Dokument hängt immer von der klinischen Beurteilung ab und wird nicht automatisch ausgestellt. Über ein etwaiges Krankengeld (subsídio de doença) entscheidet die Segurança Social (portugiesische Sozialversicherung) gesondert nach ihren eigenen Regeln."
+          },
+          {
+            "question": "Werden ärztliche Atteste für den Führerschein ausgestellt?",
+            "answer": "Für ärztliche Atteste für den Führerschein gibt es einen eigenen Dienst. Informieren Sie sich vor der Buchung auf der Seite dieses Dienstes über den Leistungsumfang und die vorgesehenen Schritte. Atteste für den Führerschein richten sich nach den Anforderungen des IMT (Instituto da Mobilidade e dos Transportes, der portugiesischen Verkehrsbehörde)."
+          },
+          {
+            "question": "Kann mein Rezept oder meine regelmäßige Behandlung verlängert werden?",
+            "answer": "Ja, die Verlängerung einer Behandlung ist ein häufiger Konsultationsgrund. In einer Verlängerungskonsultation überprüft der Arzt die Medikamente, die Sie bereits einnehmen, und bestätigt, ob sie weiterhin klinisch angemessen sind. Es handelt sich nicht um eine automatische Verlängerung: Der Arzt kann weitere Informationen anfordern, eine Anpassung vorschlagen oder eine Konsultation vor Ort empfehlen, wenn die Situation dies rechtfertigt."
+          },
+          {
+            "question": "Wird das Attest vom Arbeitgeber und von der Segurança Social anerkannt?",
+            "answer": "Das Attest wird nach einer klinischen Beurteilung von einem Arzt ausgestellt, der bei der Ordem dos Médicos eingetragen ist. Wie Sie Ihre Abwesenheit dem Arbeitgeber mitteilen und ob Krankengeld gewährt wird, richtet sich nach den Regeln des Unternehmens und der Segurança Social. Wenn Sie Fragen zu Ihrem Fall haben, klären Sie die Anforderungen direkt mit diesen Stellen."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Datenschutz",
+        "title": "Datenschutz und Patientenakte",
+        "items": [
+          {
+            "question": "Sind meine medizinischen Daten geschützt?",
+            "answer": "Ja. Ihre Gesundheitsdaten werden als sensible klinische Informationen behandelt, der Zugriff ist auf die an Ihrer Versorgung beteiligten Personen beschränkt, und sie werden gemäß der Datenschutz-Grundverordnung (DSGVO) geschützt. Die Videoanrufe laufen über sichere Verbindungen, und die Dokumentation der Konsultation wird in Ihrem Patientenbereich gespeichert, sofern keine gesetzliche Verpflichtung dem entgegensteht."
+          },
+          {
+            "question": "Wer hat Zugriff auf meine Patientenakte?",
+            "answer": "Ihre Patientenakte ist für den Arzt zugänglich, der Sie behandelt, und gegebenenfalls für das Team, das unmittelbar an Ihrer Versorgung beteiligt ist. Wir geben Ihre Gesundheitsdaten ohne Ihre ausdrückliche Einwilligung nicht an Arbeitgeber, Versicherer oder Dritte weiter, außer wenn dies gesetzlich vorgeschrieben ist. Den Verlauf Ihrer Konsultationen, Atteste und Rezepte können Sie in Ihrem Patientenbereich einsehen."
+          },
+          {
+            "question": "Kann ich die Löschung meiner medizinischen Daten beantragen?",
+            "answer": "Ja. Als betroffene Person können Sie gemäß der Datenschutz-Grundverordnung Auskunft über Ihre personenbezogenen Daten sowie deren Berichtigung oder Löschung verlangen. Ein Teil der klinischen Informationen muss unter Umständen aufgrund gesetzlicher Aufbewahrungspflichten für Gesundheitsunterlagen aufbewahrt werden. Um dieses Recht auszuüben, können Sie uns über die auf der Kontaktseite angegebenen Kanäle kontaktieren."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Zahlungen",
+        "title": "Preise und Zahlung",
+        "items": [
+          {
+            "question": "Was kostet eine Konsultation?",
+            "answer": "Der Preis jeder Konsultationsart, ob Allgemeinmedizin, Fachgebiet oder Attest, wird angezeigt, bevor Sie die Buchung bestätigen. Die Preise unterscheiden sich je nach Art der Konsultation und können sich im Laufe der Zeit ändern, deshalb zeigen wir Ihnen den aktuellen Preis zum Zeitpunkt der Buchung. Wenn Sie Fragen zu einem bestimmten Dienst haben, können Sie den Preis auf der jeweiligen Seite überprüfen."
+          },
+          {
+            "question": "Welche Zahlungsmethoden werden akzeptiert?",
+            "answer": "Die Zahlung erfolgt online bei der Buchung über die im Bezahlvorgang angezeigten Methoden, in der Regel per Zahlungskarte. Nach der Zahlung erhalten Sie einen Zahlungsbeleg zu Ihrer Buchung, der auch in Ihrem Patientenbereich verfügbar ist. Wenn Sie eine Erstattung bei einer Krankenversicherung beantragen möchten, prüfen Sie zuerst die Bedingungen Ihrer Police."
+          }
+        ]
+      }
+    ]
+  }
+}

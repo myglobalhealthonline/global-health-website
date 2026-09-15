@@ -1,0 +1,138 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/ro/faq-markets.json under the market key.",
+  "_source": "frontend/locales/cs/faq-markets.json#cz",
+  "_locale": "ro",
+  "_keywordsUsed": [
+    { "keyword": "medic online în cehia", "volume": null, "where": "group 2 title" }
+  ],
+  "_reviewNotes": [
+    { "group": 0, "item": 0, "note": "Česká lékařská komora kept in Czech with the gloss 'Camera Medicilor din Cehia'. The abbreviation ČLK is not in the native text and was not added. The address 'Praha 1, Rybná 24' is kept exactly; the text says it is the registered office, not a clinic." },
+    { "group": 0, "item": 0, "note": "'Praktický lékař' is rendered as 'medic de familie' (site term), and glossed once in 0.2 as („praktický lékař”). A Czech praktický lékař is not a CNAS family doctor; the text does not imply that." },
+    { "group": 0, "item": 1, "note": "Languages: the source offers Czech and English; 'another language' is only something to check with the doctor. Romanian-language consultations are not promised or implied." },
+    { "group": 0, "item": 2, "note": "'Neschopenka' kept in Czech with the gloss 'certificatul ceh de incapacitate temporară de muncă'. ČSSZ glossed once as 'Administrația Cehă a Securității Sociale'. The Romanian 'concediu medical' is deliberately not used. 'Odborné posouzení' rendered as 'evaluare medicală calificată' (not 'de specialitate', to avoid implying a specialist)." },
+    { "group": 0, "item": 2, "note": "'Zdravotní pojišťovna' is rendered as 'asigurător de sănătate' throughout. 'Casa de asigurări de sănătate' was rejected because it evokes Romania's CNAS/CAS system. Reviewer to confirm." },
+    { "group": 1, "item": 0, "note": "'Hodnocení' (ratings) rendered as 'recenziile', to avoid 'evaluare', which in this copy means clinical assessment." },
+    { "group": 1, "item": 1, "note": "YMYL: the native source says same-day slots 'bývají k dispozici' (are usually available) for GPs and many specialists. Rendered as 'sunt de obicei disponibile', with no stronger promise. 155 kept, with the gloss '(serviciul de ambulanță)' added; 112 kept. 'Pohotovost' glossed as 'unitate de urgență'." },
+    { "group": 1, "item": 2, "note": "'Zdravotní kartička' rendered as 'cardul de asigurat' with the Czech term in quotes. 'Záznam' from a consultation is rendered as 'fișa consultației' throughout, not 'înregistrare', which could be read as a video recording of the call." },
+    { "group": 2, "item": null, "note": "Keyword placement: the group title 'Online konzultace' became 'Consultații cu un medic online în Cehia'. 'În Cehia' is implicit because this is the Czechia market page. No facts were added. The country name 'Cehia' is standard Romanian for Česko." },
+    { "group": 2, "item": 0, "note": "'eRecept' kept with the gloss 'rețeta electronică cehă'. 'Potvrzení' rendered as 'adeverință' with the Czech term in quotes; its exact scope (what document is issued) should be confirmed clinically. 'Do dvaceti minut' rendered as 'până la douăzeci de minute' (written in words, as in the source)." },
+    { "group": 2, "item": 1, "note": "'Preskripce a přeskripce' rendered as 'prescrierea și represcrierea'. 'Laboratorní odběr' rendered as 'recoltare pentru analize de laborator'; 'zobrazovací metoda' as 'investigații imagistice'. Clinical reviewer to confirm the list of conditions." },
+    { "group": 3, "item": 0, "note": "The quoted scare-quote in the source („nevydává”) is kept as „emite”. The core safety statement is kept exactly: the private platform does not itself issue or guarantee the eNeschopenka; the ČSSZ decides on sickness benefit. 'Rodné číslo' glossed as 'codul numeric personal ceh'." },
+    { "group": 3, "item": 1, "note": "ePortál ČSSZ kept in Czech. Czech nouns are not inflected in Romanian ('documentele „neschopenka”')." },
+    { "group": 3, "item": 2, "note": "Centrální úložiště elektronických receptů kept in Czech with the gloss 'registrul central al rețetelor electronice'." },
+    { "group": 3, "item": 3, "note": "'Psychofarmaka' rendered as 'medicamente psihotrope'; 'návykové látky' as 'substanțe care creează dependență'. Clinical reviewer to confirm." },
+    { "group": 5, "item": 1, "note": "ZPMVČR kept as is (a Czech health insurer; no gloss added). 'Proplácení' rendered as 'decontare'. The answer keeps that Global Health is paid by the patient regardless of insurer." }
+  ],
+  "cz": {
+    "groups": [
+      {
+        "eyebrow": "Cehia",
+        "title": "Întrebări despre Cehia",
+        "items": [
+          {
+            "question": "Medicii Global Health sunt înregistrați în Cehia?",
+            "answer": "Da. Medicii care oferă consultații prin Global Health Česko sunt înregistrați la Česká lékařská komora (Camera Medicilor din Cehia), organizația profesională care ține registrul medicilor de familie și al medicilor specialiști din Cehia. Înregistrarea fiecărui medic o găsiți pe profilul său, împreună cu specializarea și limbile în care oferă consultații. Sediul nostru este în Praga 1, la adresa Rybná 24 — este sediul social înregistrat al companiei, nu un cabinet pentru vizite în persoană. Toate examinările au loc prin apel video securizat, astfel încât locul în care vă aflați în Cehia nu contează — puteți avea o consultație de oriunde din țară."
+          },
+          {
+            "question": "În ce limbă pot avea consultația?",
+            "answer": "Oferim consultații în cehă și în engleză. Profilul fiecărui medic indică limba sau limbile în care oferă consultații, astfel încât vă puteți alege medicul în funcție de limbă încă dinainte de programare. Linia telefonică pentru întrebări despre programări, plăți și cont funcționează, de asemenea, în cehă și în engleză. Dacă preferați o consultație într-o altă limbă, vă recomandăm să verificați acest lucru direct la medicul respectiv înainte de rezervare, deoarece limbile oferite pot varia în funcție de specializarea sa și de disponibilitatea din ziua respectivă. Dacă nu sunteți sigur ce medic să alegeți, filtrul de limbă îl găsiți direct în sistemul de rezervare, la alegerea intervalului orar."
+          },
+          {
+            "question": "Înlocuiește Global Health medicul meu de familie?",
+            "answer": "Nu, Global Health funcționează ca o completare a îngrijirii medicale obișnuite, nu ca un înlocuitor al înregistrării la un medic de familie („praktický lékař”). Uneori, o consultație online este o cale mai rapidă spre o evaluare medicală calificată, de exemplu în cazul unor probleme acute în afara programului clinicii dumneavoastră sau al unei întrebări de specialitate. Pentru anumite proceduri, cum ar fi eliberarea documentului „neschopenka” (certificatul ceh de incapacitate temporară de muncă), rămân însă decisive relația cu medicul de familie la care sunteți înregistrat și regulile ČSSZ (Administrația Cehă a Securității Sociale). Vă recomandăm să aveți în continuare un medic de familie înregistrat la asigurătorul de sănătate, pentru îngrijirea pe termen lung și controalele preventive. Pentru monitorizarea pe termen lung a bolilor cronice, vaccinări sau controalele preventive regulate, medicul de familie personal rămâne de neînlocuit, deoarece asigură continuitatea îngrijirii și ținerea documentației medicale într-un singur loc."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Programare",
+        "title": "Cum se face programarea",
+        "items": [
+          {
+            "question": "Cum programez o consultație?",
+            "answer": "Programați consultația online în câteva minute: alegeți domeniul (medic de familie sau specialist), selectați un interval liber din calendarul unui anumit medic și confirmați programarea. Prețul consultației este afișat înainte de finalizarea rezervării, astfel încât știți exact ce plătiți. După confirmare, primiți pe e-mail linkul către apelul video și eventualele instrucțiuni de pregătire. Programarea o puteți face de pe calculator sau de pe telefonul mobil, fără să fie nevoie să instalați o aplicație separată. Dacă nu sunteți sigur ce medic să alegeți, pe fiecare profil găsiți specializarea, recenziile și cel mai apropiat interval liber, astfel încât decizia durează doar câteva momente."
+          },
+          {
+            "question": "Cât de repede pot consulta un medic?",
+            "answer": "În Cehia sunt de obicei disponibile intervale chiar în aceeași zi, atât la medicul de familie, cât și la mulți specialiști, în funcție de gradul actual de ocupare și de limba în care doriți consultația. Disponibilitatea exactă o vedeți direct în calendar, la alegerea medicului — sistemul afișează doar intervalele libere reale. Dacă aveți nevoie de îngrijire cu adevărat urgentă, consultația online nu este destinată rezolvării stărilor acute și care pun viața în pericol; în acest caz, sunați la 155 (serviciul de ambulanță) sau la 112 ori mergeți la cea mai apropiată unitate de urgență („pohotovost”). În afara orelor de vârf, alegerea intervalelor este de obicei și mai largă, mai ales la medicii de familie care oferă consultații atât în engleză, cât și în cehă. Vă recomandăm să faceți programarea din timp dacă preferați un anumit medic sau o anumită oră."
+          },
+          {
+            "question": "Pot programa o consultație pentru copilul meu sau pentru un membru al familiei?",
+            "answer": "Da, consultația poate fi programată și în numele unui copil sau al unui alt membru al familiei, dacă rezervarea este făcută de reprezentantul legal sau de o persoană care are acordul acestuia. La programare introduceți datele persoanei care va avea consultația, nu doar ale persoanei care plătește. În cazul copiilor și al minorilor, medicul evaluează în timpul consultației dacă forma online este potrivită pentru problema respectivă și, în caz contrar, recomandă o examinare în persoană. Vă recomandăm ca, la consultația copilului, să aveți la îndemână și cardul de asigurat („zdravotní kartička”) și eventuala documentație de la medicul de familie. Plata consultației se face dintr-un singur cont, indiferent de membrul familiei care are consultația. După consultație, fișa consultației și eventualele documente le găsiți în contul de pacient al persoanei care a fost examinată."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultații",
+        "title": "Consultații cu un medic online în Cehia",
+        "items": [
+          {
+            "question": "Cum decurge o consultație online?",
+            "answer": "Consultația are loc sub forma unui apel video securizat în browser, la ora pe care ați rezervat-o. Medicul discută cu dumneavoastră problemele, eventualul istoric medical și medicamentele pe care le luați și, pe această bază, propune pașii următori — poate fi vorba de o recomandare de tratament, de emiterea unui „eRecept” (rețeta electronică cehă), de recomandarea unei investigații suplimentare sau, dacă este justificat clinic, de emiterea unei adeverințe („potvrzení”). Consultația durează de obicei până la douăzeci de minute. După încheierea ei, găsiți fișa consultației și eventualele documente în contul dumneavoastră de pacient. Înainte de consultație vă recomandăm să aveți pregătită o listă cu medicamentele pe care le luați și o scurtă descriere a problemelor, pentru ca examinarea să decurgă cât mai eficient. Dacă legătura se întrerupe, medicul va încerca să reia apelul sau vă va oferi un interval alternativ."
+          },
+          {
+            "question": "Ce probleme pot fi rezolvate online și când este nevoie de o examinare în persoană?",
+            "answer": "Online pot fi rezolvate bine afecțiunile acute obișnuite (răceala, gripa, infecțiile urinare), prescrierea și represcrierea medicamentelor obișnuite, problemele de piele și alte întrebări pentru care sunt suficiente o descriere și, eventual, o fotografie, precum și consultațiile cu un specialist. Dacă problemele necesită o examinare fizică, o recoltare pentru analize de laborator sau investigații imagistice, medicul vă va semnala acest lucru în timpul consultației și vă va recomanda o unitate medicală potrivită sau o unitate de urgență. Scopul este o evaluare sigură la distanță, nu înlocuirea examinării în persoană acolo unde aceasta este necesară. În cazul problemelor de piele, este util să trimiteți o fotografie de bună calitate înainte de începerea apelului, iar în cazul problemelor respiratorii și al altor probleme acute, medicul evaluează gravitatea direct în timpul apelului."
+          },
+          {
+            "question": "Pot consulta un specialist sau doar un medic de familie?",
+            "answer": "Prin Global Health Česko puteți programa o consultație atât cu un medic de familie, cât și cu anumiți specialiști — domeniile oferite sunt afișate direct în sistemul de rezervare și variază în funcție de disponibilitatea actuală a medicilor. La noi vă programați direct la specialist, fără să fie nevoie să așteptați o trimitere pe hârtie de la medicul de familie; specialistul poate însă recomanda, în cadrul consultației, pașii următori, eventual o examinare în persoană sau o examinare la un alt specialist, dacă starea respectivă o impune. Lista actuală a specializărilor disponibile se poate schimba în funcție de medicii care oferă consultații în ziua respectivă, așa că vă recomandăm să verificați oferta direct în sistemul de rezervare."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Neschopenka și rețete",
+        "title": "Neschopenka, eRecept și medicamente",
+        "items": [
+          {
+            "question": "Îmi poate elibera un medic prin Global Health o „neschopenka”?",
+            "answer": "„Neschopenka” (incapacitatea temporară de muncă) este întotdeauna decizia medicului curant, pe baza unei examinări, inclusiv telefonice sau video, și se transmite electronic direct în sistemul ČSSZ ca „eNeschopenka” — o platformă privată nu o „emite” și nici nu o garantează ea însăși. Dacă starea pacientului o justifică, medicul o eliberează în timpul consultației sau după aceasta, prin aceeași procedură ca la o vizită în persoană. Despre dreptul la indemnizația de boală decide apoi ČSSZ, conform propriilor reguli, nu medicul curant și nici Global Health. Vă recomandăm să aveți pregătite „rodné číslo” (codul numeric personal ceh) și datele angajatorului."
+          },
+          {
+            "question": "Cum funcționează „eNeschopenka” și de ce nu o eliberează o clinică privată doar la cerere?",
+            "answer": "„Neschopenka” este astăzi complet electronică („eNeschopenka”) și este eliberată direct de medicul curant prin ePortál ČSSZ sau printr-un software medical conectat — documentul ajunge direct în sistemul ČSSZ, la angajator și la asigurat, fără variantă pe hârtie. Eliberarea este condiționată de examinarea și evaluarea clinică a medicului, nu de cererea pacientului adresată unui anumit furnizor. Situația actuală și istoricul documentelor „neschopenka” le puteți vedea și dumneavoastră, după autentificarea pe ePortál ČSSZ, inclusiv datele despre medicul curant și durata incapacității de muncă. Pentru pacient nu se schimbă, așadar, nimic în privința modului în care folosește „neschopenka” — doar că nu mai trebuie să ducă fizic nimic angajatorului, deoarece angajatorul are propriul acces în sistemul ČSSZ."
+          },
+          {
+            "question": "Primesc un „eRecept” la consultație?",
+            "answer": "Dacă starea de sănătate o impune și medicul consideră că este potrivit după evaluare, poate emite în timpul consultației online un „eRecept”, care este salvat electronic în Centrální úložiště elektronických receptů (registrul central al rețetelor electronice). Rețeta o ridicați apoi de la orice farmacie din Cehia, prezentând „rodné číslo” sau codul primit prin SMS, fără să fie nevoie de o versiune pe hârtie. Nu orice consultație se încheie neapărat cu o prescripție — depinde de evaluarea clinică a medicului. Pentru anumite substanțe, de exemplu opioide sau medicamente cu regim special, se pot aplica restricții suplimentare prevăzute de lege. Datorită formei electronice, rețeta poate fi ridicată și în afara localității de domiciliu, practic de la orice farmacie din Cehia, ceea ce facilitează ridicarea medicamentului și atunci când sunteți în călătorie."
+          },
+          {
+            "question": "Îmi puteți prescrie în mod repetat același medicament pe care îl iau de mult timp?",
+            "answer": "În cazul medicației cronice, medicul verifică în timpul consultației tratamentul dumneavoastră actual și, dacă este nevoie, emite un „eRecept” pentru continuarea terapiei, dacă consideră acest lucru adecvat din punct de vedere clinic. Pentru medicamentele care necesită monitorizare regulată, de exemplu analize de laborator de control, medicul poate recomanda o examinare în persoană sau o recoltare înainte de a prelungi rețeta. În special pentru opioide, substanțe care creează dependență și unele medicamente psihotrope se aplică reguli mai stricte pentru prescrierea la distanță, iar medicul vă informează despre acestea în timpul consultației. Dacă de la ultimul control a trecut o perioadă mai lungă, medicul vă poate recomanda mai întâi o scurtă vizită în persoană la medicul dumneavoastră de familie, înainte de a reînnoi rețeta."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Confidențialitate",
+        "title": "Confidențialitate și fișe medicale",
+        "items": [
+          {
+            "question": "Cum sunt protejate datele mele medicale?",
+            "answer": "Întreaga documentație medicală și transferul de date în timpul consultației video sunt criptate și prelucrate în conformitate cu GDPR și cu legislația cehă privind protecția datelor personale și sensibile. Acces la fișele dumneavoastră au doar medicul curant și un număr restrâns de membri ai personalului autorizat care asigură funcționarea platformei. Nu vindem datele și nu le partajăm cu terți în scopuri de marketing. Detalii despre prelucrarea datelor găsiți în politica noastră de confidențialitate, disponibilă pe site. Accesările sistemului sunt, în plus, auditate, astfel încât se poate verifica retroactiv cine a lucrat cu o fișă și când. Pentru întrebări privind protecția datelor, vă puteți adresa direct echipei noastre de suport."
+          },
+          {
+            "question": "Cine are acces la fișa consultației mele?",
+            "answer": "Fișa și notițele din consultație le văd în primul rând medicul care v-a examinat și dumneavoastră, în contul de pacient. Dacă solicitați acest lucru și vă dați acordul, rezumatul poate fi pus la dispoziția medicului dumneavoastră de familie sau a altui medic curant, pentru continuitatea îngrijirii. Fără acordul dumneavoastră explicit nu partajăm fișele cu angajatorul, cu asigurătorul de sănătate sau cu alți terți — cu excepția cazurilor prevăzute de lege, de exemplu raportarea anumitor boli infecțioase. Aceleași reguli se aplică și evidențelor privind un „eRecept” sau o „neschopenka” emise, dacă acestea au fost eliberate în timpul consultației. Acordul pentru partajare poate fi retras oricând prin contul de pacient."
+          },
+          {
+            "question": "Pot solicita o copie a fișei mele medicale?",
+            "answer": "Da. În calitate de pacient, aveți dreptul să solicitați o copie a documentației medicale întocmite în legătură cu consultațiile prin Global Health, prin contul de pacient sau prin e-mail către echipa noastră de suport. De obicei, soluționăm solicitarea în câteva zile lucrătoare. Același lucru este valabil și pentru evidența unui „eRecept” sau a unei „neschopenka” emise, dacă acestea au fost eliberate în timpul consultației. O copie a documentației vă poate fi utilă și pentru a o transmite medicului de familie sau unui alt specialist. Documentația o primiți în format electronic, care poate fi ușor redirecționat sau tipărit, după nevoie. Dacă aveți nelămuriri privind volumul datelor furnizate, vă puteți adresa echipei noastre de suport. Datele sunt păstrate pe durata stabilită de legislația din domeniul sănătății."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Plăți",
+        "title": "Plăți și prețuri",
+        "items": [
+          {
+            "question": "Cât costă consultația și cum plătesc?",
+            "answer": "Prețul unei anumite consultații îl vedeți întotdeauna înainte de finalizarea programării, deoarece diferă în funcție de tipul consultației (medic de familie, specialist) și de medicul ales, și este gestionat direct în sistemul de rezervare, astfel încât corespunde întotdeauna ofertei actuale. Plata se face online, cu cardul, în momentul rezervării, în siguranță, printr-un procesator de plăți securizat. Nu percepem taxe ascunse suplimentare — prețul afișat la programare este prețul pe care îl plătiți. Factura pentru plată o primiți automat pe e-mail. Acceptăm cardurile de plată uzuale, iar plata este procesată imediat, astfel încât rezervarea este confirmată imediat după finalizarea comenzii. Factura poate fi găsită oricând, retroactiv, și în contul dumneavoastră de pacient."
+          },
+          {
+            "question": "Îmi decontează asigurătorul de sănătate consultația?",
+            "answer": "Global Health este un serviciu privat cu plată, iar plata o faceți direct către noi, nu prin sistemul public de asigurări de sănătate. Unii asigurători de sănătate din Cehia, de exemplu ZPMVČR, oferă clienților lor propria linie telefonică sau online ca beneficiu inclus în asigurare — este însă un serviciu separat al asigurătorului, nu decontarea consultațiilor la furnizori privați precum Global Health. Vă recomandăm să verificați direct la asigurătorul dumneavoastră dacă vă oferă o contribuție pentru îngrijirea privată. În practică, acest lucru înseamnă că plata consultației la Global Health o suportați dumneavoastră, indiferent de asigurătorul pe care îl aveți. Condițiile exacte ale fiecărui asigurător diferă și se pot schimba în timp."
+          }
+        ]
+      }
+    ]
+  }
+}

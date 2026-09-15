@@ -1,0 +1,141 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/es/faq-markets.json under the market key.",
+  "_source": "frontend/locales/pt/faq-markets.json#br",
+  "_locale": "es",
+  "_keywordsUsed": [
+    { "keyword": "consulta médica online", "volume": null, "where": "1.0 answer" },
+    { "keyword": "seguro médico", "volume": null, "where": "5.1 question" }
+  ],
+  "_reviewNotes": [
+    { "group": 0, "item": null, "note": "Translated from the native Brazilian Portuguese copy, not the English. Uses neutral Latin American Spanish, because Spanish speakers in Brazil are mostly Latin American: 'salud' (never 'sanidad'), 'celular', 'computadora', 'video', 'agendar', 'empleador', 'monitoreada'. This differs from the Spain-leaning es#es locale on purpose. Register is 'tú', as in es#es; the 'vocês' questions use the neutral 'ustedes' verb form. Em dashes kept spaced as in the source." },
+    { "group": 0, "item": 0, "note": "CRM and CFM keep their official Portuguese names as in the source, with no Spanish gloss: the source already expands them and the names are transparent to Spanish readers. 'Registrado en el CRM' is used, never 'colegiado'. 'Conduta' = 'conducta' (Latin American clinical usage for the management plan)." },
+    { "group": 0, "item": 1, "note": "'Resolução CFM nº 2.314/2022' kept verbatim. Validity wording kept exactly as in the source: legal validity 'siempre que lo firme digitalmente el médico responsable'. Not strengthened." },
+    { "group": 0, "item": 1, "note": "'Atestado' rendered 'certificado (médico)' throughout, the most widely understood term across Latin America (alternatives: 'constancia médica', or 'incapacidad' in Mexico/Colombia). Clinical/legal reviewer should confirm." },
+    { "group": 0, "item": 1, "note": "INSS glossed on first use only: 'Instituto Nacional do Seguro Social, la seguridad social brasileña'. 'Benefício previdenciário' (3.0) = 'la prestación de la seguridad social'." },
+    { "group": 0, "item": 2, "note": "'192 (SAMU)' kept exactly as in the source, with no gloss because the instruction to call makes it self-explanatory. 'Pronto-socorro' = 'servicio de urgencias'; 'emergência' = 'emergencia' (Latin American usage). 'Não é monitorada' = 'no está monitoreada'." },
+    { "group": 1, "item": 0, "note": "KEYWORD: 'teleconsulta' rendered 'consulta médica online' once here. This is the head term of 'consulta médica online brasil' (10/mo, OpenSEO 2026-09-15). Volume is null because the exact phrase with 'brasil' does not appear. Elsewhere 'teleconsulta' stays 'teleconsulta'." },
+    { "group": 1, "item": 0, "note": "'Clínico geral' = 'médico general'. 'Agendamento/agendar' = 'agendar / página de reserva'." },
+    { "group": 1, "item": 1, "note": "Same-day wording follows the native source ('na maioria dos casos há horários disponíveis no mesmo dia' = 'en la mayoría de los casos hay horarios disponibles el mismo día'). Not strengthened. 'Vaga' = 'un horario disponible' ('turno' avoided as Argentina-specific)." },
+    { "group": 1, "item": 2, "note": "'Exames' = 'exámenes' (Latin American term for lab tests; Spain would say 'pruebas/análisis')." },
+    { "group": 2, "item": 0, "note": "'Do seu estado' rendered 'de su estado', which keeps the Portuguese ambiguity (the doctor's state or the patient's state). The English reference reads 'their state'. Also in 2.2 and 3.0. Reviewer should confirm the intended meaning. 'Prontuário eletrônico' = 'historia clínica electrónica'." },
+    { "group": 2, "item": 1, "note": "The source says the rest of the site is available 'in both languages' (Portuguese and English). Kept faithfully, but on a Spanish page this may read oddly. Flag for content owner." },
+    { "group": 3, "item": 0, "note": "'Mesma validade de um atestado emitido presencialmente' kept at the same strength ('la misma validez'). The non-guarantee about third parties is preserved. 'Empresa' in the last sentence follows the source ('política da sua empresa')." },
+    { "group": 3, "item": 1, "note": "'Medicamentos controlados' = 'medicamentos controlados'. 'Receita eletrônica' = 'recetas electrónicas'." },
+    { "group": 3, "item": 3, "note": "'Afastamento por doença comum' = 'ausencia laboral por enfermedad común'; 'perícia específica' = 'peritaje específico'." },
+    { "group": 4, "item": 0, "note": "LGPD keeps its official Portuguese name, glossed on first use only: 'la Ley General de Protección de Datos de Brasil'." },
+    { "group": 5, "item": 1, "note": "KEYWORD: 'plano de saúde' rendered 'seguro médico' once in the question. This is the head term of 'seguro médico brasil' (30/mo Argentina, 20/mo Spain). Volume is null because the exact phrase does not appear. 'Convênio' kept in Portuguese as the local name, and 'planes de salud' is used in the answer. 'Operadora' = 'aseguradora'." },
+    { "group": 5, "item": null, "note": "Keywords not used: 'salud en brasil', 'sanidad en brasil' (no source sentence expresses them without adding words; 'sanidad' is also Spain-only) and 'telemedicina brasil' (the exact phrase is not natural). 'Telemedicina' appears as a plain translation of the source term and is not counted as a keyword placement." }
+  ],
+  "br": {
+    "groups": [
+      {
+        "eyebrow": "Brasil",
+        "title": "Preguntas sobre Brasil",
+        "items": [
+          {
+            "question": "¿Los médicos están registrados en Brasil?",
+            "answer": "Sí. Todos los médicos que atienden a pacientes en Brasil a través de Global Health tienen registro en el Conselho Regional de Medicina (CRM) de su estado, bajo la supervisión del Conselho Federal de Medicina (CFM). Esta información está disponible en el perfil de cada médico antes de que reserves la consulta, incluidos el número de CRM y la especialidad. La teleconsulta cumple las mismas exigencias éticas y técnicas que una consulta presencial: el médico evalúa tu cuadro clínico y decide la conducta según su criterio profesional, con base en las normas del CFM para el ejercicio de la medicina a distancia en el país."
+          },
+          {
+            "question": "¿La teleconsulta y el certificado emitido online tienen validez jurídica en Brasil?",
+            "answer": "Sí. La telemedicina está reconocida como forma legítima de ejercicio de la medicina por el Conselho Federal de Medicina (Resolução CFM nº 2.314/2022), y un certificado emitido tras una teleconsulta real tiene validez jurídica siempre que lo firme digitalmente el médico responsable, conforme a las normas del CFM. Esto es distinto de un documento generado solo a partir de un cuestionario, sin evaluación médica — nuestro certificado solo se emite después de una consulta con un médico, y únicamente cuando es clínicamente apropiado para tu cuadro. La aceptación por parte del empleador y la prestación del INSS (Instituto Nacional do Seguro Social, la seguridad social brasileña) las evalúa cada uno según sus propios criterios, y no nosotros."
+          },
+          {
+            "question": "¿Qué hago en caso de emergencia médica?",
+            "answer": "Global Health es una clínica online y no sustituye la atención de emergencia. Si tienes síntomas graves — dolor en el pecho, dificultad para respirar, sangrado intenso, pérdida del conocimiento o cualquier señal de riesgo para la vida — llama de inmediato al 192 (SAMU) o acude al servicio de urgencias más cercano. Nuestras teleconsultas están indicadas para la evaluación de síntomas no urgentes, el seguimiento de salud, certificados y prescripciones cuando es clínicamente apropiado. La línea de atención de Global Health no está monitoreada para emergencias clínicas, por lo que no debe usarse en esas situaciones. Si tienes dudas sobre la gravedad de los síntomas, busca siempre atención presencial."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Citas",
+        "title": "Cómo agendar tu consulta",
+        "items": [
+          {
+            "question": "¿Cómo agendo una consulta en Global Health?",
+            "answer": "Puedes agendar una consulta médica online directamente en el sitio web, eligiendo el tipo de atención — médico general o especialista, según disponibilidad en Brasil — y un horario que te convenga. Después de elegir el horario, completas un breve formulario con tus datos y tu historial relevante, confirmas el pago y recibes el enlace de la videollamada por correo electrónico. No es necesario llamar ni enviar mensajes para agendar; todo el proceso se hace online, en pocos minutos. Si prefieres aclarar dudas administrativas antes de agendar, puedes escribir a nuestro correo electrónico de contacto, atendido en portugués e inglés."
+          },
+          {
+            "question": "¿Hay consultas el mismo día?",
+            "answer": "Sí, en la mayoría de los casos hay horarios disponibles el mismo día, según la demanda y la disponibilidad de los médicos en el momento en que consultas la agenda. Al abrir la página de reserva, solo ves los horarios realmente libres, así que lo que aparece ahí ya refleja la disponibilidad real. Si necesitas un certificado u orientación rápida, te recomendamos agendar en cuanto notes el síntoma, ya que los horarios más próximos suelen llenarse primero. Para situaciones que no pueden esperar a un horario disponible, busca atención presencial o, en caso de emergencia, llama al 192."
+          },
+          {
+            "question": "¿Cuánto cuesta una consulta?",
+            "answer": "El valor de cada tipo de consulta se muestra antes de que confirmes la cita, en la pantalla de selección de horario, para que sepas exactamente cuánto vas a pagar antes de finalizar. Los precios pueden variar según el tipo de atención — médico general, especialista o exámenes, cuando estén disponibles en Brasil — y se actualizan periódicamente, por eso no los publicamos fuera de la propia página de reserva. También puedes consultar los valores en la página de cada servicio antes de agendar. No cobramos ninguna tarifa oculta: el valor mostrado en el momento de la reserva es el valor final de la consulta."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultas",
+        "title": "Cómo funciona la teleconsulta",
+        "items": [
+          {
+            "question": "¿Cómo funciona la consulta por video?",
+            "answer": "Después de confirmar la cita, recibes un enlace para la videollamada, accesible desde el celular, la tableta o la computadora, sin necesidad de descargar ninguna aplicación. A la hora agendada, entras a la sala virtual y te atiende un médico registrado en el Conselho Regional de Medicina de su estado, que escuchará tus síntomas, revisará tu historial relevante y realizará la evaluación de la misma forma que lo haría presencialmente. Al final, el médico decide la conducta apropiada — que puede incluir orientación, prescripción o certificado, cuando esté clínicamente indicado. Toda la consulta queda registrada en la historia clínica electrónica, como en cualquier atención médica formal."
+          },
+          {
+            "question": "¿En qué idiomas me pueden atender?",
+            "answer": "Las teleconsultas de Global Health en Brasil se realizan en portugués y en inglés. Puedes elegir el idioma preferido al agendar la consulta, y el perfil de cada médico indica en qué idiomas atiende, para que lo sepas antes de reservar el horario. Si te sientes más cómodo comunicándote en uno de los dos idiomas — por ejemplo, si eres extranjero y resides en Brasil o brasileño en el exterior — puedes filtrar los médicos disponibles por idioma directamente en la agenda. El resto del sitio también está disponible en los dos idiomas, incluidos los documentos que recibes después de la consulta."
+          },
+          {
+            "question": "¿En qué se diferencia Global Health de un certificado emitido solo con un cuestionario?",
+            "answer": "A diferencia de los servicios que emiten un certificado solo con base en un formulario completado por el paciente, sin una evaluación real, en Global Health todo certificado y toda prescripción van precedidos de una teleconsulta con un médico registrado en el CRM de su estado. El médico conversa contigo por video, evalúa tus síntomas y tu historial, y solo entonces decide si la emisión del documento es clínicamente apropiada — lo que significa que, en algunos casos, el resultado de la consulta puede ser distinto de simplemente recibir el certificado solicitado. Esta evaluación real es lo que sustenta la validez médica y jurídica del documento."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Certificados",
+        "title": "Certificados y recetas",
+        "items": [
+          {
+            "question": "¿Mi empleador acepta el certificado médico emitido por Global Health?",
+            "answer": "El certificado lo emite un médico registrado en el Conselho Regional de Medicina de su estado, después de una evaluación real por videollamada, y cumple las normas del Conselho Federal de Medicina para documentos emitidos por telemedicina. Esto le da al documento la misma validez que un certificado emitido presencialmente. Aun así, cada empleador define sus propias políticas internas de aceptación de certificados, y la prestación de la seguridad social, cuando corresponde, la evalúa el INSS según sus propios criterios — no podemos garantizar la decisión de terceros. Te recomendamos revisar la política de tu empresa si tienes dudas específicas sobre tu caso."
+          },
+          {
+            "question": "¿Emiten recetas médicas online?",
+            "answer": "Sí. Cuando es clínicamente apropiado, el médico puede emitir una prescripción durante la teleconsulta o poco después, siguiendo las mismas reglas de seguridad y registro que cualquier receta médica en Brasil. La prescripción se envía digitalmente y puede usarse en farmacias que aceptan recetas electrónicas. No toda consulta termina en una prescripción — eso depende exclusivamente de la evaluación del médico sobre tu cuadro, y algunos medicamentos controlados tienen reglas específicas que pueden exigir una evaluación adicional o no pueden prescribirse a distancia. El médico te explica durante la consulta si tu situación permite la prescripción por telemedicina."
+          },
+          {
+            "question": "¿En cuánto tiempo recibo el certificado o la receta después de la consulta?",
+            "answer": "En la mayoría de los casos, el documento se emite justo después de terminar la consulta, en la misma atención, y se envía al correo electrónico registrado en tu cuenta. También puedes acceder a él en el área de documentos de tu perfil, desde donde puedes descargarlo o reenviarlo siempre que lo necesites. En situaciones que requieren un análisis adicional por parte del médico, la emisión puede tardar un poco más, pero se te avisa durante la consulta si es necesario. Si no recibes el documento esperado dentro del plazo indicado, comunícate con nosotros a través de nuestro correo electrónico de soporte."
+          },
+          {
+            "question": "¿Qué tipos de certificado emite Global Health?",
+            "answer": "Emitimos certificados de ausencia laboral por enfermedad común, siempre con base en la evaluación del médico durante la teleconsulta y solo cuando es clínicamente apropiado para tu cuadro. La finalidad y el periodo de ausencia los decide el médico responsable, y no los elige el paciente al agendar. Algunos tipos de certificado — como los que requieren un examen físico presencial o un peritaje específico — pueden no ser adecuados para emitirse por telemedicina, y el médico te orientará en esos casos. Si tienes una necesidad específica, puedes describirla al agendar, y el médico evalúa durante la consulta si es posible atenderla a distancia."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacidad",
+        "title": "Privacidad y tus datos",
+        "items": [
+          {
+            "question": "¿Mis datos de salud están protegidos?",
+            "answer": "Sí. Tratamos tus datos de salud de conformidad con la Lei Geral de Proteção de Dados (LGPD, la Ley General de Protección de Datos de Brasil), que establece reglas estrictas para la recopilación, el almacenamiento y el uso de datos sensibles, incluida la información médica. Tu información se almacena de forma segura y se usa solo para prestar la atención médica, gestionar tu historial y cumplir obligaciones legales. No vendemos ni compartimos tus datos de salud con terceros con fines comerciales. Si quieres saber más sobre cómo tratamos tus datos, puedes consultar nuestra política de privacidad, disponible en el pie de página del sitio, o comunicarte con nosotros por correo electrónico."
+          },
+          {
+            "question": "¿Quién tiene acceso a mi historia clínica y a mis consultas?",
+            "answer": "A tu historia clínica solo acceden los profesionales directamente involucrados en tu atención, como el médico que realizó la consulta, y los sistemas administrativos necesarios para el funcionamiento de la plataforma, siempre bajo control de acceso. No compartimos el contenido clínico de tu consulta con tu empleador, tus familiares ni terceros sin tu autorización, salvo cuando lo exija la ley. Puedes acceder a tu propio historial de consultas, certificados y prescripciones en cualquier momento en el área de documentos de tu perfil. Esta es una de las protecciones centrales de la LGPD para los datos de salud, que la legislación brasileña trata como datos sensibles."
+          },
+          {
+            "question": "¿Puedo pedir que eliminen mis datos?",
+            "answer": "Sí. Como titular de los datos, la LGPD te garantiza el derecho a solicitar información sobre qué datos tenemos, a corregirlos cuando sean incorrectos o a pedir su eliminación, dentro de los límites de la ley. Es importante saber que algunos registros médicos deben conservarse durante un periodo mínimo por exigencia legal y ética de la profesión médica, incluso después de una solicitud de eliminación, por lo que no todos los datos pueden borrarse de inmediato. Para ejercer cualquiera de estos derechos, comunícate con nosotros a través de nuestro correo electrónico de soporte, y te explicaremos qué datos pueden eliminarse y en cuánto tiempo se atiende la solicitud."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Pagos",
+        "title": "Formas de pago",
+        "items": [
+          {
+            "question": "¿Qué formas de pago aceptan?",
+            "answer": "Aceptamos las principales tarjetas de crédito y débito internacionales en el momento de reservar la consulta, procesadas de forma segura en la propia página de reserva. El valor exacto y las formas de pago disponibles para tu tipo de consulta se muestran antes de que confirmes el pago, para que no haya sorpresas. Si alguna forma de pago específica no aparece como opción en el momento de tu reserva, significa que no está disponible para ese servicio en Brasil. Si tienes dudas sobre un pago ya realizado o sobre un problema con el cobro, comunícate con nosotros a través de nuestro correo electrónico de soporte."
+          },
+          {
+            "question": "¿El seguro médico o plan de salud (convênio) reembolsa la consulta?",
+            "answer": "Global Health no factura directamente a convênios ni a planes de salud brasileños — el pago de la consulta lo haces tú en el momento de la reserva. Según tu plan, puede ser posible solicitar el reembolso a tu aseguradora presentando el recibo de la consulta y el certificado o informe emitido, pero eso depende enteramente de las reglas y la cobertura de tu propio convênio, que no controlamos. Después de la consulta, puedes acceder al recibo y descargarlo en el área de documentos de tu perfil para enviarlo a tu aseguradora, en caso de que tu plan contemple este tipo de reembolso."
+          }
+        ]
+      }
+    ]
+  }
+}

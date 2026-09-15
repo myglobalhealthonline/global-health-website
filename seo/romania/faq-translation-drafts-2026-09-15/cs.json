@@ -1,0 +1,206 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/cs/faq-markets.json under the market key.",
+  "_source": "frontend/locales/ro/faq-markets.json#ro",
+  "_locale": "cs",
+  "_keywordsUsed": [
+    {
+      "keyword": "lékař online v rumunsku",
+      "volume": null,
+      "where": "1.0 question"
+    }
+  ],
+  "_reviewNotes": [
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'cabinet medical' is translated as 'ordinace'. 'de multe ori, chiar în ziua în care faceți programarea' keeps its hedge ('často i ve stejný den, kdy se objednáte') — not strengthened to a same-day promise."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "'Colegiul Medicilor din România' keeps its official name with the gloss '(rumunská lékařská komora)'. The source calls it 'the authority that regulates the medical profession', translated as 'orgán, který v zemi reguluje lékařskou profesi'."
+    },
+    {
+      "group": 0,
+      "item": 2,
+      "note": "Consultations are in Romanian, some doctors also in English. The Czech page does not promise Czech-language consultations; please confirm this is intended for cs readers."
+    },
+    {
+      "group": 1,
+      "item": 0,
+      "note": "The keyword phrase is placed as a lead-in to the existing question ('Lékař online v Rumunsku: jak si objednám konzultaci?'). The source question already asks about booking an online consultation; 'v Rumunsku' adds only the page's market context. Revert to 'Jak si objednám online konzultaci?' if the reviewer prefers a literal question."
+    },
+    {
+      "group": 1,
+      "item": 1,
+      "note": "Same-day wording is a faithful translation of the native hedge 'În multe cazuri, da ... frecvent intervale libere' ('V mnoha případech ano ... často volné termíny'). 'consultații generale' is translated as 'všeobecné konzultace'."
+    },
+    {
+      "group": 1,
+      "item": 2,
+      "note": "'anulare fără penalizare' is translated as 'zrušení bez sankce'; 'condiții de rambursare' as 'podmínky vrácení peněz'."
+    },
+    {
+      "group": 2,
+      "item": 0,
+      "note": "'adeverință medicală' is translated as 'lékařské potvrzení' with the Romanian term in parentheses on first use. 'consult suplimentar' is translated as 'další vyšetření'. 'câteva zeci de minute' is translated literally as 'několik desítek minut'."
+    },
+    {
+      "group": 2,
+      "item": 2,
+      "note": "'unitate de primiri urgențe' is translated as 'urgentní příjem'. 'medicul de familie' is translated as 'praktický lékař' with the Romanian term in parentheses. 'serviciile de urgență' is translated as 'tísňové služby'. 112 kept; the Czech 155 was NOT added."
+    },
+    {
+      "group": 3,
+      "item": null,
+      "note": "'concediu medical' is translated as 'pracovní neschopnost'. 'neschopenka'/'eNeschopenka' were deliberately avoided (Czech ČSSZ system). The eyebrow is shortened to 'Neschopnost a recepty'."
+    },
+    {
+      "group": 3,
+      "item": 0,
+      "note": "The native answer does not say the service issues official sick leave; it says a doctor can issue an 'adeverință medicală' and recognition depends on CNAS, the doctor's contract and the employer. This is kept. The question keeps 'concediu medical' in parentheses. 'CNAS' kept with the gloss '(Casa Națională de Asigurări de Sănătate, rumunská národní zdravotní pojišťovna)'; VZP was NOT substituted. 'indemnizația aferentă' is translated as 'související nemocenská dávka'. The sentence about the Romanian legal press debate is kept as in the source."
+    },
+    {
+      "group": 3,
+      "item": 1,
+      "note": "'justificare a absenței' is translated as 'omluva nepřítomnosti'. The no-guarantee sentence is kept at full strength."
+    },
+    {
+      "group": 3,
+      "item": 2,
+      "note": "'medicamente cu regim special' is translated as 'léky se zvláštním režimem' (controlled medicines). 'rețetă' is translated as 'recept'; 'eRecept' was deliberately NOT used."
+    },
+    {
+      "group": 3,
+      "item": 3,
+      "note": "'compensată' (subsidised/reimbursed prescription) is translated as 'hrazený' and 'compensarea' as 'úhrada'. Please confirm this reads correctly: in Romania compensation may be partial, which 'hrazený' could overstate. 'rețetă electronică' is translated as 'elektronický recept'."
+    },
+    {
+      "group": 4,
+      "item": 1,
+      "note": "'fișa medicală' is translated as 'zdravotnická dokumentace'; 'istoricul medical' (question) as 'zdravotní historie'. 'asigurători' is translated as 'pojišťovny' — Czech readers may read this as the public health insurer."
+    },
+    {
+      "group": 4,
+      "item": 2,
+      "note": "'legislația europeană privind protecția datelor' is translated as 'evropské předpisy o ochraně osobních údajů'. GDPR is not named because the source does not name it."
+    },
+    {
+      "group": 5,
+      "item": 0,
+      "note": "'plan sau abonament' is translated as 'plán nebo předplatné'. Please confirm against the cs billing labels."
+    }
+  ],
+  "ro": {
+    "groups": [
+      {
+        "eyebrow": "Rumunsko",
+        "title": "O naší službě v Rumunsku",
+        "items": [
+          {
+            "question": "Máte v Rumunsku ordinaci?",
+            "answer": "Global Health v Rumunsku funguje výhradně jako online klinika. V Rumunsku nemáme fyzickou ordinaci a sídlo společnosti je v Irsku. Všechny konzultace probíhají zabezpečeným videohovorem přímo z telefonu, tabletu nebo počítače, aniž byste museli kamkoli cestovat. Tento online model vám umožňuje mluvit s lékařem bez čekárny a často i ve stejný den, kdy se objednáte. Pokud dáváte přednost osobní návštěvě, může vám lépe vyhovovat místní ordinace. Naše platforma je určena pacientům, kterým vyhovuje konzultace na dálku přes video."
+          },
+          {
+            "question": "Jsou lékaři registrovaní u Colegiul Medicilor din România?",
+            "answer": "Ano. Všichni lékaři, kteří přes naši platformu konzultují pacienty z Rumunska, jsou registrovaní u Colegiul Medicilor din România (rumunská lékařská komora), orgánu, který v zemi reguluje lékařskou profesi. Registraci každého lékaře lze ověřit přímo v jeho profilu na platformě, kde najdete také jeho specializaci a jazyky, ve kterých konzultuje. To znamená, že lékař, se kterým mluvíte, dodržuje stejné profesní a etické standardy jako lékař, kterého byste navštívili osobně v ordinaci v Rumunsku. Máte-li nejasnosti ohledně registrace konkrétního lékaře, můžete nás před objednáním kontaktovat e-mailem a náš tým vám příslušné údaje potvrdí."
+          },
+          {
+            "question": "Probíhají konzultace v rumunštině?",
+            "answer": "Ano. Konzultace pro pacienty z Rumunska probíhají v rumunštině a někteří lékaři nabízejí také konzultace v angličtině. Jazyky, kterými jednotliví lékaři mluví, jsou uvedeny v jejich profilu, takže si můžete předem vybrat lékaře podle svých jazykových potřeb. Také administrativní podpora, tedy objednávky, fakturace a dotazy k účtu, je k dispozici e-mailem v rumunštině a angličtině. Pokud máte pro samotný lékařský rozhovor preferovaný jazyk, zkontrolujte před potvrzením objednávky profil lékaře, nebo nám napište a doporučíme vám lékaře, který vašim potřebám vyhovuje."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Objednání",
+        "title": "Objednání konzultace",
+        "items": [
+          {
+            "question": "Lékař online v Rumunsku: jak si objednám konzultaci?",
+            "answer": "Objednání probíhá přímo na platformě: vyberete si typ konzultace, který potřebujete, a poté volný termín ze seznamu lékařů. Vyplníte krátký formulář se svými údaji a důvodem konzultace, aby měl lékař před hovorem potřebné souvislosti. Cena konzultace se přehledně zobrazí před potvrzením objednávky, bez skrytých poplatků. Po zaplacení obdržíte potvrzení s odkazem na videokonzultaci, a to e-mailem i ve svém účtu na platformě. Celý proces obvykle trvá několik minut a nevyžaduje cestu do žádné fyzické ordinace."
+          },
+          {
+            "question": "Mohu dostat termín ještě tentýž den?",
+            "answer": "V mnoha případech ano. Platforma zobrazuje dostupnost v reálném čase a u všeobecných konzultací bývají často volné termíny ještě tentýž den, v závislosti na rozpisu aktivních lékařů. Dostupnost se však liší den ode dne i podle typu konzultace, zejména u specializací, pro které je na platformě méně lékařů. Doporučujeme zkontrolovat seznam volných termínů přímo na stránce objednání, kde uvidíte nejbližší volný čas. Pokud dnes nenajdete vhodný termín, můžete se stejně snadno objednat na některý z následujících dnů."
+          },
+          {
+            "question": "Mohu konzultaci zrušit nebo přesunout?",
+            "answer": "Ano, konzultaci můžete zrušit nebo přesunout ve svém účtu před sjednaným časem. Přesná lhůta pro zrušení bez sankce a případné podmínky vrácení peněz se zobrazí na platformě již při objednání, takže je znáte dříve, než objednávku potvrdíte. Pokud narazíte na technický problém nebo potřebujete pomoc se změnou času konzultace, tým podpory vám může pomoci e-mailem. Přesunutí termínu se hodí zejména tehdy, když na poslední chvíli nastane něco nepředvídaného nebo když se váš zdravotní stav před konzultací změní."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Konzultace",
+        "title": "Jak probíhá online konzultace",
+        "items": [
+          {
+            "question": "Jak probíhá videokonzultace?",
+            "answer": "V objednaný čas získáte přístup k zabezpečenému videohovoru přímo na platformě nebo přes odkaz zaslaný e-mailem. Lékař se vás zeptá na příznaky, anamnézu a dosavadní léčbu, stejně jako při osobní konzultaci, a poté vám poskytne posouzení a doporučení. Podle situace může lékař vystavit recept, lékařské potvrzení (adeverință medicală) nebo vám doporučit další vyšetření. Konzultace obvykle trvá několik desítek minut, což je dost času na podrobné probrání problému. Potřebujete jen stabilní připojení k internetu a klidné místo."
+          },
+          {
+            "question": "Jaké vybavení ke konzultaci potřebuji?",
+            "answer": "Stačí telefon, tablet nebo počítač s kamerou, mikrofonem a připojením k internetu. Žádný specializovaný software není potřeba, konzultace probíhá přímo v prohlížeči nebo v aplikaci. Doporučujeme klidné místo s dobrým osvětlením, aby vás lékař dobře viděl a slyšel. Pokud máte relevantní zdravotní dokumenty, například nedávné výsledky vyšetření nebo předchozí recepty, je užitečné mít je během hovoru po ruce. Před konzultací si vyzkoušejte kameru a mikrofon, a pokud narazíte na technické potíže, tým podpory vám poradí e-mailem."
+          },
+          {
+            "question": "Co mám dělat, pokud potřebuji neodkladnou lékařskou pomoc?",
+            "answer": "Global Health není pohotovostní služba a online konzultace nenahrazují neodkladnou péči. Pokud máte závažné příznaky nebo jste v ohrožení, okamžitě volejte 112 nebo jděte na nejbližší urgentní příjem. Naše platforma je vhodná pro běžné, nenaléhavé potíže, jako jsou nachlazení, lehké infekce, obnovení léčby nebo obecné zdravotní dotazy. Pokud si nejste jistí, zda je vaše situace naléhavá, nejbezpečnější je kontaktovat svého praktického lékaře (medic de familie) nebo tísňové služby, a nečekat na online konzultaci."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Neschopnost a recepty",
+        "title": "Pracovní neschopnost a recepty",
+        "items": [
+          {
+            "question": "Můžete online vystavit pracovní neschopnost (concediu medical)?",
+            "answer": "Lékař, který vás posoudí při online konzultaci, může vystavit lékařské potvrzení dokládající provedené posouzení, pokud je to klinicky indikováno. Jeho uznání jako podkladu pro oficiální pracovní neschopnost a pro související nemocenskou dávku závisí na CNAS (Casa Națională de Asigurări de Sănătate, rumunská národní zdravotní pojišťovna) a na smluvním vztahu daného lékaře s pojišťovnou, stejně jako na pravidlech vašeho zaměstnavatele, a to jsou věci, které nemůžeme zaručit. Téma pracovních neschopností získaných online je ostatně v rumunském právním tisku předmětem živé diskuse. Pokud potřebujete pracovní neschopnost oficiálně uznanou CNAS, ověřte si to předem u zaměstnavatele a případně u svého praktického lékaře."
+          },
+          {
+            "question": "Přijme zaměstnavatel lékařské potvrzení vystavené online?",
+            "answer": "Potvrzení vystavuje lékař, který vás posoudil, a dokládá konzultaci a lékařské nálezy. Každý zaměstnavatel si však stanovuje vlastní požadavky na doklady, které přijímá jako omluvu nepřítomnosti, a někteří vyžadují dokumenty vystavené podle postupů CNAS. Doporučujeme včas si ověřit interní pravidla svého zaměstnavatele, zejména pokud potřebujete, aby vaše nepřítomnost byla uznána a proplacena jako nemocenská dávka. Náš tým vám může poskytnout potvrzení vystavené lékařem, nemůže však zaručit, že je určitá instituce nebo zaměstnavatel přijme. Rozhodnutí zůstává na nich, podle jejich vlastních předpisů."
+          },
+          {
+            "question": "Můžete vystavit recept online?",
+            "answer": "Ano. Pokud lékař na základě posouzení usoudí, že je indikována léčba léky, může vystavit recept, který si vyzvednete v kterékoli lékárně po předložení dokladu totožnosti. Ne každý zdravotní problém vyžaduje nebo umožňuje léčbu na dálku; rozhodnutí vždy náleží lékaři podle příznaků a vaší anamnézy. Některé kategorie léků, například léky se zvláštním režimem, nelze předepsat při online konzultaci a vyžadují osobní vyšetření. Pokud máte předchozí recept, který chcete probrat, můžete ho lékaři během konzultace zmínit."
+          },
+          {
+            "question": "Je recept vystavený online hrazen přes CNAS?",
+            "answer": "Záleží na typu receptu a na postavení lékaře vůči CNAS. Elektronický recept vystavený lékařem, který vás konzultoval, lze vyzvednout v lékárně, ale úhrada v systému CNAS se řídí vlastními pravidly pojišťovny a obvykle předpokládá, že vystavující lékař má s CNAS smlouvu pro daný typ předpisu. Úhradu receptu vystaveného přes naši platformu nemůžeme zaručit. Pokud je to pro vás důležité, zeptejte se lékárníka při vyzvednutí receptu nebo si to ověřte přímo u CNAS ještě před objednáním konzultace."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Soukromí",
+        "title": "Soukromí a zdravotní údaje",
+        "items": [
+          {
+            "question": "Jak jsou chráněné moje zdravotní údaje?",
+            "answer": "Vaše zdravotní údaje jsou uloženy šifrovaně a přístup k nim má pouze oprávněný personál přímo zapojený do vaší péče, především lékař, který vás konzultuje. Videohovory probíhají přes zabezpečené připojení a informace zadané na platformě, například příznaky, anamnéza nebo nahrané dokumenty, nesdílíme s třetími stranami pro obchodní účely. Dodržujeme zákonné požadavky na ochranu osobních údajů platné v Evropské unii. Máte-li konkrétní dotazy k tomu, jak jsou vaše údaje používány, nebo k našim zásadám ochrany osobních údajů, můžete nám kdykoli napsat na kontaktní e-mailovou adresu."
+          },
+          {
+            "question": "Kdo má přístup k mé zdravotní historii?",
+            "answer": "Přístup k vaší zdravotnické dokumentaci mají pouze lékaři přímo zapojení do vaší péče a personál nezbytně nutný pro fungování platformy, například kvůli technické podpoře související s vaším účtem. Nový lékař může při budoucí konzultaci vidět historii předchozích konzultací na platformě, aby mohl zajistit ucelenou péči, pokud se nerozhodnete jinak. Údaje neprodáváme a nesdílíme je se zaměstnavateli, pojišťovnami ani jinými institucemi bez vašeho výslovného souhlasu nebo bez jasné zákonné povinnosti, která nám to v konkrétním případě ukládá."
+          },
+          {
+            "question": "Mohu si své údaje stáhnout nebo je smazat?",
+            "answer": "Ano. Můžete požádat o kopii svých zdravotních údajů uložených na platformě a také o smazání účtu a souvisejících informací, s výhradou lhůt pro uchovávání zdravotnické dokumentace stanovených zákonem. Tyto žádosti se vyřizují e-mailem na naší kontaktní adrese a zpracovávají se v souladu s právy, která pacientům přiznávají evropské předpisy o ochraně osobních údajů. Mějte na paměti, že některé zdravotní záznamy mohou být uchovány po povinnou minimální dobu i po žádosti o smazání, pokud to vyžaduje zákon, bez ohledu na vaše osobní preference."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Platby",
+        "title": "Platby a fakturace",
+        "items": [
+          {
+            "question": "Kolik stojí konzultace?",
+            "answer": "Cena každé konzultace se přehledně zobrazí na platformě před potvrzením objednávky a závisí na typu konzultace a zvoleném lékaři. Pevné ceny zde nezveřejňujeme, protože se mohou měnit v čase i podle požadované služby; aktuální je vždy cena zobrazená na stránce objednání. Neúčtujeme žádné skryté poplatky: částka, kterou vidíte před platbou, je konečná částka, kterou zaplatíte. Pokud máte aktivní plán nebo předplatné, případné zahrnuté výhody se uplatní automaticky dříve, než budete vyzváni k platbě."
+          },
+          {
+            "question": "Jaké způsoby platby přijímáte?",
+            "answer": "Přijímáme online platbu kartou přímo na platformě při potvrzení objednávky. Zpracování platby je zabezpečené a údaje o vaší kartě neukládáme. Pokud máte předplatné nebo plán, který pokrývá určité služby, cena konzultace může být snížena nebo zcela pokryta podle zahrnutých výhod, což se automaticky zobrazí před platbou. S dotazy k faktuře nebo k platbě, která nebyla správně zpracována, nás můžete kontaktovat e-mailem a náš tým vám odpoví s podrobnostmi o dané transakci."
+          }
+        ]
+      }
+    ]
+  }
+}

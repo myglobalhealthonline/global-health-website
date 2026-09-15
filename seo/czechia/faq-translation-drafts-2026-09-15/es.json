@@ -1,0 +1,215 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/es/faq-markets.json under the market key.",
+  "_source": "frontend/locales/cs/faq-markets.json#cz",
+  "_locale": "es",
+  "_keywordsUsed": [],
+  "_reviewNotes": [
+    {
+      "group": 0,
+      "item": null,
+      "note": "WHOLE FILE: no keywords used: OpenSEO found no measurable Spanish-language demand for any tested phrase (médico online/en Chequia/República Checa, urgencias Praga, sanidad, seguro médico, hospital Praga). Terminology follows existing site Spanish instead. 'Česko' rendered 'Chequia' (site term); 'ČR' rendered 'la República Checa'."
+    },
+    {
+      "group": 0,
+      "item": null,
+      "note": "WHOLE FILE: translated from the native Czech copy, which is longer than en/faq-markets.json#cz. All native sentences kept; nothing added from the English. Register follows es/faq-markets.json#es (plural 'ustedes' in questions to the company, 'tú' in answers)."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "Source names 'Česká lékařská komora' without abbreviation. Rendered 'registrados en la Česká lékařská komora (ČLK, Cámara Médica Checa)': abbreviation and literal Spanish gloss added on first use. NOT 'colegiados' (reserved for Spain). 'Praktických i specializovaných lékařů' = 'médicos de cabecera y especialistas'."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'Registrační sídlo společnosti, nikoli ordinace' rendered 'sede social de la empresa, no una consulta para visitas presenciales'. Address 'Praha 1, Rybná 24' kept as 'Praga 1, Rybná 24'."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "Languages kept as Czech and English only; do not add Spanish. The source's final sentence (language filter 'in the booking system when choosing a slot') differs slightly from the English ('booking calendar'); the native wording was followed."
+    },
+    {
+      "group": 0,
+      "item": 2,
+      "note": "'Praktický lékař' rendered 'médico de cabecera' (common.json bookGp), with the Czech term in parentheses on first use. 'Neschopenka' glossed '(baja por incapacidad temporal)' on first use; later mentions unglossed. 'ČSSZ' glossed '(Česká správa sociálního zabezpečení, la Seguridad Social checa)' on first use. 'Zdravotní pojišťovna' rendered 'aseguradora sanitaria (zdravotní pojišťovna)': in Czechia these are the statutory public health insurers, not private insurance — reviewer to confirm the gloss is not misleading."
+    },
+    {
+      "group": 1,
+      "item": 0,
+      "note": "'Hodnocení' (doctor rating on profile) rendered 'puntuación', to avoid 'valoración', which the site uses for the clinical assessment."
+    },
+    {
+      "group": 1,
+      "item": 1,
+      "note": "CLINICAL REVIEW: the native source itself says same-day slots 'bývají k dispozici' (tend to be available). Translated faithfully and no stronger: 'suele haber horarios disponibles el mismo día', with the source's dependence on demand and language kept. Not a promise, but flag against the no-same-day-promise rule; reviewer may want it softened in the source too. 155 glossed '(emergencias médicas)'. 'Pohotovost' rendered 'servicio de urgencias'."
+    },
+    {
+      "group": 1,
+      "item": 2,
+      "note": "'Zákonný zástupce' rendered 'representante legal'. 'Zdravotní kartička' rendered 'tarjeta del seguro médico'."
+    },
+    {
+      "group": 2,
+      "item": 0,
+      "note": "'eRecept' kept as the Czech scheme name with gloss '(receta electrónica)' on first use. 'Potvrzení' rendered 'certificado' (it is the generic confirmation/certificate, distinct from the neschopenka). 'Obvykle trvá do dvaceti minut' = 'suele durar hasta veinte minutos'."
+    },
+    {
+      "group": 2,
+      "item": 2,
+      "note": "'Papírové doporučení' (paper referral) rendered 'derivación en papel', using the site term 'derivación'."
+    },
+    {
+      "group": 3,
+      "item": 0,
+      "note": "Source's own gloss 'dočasná pracovní neschopnost' rendered '(incapacidad temporal para el trabajo)'. Source's quoted „nevydává“ rendered with Spanish angle quotes «emite». 'Rodné číslo' kept with gloss '(número de identificación personal)'. 'Nemocenské dávky' rendered 'prestaciones por enfermedad'. 'Zaměstnavatel' rendered 'empresa' as in es/faq-markets.json#es."
+    },
+    {
+      "group": 3,
+      "item": 1,
+      "note": "'ePortál ČSSZ' kept as the official system name. Czech plural 'neschopenky' kept in 'el historial de tus neschopenky'; reviewer may prefer 'de tus eNeschopenky' or a Spanish plural."
+    },
+    {
+      "group": 3,
+      "item": 2,
+      "note": "'Centrální úložiště elektronických receptů' rendered 'Repositorio Central de Recetas Electrónicas' with the Czech official name in parentheses. 'Léky se zvláštním režimem' rendered 'medicamentos sujetos a un régimen especial' (controlled substances)."
+    },
+    {
+      "group": 3,
+      "item": 3,
+      "note": "'Návykové látky' rendered 'sustancias adictivas'; 'psychofarmaka' rendered 'psicofármacos'. 'Prodlouží/obnoví' (extend/renew the prescription) rendered 'prolongar'/'renovar'."
+    },
+    {
+      "group": 4,
+      "item": null,
+      "note": "'Záznamy' rendered 'registros'; 'zdravotnická dokumentace' rendered 'documentación sanitaria'; title 'Soukromí a záznamy' rendered 'Privacidad e historial'. 'Historia clínica' avoided (specific legal meaning in Spain). 'GDPR' rendered 'RGPD' as on the Spanish site."
+    },
+    {
+      "group": 4,
+      "item": 1,
+      "note": "'Hlášení vybraných infekčních onemocnění' rendered 'la notificación de determinadas enfermedades infecciosas'. 'Zdravotní pojišťovna' rendered 'aseguradora sanitaria'."
+    },
+    {
+      "group": 4,
+      "item": 2,
+      "note": "'Obvykle vyřídíme do několika pracovních dnů' rendered 'normalmente tramitamos la solicitud en pocos días hábiles' — kept as 'usually', not a guarantee."
+    },
+    {
+      "group": 5,
+      "item": 1,
+      "note": "'ZPMVČR' kept as the insurer's official abbreviation, unglossed. 'Veřejné zdravotní pojištění' rendered 'seguro público de salud'. The answer's statement that the patient pays Global Health directly is kept without softening."
+    }
+  ],
+  "cz": {
+    "groups": [
+      {
+        "eyebrow": "Chequia",
+        "title": "Preguntas sobre Chequia",
+        "items": [
+          {
+            "question": "¿Los médicos de Global Health están registrados en Chequia?",
+            "answer": "Sí. Los médicos que pasan consulta a través de Global Health Chequia están registrados en la Česká lékařská komora (ČLK, Cámara Médica Checa), la organización profesional que lleva el registro de médicos de cabecera y especialistas en la República Checa. La inscripción de cada médico figura en su perfil, junto con su especialidad y los idiomas en los que atiende. Nuestra sede está en Praga 1, en la dirección Rybná 24: se trata de la sede social de la empresa, no de una consulta para visitas presenciales. Todas las valoraciones se realizan por videollamada segura, así que no importa en qué lugar de Chequia te encuentres: puedes consultar desde cualquier punto del país."
+          },
+          {
+            "question": "¿En qué idioma puedo hacer la consulta?",
+            "answer": "Ofrecemos consultas en checo y en inglés. El perfil de cada médico indica en qué idioma o idiomas atiende, así que puedes elegir médico por idioma antes de reservar. La línea telefónica para dudas sobre reservas, pagos y cuenta también se atiende en checo y en inglés. Si prefieres una consulta en otro idioma, te recomendamos comprobarlo directamente con el médico concreto antes de reservar, ya que la oferta de idiomas puede variar según su especialidad y su disponibilidad ese día. Si no sabes con seguridad qué médico elegir, encontrarás el filtro de idioma directamente en el sistema de reservas al elegir el horario."
+          },
+          {
+            "question": "¿Global Health sustituye a mi médico de cabecera?",
+            "answer": "No. Global Health funciona como complemento de tu atención sanitaria habitual, no como sustituto de tu inscripción con un médico de cabecera (praktický lékař). A veces la consulta online es una vía más rápida para obtener una valoración profesional, por ejemplo ante problemas agudos fuera del horario de tu centro o para una consulta especializada. Sin embargo, en algunos trámites, como la emisión de la neschopenka (baja por incapacidad temporal), siguen siendo determinantes la relación con tu médico de cabecera registrado y las normas de la ČSSZ (Česká správa sociálního zabezpečení, la Seguridad Social checa). Te recomendamos seguir teniendo a tu médico de cabecera registrado en tu aseguradora sanitaria (zdravotní pojišťovna) para la atención a largo plazo y las revisiones preventivas. Para el seguimiento a largo plazo de enfermedades crónicas, la vacunación o las revisiones preventivas periódicas, tu médico de cabecera sigue siendo insustituible, porque garantiza la continuidad de la atención y la gestión de la documentación sanitaria en un solo lugar."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Reservas",
+        "title": "Cómo funciona la reserva",
+        "items": [
+          {
+            "question": "¿Cómo reservo una consulta?",
+            "answer": "Reservas la consulta online en pocos minutos: eliges el área (médico de cabecera o especialista), seleccionas un horario libre en el calendario del médico concreto y confirmas la reserva. El precio de la consulta se muestra antes de completar la reserva, así que sabes exactamente lo que pagas. Tras la confirmación, recibes por correo electrónico el enlace a la videollamada y, si procede, instrucciones de preparación. Puedes reservar desde el ordenador o el móvil, sin necesidad de instalar una aplicación aparte. Si no sabes con seguridad qué médico elegir, en cada perfil encontrarás su especialidad, su puntuación y el próximo horario libre, así que decidir lleva solo un momento."
+          },
+          {
+            "question": "¿Con qué rapidez puedo consultar a un médico?",
+            "answer": "En Chequia suele haber horarios disponibles el mismo día, tanto con médicos de cabecera como con muchos especialistas, en función de la demanda del momento y del idioma en el que quieras hacer la consulta. La disponibilidad exacta se ve directamente en el calendario al elegir médico: el sistema solo muestra horarios realmente libres. Si necesitas atención verdaderamente urgente, la consulta online no está pensada para resolver situaciones agudas ni que pongan en peligro la vida; en ese caso, llama al 155 (emergencias médicas) o al 112, o acude al servicio de urgencias más cercano. Fuera de las horas punta la oferta de horarios suele ser aún más amplia, sobre todo con médicos de cabecera que atienden en inglés y en checo. Te recomendamos reservar con antelación si prefieres un médico o una hora concretos."
+          },
+          {
+            "question": "¿Puedo reservar una consulta para mi hijo o para otro familiar?",
+            "answer": "Sí, la consulta también puede reservarse en nombre de un hijo o de otro familiar, siempre que la reserva la haga su representante legal o una persona con su consentimiento. Al reservar, introduces los datos de la persona que va a ser atendida, no solo los de quien paga. En el caso de niños y menores, el médico valora durante la consulta si el formato online es adecuado para sus síntomas y, si no lo es, recomienda una exploración presencial. Te recomendamos tener a mano, durante la consulta del niño, la tarjeta del seguro médico y la documentación que pueda haber de su médico de cabecera. El pago de la consulta se realiza desde una sola cuenta, sea cual sea el familiar atendido. Después de la consulta, encontrarás el registro y los posibles documentos en la cuenta de paciente de la persona atendida."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultas",
+        "title": "Consultas online",
+        "items": [
+          {
+            "question": "¿Cómo es una consulta online?",
+            "answer": "La consulta se realiza por videollamada segura en el navegador, a la hora que reservaste. El médico repasa contigo los síntomas, tus antecedentes relevantes y la medicación que tomas, y a partir de ahí propone los pasos siguientes: puede tratarse de una recomendación de tratamiento, la emisión de un eRecept (receta electrónica), la recomendación de pruebas adicionales o, si está clínicamente justificado, la emisión de un certificado. La consulta suele durar hasta veinte minutos. Al terminar, encontrarás el registro y los posibles documentos en tu cuenta de paciente. Antes de la consulta, te recomendamos tener preparada una lista de los medicamentos que tomas y una breve descripción de los síntomas, para que la valoración sea lo más eficaz posible. Si se corta la conexión, el médico intentará retomar la llamada o te ofrecerá otro horario."
+          },
+          {
+            "question": "¿Qué problemas se pueden tratar online y cuándo hace falta una exploración presencial?",
+            "answer": "Online se resuelven bien las enfermedades agudas comunes (resfriado, gripe, infecciones urinarias), la prescripción y renovación de recetas de medicamentos habituales, las consultas dermatológicas y de otro tipo en las que basta una descripción y, en su caso, una fotografía, así como las consultas con especialistas. Si los síntomas requieren exploración física, una extracción para análisis o una prueba de imagen, el médico te lo indicará durante la consulta y te recomendará el centro adecuado o un servicio de urgencias. El objetivo es una valoración segura a distancia, no sustituir la exploración presencial cuando es imprescindible. En los problemas de piel ayuda enviar una fotografía de buena calidad antes de que empiece la llamada; en los problemas respiratorios y otros problemas agudos, el médico valora la gravedad directamente durante la llamada."
+          },
+          {
+            "question": "¿Puedo consultar a un especialista o solo a un médico de cabecera?",
+            "answer": "A través de Global Health Chequia puedes reservar una consulta tanto con un médico de cabecera como con determinados especialistas: la oferta de especialidades aparece directamente en el sistema de reservas y varía según la disponibilidad actual de los médicos. Con nosotros reservas directamente con el especialista, sin tener que esperar a una derivación en papel del médico de cabecera; aun así, el propio especialista puede recomendar en la consulta otros pasos, como una exploración presencial o una valoración por otro profesional, si tu estado lo requiere. La lista actual de especialidades disponibles puede cambiar según qué médicos pasen consulta ese día, así que te recomendamos comprobar la oferta directamente en el sistema de reservas."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Neschopenka y recetas",
+        "title": "Neschopenka, eRecept y medicamentos",
+        "items": [
+          {
+            "question": "¿Puede un médico de Global Health emitirme una neschopenka?",
+            "answer": "La neschopenka (incapacidad temporal para el trabajo) es siempre una decisión del médico que te atiende tras una valoración, también si esta es telefónica o por vídeo, y se envía electrónicamente directamente al sistema de la ČSSZ como eNeschopenka: una plataforma privada no la «emite» ni la garantiza por sí sola. Si el estado del paciente lo justifica, el médico la emite durante o después de la consulta siguiendo el mismo procedimiento que en una visita presencial. El derecho a las prestaciones por enfermedad lo decide después la ČSSZ según sus propias normas, no el médico que te atiende ni Global Health. Te recomendamos tener preparados tu rodné číslo (número de identificación personal) y los datos de tu empresa."
+          },
+          {
+            "question": "¿Cómo funciona la eNeschopenka y por qué no la emite sin más una clínica privada a petición?",
+            "answer": "La neschopenka es hoy totalmente electrónica (eNeschopenka) y la emite directamente el médico que te atiende a través del ePortál de la ČSSZ o de un software médico conectado: el documento va directamente al sistema de la ČSSZ, a la empresa y al asegurado, sin versión en papel. Su emisión está vinculada a la exploración y la valoración clínica del médico, no a la petición del paciente a un proveedor concreto. Tú mismo puedes ver el estado actual y el historial de tus neschopenky iniciando sesión en el ePortál de la ČSSZ, incluidos los datos del médico que te atiende y la duración de la incapacidad laboral. Para el paciente no cambia nada en cuanto al uso de la neschopenka: simplemente ya no tiene que llevar nada físicamente a su empresa, porque la empresa tiene su propio acceso al sistema de la ČSSZ."
+          },
+          {
+            "question": "¿Recibiré un eRecept en la consulta?",
+            "answer": "Si tu estado de salud lo requiere y el médico lo considera adecuado tras la valoración, puede emitir durante la consulta online un eRecept, que se guarda electrónicamente en el Repositorio Central de Recetas Electrónicas (Centrální úložiště elektronických receptů). Después recoges la receta en cualquier farmacia de la República Checa presentando tu rodné číslo o un código SMS, sin necesidad de llevar la versión en papel. No todas las consultas terminan necesariamente en una prescripción: depende de la valoración clínica del médico. Para determinadas sustancias, por ejemplo opioides o medicamentos sujetos a un régimen especial, pueden aplicarse restricciones adicionales establecidas por la ley. Gracias a su formato electrónico, la receta también puede recogerse fuera del lugar de residencia, prácticamente en cualquier farmacia de Chequia, lo que facilita obtener el medicamento incluso de viaje."
+          },
+          {
+            "question": "¿Pueden recetarme de nuevo el mismo medicamento que ya tomo desde hace tiempo?",
+            "answer": "En el caso de la medicación crónica, el médico revisa durante la consulta tu tratamiento actual y, si es necesario, emite un eRecept para continuar la terapia, si lo considera clínicamente adecuado. En medicamentos que requieren un seguimiento periódico, por ejemplo controles analíticos, el médico puede recomendar una exploración presencial o una extracción antes de prolongar la receta. Especialmente en el caso de los opioides, las sustancias adictivas y algunos psicofármacos, se aplican normas más estrictas para la prescripción a distancia, y el médico te informará de ellas en la consulta. Si ha pasado mucho tiempo desde el último control, el médico puede recomendar primero una breve visita presencial a tu médico de cabecera antes de renovar la receta."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacidad",
+        "title": "Privacidad e historial",
+        "items": [
+          {
+            "question": "¿Cómo se protegen mis datos de salud?",
+            "answer": "Toda la documentación sanitaria y la transmisión de datos durante la videoconsulta están cifradas y se tratan conforme al RGPD y a la legislación checa sobre protección de datos personales y datos sensibles. Solo tienen acceso a tus registros el médico que te atiende y un grupo reducido de personal autorizado que se encarga del funcionamiento de la plataforma. No vendemos tus datos ni los compartimos con terceros con fines de marketing. Encontrarás los detalles sobre el tratamiento de datos en nuestra política de privacidad, disponible en la web. Además, los accesos al sistema se auditan, de modo que se puede comprobar a posteriori quién trabajó con un registro y cuándo. Si tienes alguna pregunta sobre la protección de datos, puedes dirigirte directamente a nuestro servicio de soporte."
+          },
+          {
+            "question": "¿Quién tiene acceso al registro de mi consulta?",
+            "answer": "El registro y las notas de la consulta los ve principalmente el médico que te atendió, y tú mismo en tu cuenta de paciente. Si lo solicitas y das tu consentimiento, el resumen también puede ponerse a disposición de tu médico de cabecera o de otro profesional que te atienda, para la continuidad de la atención. Sin tu consentimiento expreso no compartimos los registros con tu empresa, tu aseguradora sanitaria ni ningún otro tercero, salvo en los casos establecidos por la ley, por ejemplo la notificación de determinadas enfermedades infecciosas. Las mismas normas se aplican a los registros de un eRecept o una neschopenka, si se emitieron durante la consulta. Puedes retirar el consentimiento para compartir en cualquier momento desde tu cuenta de paciente."
+          },
+          {
+            "question": "¿Puedo pedir una copia de mi historial médico?",
+            "answer": "Sí. Como paciente tienes derecho a solicitar una copia de tu documentación sanitaria relacionada con las consultas a través de Global Health, desde tu cuenta de paciente o por correo electrónico a nuestro servicio de soporte. Normalmente tramitamos la solicitud en pocos días hábiles. Lo mismo se aplica al registro de un eRecept o una neschopenka, si se emitieron durante la consulta. También puede ser útil tener una copia de la documentación para entregarla a tu médico de cabecera o a otro especialista. Recibirás la documentación en formato electrónico, que puedes reenviar o imprimir fácilmente según lo necesites. Si tienes dudas sobre el alcance de los datos facilitados, puedes dirigirte a nuestro servicio de soporte. Conservamos los datos durante el plazo que establece la legislación sanitaria."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Pagos",
+        "title": "Pagos y precios",
+        "items": [
+          {
+            "question": "¿Cuánto cuesta la consulta y cómo pago?",
+            "answer": "El precio de cada consulta lo ves siempre antes de completar la reserva, porque varía según el tipo de consulta (médico de cabecera, especialista) y el médico elegido, y se gestiona directamente en el sistema de reservas, así que siempre corresponde a la oferta actual. El pago se realiza online con tarjeta en el momento de la reserva, de forma segura a través de una pasarela de pago protegida. No cobramos cargos ocultos adicionales: el precio que se muestra al reservar es el que pagas. Recibirás automáticamente la factura del pago por correo electrónico. Aceptamos las tarjetas de pago habituales y el pago se procesa al instante, así que tu reserva queda confirmada en cuanto completas el pedido. También puedes consultar la factura en cualquier momento en tu cuenta de paciente."
+          },
+          {
+            "question": "¿Me reembolsa la consulta mi aseguradora sanitaria?",
+            "answer": "Global Health es un servicio privado de pago y el pago lo realizas directamente a nosotros, no a través del sistema del seguro público de salud. Algunas aseguradoras sanitarias de Chequia, como la ZPMVČR, ofrecen a sus asegurados su propia línea telefónica u online como ventaja incluida en el seguro, pero se trata de un servicio independiente de la aseguradora, no del reembolso de consultas con proveedores privados como Global Health. Te recomendamos comprobar directamente con tu aseguradora si te ofrece alguna aportación para la atención privada. En la práctica, esto significa que pagas tú mismo la consulta con Global Health, independientemente de tu aseguradora. Las condiciones exactas de cada aseguradora varían y pueden cambiar con el tiempo."
+          }
+        ]
+      }
+    ]
+  }
+}

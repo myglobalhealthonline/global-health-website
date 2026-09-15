@@ -336,3 +336,21 @@ A full local crawl was not feasible. The dev server took 5 minutes per doctor pa
 **Workbook:** in `19_Issues`, META-001 is now "Implemented - awaiting deploy". META-002 is "Partially implemented - awaiting deploy", because only the 28 audit duplicate pairs are covered and the wider 412/769 same-language duplicate set stays open. The workbook was recalculated with `recalc_excel.ps1`, and `check_formula_errors.py` exit 0.
 
 **Not done:** deploy and push (owner), the post-deploy re-probe, and the OpenSEO re-audit.
+
+### 7.1 Market FAQ translations drafted for 5 more countries — 2026-09-15
+
+**Owner request (2026-09-15):** extend the FAQ work beyond Ireland to Portugal, Spain, Czechia, Romania and Brazil, using OpenSEO keywords per country and locale. A live probe of all 33 `/{country}/{lang}/faq` pages showed 17 still `noindex, follow` because they serve fallback-language copy: Portugal, Spain, Czechia and Romania in the four non-native languages each, and Brazil in Spanish. Brazil's cs/ro/de URLs redirect (308) because the locale is unsupported.
+
+**Keyword evidence:** `seo/tracking/raw/2026-09-15/faq-locale-keywords/` holds 22 `get_keyword_metrics` calls and cost 353 credits (9,914 down to 9,561). DataForSEO only serves a country's own language for that country, so each language was measured where it is spoken. Real demand exists only for German (health insurance, health system, hospital and prescription in every market, up to 480 a month for Spain) and Portuguese about Spain (50–170, from Brazil). Spanish demand is small, and Czech and Romanian show none. Editorial plan §7.2 still applies: keywords are term choices, not insertions.
+
+**Drafts:** `seo/{portugal,spain,czechia,romania,brazil}/faq-translation-drafts-2026-09-15/<lang>.json`. There are 17 files, each translating the NATIVE market FAQ, because the English versions contain claims the native copy removed. Each has 6 groups and 18 items, 11–19 reviewer notes and a `_keywordsUsed` list. `python seo/tracking/scripts/check_faq_translation_drafts.py --all` reports 0 problems on all 17. The three Portuguese drafts use European Portuguese to match the site, although the measurable demand is Brazilian.
+
+**Not wired, not live.** Dr Tiago's approval covered only the Irish drafts. These 17 need clinical approval before they are copied into `frontend/locales/<lang>/faq-markets.json`.
+
+**Flagged in the LIVE native FAQs (for clinical and legal review, independent of the drafts):**
+
+- Spain `es` 0.1: prescriptions and reports "con la misma validez legal que una consulta presencial". This is the kind of claim the Portugal safety test bans.
+- Spain `es` 1.1, Czechia `cz` 1.1, Romania `ro` 0.0 and 1.1: hedged same-day appointment wording ("en muchos casos", "bývají k dispozici", "de obicei").
+- Spain `es` 0.1: Colegio Oficial de Médicos membership described "by specialty and province". The councils are provincial.
+
+The drafts reproduce each of these at the source's strength and flag it.

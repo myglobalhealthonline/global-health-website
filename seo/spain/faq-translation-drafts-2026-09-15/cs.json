@@ -1,0 +1,211 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/cs/faq-markets.json under the market key.",
+  "_source": "frontend/locales/es/faq-markets.json#es",
+  "_locale": "cs",
+  "_keywordsUsed": [
+    {
+      "keyword": "lékař online ve španělsku",
+      "volume": null,
+      "where": "group 2 title"
+    }
+  ],
+  "_reviewNotes": [
+    {
+      "group": 0,
+      "item": null,
+      "note": "The native source uses informal 'tú'; the Czech uses formal 'vy' throughout, as required for the cs site."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'colegiados para ejercer con pacientes en España' is translated as 'jsou členy lékařské komory (colegiados) s oprávněním přijímat pacienty ve Španělsku'. 'consulta física' is translated as 'fyzická ordinace'; 'centro tradicional' as 'tradiční zdravotnické zařízení'."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "'Colegio Oficial de Médicos' keeps its official name with the gloss '(španělská lékařská komora)'. In Spain these are provincial colleges; the source says 'que corresponde a su especialidad y provincia', which is kept literally — clinical/legal review should confirm the 'specialty' part. 'con la misma validez legal que una consulta presencial' is a legal claim present in the native source and is translated literally ('se stejnou právní platností jako při osobní konzultaci'); it was not strengthened."
+    },
+    {
+      "group": 0,
+      "item": 2,
+      "note": "'comunidad autónoma' is translated as 'autonomní společenství' with the gloss '(region)' on first use. 'incapacidad temporal' is translated as 'dočasná pracovní neschopnost' with the Spanish term in parentheses. 'circuitos de derivación' is translated as 'postupy při odesílání k dalším lékařům'. 'INSS' kept with the gloss '(španělský Národní institut sociálního zabezpečení)'; ČSSZ was NOT substituted."
+    },
+    {
+      "group": 1,
+      "item": 1,
+      "note": "Same-day wording is a faithful translation of the native hedge 'En muchos casos sí ... con frecuencia, el mismo día' ('V mnoha případech ano ... často včetně termínu ve stejný den'). It must not be strengthened. 'urgencia real' is translated as 'skutečná pohotovost'; 112 kept, 155 NOT added."
+    },
+    {
+      "group": 2,
+      "item": null,
+      "note": "The keyword phrase is placed in the group title: 'Cómo son las consultas online' becomes 'Lékař online ve Španělsku: jak probíhají konzultace'. 've Španělsku' adds only the page's market context, no new fact. Revert to 'Jak probíhají online konzultace' if the reviewer prefers a literal title."
+    },
+    {
+      "group": 2,
+      "item": 0,
+      "note": "'justificante' is translated as 'potvrzení' (a doctor's note attesting the visit) and 'informe' as 'lékařská zpráva'. 'diagnóstico probable' is translated as 'pravděpodobná diagnóza'."
+    },
+    {
+      "group": 2,
+      "item": 1,
+      "note": "'médico de familia' is translated as 'praktický lékař', matching cs site terminology. 'pruebas presenciales' is translated as 'vyšetření na místě'."
+    },
+    {
+      "group": 2,
+      "item": 2,
+      "note": "Consultations are offered in Spanish and English only. The Czech page does not promise Czech-language consultations; please confirm this is intended for cs readers."
+    },
+    {
+      "group": 3,
+      "item": null,
+      "note": "'Bajas' is translated as 'pracovní neschopnost', not 'neschopenka'/'eNeschopenka' (Czech ČSSZ system). The eyebrow is shortened to 'Neschopnost a recepty'."
+    },
+    {
+      "group": 3,
+      "item": 0,
+      "note": "The native answer starts 'No directamente' — the service does NOT issue official Spanish sick leave. This is kept as 'Ne přímo'. The question uses 'pracovní neschopnost (incapacidad temporal)' rather than the cs site term 'potvrzení o pracovní neschopnosti', because that term would suggest the service issues the official document. 'baja médica' is kept in parentheses. 'prestación económica' is translated as 'peněžitá dávka'."
+    },
+    {
+      "group": 3,
+      "item": 1,
+      "note": "'justificante médico' is translated as 'lékařské potvrzení' and 'parte de baja' is kept in Spanish with the explanation 'úřední doklad ... dočasnou pracovní neschopnost'. Please confirm Czech readers will not confuse 'lékařské potvrzení' with an official sick-leave certificate."
+    },
+    {
+      "group": 3,
+      "item": 2,
+      "note": "'receta electrónica' is translated as 'elektronický recept' with the Spanish term in parentheses; 'eRecept' was deliberately NOT used (Czech SÚKL system). 'tarjeta sanitaria' is translated as 'karta zdravotního pojištění' with the Spanish term. 'medicamentos de mayor control' is translated as 'léky s přísnější kontrolou'."
+    },
+    {
+      "group": 3,
+      "item": 3,
+      "note": "'departamento de recursos humanos' is translated as 'personální oddělení'. 'empresa' is translated as 'zaměstnavatel' throughout."
+    },
+    {
+      "group": 4,
+      "item": 0,
+      "note": "'RGPD' is translated as 'GDPR' (the name Czech readers use for the same EU regulation). 'historial clínico' is translated as 'zdravotnická dokumentace'."
+    },
+    {
+      "group": 4,
+      "item": 2,
+      "note": "'aseguradora' is translated as 'pojišťovna'. Czech readers may read this as the public health insurer; the source is generic. 'deber de confidencialidad' is translated as 'povinnost mlčenlivosti'."
+    },
+    {
+      "group": 5,
+      "item": 1,
+      "note": "'plan de suscripción' is translated as 'předplatné'. Please confirm this matches the cs billing labels (the Ireland cs draft used 'členství' for 'membership'). 'justificante del cobro' is translated as 'doklad o platbě'."
+    }
+  ],
+  "es": {
+    "groups": [
+      {
+        "eyebrow": "Španělsko",
+        "title": "Otázky o Španělsku",
+        "items": [
+          {
+            "question": "Máte ve Španělsku fyzickou ordinaci?",
+            "answer": "Ne. Ve Španělsku fungujeme výhradně jako online klinika: nemáme fyzickou ordinaci ani čekárnu, kterou byste mohli navštívit. Všechny konzultace probíhají zabezpečeným videohovorem z mobilu nebo počítače, se stejným soukromím jako při osobní konzultaci. Sídlo naší společnosti je registrováno v Irsku, ale lékaři, kteří vás ošetřují, jsou členy lékařské komory (colegiados) s oprávněním přijímat pacienty ve Španělsku. Tento model umožňuje nabízet termíny s větší dostupností, bez cestování a čekáren, při zachování stejné úrovně klinického posouzení, jakou byste získali v tradičním zdravotnickém zařízení. Pokud hledáte adresu, kam přijít osobně, tato služba pro vás není vhodná."
+          },
+          {
+            "question": "Jsou lékaři členy španělské lékařské komory?",
+            "answer": "Ano. Všichni lékaři, kteří přijímají pacienty ve Španělsku, jsou členy Colegio Oficial de Médicos (španělská lékařská komora) příslušného podle jejich specializace a provincie a splňují stejné požadavky na vzdělání a oprávnění k výkonu praxe jako kterýkoli lékař, který v zemi pracuje osobně. Profil každého lékaře na naší platformě uvádí jeho členství v komoře, takže si ho můžete ověřit před rezervací. Spolupráce s lékaři, kteří jsou členy komory, nám umožňuje nabízet klinická posouzení, lékařské zprávy a v odůvodněných případech i recepty se stejnou právní platností jako při osobní konzultaci. Máte-li pochybnosti o členství konkrétního lékaře v komoře, můžete se nás před konzultací zeptat e-mailem."
+          },
+          {
+            "question": "Je postup stejný ve všech autonomních společenstvích?",
+            "answer": "Ne vždy. Veřejné zdravotnictví je ve Španělsku v kompetenci jednotlivých autonomních společenství (regionů), a proto se úkony jako dočasná pracovní neschopnost (incapacidad temporal), platnost některých potvrzení nebo postupy při odesílání k dalším lékařům mohou lišit podle toho, kde žijete. Naši lékaři to během konzultace zohledňují a poradí vám nejvhodnější další krok podle vašeho autonomního společenství, konečné vyřízení veřejných dávek však vždy náleží INSS (španělský Národní institut sociálního zabezpečení) a příslušné regionální zdravotní službě. Pokud vaše situace závisí na konkrétním úkonu ve vašem regionu, zmiňte to lékaři na začátku konzultace, aby vám mohl přesně poradit."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Rezervace",
+        "title": "Jak si rezervovat konzultaci",
+        "items": [
+          {
+            "question": "Jak si rezervuji konzultaci?",
+            "answer": "Rezervace konzultace je jednoduchá: vyberete si typ konzultace, kterou potřebujete, lékaře a volný termín a na webu bezpečně potvrdíte platbu. Před potvrzením přehledně uvidíte cenu konzultace. Potvrzení obdržíte e-mailem s odkazem na videohovor a v případě potřeby i připomínku před domluveným časem. Nemusíte nikam cestovat ani čekat v čekárně: stačí připojení k internetu a zařízení s kamerou. Pokud si nejste jistí, jaký typ konzultace rezervovat, napište nám e-mailem a před rezervací vám poradíme."
+          },
+          {
+            "question": "Mohu dostat termín ještě tentýž den?",
+            "answer": "V mnoha případech ano. Dostupnost závisí na typu konzultace a na lékařích, kteří mají ten den otevřený rozpis, ale protože jde o online službu, obvykle nabízíme termíny rychleji než při osobní konzultaci, často včetně termínu ve stejný den, kdy rezervaci provádíte. Rezervační kalendář zobrazuje v reálném čase skutečně volné termíny, takže to, co vidíte při rezervaci, odpovídá skutečnosti. Pokud je vaše potřeba naléhavá z lékařského hlediska, nejen kvůli rychlosti termínu, pamatujte, že online konzultace nenahrazuje skutečnou pohotovost: v takovém případě volejte 112."
+          },
+          {
+            "question": "Mohu termín změnit nebo zrušit?",
+            "answer": "Ano. Termín můžete změnit nebo zrušit ve svém účtu s předstihem uvedeným v rezervačních podmínkách, které se zobrazí před potvrzením platby. Zrušení nebo přesunutí termínu s dostatečným předstihem uvolní termín pro jiného pacienta a v závislosti na lhůtě vám může umožnit získat zaplacenou částku zpět. Pokud potřebujete se změnou pomoci nebo pokud těsně před konzultací nastane nečekaná situace, napište nám e-mailem a pomůžeme vám najít řešení. Doporučujeme zkontrolovat storno podmínky vaší konkrétní konzultace, protože se mohou lišit podle typu rezervované konzultace."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Konzultace",
+        "title": "Lékař online ve Španělsku: jak probíhají konzultace",
+        "items": [
+          {
+            "question": "Jak probíhá konzultace přes videohovor?",
+            "answer": "Konzultace probíhá zabezpečeným videohovorem, stejně jako osobní návštěva, ale odkudkoli, kde se právě nacházíte. Lékař projde důvod vaší konzultace, položí potřebné otázky a v případě potřeby vás požádá, abyste mu něco ukázali kamerou nebo podrobněji popsali příznaky. Na konci posouzení vám vysvětlí pravděpodobnou diagnózu a další postup a, je-li to klinicky odůvodněné, vystaví recept, lékařskou zprávu nebo potvrzení. Délka je podobná jako u běžné osobní konzultace. Potřebujete jen zařízení s kamerou a mikrofonem a klidné místo, kde můžete mluvit v soukromí."
+          },
+          {
+            "question": "S čím se mohu obrátit na online konzultaci?",
+            "answer": "Můžete si rezervovat všeobecnou konzultaci s praktickým lékařem kvůli běžným příznakům, sledování léčby nebo zdravotním dotazům a také konzultace se specialisty podle aktuální dostupnosti. Platforma jasně uvádí, jaký typ konzultace rezervujete a co zahrnuje. Ne každá situace je vhodná pro online posouzení: pokud lékař během konzultace usoudí, že potřebujete fyzické vyšetření, vyšetření na místě nebo neodkladnou péči, sdělí vám to a poradí, kam se obrátit. Cílem je vždy nabídnout vám co nejbezpečnější posouzení, nikoli vnucovat online řešení tam, kde není vhodné."
+          },
+          {
+            "question": "V jakých jazycích konzultace probíhají?",
+            "answer": "Konzultace pro pacienty ve Španělsku nabízíme ve španělštině a v angličtině. Jazyk každého lékaře je uveden v jeho profilu, takže si můžete vybrat, u koho se objednáte, podle jazyka, ve kterém se vám nejlépe popisují příznaky. Administrativní záležitosti, tedy rezervace, platby a dotazy k účtu, vyřizujeme také e-mailem ve španělštině a angličtině. Pokud máte pro samotnou lékařskou konzultaci preferovaný jazyk, zkontrolujte před rezervací profil lékaře, protože ne všichni lékaři na platformě konzultují ve stejných jazycích."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Neschopnost a recepty",
+        "title": "Pracovní neschopnost, potvrzení a recepty",
+        "items": [
+          {
+            "question": "Můžete mi vystavit pracovní neschopnost (incapacidad temporal)?",
+            "answer": "Ne přímo. Pracovní neschopnost (baja médica neboli incapacidad temporal) je ve Španělsku úřední úkon, který se vyřizuje ve veřejném systému: vystavuje ji lékař zdravotní služby vašeho autonomního společenství a související peněžitou dávku přiznává INSS podle vlastních kritérií. Online konzultace u nás tento veřejný postup nenahrazuje. Lékař vám však, pokud to klinické posouzení odůvodňuje, může vystavit soukromou lékařskou zprávu nebo potvrzení, které dokládá váš zdravotní stav a může vám posloužit jako podklad pro zaměstnavatele, zatímco oficiální pracovní neschopnost vyřizujete příslušnou veřejnou cestou ve svém autonomním společenství."
+          },
+          {
+            "question": "Co je lékařské potvrzení a čím se liší od pracovní neschopnosti?",
+            "answer": "Lékařské potvrzení (justificante médico) je dokument, který dokládá, že vás lékař v určitý den posoudil, a obsahuje jeho klinické zhodnocení; není totéž co parte de baja, tedy úřední doklad, který ve veřejném systému uznává dočasnou pracovní neschopnost. Naši lékaři mohou po posouzení, je-li to klinicky vhodné, vystavit soukromé lékařské potvrzení, které můžete předložit zaměstnavateli nebo tam, kde ho potřebujete. Oficiální pracovní neschopnost a související peněžitá dávka nadále závisejí na zdravotní službě vašeho autonomního společenství a na INSS, s jejich vlastními postupy a požadavky."
+          },
+          {
+            "question": "Můžete mi při online konzultaci předepsat léky?",
+            "answer": "Ano, pokud to lékař po posouzení považuje za klinicky vhodné. Pokud to vaše situace umožňuje, může na konci konzultace vystavit elektronický recept (receta electrónica), který si vyzvednete v kterékoli lékárně s kartou zdravotního pojištění (tarjeta sanitaria) nebo dokladem totožnosti, podle běžného postupu ve Španělsku. Ne každá konzultace končí receptem: některé léčby, vyšetření nebo odeslání k dalšímu lékaři vyžadují osobní posouzení a lékař vám to řekne, pokud jde o váš případ. Předepsání některých léků, zejména těch s přísnější kontrolou, může podle platných předpisů vyžadovat další osobní konzultaci a lékař vám to během konzultace vysvětlí."
+          },
+          {
+            "question": "Mohu požádat o lékařskou zprávu pro zaměstnavatele?",
+            "answer": "Ano. Pokud lékař po konzultaci usoudí, že je to klinicky odůvodněné, může vám vystavit lékařskou zprávu nebo potvrzení, které zachycuje provedené posouzení a váš zdravotní stav v daném okamžiku, abyste je mohli předložit zaměstnavateli. Každý zaměstnavatel si stanovuje vlastní požadavky na to, jakou dokumentaci přijímá, proto je vhodné si před konzultací ověřit u personálního oddělení, co přesně potřebuje. Mějte na paměti, že tato zpráva se liší od úředního dokladu o pracovní neschopnosti (parte de baja): pokud vaše situace vyžaduje uznanou dočasnou pracovní neschopnost a související peněžitou dávku, tento postup závisí na zdravotní službě vašeho autonomního společenství a na INSS."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Soukromí",
+        "title": "Soukromí a zdravotní údaje",
+        "items": [
+          {
+            "question": "Jak chráníte moje zdravotní údaje?",
+            "answer": "S vašimi zdravotními údaji nakládáme v souladu s GDPR a se španělskými předpisy o ochraně osobních údajů, přičemž přístup k nim má pouze zdravotnický a administrativní personál, který je potřebuje k poskytování služby. Videohovory probíhají přes šifrovaná připojení a vaše zdravotnická dokumentace je uložena v systémech s bezpečnostními kontrolami a zálohami, nikoli v samostatných dokumentech nebo e-mailech. Vaše zdravotní informace nesdílíme s třetími stranami bez vašeho souhlasu, s výjimkou případů, kdy nám to ukládá zákon. Pokud chcete podrobnější informace o tom, jak s vašimi údaji nakládáme, přečtěte si naše zásady ochrany osobních údajů nebo nám napište přímo."
+          },
+          {
+            "question": "Mohu si prohlédnout historii svých konzultací?",
+            "answer": "Ano. Ve svém účtu si můžete prohlédnout historii předchozích konzultací včetně lékařských zpráv, potvrzení nebo receptů, které lékař během jednotlivých konzultací vystavil. Tato historie vám umožní například sdílet s jiným zdravotníkem, co bylo posouzeno při předchozí konzultaci, nebo znovu získat dokument, který budete později potřebovat předložit. Přístup je chráněn vaším osobním přihlášením a prohlížet ho můžete pouze vy, pokud výslovně nepověříte jinou osobu. Pokud nenajdete dokument, který jste očekávali, napište nám e-mailem a projdeme to s vámi."
+          },
+          {
+            "question": "Kdo může vidět moje zdravotní informace?",
+            "answer": "K vašim zdravotním informacím má přístup pouze lékař, který vás ošetřuje, a personál nezbytně nutný pro fungování služby, například technická nebo administrativní podpora u úkonů, které to vyžadují, a to vždy se stejnou povinností mlčenlivosti, jaká platí pro každého zdravotníka. Vaši dokumentaci nesdílíme s vaším zaměstnavatelem, pojišťovnou ani žádnou třetí stranou bez vašeho výslovného souhlasu, s výjimkou zákonné povinnosti. Pokud budete někdy potřebovat, abychom sdíleli dokument s jinou osobou nebo institucí, například s jiným lékařem, můžete to sami povolit ve svém účtu nebo o to písemně požádat."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Platby",
+        "title": "Ceny a platby",
+        "items": [
+          {
+            "question": "Kolik stojí konzultace?",
+            "answer": "Cena závisí na typu konzultace, kterou si rezervujete (všeobecná, u specialisty nebo jiná služba), a vždy se přehledně zobrazí před potvrzením a zaplacením termínu, takže přesně víte, kolik zaplatíte, ještě před rezervací. Nejsou zde žádné skryté poplatky: pokud lékař během konzultace doporučí další službu, cenu se dozvíte dříve, než se rozhodnete, zda chcete pokračovat. Ceny se mohou v průběhu času měnit, proto je konečná částka vždy ta, kterou vidíte na obrazovce rezervace v okamžiku potvrzení, nikoli pevný ceník zveřejněný jinde."
+          },
+          {
+            "question": "Jaké způsoby platby přijímáte?",
+            "answer": "Přijímáme bezpečnou platbu kreditní nebo debetní kartou přes platformu při rezervaci termínu. Platba se zpracuje přes šifrovaná připojení ještě před potvrzením termínu a doklad o platbě obdržíte e-mailem spolu s potvrzením rezervace. Pokud máte aktivní předplatné, cena zahrnutých konzultací se vyřídí automaticky a platební údaje nemusíte zadávat při každé rezervaci. Máte-li dotaz ke konkrétní platbě, napište nám a projdeme ji s vámi podle údajů o transakci."
+          }
+        ]
+      }
+    ]
+  }
+}

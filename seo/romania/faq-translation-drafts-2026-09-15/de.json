@@ -1,0 +1,201 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/de/faq-markets.json under the market key.",
+  "_source": "frontend/locales/ro/faq-markets.json#ro",
+  "_locale": "de",
+  "_keywordsUsed": [
+    {
+      "keyword": "krankenversicherung rumänien",
+      "volume": 140,
+      "where": "3.0 answer (inside 'Krankenversicherung Rumäniens')"
+    }
+  ],
+  "_reviewNotes": [
+    {
+      "group": 0,
+      "item": null,
+      "note": "Translated from the native Romanian copy, not the English. Formal 'Sie' throughout; em dashes kept as '—' like the existing de locale. Site terms reused from frontend/locales/de: 'Konsultation', 'Hausarzt', 'Rezept', 'Bescheinigung', 'registriert'. 'cabinet (medical)' = 'Praxis' (German 'Klinik' suggests a hospital); 'clinică online' = 'Online-Klinik' as the service self-description."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "YMYL: 'de multe ori, chiar în ziua în care faceți programarea' rendered 'oft sogar noch an dem Tag, an dem Sie den Termin buchen' — same hedge as the source, not strengthened."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "'Colegiul Medicilor din România' kept as official name, glossed '(der rumänischen Ärztekammer)'. The source calls it 'the authority that regulates the medical profession'; CMR is legally a professional chamber, so the gloss is accurate, but confirm."
+    },
+    {
+      "group": 1,
+      "item": 1,
+      "note": "YMYL: same-day availability is stated in the native source ('În multe cazuri, da' / 'frecvent intervale libere'); rendered 'In vielen Fällen ja' / 'häufig', with all source conditions kept. 'programul medicilor activi' = 'Sprechzeiten der aktiven Ärzte'."
+    },
+    {
+      "group": 1,
+      "item": 2,
+      "note": "'anulare fără penalizare' = 'kostenfreie Stornierung'. If the penalty may be something other than a fee, use 'Stornierung ohne Nachteile'."
+    },
+    {
+      "group": 2,
+      "item": 0,
+      "note": "'câteva zeci de minute' = 'einige Dutzend Minuten' (literal; vague in both languages). Do not replace with a number unless the service owner confirms one. 'consult suplimentar' = 'weitere Untersuchung'."
+    },
+    {
+      "group": 2,
+      "item": 2,
+      "note": "Emergency number 112 unchanged. 'unitate de primiri urgențe' = 'Notaufnahme'; 'serviciile de urgență' = 'Notdienst'; 'medicul de familie' = 'Hausarzt' (site term; Romanian family doctor is the primary-care physician). 'reînnoiri de tratament' = 'Verlängerungen laufender Behandlungen'. Clinical review: confirm nothing softened."
+    },
+    {
+      "group": 3,
+      "item": 0,
+      "note": "'concediu medical' = 'Krankschreibung (concediu medical)' with the Romanian term on first use; 'adeverință medicală' = 'ärztliche Bescheinigung (adeverință medicală)'; 'indemnizație' = 'Krankengeld (indemnizație)'. Deliberately NOT 'AU-Bescheinigung'. The distinction certificate vs official CNAS sick leave is load-bearing — reviewer must confirm it survives. 'casa de asigurări' = 'Versicherungskasse'. 'Arztbrief' not used: the source mentions a medical certificate, not a medical letter."
+    },
+    {
+      "group": 3,
+      "item": 0,
+      "note": "SEO: CNAS glossed on first use as '(Casa Națională de Asigurări de Sănătate, der staatlichen Krankenversicherung Rumäniens)'. The genitive 'Krankenversicherung Rumäniens' contains the measured keyword 'krankenversicherung rumänien' (140/month, DE) verbatim. Gloss is factually accurate (CNAS administers Romania's public health insurance); used once only."
+    },
+    {
+      "group": 3,
+      "item": 1,
+      "note": "YMYL: 'nu poate garanta acceptarea' kept as 'nicht garantieren'; the employer's own rules remain decisive. 'politica internă' = 'interne Regelung'."
+    },
+    {
+      "group": 3,
+      "item": 2,
+      "note": "'medicamente cu regim special' = 'Arzneimittel mit besonderen Vorschriften'; the absolute 'nu pot fi prescrise' kept as 'können nicht ... verschrieben werden'. 'act de identitate' = 'Ausweisdokument'."
+    },
+    {
+      "group": 3,
+      "item": 3,
+      "note": "'rețetă compensată' = 'bezuschusstes Rezept'; 'compensare' = 'Bezuschussung'. Romanian compensation can be partial or full — 'Bezuschussung' may read as partial only; alternative 'Kostenübernahme'. Confirm."
+    },
+    {
+      "group": 4,
+      "item": 1,
+      "note": "'fișa medicală' = 'Patientenakte'; 'asigurători' = 'Versicherer'. Legal-obligation exception kept."
+    },
+    {
+      "group": 4,
+      "item": 2,
+      "note": "Retention caveat kept in full ('gesetzlich vorgeschriebene Mindestdauer ... unabhängig von Ihrer persönlichen Präferenz')."
+    },
+    {
+      "group": 5,
+      "item": 0,
+      "note": "'plan sau abonament' = 'Tarif oder Abonnement'. No prices in source; none added. 'gesundheitssystem rumänien' (50) and 'krankenhaus bukarest' (10) NOT used anywhere: the source mentions neither the health system as such, hospitals nor Bucharest."
+    }
+  ],
+  "ro": {
+    "groups": [
+      {
+        "eyebrow": "Rumänien",
+        "title": "Über unseren Service in Rumänien",
+        "items": [
+          {
+            "question": "Haben Sie eine Arztpraxis in Rumänien?",
+            "answer": "Global Health ist in Rumänien ausschließlich als Online-Klinik tätig. Wir haben keine physische Praxis in Rumänien, und der eingetragene Sitz des Unternehmens befindet sich in Irland. Alle Konsultationen finden per gesichertem Videoanruf statt, direkt über Telefon, Tablet oder Computer, ohne dass Sie sich irgendwohin begeben müssen. Dieses Online-Modell ermöglicht es Ihnen, ohne Wartezimmer mit einem Arzt zu sprechen — und oft sogar noch an dem Tag, an dem Sie den Termin buchen. Wenn Sie einen persönlichen Besuch bevorzugen, ist eine Praxis vor Ort für Sie möglicherweise besser geeignet — unsere Plattform richtet sich an Patienten, die mit einer Konsultation aus der Ferne per Video gut zurechtkommen."
+          },
+          {
+            "question": "Sind die Ärzte beim Colegiul Medicilor din România registriert?",
+            "answer": "Ja. Alle Ärzte, die über unsere Plattform Patienten aus Rumänien konsultieren, sind beim Colegiul Medicilor din România (der rumänischen Ärztekammer) registriert, der Behörde, die den ärztlichen Beruf im Land regelt. Die Registrierung jedes Arztes lässt sich direkt in seinem Profil auf der Plattform überprüfen, wo Sie auch sein Fachgebiet und die Sprachen finden, in denen er Konsultationen anbietet. Das bedeutet, dass der Arzt, mit dem Sie sprechen, dieselben beruflichen und ethischen Standards einhält wie ein Arzt, den Sie persönlich in einer Praxis in Rumänien aufsuchen. Wenn Sie Fragen zur Registrierung eines bestimmten Arztes haben, können Sie uns vor der Buchung per E-Mail kontaktieren, und das Team kann Ihnen die relevanten Angaben bestätigen."
+          },
+          {
+            "question": "Finden die Konsultationen auf Rumänisch statt?",
+            "answer": "Ja. Die Konsultationen für Patienten aus Rumänien finden auf Rumänisch statt, und einige Ärzte bieten auch Konsultationen auf Englisch an. Die Sprachen, die jeder Arzt spricht, werden in seinem Profil angezeigt, sodass Sie im Voraus einen Arzt wählen können, der zu Ihren sprachlichen Bedürfnissen passt. Auch die administrative Unterstützung — Termine, Abrechnung, Fragen zum Konto — steht per E-Mail auf Rumänisch und Englisch zur Verfügung. Wenn Sie für das eigentliche ärztliche Gespräch eine bestimmte Sprache bevorzugen, prüfen Sie das Profil des Arztes, bevor Sie den Termin bestätigen, oder schreiben Sie uns, und wir empfehlen Ihnen einen passenden Arzt."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Termine",
+        "title": "Eine Konsultation buchen",
+        "items": [
+          {
+            "question": "Wie buche ich eine Online-Konsultation?",
+            "answer": "Die Buchung erfolgt direkt über die Plattform: Sie wählen die Art der Konsultation, die Sie benötigen, und dann ein verfügbares Zeitfenster aus einer Liste von Ärzten. Sie füllen ein kurzes Formular mit Ihren Daten und dem Grund der Konsultation aus, damit der Arzt vor dem Anruf den Kontext kennt. Der Preis der Konsultation wird vor der Bestätigung des Termins deutlich angezeigt, ohne versteckte Kosten. Nach der Zahlung erhalten Sie eine Bestätigung mit dem Link zur Videokonsultation per E-Mail und in Ihrem Konto auf der Plattform. Der gesamte Vorgang dauert in der Regel wenige Minuten und erfordert keinen Weg in eine Praxis."
+          },
+          {
+            "question": "Kann ich einen Termin am selben Tag bekommen?",
+            "answer": "In vielen Fällen ja — die Plattform zeigt die Verfügbarkeit in Echtzeit an, und für allgemeine Konsultationen gibt es häufig freie Zeitfenster noch am selben Tag, abhängig von den Sprechzeiten der aktiven Ärzte. Die Verfügbarkeit schwankt jedoch von Tag zu Tag und je nach Art der Konsultation, insbesondere bei Fachgebieten mit weniger Ärzten auf der Plattform. Wir empfehlen, die Liste der verfügbaren Zeitfenster direkt auf der Buchungsseite zu prüfen, um den nächsten freien Termin zu sehen. Wenn Sie heute kein passendes Zeitfenster finden, können Sie genauso einfach für die folgenden Tage buchen."
+          },
+          {
+            "question": "Kann ich eine Konsultation stornieren oder verschieben?",
+            "answer": "Ja, eine Konsultation kann vor dem vereinbarten Zeitpunkt über Ihr Konto storniert oder verschoben werden. Die genaue Frist für eine kostenfreie Stornierung und etwaige Erstattungsbedingungen werden bereits bei der Buchung auf der Plattform angezeigt, sodass Sie sie vor der Bestätigung kennen. Wenn ein technisches Problem auftritt oder Sie Hilfe beim Ändern der Uhrzeit benötigen, kann Ihnen das Support-Team per E-Mail helfen. Eine Verschiebung ist besonders dann hilfreich, wenn kurzfristig etwas Unvorhergesehenes eintritt oder sich Ihr Gesundheitszustand vor der Konsultation verändert."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Konsultationen",
+        "title": "So läuft eine Online-Konsultation ab",
+        "items": [
+          {
+            "question": "Wie läuft eine Videokonsultation ab?",
+            "answer": "Zur vereinbarten Uhrzeit erhalten Sie Zugang zu einem gesicherten Videoanruf direkt über die Plattform oder über den per E-Mail gesendeten Link. Der Arzt fragt Sie nach Ihren Symptomen, Ihrer Krankengeschichte und bisherigen Behandlungen, genau wie bei einer Konsultation vor Ort, und gibt Ihnen anschließend eine Einschätzung und Empfehlungen. Je nach Situation kann der Arzt ein Rezept oder eine ärztliche Bescheinigung ausstellen oder Ihnen eine weitere Untersuchung empfehlen. Die Konsultation dauert in der Regel einige Dutzend Minuten — genug Zeit, um das Anliegen ausführlich zu besprechen. Sie benötigen lediglich eine stabile Internetverbindung und einen ruhigen Ort."
+          },
+          {
+            "question": "Welche Ausstattung brauche ich für eine Konsultation?",
+            "answer": "Sie benötigen lediglich ein Telefon, ein Tablet oder einen Computer mit Kamera, Mikrofon und Internetverbindung — spezielle Software ist nicht erforderlich, die Konsultation findet direkt im Browser oder in der App statt. Wir empfehlen einen ruhigen, gut beleuchteten Ort, damit der Arzt Sie klar sehen und hören kann. Wenn Sie relevante medizinische Unterlagen haben — aktuelle Laborbefunde, frühere Rezepte —, ist es hilfreich, sie während des Anrufs griffbereit zu haben. Testen Sie Kamera und Mikrofon vor dem Termin; bei technischen Problemen kann Ihnen das Support-Team per E-Mail weiterhelfen."
+          },
+          {
+            "question": "Was tue ich bei einem medizinischen Notfall?",
+            "answer": "Global Health ist kein Notfalldienst, und Online-Konsultationen ersetzen keine Notfallversorgung. Wenn Sie schwere Symptome haben oder in Gefahr sind, rufen Sie sofort die 112 an oder gehen Sie in die nächstgelegene Notaufnahme. Unsere Plattform eignet sich für gewöhnliche, nicht dringende Beschwerden — Erkältungen, leichte Infektionen, Verlängerungen laufender Behandlungen, allgemeine medizinische Fragen. Wenn Sie nicht sicher sind, ob es sich bei Ihrer Situation um einen Notfall handelt, ist es am sichersten, Ihren Hausarzt oder den Notdienst zu kontaktieren, statt auf einen Online-Termin zu warten."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Krankschreibung und Rezepte",
+        "title": "Ärztliche Krankschreibung und Rezepte",
+        "items": [
+          {
+            "question": "Können Sie online eine Krankschreibung (concediu medical) ausstellen?",
+            "answer": "Ein Arzt, der Sie in einer Online-Konsultation beurteilt, kann eine ärztliche Bescheinigung (adeverință medicală) ausstellen, die die durchgeführte Beurteilung bestätigt, wenn dies klinisch angezeigt ist. Ob diese als Grundlage für eine offizielle Krankschreibung und das entsprechende Krankengeld (indemnizație) anerkannt wird, hängt von der CNAS (Casa Națională de Asigurări de Sănătate, der staatlichen Krankenversicherung Rumäniens) und dem Vertragsverhältnis des jeweiligen Arztes mit der Versicherungskasse ab, ebenso wie von den Regeln Ihres Arbeitgebers — Punkte, die wir nicht garantieren können. Das Thema online erhaltener Krankschreibungen wird im Übrigen in der rumänischen Rechtspresse aktiv diskutiert. Wenn Sie eine von der CNAS offiziell anerkannte Krankschreibung benötigen, klären Sie dies vorab mit Ihrem Arbeitgeber und gegebenenfalls mit Ihrem Hausarzt."
+          },
+          {
+            "question": "Wird eine online ausgestellte Bescheinigung vom Arbeitgeber akzeptiert?",
+            "answer": "Die Bescheinigung wird von dem Arzt ausgestellt, der Sie beurteilt hat, und bestätigt die Konsultation und die ärztlichen Befunde. Jeder Arbeitgeber legt jedoch selbst fest, welche Dokumente er als Nachweis für eine Abwesenheit akzeptiert, und manche verlangen Dokumente, die nach den Verfahren der CNAS ausgestellt wurden. Wir empfehlen, die interne Regelung Ihres Arbeitgebers rechtzeitig zu prüfen, vor allem wenn die Abwesenheit als Krankschreibung anerkannt und mit Krankengeld vergütet werden soll. Unser Team kann Ihnen die vom Arzt ausgestellte Bescheinigung zur Verfügung stellen, aber nicht garantieren, dass eine bestimmte Institution oder ein bestimmter Arbeitgeber sie akzeptiert — die Entscheidung liegt gemäß deren eigenen Vorschriften bei ihnen."
+          },
+          {
+            "question": "Können Sie online ein Rezept ausstellen?",
+            "answer": "Ja. Wenn der Arzt nach der Beurteilung eine medikamentöse Behandlung für angezeigt hält, kann er ein Rezept ausstellen, das Sie gegen Vorlage eines Ausweisdokuments in jeder Apotheke einlösen können. Nicht jede Erkrankung erfordert oder erlaubt eine Behandlung aus der Ferne — die Entscheidung liegt immer beim Arzt, abhängig von Ihren Symptomen und Ihrer Krankengeschichte. Bestimmte Arzneimittelgruppen, etwa solche mit besonderen Vorschriften, können nicht über eine Online-Konsultation verschrieben werden und erfordern eine persönliche Untersuchung. Wenn Sie ein früheres Rezept besprechen möchten, können Sie es während der Konsultation beim Arzt ansprechen."
+          },
+          {
+            "question": "Wird ein online ausgestelltes Rezept von der CNAS bezuschusst?",
+            "answer": "Das hängt von der Art des Rezepts und vom Status des Arztes gegenüber der CNAS ab. Ein elektronisches Rezept, das von dem Arzt ausgestellt wurde, der Sie konsultiert hat, kann in der Apotheke eingelöst werden; die Bezuschussung über das System der CNAS folgt jedoch den eigenen Regeln der Versicherungskasse und setzt in der Regel voraus, dass der ausstellende Arzt für diese Art der Verordnung einen Vertrag mit der CNAS hat. Wir können die Bezuschussung eines über unsere Plattform ausgestellten Rezepts nicht garantieren. Wenn Ihnen dieser Punkt wichtig ist, fragen Sie beim Einlösen des Rezepts in der Apotheke nach oder klären Sie es direkt mit der CNAS, bevor Sie eine Konsultation buchen."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Datenschutz",
+        "title": "Datenschutz und medizinische Daten",
+        "items": [
+          {
+            "question": "Wie werden meine medizinischen Daten geschützt?",
+            "answer": "Ihre medizinischen Daten werden verschlüsselt gespeichert und nur von befugtem Personal eingesehen, das direkt an Ihrer Versorgung beteiligt ist — in erster Linie von dem Arzt, der Sie konsultiert. Videoanrufe laufen über eine gesicherte Verbindung, und die Informationen, die Sie auf der Plattform eingeben, etwa Symptome, Krankengeschichte oder hochgeladene Dokumente, werden nicht zu kommerziellen Zwecken an Dritte weitergegeben. Wir halten die in der Europäischen Union geltenden gesetzlichen Anforderungen zum Schutz personenbezogener Daten ein. Wenn Sie konkrete Fragen dazu haben, wie Ihre Daten verwendet werden, oder zu unserer Datenschutzrichtlinie, können Sie uns jederzeit an unsere Kontakt-E-Mail-Adresse schreiben."
+          },
+          {
+            "question": "Wer hat Zugriff auf meine Krankengeschichte?",
+            "answer": "Der Zugriff auf Ihre Patientenakte ist auf die Ärzte beschränkt, die direkt an Ihrer Versorgung beteiligt sind, sowie auf das Personal, das für den Betrieb der Plattform unbedingt erforderlich ist, zum Beispiel für den technischen Support zu Ihrem Konto. Ein neuer Arzt kann bei einer künftigen Konsultation die bisherigen Konsultationen auf der Plattform einsehen, um eine stimmige Versorgung zu gewährleisten, es sei denn, Sie entscheiden sich anders. Die Daten werden nicht verkauft und ohne Ihre ausdrückliche Einwilligung oder eine eindeutige gesetzliche Verpflichtung, die uns dies im konkreten Fall vorschreibt, nicht an Arbeitgeber, Versicherer oder andere Institutionen weitergegeben."
+          },
+          {
+            "question": "Kann ich meine Daten herunterladen oder löschen?",
+            "answer": "Ja. Sie können eine Kopie Ihrer auf der Plattform gespeicherten medizinischen Daten sowie die Löschung Ihres Kontos und der zugehörigen Informationen beantragen, vorbehaltlich der gesetzlich vorgeschriebenen Aufbewahrungsfristen für medizinische Unterlagen. Diese Anträge werden per E-Mail an unsere Kontaktadresse bearbeitet und gemäß den Rechten behandelt, die das europäische Datenschutzrecht Patienten einräumt. Bitte beachten Sie, dass bestimmte medizinische Unterlagen auch nach einem Löschantrag für eine gesetzlich vorgeschriebene Mindestdauer aufbewahrt werden können, wenn das Gesetz dies verlangt, unabhängig von Ihrer persönlichen Präferenz."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Zahlungen",
+        "title": "Zahlungen und Abrechnung",
+        "items": [
+          {
+            "question": "Was kostet eine Konsultation?",
+            "answer": "Der Preis jeder Konsultation wird vor der Bestätigung des Termins deutlich auf der Plattform angezeigt und richtet sich nach der Art der Konsultation und dem gewählten Arzt. Feste Preise veröffentlichen wir hier nicht, da sie sich im Laufe der Zeit und je nach gewünschter Leistung ändern können — maßgeblich ist immer der aktuelle Preis auf der Buchungsseite. Es gibt keine versteckten Kosten: Der Betrag, den Sie vor der Zahlung sehen, ist der Endbetrag, den Sie bezahlen. Wenn Sie einen aktiven Tarif oder ein aktives Abonnement haben, werden etwaige enthaltene Vorteile automatisch angewendet, bevor Sie zur Zahlung aufgefordert werden."
+          },
+          {
+            "question": "Welche Zahlungsmethoden akzeptieren Sie?",
+            "answer": "Wir akzeptieren Online-Zahlungen per Karte direkt auf der Plattform, zum Zeitpunkt der Terminbestätigung. Die Zahlungsabwicklung ist gesichert, und Ihre Kartendaten werden nicht von uns gespeichert. Wenn Sie ein Abonnement oder einen Tarif haben, der bestimmte Leistungen abdeckt, kann der Preis der Konsultation je nach den enthaltenen Vorteilen reduziert oder vollständig abgedeckt sein — dies wird vor der Zahlung automatisch angezeigt. Bei Fragen zu einer Rechnung oder zu einer nicht korrekt verarbeiteten Zahlung können Sie uns per E-Mail kontaktieren, und unser Team antwortet Ihnen mit Einzelheiten zur betreffenden Transaktion."
+          }
+        ]
+      }
+    ]
+  }
+}

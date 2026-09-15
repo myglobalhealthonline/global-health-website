@@ -1,0 +1,211 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/de/faq-markets.json under the market key.",
+  "_source": "frontend/locales/cs/faq-markets.json#cz",
+  "_locale": "de",
+  "_keywordsUsed": [
+    {
+      "keyword": "krankenversicherungen in tschechien",
+      "volume": null,
+      "where": "5.1 answer"
+    }
+  ],
+  "_reviewNotes": [
+    {
+      "group": 0,
+      "item": null,
+      "note": "Translated from the native Czech copy, not the English. Formal 'Sie' throughout; em dashes kept as '—' like the existing de locale. Site terms reused from frontend/locales/de: 'Konsultation', 'Hausarzt', 'Facharzt', 'Rezept', 'Überweisung', 'Bescheinigung', 'registriert'. Masculine generic 'Arzt'/'Patient' as in the existing de copy."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'Česká lékařská komora' rendered 'Tschechische Ärztekammer (Česká lékařská komora)' — ČLK is a chamber, so 'Ärztekammer' is accurate. 'praktických i specializovaných lékařů' = 'Allgemeinmediziner und Fachärzte'. Address 'Prag 1, Rybná 24' kept exact; 'registrační sídlo' = 'eingetragener Firmensitz'."
+    },
+    {
+      "group": 0,
+      "item": 2,
+      "note": "'praktický lékař' = 'Hausarzt' throughout (site term), though the Czech GP is a registered primary-care physician rather than the German Hausarzt model. 'kliniky' (the patient's own practice) = 'Praxis' because German 'Klinik' suggests a hospital. 'neschopenka' kept as local name with gloss '(Bescheinigung der vorübergehenden Arbeitsunfähigkeit)' — deliberately NOT 'Krankschreibung'/'AU-Bescheinigung' (German process). 'ČSSZ' glossed once as 'Tschechische Sozialversicherungsverwaltung'."
+    },
+    {
+      "group": 0,
+      "item": 2,
+      "note": "'zdravotní pojišťovna' = 'Krankenversicherung' throughout (Czech public health insurers such as VZP/ZPMVČR). 'Krankenkasse' avoided because it names the German statutory fund. Reviewer: confirm 'Krankenversicherung' does not read as private insurance to German readers."
+    },
+    {
+      "group": 1,
+      "item": 1,
+      "note": "YMYL: the NATIVE source itself says same-day slots 'bývají k dispozici' (are often/usually available). Rendered 'sind häufig Termine noch am selben Tag verfügbar' with the source's conditions (workload, language). Not strengthened; confirm with the service owner that this claim is still true. 'pohotovost' = 'Notdienst (pohotovost)' on first use — Czech pohotovost covers emergency/after-hours services, so 'Notaufnahme' (hospital ER only) was avoided. Numbers 155 and 112 unchanged."
+    },
+    {
+      "group": 1,
+      "item": 2,
+      "note": "'zdravotní kartička' = 'Versichertenkarte' (the Czech insurance card). Confirm wording."
+    },
+    {
+      "group": 2,
+      "item": 0,
+      "note": "'záznam' (consultation record/notes) = 'Dokumentation', deliberately NOT 'Aufzeichnung', which would imply a video recording. 'do dvaceti minut' = 'bis zu zwanzig Minuten' (kept in words as in source). 'potvrzení' = 'Bescheinigung'."
+    },
+    {
+      "group": 2,
+      "item": 1,
+      "note": "'preskripce a přeskripce' = 'Verordnung und Folgeverordnung'. 'laboratorní odběr' = 'Laborprobe', 'zobrazovací metoda' = 'bildgebendes Verfahren'. Clinical review: confirm the condition list is unchanged."
+    },
+    {
+      "group": 2,
+      "item": 2,
+      "note": "'papírové doporučení' = 'Überweisung in Papierform' (site term 'Überweisung')."
+    },
+    {
+      "group": 3,
+      "item": 0,
+      "note": "YMYL: the source's caveat (platform does not itself 'issue' or guarantee the neschopenka; ČSSZ decides benefit entitlement) kept in full. 'nemocenské dávky' = 'Krankengeld (nemocenské dávky)' with the Czech term to avoid implying German Krankengeld rules. 'rodné číslo' = 'Geburtsnummer (rodné číslo)'."
+    },
+    {
+      "group": 3,
+      "item": 1,
+      "note": "'ePortál ČSSZ' kept as official name. 'soukromá klinika' in the question = 'private Klinik' (here it means private providers like Global Health, not the patient's own practice). Czech plural 'neschopenky' rendered 'Neschopenka-Bescheinigungen'."
+    },
+    {
+      "group": 3,
+      "item": 2,
+      "note": "'eRecept' kept as official name, glossed '(elektronisches Rezept)' in 2.0. 'Centrální úložiště elektronických receptů' glossed as 'zentraler Speicher für elektronische Rezepte'. 'léky se zvláštním režimem' = 'Arzneimittel mit besonderen Vorschriften'."
+    },
+    {
+      "group": 3,
+      "item": 3,
+      "note": "'odběr' = 'Probenentnahme' (not only blood). 'návykové látky' = 'suchterzeugende Substanzen'. Clinical review: confirm the stricter-rules caveat reads with the same strength."
+    },
+    {
+      "group": 4,
+      "item": 0,
+      "note": "'GDPR' = 'DSGVO' (German name of the same EU regulation). 'auditované' = 'auditiert'."
+    },
+    {
+      "group": 4,
+      "item": 1,
+      "note": "'jinému ošetřujícímu odborníkovi' = 'einer anderen behandelnden Fachperson'. Legal exception (reporting certain infectious diseases) kept."
+    },
+    {
+      "group": 5,
+      "item": 0,
+      "note": "'platební karta' = 'Zahlungskarte'; 'platební brána' = 'Zahlungsgateway'. No amounts in source; none added."
+    },
+    {
+      "group": 5,
+      "item": 1,
+      "note": "SEO: keyword placement 'Einige Krankenversicherungen in Tschechien' is a literal rendering of 'Některé zdravotní pojišťovny v Česku'. Closest measured keyword: 'krankenversicherung tschechien' (110/month, DE) — the exact phrase is not contained, so the listed phrase has volume null. Not forced further. 'krankenhaus prag' (110) and 'gesundheitssystem tschechien' (20) NOT used: the source mentions neither hospitals nor the health system as such (Prague appears only as the company address). 'ZPMVČR' kept unchanged."
+    }
+  ],
+  "cz": {
+    "groups": [
+      {
+        "eyebrow": "Tschechien",
+        "title": "Fragen zu Tschechien",
+        "items": [
+          {
+            "question": "Sind die Ärzte von Global Health in Tschechien registriert?",
+            "answer": "Ja. Die Ärzte, die über Global Health Tschechien Konsultationen anbieten, sind bei der Tschechischen Ärztekammer (Česká lékařská komora) registriert, der Berufsorganisation, die das Register der Allgemeinmediziner und Fachärzte in der Tschechischen Republik führt. Die Registrierung des jeweiligen Arztes finden Sie in seinem Profil, zusammen mit seinem Fachgebiet und den Sprachen, in denen er Konsultationen anbietet. Unser Sitz ist in Prag 1, Rybná 24 — dabei handelt es sich um den eingetragenen Firmensitz des Unternehmens, nicht um eine Praxis für persönliche Besuche. Alle Untersuchungen finden per gesichertem Videoanruf statt, daher spielt der Standort des Patienten innerhalb Tschechiens keine Rolle — Sie können von überall im Land aus eine Konsultation wahrnehmen."
+          },
+          {
+            "question": "In welcher Sprache kann die Konsultation stattfinden?",
+            "answer": "Konsultationen bieten wir auf Tschechisch und auf Englisch an. Im Profil jedes Arztes steht, in welcher Sprache oder welchen Sprachen er Konsultationen anbietet, sodass Sie den Arzt schon vor der Buchung nach Sprache auswählen können. Auch die Telefonhotline für Fragen zu Buchungen, Zahlungen und zum Konto wird auf Tschechisch und Englisch betreut. Wenn Sie eine Konsultation in einer anderen Sprache bevorzugen, empfehlen wir, dies vor der Reservierung direkt beim jeweiligen Arzt zu klären, da das Sprachangebot je nach Fachgebiet und Verfügbarkeit am jeweiligen Tag variieren kann. Wenn Sie unsicher sind, welchen Arzt Sie wählen sollen, finden Sie den Sprachfilter direkt im Buchungssystem bei der Terminauswahl."
+          },
+          {
+            "question": "Ersetzt Global Health meinen Hausarzt?",
+            "answer": "Nein, Global Health ist eine Ergänzung zu Ihrer regulären medizinischen Versorgung und kein Ersatz für die Registrierung bei einem Hausarzt. Manchmal ist eine Online-Konsultation der schnellere Weg zu einer fachlichen Beurteilung, zum Beispiel bei akuten Beschwerden außerhalb der Sprechzeiten Ihrer Praxis oder bei einer spezialisierten Frage. Bei manchen Leistungen, etwa der Ausstellung einer Neschopenka (Bescheinigung der vorübergehenden Arbeitsunfähigkeit), bleiben jedoch die Beziehung zu Ihrem registrierten Hausarzt und die Regeln der ČSSZ (Tschechische Sozialversicherungsverwaltung) maßgeblich. Wir empfehlen, dass Ihr Hausarzt auch weiterhin bei Ihrer Krankenversicherung für die Langzeitversorgung und Vorsorgeuntersuchungen gemeldet bleibt. Für die langfristige Betreuung chronischer Erkrankungen, Impfungen oder regelmäßige Vorsorgeuntersuchungen bleibt der persönliche Hausarzt unersetzlich, weil er die Kontinuität der Versorgung und die Führung der medizinischen Dokumentation an einem Ort sicherstellt."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Buchung",
+        "title": "So funktioniert die Buchung",
+        "items": [
+          {
+            "question": "Wie buche ich eine Konsultation?",
+            "answer": "Eine Konsultation buchen Sie online in wenigen Minuten: Sie wählen den Bereich (Hausarzt oder Facharzt), wählen einen freien Termin im Kalender des jeweiligen Arztes und bestätigen die Buchung. Der Preis der Konsultation wird schon vor Abschluss der Reservierung angezeigt, sodass Sie genau wissen, was Sie bezahlen. Nach der Bestätigung erhalten Sie per E-Mail den Link zum Videoanruf und gegebenenfalls Hinweise zur Vorbereitung. Die Buchung ist am Computer und am Mobiltelefon möglich, ohne dass Sie eine separate App installieren müssen. Wenn Sie unsicher sind, welchen Arzt Sie wählen sollen, finden Sie in jedem Profil das Fachgebiet, die Bewertungen und den nächsten freien Termin, sodass die Entscheidung nur einen Moment dauert."
+          },
+          {
+            "question": "Wie schnell kann ich einen Arzt konsultieren?",
+            "answer": "In Tschechien sind häufig Termine noch am selben Tag verfügbar, beim Hausarzt wie auch bei vielen Fachärzten, abhängig von der aktuellen Auslastung und der Sprache, in der Sie die Konsultation wünschen. Die genaue Verfügbarkeit sehen Sie direkt im Kalender bei der Auswahl des Arztes — das System zeigt nur tatsächlich freie Termine an. Wenn Sie wirklich dringend Hilfe benötigen: Die Online-Konsultation ist nicht für die Behandlung akuter und lebensbedrohlicher Zustände gedacht; rufen Sie in diesem Fall 155 oder 112 an oder suchen Sie den nächstgelegenen Notdienst (pohotovost) auf. Außerhalb der Stoßzeiten ist die Terminauswahl meist noch größer, vor allem bei Hausärzten, die Konsultationen auf Englisch und Tschechisch anbieten. Wir empfehlen, frühzeitig zu buchen, wenn Sie einen bestimmten Arzt oder eine bestimmte Uhrzeit bevorzugen."
+          },
+          {
+            "question": "Kann ich eine Konsultation für mein Kind oder ein Familienmitglied buchen?",
+            "answer": "Ja, eine Konsultation kann auch im Namen eines Kindes oder eines anderen Familienmitglieds gebucht werden, sofern die Reservierung von einem gesetzlichen Vertreter oder einer Person mit dessen Einverständnis vorgenommen wird. Bei der Buchung geben Sie die Daten der Person ein, die konsultiert wird, nicht nur die der Person, die bezahlt. Bei Kindern und Minderjährigen beurteilt der Arzt während der Konsultation, ob die Online-Form für die jeweiligen Beschwerden geeignet ist, und empfiehlt andernfalls eine persönliche Untersuchung. Wir empfehlen, bei der Konsultation eines Kindes auch die Versichertenkarte und gegebenenfalls Unterlagen vom Hausarzt bereitzuhalten. Die Zahlung für die Konsultation erfolgt über ein Konto, unabhängig davon, welches Familienmitglied konsultiert. Nach der Konsultation finden Sie die Dokumentation und etwaige Dokumente im Patientenkonto der untersuchten Person."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Konsultation",
+        "title": "Online-Konsultation",
+        "items": [
+          {
+            "question": "Wie läuft eine Online-Konsultation ab?",
+            "answer": "Die Konsultation findet als gesicherter Videoanruf im Browser statt, zu dem Zeitpunkt, den Sie reserviert haben. Der Arzt geht mit Ihnen Ihre Beschwerden, gegebenenfalls Ihre Krankengeschichte und die Medikamente, die Sie einnehmen, durch und schlägt auf dieser Grundlage das weitere Vorgehen vor — das kann eine Behandlungsempfehlung sein, die Ausstellung eines eRecept (elektronisches Rezept), die Empfehlung einer weiteren Untersuchung oder, wenn klinisch begründet, die Ausstellung einer Bescheinigung. Die Konsultation dauert in der Regel bis zu zwanzig Minuten. Danach finden Sie die Dokumentation und etwaige Dokumente in Ihrem Patientenkonto. Wir empfehlen, vor der Konsultation eine Liste Ihrer Medikamente und eine kurze Beschreibung Ihrer Beschwerden bereitzuhalten, damit die Untersuchung möglichst effizient verläuft. Bricht die Verbindung ab, versucht der Arzt, den Anruf wiederherzustellen, oder bietet Ihnen einen Ersatztermin an."
+          },
+          {
+            "question": "Welche Beschwerden lassen sich online behandeln und wann ist eine persönliche Untersuchung nötig?",
+            "answer": "Online gut behandeln lassen sich häufige akute Erkrankungen (Erkältung, Grippe, Harnwegsinfektionen), die Verordnung und Folgeverordnung gängiger Medikamente, Haut- und andere Anliegen, bei denen eine Beschreibung und gegebenenfalls Fotos ausreichen, sowie Konsultationen mit einem Facharzt. Wenn die Beschwerden eine körperliche Untersuchung, eine Laborprobe oder ein bildgebendes Verfahren erfordern, weist der Arzt Sie während der Konsultation darauf hin und empfiehlt eine geeignete Einrichtung oder den Notdienst. Ziel ist eine sichere Beurteilung aus der Ferne, nicht der Ersatz einer persönlichen Untersuchung dort, wo sie notwendig ist. Bei Hautbeschwerden hilft es, schon vor Beginn des Anrufs ein gutes Foto zu senden; bei Atemwegs- und anderen akuten Beschwerden beurteilt der Arzt den Schweregrad direkt während des Gesprächs."
+          },
+          {
+            "question": "Kann ich einen Facharzt konsultieren oder nur einen Hausarzt?",
+            "answer": "Über Global Health Tschechien können Sie eine Konsultation sowohl bei einem Hausarzt als auch bei ausgewählten Fachärzten buchen — das Angebot an Fachgebieten ist direkt im Buchungssystem aufgeführt und hängt von der aktuellen Verfügbarkeit der Ärzte ab. Beim Facharzt buchen Sie bei uns direkt, ohne auf eine Überweisung in Papierform vom Hausarzt warten zu müssen; der Facharzt selbst kann in der Konsultation jedoch weitere Schritte empfehlen, etwa eine persönliche Untersuchung oder eine Untersuchung bei einem anderen Spezialisten, wenn der Zustand dies erfordert. Die aktuelle Liste der verfügbaren Fachgebiete kann sich ändern, je nachdem, welche Ärzte an dem jeweiligen Tag Konsultationen anbieten, daher empfehlen wir, das Angebot direkt im Buchungssystem zu prüfen."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Neschopenka und Rezepte",
+        "title": "Neschopenka, eRecept und Medikamente",
+        "items": [
+          {
+            "question": "Kann mir ein Arzt über Global Health eine Neschopenka ausstellen?",
+            "answer": "Die Neschopenka (Bescheinigung der vorübergehenden Arbeitsunfähigkeit) ist immer eine Entscheidung des behandelnden Arztes auf Grundlage einer Untersuchung — auch einer telefonischen oder per Video — und wird elektronisch als eNeschopenka direkt an das System der ČSSZ übermittelt; eine private Plattform „stellt“ sie nicht von sich aus „aus“ und garantiert sie auch nicht. Wenn der Zustand des Patienten es rechtfertigt, stellt der Arzt sie während oder nach der Konsultation auf demselben Weg aus wie bei einem persönlichen Besuch. Über den Anspruch auf Krankengeld (nemocenské dávky) entscheidet anschließend nach eigenen Regeln die ČSSZ, weder der behandelnde Arzt noch Global Health. Wir empfehlen, Ihre Geburtsnummer (rodné číslo) und die Angaben Ihres Arbeitgebers bereitzuhalten."
+          },
+          {
+            "question": "Wie funktioniert die eNeschopenka und warum stellt sie nicht einfach eine private Klinik auf Anfrage aus?",
+            "answer": "Die Neschopenka ist heute vollständig elektronisch (eNeschopenka) und wird direkt vom behandelnden Arzt über das ePortál der ČSSZ oder eine angebundene Praxissoftware ausgestellt — das Dokument geht direkt an das System der ČSSZ, an den Arbeitgeber und an den Versicherten, ohne Papierversion. Die Ausstellung ist an eine Untersuchung und die klinische Beurteilung durch den Arzt gebunden, nicht an den Wunsch des Patienten bei einem bestimmten Anbieter. Den aktuellen Stand und die Historie Ihrer Neschopenka-Bescheinigungen können Sie nach der Anmeldung im ePortál der ČSSZ auch selbst einsehen, einschließlich der Angaben zum behandelnden Arzt und zur Dauer der Arbeitsunfähigkeit. Für den Patienten ändert sich also nichts daran, wie er die Neschopenka nutzt — er muss seinem Arbeitgeber nur nichts mehr persönlich vorbeibringen, da der Arbeitgeber einen eigenen Zugang zum System der ČSSZ hat."
+          },
+          {
+            "question": "Erhalte ich bei der Konsultation ein eRecept?",
+            "answer": "Wenn Ihr Gesundheitszustand es erfordert und der Arzt es nach seiner Beurteilung für angebracht hält, kann er während der Online-Konsultation ein eRecept ausstellen, das elektronisch im zentralen Speicher für elektronische Rezepte (Centrální úložiště elektronických receptů) abgelegt wird. Das Rezept können Sie dann in jeder Apotheke in der Tschechischen Republik gegen Angabe Ihrer Geburtsnummer oder eines SMS-Codes einlösen, ohne eine Papierversion mitbringen zu müssen. Nicht jede Konsultation endet zwangsläufig mit einer Verordnung — das hängt von der klinischen Beurteilung des Arztes ab. Für bestimmte Wirkstoffe, zum Beispiel Opioide oder Arzneimittel mit besonderen Vorschriften, können zusätzliche gesetzliche Einschränkungen gelten. Dank der elektronischen Form kann das Rezept auch außerhalb Ihres Wohnorts eingelöst werden, praktisch in jeder Apotheke in Tschechien, was die Abholung des Medikaments auch unterwegs erleichtert."
+          },
+          {
+            "question": "Können Sie mir wiederholt dasselbe Medikament verschreiben, das ich schon länger einnehme?",
+            "answer": "Bei einer Dauermedikation prüft der Arzt während der Konsultation Ihre aktuelle Behandlung und stellt bei Bedarf ein eRecept zur Fortsetzung der Therapie aus, wenn er dies klinisch für angebracht hält. Bei Medikamenten, die eine regelmäßige Kontrolle erfordern, zum Beispiel Laborkontrollen, kann der Arzt eine persönliche Untersuchung oder eine Probenentnahme empfehlen, bevor er das Rezept verlängert. Insbesondere für Opioide, suchterzeugende Substanzen und bestimmte Psychopharmaka gelten strengere Regeln für die Verschreibung aus der Ferne; darüber informiert Sie der Arzt in der Konsultation. Wenn seit der letzten Kontrolle längere Zeit vergangen ist, kann der Arzt empfehlen, vor der Verlängerung des Rezepts zunächst kurz Ihren Hausarzt persönlich aufzusuchen."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Datenschutz",
+        "title": "Datenschutz und Dokumentation",
+        "items": [
+          {
+            "question": "Wie werden meine Gesundheitsdaten geschützt?",
+            "answer": "Die gesamte medizinische Dokumentation und die Datenübertragung während der Videokonsultation sind verschlüsselt und werden im Einklang mit der DSGVO und der tschechischen Gesetzgebung zum Schutz personenbezogener und sensibler Daten verarbeitet. Zugriff auf Ihre Unterlagen haben nur der behandelnde Arzt und ein begrenzter Kreis befugter Mitarbeiter, die den Betrieb der Plattform sicherstellen. Wir verkaufen Daten nicht und geben sie nicht zu Marketingzwecken an Dritte weiter. Einzelheiten zur Datenverarbeitung finden Sie in unserer Datenschutzerklärung auf der Website. Zugriffe auf das System werden zudem auditiert, sodass sich nachträglich feststellen lässt, wer wann mit einem Eintrag gearbeitet hat. Bei Fragen zum Datenschutz können Sie sich direkt an unseren Support wenden."
+          },
+          {
+            "question": "Wer hat Zugriff auf die Dokumentation meiner Konsultation?",
+            "answer": "Die Dokumentation und die Notizen zur Konsultation sehen in erster Linie der Arzt, der Sie untersucht hat, und Sie selbst in Ihrem Patientenkonto. Wenn Sie es wünschen und Ihre Einwilligung geben, kann eine Zusammenfassung auch Ihrem Hausarzt oder einer anderen behandelnden Fachperson für die weitere Versorgung zugänglich gemacht werden. Ohne Ihre ausdrückliche Einwilligung geben wir Unterlagen nicht an Ihren Arbeitgeber, Ihre Krankenversicherung oder andere Dritte weiter — ausgenommen sind gesetzlich festgelegte Fälle, zum Beispiel die Meldung bestimmter Infektionskrankheiten. Dieselben Regeln gelten für Unterlagen zu einem ausgestellten eRecept oder einer Neschopenka, sofern diese während der Konsultation ausgestellt wurden. Die Einwilligung zur Weitergabe können Sie jederzeit über Ihr Patientenkonto widerrufen."
+          },
+          {
+            "question": "Kann ich eine Kopie meiner medizinischen Unterlagen anfordern?",
+            "answer": "Ja. Als Patient haben Sie das Recht, eine Kopie Ihrer medizinischen Dokumentation anzufordern, die im Zusammenhang mit Konsultationen über Global Health geführt wird, und zwar über Ihr Patientenkonto oder per E-Mail an unseren Support. Die Anfrage bearbeiten wir in der Regel innerhalb weniger Werktage. Dasselbe gilt für Unterlagen zu einem ausgestellten eRecept oder einer Neschopenka, sofern diese während der Konsultation ausgestellt wurden. Eine Kopie der Dokumentation kann auch nützlich sein, um sie an Ihren Hausarzt oder einen anderen Facharzt weiterzugeben. Sie erhalten die Dokumentation in elektronischer Form, die sich bei Bedarf einfach weiterleiten oder ausdrucken lässt. Bei Unklarheiten zum Umfang der bereitgestellten Daten können Sie sich an unseren Support wenden. Wir bewahren die Daten für die im Gesundheitsrecht vorgeschriebene Dauer auf."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Zahlungen",
+        "title": "Zahlungen und Preise",
+        "items": [
+          {
+            "question": "Was kostet eine Konsultation und wie bezahle ich?",
+            "answer": "Den Preis der jeweiligen Konsultation sehen Sie immer vor Abschluss der Buchung, denn er richtet sich nach der Art der Konsultation (Hausarzt, Facharzt) und dem gewählten Arzt und wird direkt im Buchungssystem gepflegt, sodass er stets dem aktuellen Angebot entspricht. Die Zahlung erfolgt online per Zahlungskarte zum Zeitpunkt der Reservierung, sicher über ein geschütztes Zahlungsgateway. Versteckte Zusatzgebühren berechnen wir nicht — der bei der Buchung angezeigte Preis ist der Preis, den Sie bezahlen. Die Rechnung erhalten Sie automatisch per E-Mail. Wir akzeptieren gängige Zahlungskarten, und die Zahlung wird sofort verarbeitet, sodass Ihre Reservierung unmittelbar nach Abschluss der Buchung bestätigt ist. Die Rechnung können Sie auch jederzeit nachträglich in Ihrem Patientenkonto abrufen."
+          },
+          {
+            "question": "Erstattet mir die Krankenversicherung die Konsultation?",
+            "answer": "Global Health ist ein privater, kostenpflichtiger Dienst, und Sie bezahlen direkt an uns, nicht über das System der öffentlichen Krankenversicherung. Einige Krankenversicherungen in Tschechien, zum Beispiel die ZPMVČR, bieten ihren Versicherten eine eigene telefonische oder Online-Hotline als versicherte Leistung an — dabei handelt es sich jedoch um einen separaten Dienst der Krankenversicherung, nicht um die Erstattung von Konsultationen bei privaten Anbietern wie Global Health. Ob Ihnen Ihre Krankenversicherung einen Zuschuss zu privater Versorgung anbietet, sollten Sie direkt bei Ihrer Versicherung erfragen. In der Praxis bedeutet das, dass Sie die Konsultation bei Global Health selbst bezahlen, unabhängig davon, bei welcher Krankenversicherung Sie versichert sind. Die genauen Bedingungen der einzelnen Krankenversicherungen unterscheiden sich und können sich im Laufe der Zeit ändern."
+          }
+        ]
+      }
+    ]
+  }
+}

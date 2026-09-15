@@ -1,0 +1,134 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/ro/faq-markets.json under the market key.",
+  "_source": "frontend/locales/es/faq-markets.json#es",
+  "_locale": "ro",
+  "_keywordsUsed": [
+    { "keyword": "medic online în spania", "volume": null, "where": "group 2 title" }
+  ],
+  "_reviewNotes": [
+    { "group": 0, "item": 0, "note": "Register: the Spanish source uses informal 'tú'; rendered in the formal 'dumneavoastră' register used by ro/faq-markets.json. 'Colegiados' glossed as 'înscriși în colegiul medical'." },
+    { "group": 0, "item": 1, "note": "Colegio Oficial de Médicos kept in Spanish with the gloss 'colegiul oficial al medicilor'. YMYL: 'con la misma validez legal que una consulta presencial' is in the native source and was translated at the same strength ('aceeași valabilitate legală'). Neither softened nor strengthened; clinical reviewer to confirm the claim still stands." },
+    { "group": 0, "item": 2, "note": "'Comunidad autónoma' rendered as 'comunitate autonomă' with the gloss 'regiunile autonome ale Spaniei'. INSS glossed once as 'Instituto Nacional de la Seguridad Social'. 'Incapacidad temporal' kept in quotes with the gloss 'incapacitate temporară de muncă'. 'Circuitos de derivación' rendered as 'circuitele de trimitere'." },
+    { "group": 1, "item": 1, "note": "YMYL: the native source says same-day appointments are available 'en muchos casos' and 'con frecuencia'. Rendered as 'În multe cazuri' and 'adesea', with no stronger promise. 'Lo que ves al reservar es lo que hay' rendered literally." },
+    { "group": 2, "item": null, "note": "Keyword placement: the group title 'Cómo son las consultas online' became 'Cum decurg consultațiile cu un medic online în Spania'. 'În Spania' is implicit because this is the Spain market page. No facts were added." },
+    { "group": 2, "item": 1, "note": "'Médico de familia' rendered as 'medic de familie' (site term). A Spanish médico de familia is not a CNAS family doctor; the text does not imply that." },
+    { "group": 2, "item": 2, "note": "Languages: the source offers Spanish and English only. Given the large Romanian community in Spain, the reviewer should note that no Romanian-language consultations are promised or implied. No change made." },
+    { "group": 3, "item": null, "note": "Group eyebrow/title: 'Bajas' rendered as 'Incapacitate de muncă'. The Romanian 'concediu medical' is deliberately avoided so readers do not assume a Romanian or CNAS process." },
+    { "group": 3, "item": 0, "note": "'Baja médica', 'parte de baja', 'justificante médico' and 'incapacidad temporal' kept in Spanish in quotes, with Romanian glosses. 'Justificante médico' is glossed as 'document medical justificativ'; 'adeverință medicală' was rejected (site uses it for the Romania/CNAS context). 'Informe médico' is rendered as 'raport medical'. 'Prestación económica' is rendered as 'prestația financiară'." },
+    { "group": 3, "item": 2, "note": "'Tarjeta sanitaria' glossed as 'cardul de sănătate'. 'Medicamentos de mayor control' rendered as 'cele cu regim strict de control'; clinical reviewer to confirm." },
+    { "group": 4, "item": 0, "note": "RGPD kept as 'RGPD' (the Romanian official abbreviation matches the Spanish one)." },
+    { "group": 5, "item": 1, "note": "'Justificante del cobro' rendered as 'dovada plății' (proof of payment), not 'factură'. 'Plan de suscripción' rendered as 'abonament'." }
+  ],
+  "es": {
+    "groups": [
+      {
+        "eyebrow": "Spania",
+        "title": "Întrebări despre Spania",
+        "items": [
+          {
+            "question": "Aveți cabinet fizic în Spania?",
+            "answer": "Nu. În Spania funcționăm exclusiv ca o clinică online: nu există cabinet fizic și nici sală de așteptare pe care să o vizitați. Toate programările au loc prin apel video securizat, de pe telefonul mobil sau de pe calculator, cu aceeași confidențialitate ca o consultație față în față. Sediul social al companiei este înregistrat în Irlanda, dar medicii care vă consultă sunt înscriși în colegiul medical („colegiados”) pentru a profesa cu pacienți din Spania. Acest model permite oferirea de programări cu disponibilitate mai mare, fără deplasări și fără săli de așteptare, păstrând același nivel de evaluare clinică pe care l-ați primi într-un centru tradițional. Dacă sunteți în căutarea unei adrese la care să mergeți în persoană, acesta nu este serviciul potrivit pentru dumneavoastră."
+          },
+          {
+            "question": "Medicii sunt înscriși în colegiul medicilor din Spania?",
+            "answer": "Da. Toți medicii care consultă pacienți din Spania sunt înscriși în Colegio Oficial de Médicos (colegiul oficial al medicilor) corespunzător specialității și provinciei lor și îndeplinesc aceleași cerințe de formare și autorizare ca orice medic care profesează față în față în țară. Profilul fiecărui medic de pe platforma noastră indică înscrierea sa în colegiu, astfel încât să o puteți verifica înainte de programare. Colaborarea cu medici înscriși în colegiu ne permite să oferim evaluări clinice, rapoarte medicale și, atunci când este cazul, rețete, cu aceeași valabilitate legală ca o consultație față în față. Dacă aveți nelămuriri privind înscrierea în colegiu a unui anumit medic, ne puteți întreba prin e-mail înainte de consultație."
+          },
+          {
+            "question": "Procesul este același în toate comunitățile autonome?",
+            "answer": "Nu întotdeauna. Sănătatea publică din Spania este transferată fiecărei comunități autonome (regiunile autonome ale Spaniei), astfel încât proceduri precum incapacitatea temporară de muncă („incapacidad temporal”), valabilitatea anumitor documente justificative sau circuitele de trimitere pot varia în funcție de locul în care locuiți. Medicii noștri țin cont de acest lucru în timpul consultației și vă vor îndruma spre cel mai potrivit pas următor în funcție de comunitatea dumneavoastră autonomă, deși gestionarea finală a prestațiilor publice revine întotdeauna INSS (Instituto Nacional de la Seguridad Social) și serviciului de sănătate al comunității autonome respective. Dacă situația dumneavoastră depinde de o procedură specifică regiunii, spuneți-i medicului acest lucru la începutul consultației, pentru a vă putea îndruma cu precizie."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Programări",
+        "title": "Cum vă programați consultația",
+        "items": [
+          {
+            "question": "Cum programez o consultație?",
+            "answer": "Programarea unei consultații este simplă: alegeți tipul de programare de care aveți nevoie, medicul și un interval orar disponibil, apoi confirmați plata în siguranță de pe site. Înainte de confirmare, veți vedea clar prețul consultației. Veți primi confirmarea pe e-mail, cu linkul către apelul video și, dacă aveți nevoie, un memento înainte de ora stabilită. Nu este nevoie să vă deplasați sau să așteptați în vreo sală: aveți nevoie doar de o conexiune la internet și de un dispozitiv cu cameră. Dacă nu știți ce tip de consultație să alegeți, ne puteți scrie pe e-mail și vă îndrumăm înainte de programare."
+          },
+          {
+            "question": "Pot obține o programare în aceeași zi?",
+            "answer": "În multe cazuri, da. Disponibilitatea depinde de tipul de consultație și de medicii care au program deschis în ziua respectivă, dar, fiind un serviciu online, oferim de obicei programări mai rapid decât o consultație față în față, inclusiv, adesea, chiar în ziua în care faceți programarea. Calendarul de programări afișează în timp real intervalele cu adevărat disponibile, așa că ceea ce vedeți la programare este ceea ce există. Dacă nevoia dumneavoastră este urgentă din punct de vedere medical — nu doar din motive de grabă — rețineți că o consultație online nu înlocuiește o urgență reală: în acest caz, sunați la 112."
+          },
+          {
+            "question": "Pot schimba sau anula programarea?",
+            "answer": "Da. Puteți schimba intervalul orar sau anula programarea din contul dumneavoastră, cu anticiparea indicată în condițiile de programare, care sunt afișate înainte de confirmarea plății. Anularea sau reprogramarea din timp eliberează intervalul pentru un alt pacient și, în funcție de termen, vă poate permite să recuperați suma plătită. Dacă aveți nevoie de ajutor pentru a face schimbarea sau dacă apare o situație neprevăzută chiar înainte de programare, ne puteți scrie pe e-mail și vă ajutăm să găsiți o soluție. Vă recomandăm să verificați condițiile de anulare ale programării dumneavoastră, deoarece acestea pot varia în funcție de tipul de consultație programat."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultații",
+        "title": "Cum decurg consultațiile cu un medic online în Spania",
+        "items": [
+          {
+            "question": "Cum decurge o consultație prin apel video?",
+            "answer": "Consultația are loc prin apel video securizat, la fel ca o programare față în față, dar de oriunde vă aflați. Medicul analizează motivul consultației, vă pune întrebările necesare și, dacă este nevoie, vă roagă să îi arătați ceva la cameră sau să descrieți simptomele mai detaliat. La finalul evaluării, vă explică diagnosticul probabil, planul de urmat și, atunci când este indicat clinic, vă eliberează o rețetă, un raport medical sau un document justificativ. Durata este similară cu cea a unei consultații standard față în față. Aveți nevoie doar de un dispozitiv cu cameră și microfon și de un loc liniștit, unde să puteți vorbi în intimitate."
+          },
+          {
+            "question": "Pentru ce pot cere o consultație online?",
+            "answer": "Puteți programa o consultație generală cu un medic de familie pentru simptome obișnuite, monitorizarea tratamentelor sau întrebări despre sănătate, precum și consultații cu specialiști, în funcție de disponibilitatea din fiecare moment. Platforma indică clar ce tip de consultație programați și ce include. Nu toate situațiile sunt potrivite pentru o evaluare online: dacă, în timpul consultației, medicul consideră că aveți nevoie de un examen fizic, de investigații față în față sau de îngrijire urgentă, vă va spune acest lucru și vă va îndruma unde să mergeți. Scopul este întotdeauna să vă oferim cea mai sigură evaluare posibilă, nu să forțăm o soluție online atunci când aceasta nu este potrivită."
+          },
+          {
+            "question": "În ce limbi se desfășoară consultațiile?",
+            "answer": "Consultațiile pentru pacienții din Spania sunt oferite în spaniolă și în engleză. Limba fiecărui medic este indicată pe profilul său, astfel încât puteți alege cu cine să faceți programarea în funcție de limba în care vă simțiți cel mai confortabil să vă descrieți simptomele. Chestiunile administrative — programări, plăți, întrebări despre cont — sunt gestionate și prin e-mail, în spaniolă și engleză. Dacă preferați o anumită limbă pentru consultația medicală, verificați profilul medicului înainte de programare, deoarece nu toți profesioniștii de pe platformă consultă în aceleași limbi."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Incapacitate de muncă și rețete",
+        "title": "Incapacitate de muncă, documente justificative și rețete",
+        "items": [
+          {
+            "question": "Îmi puteți acorda „baja médica” (incapacitate temporară de muncă)?",
+            "answer": "Nu în mod direct. „Baja médica”, sau incapacitatea temporară de muncă („incapacidad temporal”), este o procedură oficială care în Spania se gestionează prin sistemul public: o emite un medic al serviciului de sănătate din comunitatea dumneavoastră autonomă, iar prestația financiară asociată este acordată de INSS, conform propriilor criterii. O consultație online cu noi nu înlocuiește acest circuit public. Ceea ce vă poate oferi medicul, atunci când evaluarea clinică o justifică, este un raport medical sau un document medical justificativ privat („justificante médico”), care atestă starea dumneavoastră de sănătate și vă poate fi de folos în relația cu angajatorul, în timp ce gestionați „baja” oficială pe calea publică corespunzătoare comunității dumneavoastră autonome."
+          },
+          {
+            "question": "Ce este un „justificante médico” și prin ce diferă de „baja”?",
+            "answer": "„Justificante médico” (documentul medical justificativ) este un document care atestă că ați fost evaluat de un medic la o anumită dată și care cuprinde aprecierea sa clinică; nu este același lucru cu „parte de baja”, documentul oficial care recunoaște incapacitatea temporară de muncă în cadrul sistemului public. Medicii noștri pot emite un document medical justificativ privat după evaluare, atunci când este adecvat din punct de vedere clinic, pentru a-l prezenta angajatorului sau oriunde aveți nevoie de el. „Baja” oficială și prestația financiară aferentă depind în continuare de serviciul de sănătate al comunității dumneavoastră autonome și de INSS, cu propriile proceduri și cerințe."
+          },
+          {
+            "question": "Îmi pot fi prescrise medicamente într-o consultație online?",
+            "answer": "Da, atunci când medicul consideră că este adecvat din punct de vedere clinic, după ce vă evaluează. Dacă situația dumneavoastră o permite, poate emite o rețetă electronică la finalul consultației, pe care o veți putea ridica de la orice farmacie cu cardul de sănătate („tarjeta sanitaria”) sau cu actul de identitate, conform circuitului obișnuit din Spania. Nu toate consultațiile se încheie cu o rețetă: există tratamente, investigații sau trimiteri care necesită evaluare față în față, iar medicul vă va spune dacă este cazul dumneavoastră. Prescrierea anumitor medicamente, în special a celor cu regim strict de control, poate necesita o consultație suplimentară față în față, conform reglementărilor în vigoare, iar medicul vă va explica acest lucru în timpul programării."
+          },
+          {
+            "question": "Pot cere un raport medical pentru angajator?",
+            "answer": "Da. Dacă, după consultație, medicul consideră că este justificat clinic, vă poate emite un raport medical sau un document justificativ care cuprinde evaluarea efectuată și starea dumneavoastră de sănătate în acel moment, pentru a-l prezenta angajatorului. Fiecare companie își stabilește propriile cerințe privind documentele pe care le acceptă, așa că este bine să confirmați cu departamentul de resurse umane ce anume este necesar înainte de programare. Rețineți că acest raport este diferit de „parte de baja” oficial: dacă situația dumneavoastră necesită o incapacitate temporară de muncă recunoscută și prestația financiară aferentă, această procedură depinde de serviciul de sănătate al comunității dumneavoastră autonome și de INSS."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Confidențialitate",
+        "title": "Confidențialitate și date medicale",
+        "items": [
+          {
+            "question": "Cum îmi protejați datele medicale?",
+            "answer": "Datele dumneavoastră de sănătate sunt prelucrate în conformitate cu RGPD și cu legislația spaniolă privind protecția datelor, cu acces limitat la personalul medical și administrativ care trebuie să le consulte pentru a vă presta serviciul. Apelurile video au loc prin conexiuni criptate, iar istoricul dumneavoastră medical este stocat în sisteme cu controale de securitate și copii de rezervă, nu în documente răzlețe sau în e-mailuri. Nu partajăm informațiile dumneavoastră medicale cu terți fără consimțământul dumneavoastră, cu excepția cazurilor în care legea ne obligă. Dacă doriți mai multe detalii despre modul în care vă prelucrăm datele, puteți consulta politica noastră de confidențialitate sau ne puteți scrie direct."
+          },
+          {
+            "question": "Pot accesa istoricul consultațiilor mele?",
+            "answer": "Da. Din contul dumneavoastră puteți consulta istoricul programărilor anterioare, inclusiv rapoartele medicale, documentele justificative sau rețetele pe care medicul le-a emis la fiecare consultație. Acest istoric vă permite, de exemplu, să arătați unui alt profesionist din domeniul sănătății ce s-a evaluat la o programare anterioară sau să recuperați un document pe care trebuie să îl prezentați mai târziu. Accesul este protejat prin autentificarea dumneavoastră personală și numai dumneavoastră îl puteți consulta, cu excepția cazului în care autorizați în mod expres o altă persoană să facă acest lucru. Dacă nu găsiți un document pe care vă așteptați să îl vedeți, scrieți-ne pe e-mail și îl verificăm împreună."
+          },
+          {
+            "question": "Cine poate vedea informațiile mele medicale?",
+            "answer": "La informațiile dumneavoastră medicale au acces doar medicul care vă consultă și personalul strict necesar pentru funcționarea serviciului, cum ar fi suportul tehnic sau administrativ pentru sarcinile care o impun, întotdeauna sub aceeași obligație de confidențialitate care se aplică oricărui profesionist din domeniul sănătății. Nu partajăm istoricul dumneavoastră cu angajatorul, cu asigurătorul sau cu vreun terț fără consimțământul dumneavoastră expres, cu excepția obligațiilor legale. Dacă, la un moment dat, aveți nevoie să partajăm un document cu o altă persoană sau instituție — de exemplu, un alt medic — puteți autoriza acest lucru chiar dumneavoastră din cont sau solicitându-l în scris."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Plăți",
+        "title": "Prețuri și plăți",
+        "items": [
+          {
+            "question": "Cât costă o consultație?",
+            "answer": "Prețul depinde de tipul de consultație pe care o programați — generală, cu un specialist sau alt serviciu — și este afișat întotdeauna clar înainte de a confirma și plăti programarea, astfel încât veți ști exact cât veți plăti înainte de a vă programa. Nu există costuri ascunse: dacă, în timpul consultației, medicul recomandă un serviciu suplimentar, vi se va indica prețul înainte să decideți dacă doriți să continuați. Prețurile pot fi actualizate în timp, așa că suma finală este întotdeauna cea pe care o vedeți pe ecranul de programare în momentul confirmării, nu un tarif fix publicat separat."
+          },
+          {
+            "question": "Ce metode de plată acceptați?",
+            "answer": "Acceptăm plata cu card de credit sau de debit, în siguranță, prin platformă, în momentul programării. Plata este procesată prin conexiuni criptate înainte de confirmarea intervalului orar, iar dovada plății o veți primi pe e-mail, împreună cu confirmarea programării. Dacă aveți un abonament activ, costul consultațiilor incluse este gestionat automat, fără să fie nevoie să introduceți datele de plată la fiecare programare. Dacă aveți întrebări despre o anumită plată, ne puteți scrie și o verificăm împreună cu dumneavoastră, pe baza detaliilor tranzacției."
+          }
+        ]
+      }
+    ]
+  }
+}

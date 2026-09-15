@@ -1,0 +1,186 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/cs/faq-markets.json under the market key.",
+  "_source": "frontend/locales/pt/faq-markets.json#pt",
+  "_locale": "cs",
+  "_keywordsUsed": [
+    {
+      "keyword": "lékař online v portugalsku",
+      "volume": null,
+      "where": "1.0 question"
+    }
+  ],
+  "_reviewNotes": [
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'Ordem dos Médicos' keeps its official name, with the Czech gloss '(portugalská lékařská komora)' on first use in the answer. 'atestado' (generic medical certificate) is translated throughout as 'lékařské potvrzení'; 'receita' as 'recept'. 'eRecept' was deliberately NOT used because it names the Czech SÚKL system."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "'SNS24' kept as is. 'Serviço Nacional de Saúde' keeps its official name with the gloss '(portugalský národní zdravotní systém)'. 'triagem' is translated as 'triáž' with the explanation 'třídění pacientů' on first use. 'serviço de urgência' is translated as 'pohotovost' (as in the cs 'cz' FAQ); 'urgentní příjem' is used where the source says 'hospital'."
+    },
+    {
+      "group": 0,
+      "item": 2,
+      "note": "'não está preparada para emergências clínicas' is translated as 'není určena pro naléhavé zdravotní situace'. 'hemorragia importante' is translated as 'silné krvácení'. Please confirm the red-flag symptom list reads naturally and is complete. 112 kept; the Czech 155 was NOT added."
+    },
+    {
+      "group": 1,
+      "item": 0,
+      "note": "The keyword phrase is placed as a lead-in to the existing question ('Lékař online v Portugalsku: jak si objednat konzultaci?'). The source question already says 'consulta online em Portugal', so no new content was added. 'clínica geral' is translated as 'praktický lékař' (booking type); 'área de doente' as 'pacientský účet', matching the cs 'cz' FAQ."
+    },
+    {
+      "group": 1,
+      "item": 2,
+      "note": "'agenda clínica' is translated as 'rozpis ordinačních časů lékařů'. 'podem incluir períodos fora do horário comercial' keeps the hedge 'mohou zahrnovat' — no promise of out-of-hours availability."
+    },
+    {
+      "group": 2,
+      "item": 0,
+      "note": "'orientação' is translated as 'rady k dalšímu postupu', not 'doporučení', because 'doporučení' also means a referral in cs site copy. 'historial relevante' is translated as 'relevantní anamnéza'."
+    },
+    {
+      "group": 2,
+      "item": 2,
+      "note": "Consultations are offered in Portuguese and English only. The Czech page does not promise Czech-language consultations; please confirm with the business that this is intended for cs readers."
+    },
+    {
+      "group": 3,
+      "item": 0,
+      "note": "'Certificado de Incapacidade Temporária para o trabalho' keeps its official Portuguese name with the gloss '(potvrzení o dočasné pracovní neschopnosti)'; 'baixa médica' kept as the colloquial name. The question uses the cs site term 'potvrzení o pracovní neschopnosti'. 'neschopenka'/'eNeschopenka' were deliberately avoided (Czech ČSSZ system). 'Segurança Social' keeps its name with the gloss '(portugalský systém sociálního zabezpečení)'; 'subsídio de doença' is translated as 'nemocenská dávka'."
+    },
+    {
+      "group": 3,
+      "item": 1,
+      "note": "'IMT' kept with the gloss '(Instituto da Mobilidade e dos Transportes, portugalský úřad pro dopravu)' — the source gives only the abbreviation, so please confirm the gloss. 'carta de condução' is translated as 'řidičský průkaz'."
+    },
+    {
+      "group": 3,
+      "item": 3,
+      "note": "The answer makes no acceptance claim, matching the native source: it only states who issues the certificate and that the employer/Segurança Social rules apply. 'entidade patronal' is translated as 'zaměstnavatel'."
+    },
+    {
+      "group": 4,
+      "item": 0,
+      "note": "'Regulamento Geral de Proteção de Dados' is translated as 'obecné nařízení o ochraně osobních údajů (GDPR)' — the official Czech name of the same EU regulation. 'processo clínico' is translated as 'zdravotnická dokumentace'."
+    },
+    {
+      "group": 5,
+      "item": 1,
+      "note": "'seguro de saúde' / 'apólice' is translated as 'zdravotní pojištění' / 'pojistná smlouva'. Czech readers may think of the public health insurer (zdravotní pojišťovna); the source means a (typically private) health insurance policy. 'checkout' is translated as 'při placení'; 'comprovativo' as 'doklad o platbě'."
+    }
+  ],
+  "pt": {
+    "groups": [
+      {
+        "eyebrow": "Portugalsko",
+        "title": "Otázky o Portugalsku",
+        "items": [
+          {
+            "question": "Jsou lékaři registrovaní u Ordem dos Médicos?",
+            "answer": "Ano. Lékaři, kteří přes Global Health přijímají pacienty v Portugalsku, jsou registrovaní u Ordem dos Médicos (portugalská lékařská komora). Než lékař navrhne jakoukoli léčbu, lékařské potvrzení nebo recept, provede klinické posouzení prostřednictvím videohovoru. Pokud si chcete registraci ověřit ještě před objednáním, můžete ji vyhledat přímo na webu Ordem dos Médicos."
+          },
+          {
+            "question": "Jaký je rozdíl mezi Global Health a SNS24?",
+            "answer": "Global Health je soukromá služba, zatímco SNS24 je veřejná služba pro triáž (třídění pacientů) a poradenství v rámci Serviço Nacional de Saúde (portugalský národní zdravotní systém). SNS24 můžete využít k triáži a prvotní orientaci a Global Health k objednání soukromé lékařské konzultace videohovorem. Pokud situace vyžaduje neodkladnou péči nebo osobní vyšetření, správnou cestou nadále zůstává SNS24, linka 112 nebo pohotovost."
+          },
+          {
+            "question": "Co mám dělat, pokud v Portugalsku potřebuji naléhavou pomoc?",
+            "answer": "Global Health není pohotovostní služba a naše telefonní linka není určena pro naléhavé zdravotní situace. Pokud máte závažné příznaky, bolest na hrudi, potíže s dýcháním, silné krvácení, ztrátu vědomí nebo jinou rizikovou situaci, volejte 112 nebo jděte na urgentní příjem nejbližší nemocnice. Online konzultace jsou určeny pro situace, které nejsou naléhavé."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Objednání",
+        "title": "Jak si objednat konzultaci",
+        "items": [
+          {
+            "question": "Lékař online v Portugalsku: jak si objednat konzultaci?",
+            "answer": "Konzultaci si můžete objednat přímo na webu, kde zvolíte typ konzultace, který hledáte, například u praktického lékaře, u specialisty nebo kvůli lékařskému potvrzení. Po zadání svých údajů a důvodu konzultace vyberete v kalendáři volný termín a potvrdíte platbu. Cena konzultace se zobrazí před dokončením objednávky. Po objednání obdržíte potvrzení s časem videohovoru a pokyny k připojení, a to e-mailem i ve svém pacientském účtu."
+          },
+          {
+            "question": "Jak dlouho se v Portugalsku čeká na online konzultaci?",
+            "answer": "Doba do konzultace závisí na typu konzultace a na dostupnosti, kterou kalendář ukazuje v okamžiku objednání. Kalendář zobrazuje termíny, které jsou v danou chvíli volné. Pokud je vaše situace závažná, nečekejte na online konzultaci: volejte 112 nebo vyhledejte pohotovost."
+          },
+          {
+            "question": "Mohu se objednat i mimo pracovní dobu?",
+            "answer": "Online se můžete objednat kdykoli během dne. Dostupné termíny konzultací závisí na rozpisu ordinačních časů lékařů, který kalendář v danou chvíli ukazuje, a mohou zahrnovat i časy mimo běžnou pracovní dobu. Pokud nenajdete vhodný termín, podívejte se znovu později."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Konzultace",
+        "title": "Jak konzultace probíhají",
+        "items": [
+          {
+            "question": "Jak probíhá online lékařská konzultace?",
+            "answer": "Konzultace probíhá zabezpečeným videohovorem přes počítač, tablet nebo mobilní telefon v čase, na který jste se objednali. Lékař ověří vaši totožnost a důvod konzultace, zeptá se na příznaky a relevantní anamnézu a o dalším postupu rozhodne na základě klinického posouzení. Podle situace můžete dostat rady k dalšímu postupu, recept, lékařské potvrzení nebo pokyn vyhledat osobní péči. Na konci budete mít ve svém pacientském účtu k dispozici shrnutí konzultace včetně všech vystavených dokumentů."
+          },
+          {
+            "question": "Musím se na konzultaci nějak připravit?",
+            "answer": "Pomůže mít po ruce seznam léků, které aktuálně užíváte, včetně dávkování, a stručný popis příznaků a toho, jak dlouho je máte. Pokud máte nedávná vyšetření, laboratorní výsledky nebo lékařské zprávy související s důvodem konzultace, mějte je připravené, aby lékař mohl váš případ posoudit s více informacemi. Zajistěte si také stabilní připojení k internetu a klidné místo, aby videohovor proběhl bez přerušení."
+          },
+          {
+            "question": "Mluví lékaři portugalsky a anglicky?",
+            "answer": "Nabídka zahrnuje konzultace v portugalštině a v angličtině. Před rezervací si v profilu každého lékaře ověřte, jaké jazyky uvádí."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Potvrzení",
+        "title": "Lékařská potvrzení a recepty",
+        "items": [
+          {
+            "question": "Vystavujete potvrzení o pracovní neschopnosti (baixa médica)?",
+            "answer": "Ano, je to jedna z dostupných služeb. Pokud to lékař po posouzení považuje za klinicky vhodné, může vystavit Certificado de Incapacidade Temporária para o trabalho (potvrzení o dočasné pracovní neschopnosti), známé také jako baixa médica. Dokument vždy závisí na klinickém posouzení a nevystavuje se automaticky. O případné nemocenské dávce rozhoduje samostatně Segurança Social (portugalský systém sociálního zabezpečení) podle vlastních pravidel."
+          },
+          {
+            "question": "Vystavujete lékařské potvrzení pro řidičský průkaz?",
+            "answer": "Pro lékařské potvrzení k řidičskému průkazu existuje samostatná služba. Před objednáním si na stránce této služby prohlédněte, co konzultace zahrnuje a jaké kroky jsou předpokládané. Potvrzení pro řidičský průkaz se řídí požadavky IMT (Instituto da Mobilidade e dos Transportes, portugalský úřad pro dopravu)."
+          },
+          {
+            "question": "Můžete obnovit můj recept nebo pravidelnou léčbu?",
+            "answer": "Ano, obnovení léčby je častým důvodem konzultace. Při konzultaci kvůli obnovení léčby lékař zkontroluje léky, které již užíváte, a ověří, zda jsou nadále klinicky vhodné. Nejde o automatické obnovení: lékař si může vyžádat další informace, navrhnout úpravu nebo doporučit osobní konzultaci, pokud to situace vyžaduje."
+          },
+          {
+            "question": "Přijme potvrzení zaměstnavatel a Segurança Social?",
+            "answer": "Potvrzení vystavuje lékař registrovaný u Ordem dos Médicos po klinickém posouzení. Způsob, jakým nepřítomnost oznámíte zaměstnavateli, a přiznání nemocenské dávky se řídí pravidly firmy a Segurança Social. Máte-li pochybnosti o svém případě, ověřte si požadavky přímo u těchto institucí."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Soukromí",
+        "title": "Soukromí a zdravotnická dokumentace",
+        "items": [
+          {
+            "question": "Jsou moje zdravotní údaje chráněné?",
+            "answer": "Ano. S vašimi zdravotními údaji se zachází jako s citlivými klinickými informacemi, přístup k nim mají pouze osoby podílející se na vaší péči a jsou chráněny v souladu s obecným nařízením o ochraně osobních údajů (GDPR). Videohovory probíhají přes zabezpečená připojení a záznam z konzultace zůstává uložen ve vašem pacientském účtu, pokud zákon nestanoví jinak."
+          },
+          {
+            "question": "Kdo má přístup k mé zdravotnické dokumentaci?",
+            "answer": "Vaše zdravotnická dokumentace je přístupná lékaři, který vás konzultuje, a případně týmu přímo zapojenému do vaší péče. Vaše zdravotní údaje nesdílíme se zaměstnavateli, pojišťovnami ani třetími stranami bez vašeho výslovného souhlasu, s výjimkou případů, kdy to vyžaduje zákon. Historii svých konzultací, lékařských potvrzení a receptů najdete ve svém pacientském účtu."
+          },
+          {
+            "question": "Mohu požádat o vymazání svých zdravotních údajů?",
+            "answer": "Ano. Jako subjekt údajů můžete v souladu s obecným nařízením o ochraně osobních údajů požádat o přístup ke svým osobním údajům, jejich opravu nebo vymazání. Část klinických informací může být nutné uchovat kvůli zákonné povinnosti, která se vztahuje na zdravotnické záznamy. Toto právo můžete uplatnit prostřednictvím kontaktů uvedených na stránce s kontakty."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Platby",
+        "title": "Ceny a platba",
+        "items": [
+          {
+            "question": "Kolik stojí konzultace?",
+            "answer": "Cena každého typu konzultace, ať jde o praktického lékaře, specialistu nebo lékařské potvrzení, se zobrazí před potvrzením objednávky. Ceny se liší podle typu konzultace a mohou se v průběhu času měnit, proto zobrazujeme aktuální částku v okamžiku objednání. Pokud máte dotaz ke konkrétní službě, můžete si cenu ověřit na její stránce."
+          },
+          {
+            "question": "Jaké způsoby platby přijímáte?",
+            "answer": "Platí se online při objednání, a to způsoby zobrazenými při placení, obvykle platební kartou. Po zaplacení obdržíte doklad o platbě spojený s vaší objednávkou, který je dostupný i ve vašem pacientském účtu. Pokud chcete žádat o proplacení ze zdravotního pojištění, nejprve si ověřte podmínky své pojistné smlouvy."
+          }
+        ]
+      }
+    ]
+  }
+}

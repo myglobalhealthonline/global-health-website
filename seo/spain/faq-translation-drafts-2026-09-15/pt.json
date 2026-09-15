@@ -1,0 +1,186 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/pt/faq-markets.json under the market key.",
+  "_source": "frontend/locales/es/faq-markets.json#es",
+  "_locale": "pt",
+  "_keywordsUsed": [
+    {
+      "keyword": "saúde em espanha",
+      "volume": null,
+      "where": "0.2"
+    }
+  ],
+  "_reviewNotes": [
+    {
+      "group": 0,
+      "item": null,
+      "note": "VARIANT: drafted in European Portuguese (pt-PT) because the site's existing Spain pt page is pt-PT (country-home-copy.ts 'es:pt' = 'Cuidados médicos online em Espanha'; locales/pt uses doente, marcação, registado/inscrito). The only measurable demand is Brazilian (OpenSEO, Brazil location; Portugal location showed none): 'seguro saúde espanha' 170, 'saúde na espanha' 110, 'médico na espanha' 50. None of these could be used verbatim: pt-PT says 'em Espanha' (not 'na Espanha'). The pt-PT form 'saúde em espanha' is used once (0.2); its own volume was not measured, hence volume null. 'seguro saúde espanha' was not used because the source never discusses health insurance (only 'aseguradora' as a third party in 4.2, rendered 'seguradora'). 'médico em Espanha' was not forced in: no source sentence expresses it without rewording. If the team decides this market's pt copy should be pt-BR, the Brazilian forms would fit in the same places."
+    },
+    {
+      "group": 0,
+      "item": null,
+      "note": "Register: the Spanish source uses informal 'tú'. Rendered in the site's pt-PT formal third person ('o seu', 'pode'), matching the published Portugal FAQ, without changing any content."
+    },
+    {
+      "group": 0,
+      "item": 0,
+      "note": "'colegiados para ejercer con pacientes en España' rendered 'inscritos para exercer com doentes em Espanha', mirroring the published Portugal FAQ wording 'inscritos na Ordem dos Médicos'. 'sede social' is 'sede social'."
+    },
+    {
+      "group": 0,
+      "item": 1,
+      "note": "Question '¿Los médicos están colegiados en España?' rendered 'Os médicos estão inscritos na ordem dos médicos em Espanha?' — 'colegiado' has no natural pt-PT equivalent, so the concept (membership of the medical college) is spelled out; no new fact added. Official name 'Colegio Oficial de Médicos' kept in Spanish with gloss '(a ordem dos médicos)' on first use. The native source's own claim 'con la misma validez legal que una consulta presencial' is translated faithfully as 'com a mesma validade legal que uma consulta presencial' — it IS in the native Spanish copy, so it was not removed, but please confirm clinically/legally that it should stay."
+    },
+    {
+      "group": 0,
+      "item": 2,
+      "note": "KEYWORD placement: 'La sanidad pública en España' rendered 'O sistema público de saúde em Espanha', which contains 'saúde em espanha'. Meaning unchanged (public healthcare = public health system). 'comunidad autónoma' rendered 'comunidade autónoma'; 'INSS' kept; 'servicio de salud autonómico' is 'serviço de saúde autonómico'. 'incapacidad temporal' is 'incapacidade temporária'; 'justificantes' is 'declarações médicas'; 'circuitos de derivación' is 'circuitos de referenciação' (site term)."
+    },
+    {
+      "group": 1,
+      "item": 1,
+      "note": "Same-day wording is translated exactly as the native source hedges it ('En muchos casos sí' ... 'incluyendo, con frecuencia, el mismo día en que reservas') = 'Em muitos casos, sim' ... 'incluindo, com frequência, no próprio dia em que marca'. No stronger promise added. Please confirm this is still accurate for Spain. 112 unchanged."
+    },
+    {
+      "group": 2,
+      "item": 1,
+      "note": "'médico de familia' rendered 'médico de família' (site term). 'exploración física' is 'exame físico'; 'pruebas presenciales' is 'exames presenciais' — please check 'exames' is not read as lab tests only."
+    },
+    {
+      "group": 3,
+      "item": null,
+      "note": "Terminology: 'baja médica' is 'baixa médica' (direct cognate, also used on the site's Portugal FAQ); 'justificante médico' is 'declaração médica' — deliberately NOT 'atestado médico', because the site's Portugal FAQ uses 'atestado médico (baixa médica)' as the same document, and this Spain answer insists the justificante is different from the baja. 'informe médico' is 'relatório médico'. 'parte de baja' kept in Spanish as the official document name (the source sentence already explains it). Eyebrow 'Bajas y recetas' = 'Baixas e receitas'."
+    },
+    {
+      "group": 3,
+      "item": 2,
+      "note": "'receta electrónica' is 'receita eletrónica'; 'retirar en cualquier farmacia' is 'levantar em qualquer farmácia' (pt-PT; BR: retirar); 'tarjeta sanitaria' is 'cartão de saúde (tarjeta sanitaria)'; 'derivaciones' is 'referenciações'; 'medicamentos de mayor control' is 'medicamentos sujeitos a maior controlo'."
+    },
+    {
+      "group": 3,
+      "item": 3,
+      "note": "'tu empresa' rendered 'a sua entidade patronal' (site term) throughout groups 3-4; 'departamento de recursos humanos' kept literal."
+    },
+    {
+      "group": 4,
+      "item": 0,
+      "note": "'RGPD' kept (the pt-PT acronym is also RGPD). 'historial clínico' is 'processo clínico' (site term on the Portugal FAQ); 'historial de tus citas' in 4.1 is 'historial das suas consultas'."
+    },
+    {
+      "group": 5,
+      "item": 1,
+      "note": "'plan de suscripción' rendered 'plano de subscrição' (literal). The site's Ireland draft uses 'planos de adesão'; please standardise. 'justificante del cobro' is 'comprovativo do pagamento' (not 'declaração', to avoid confusion with the medical document)."
+    }
+  ],
+  "es": {
+    "groups": [
+      {
+        "eyebrow": "Espanha",
+        "title": "Perguntas sobre Espanha",
+        "items": [
+          {
+            "question": "Têm consultório físico em Espanha?",
+            "answer": "Não. Em Espanha funcionamos exclusivamente como clínica online: não há consultório físico nem sala de espera para visitar. Todas as consultas são feitas por videochamada segura, a partir do telemóvel ou do computador, com a mesma privacidade que uma consulta presencial. A nossa sede social está registada na Irlanda, mas os médicos que o atendem estão inscritos para exercer com doentes em Espanha. Este modelo permite oferecer consultas com maior disponibilidade, sem deslocações nem salas de espera, mantendo o mesmo nível de avaliação clínica que receberia num centro tradicional. Se procura uma morada onde se possa dirigir pessoalmente, este não é o serviço adequado para si."
+          },
+          {
+            "question": "Os médicos estão inscritos na ordem dos médicos em Espanha?",
+            "answer": "Sim. Todos os médicos que atendem doentes em Espanha estão inscritos no Colegio Oficial de Médicos (a ordem dos médicos) correspondente à sua especialidade e província, cumprindo os mesmos requisitos de formação e habilitação que qualquer médico que exerça presencialmente no país. O perfil de cada profissional na nossa plataforma indica a sua inscrição, para que possa confirmá-la antes de marcar. Trabalhar com médicos inscritos permite-nos oferecer avaliações clínicas, relatórios e, quando se justifica, receitas, com a mesma validade legal que uma consulta presencial. Se tiver dúvidas sobre a inscrição de um médico em concreto, pode contactar-nos por email antes da sua consulta."
+          },
+          {
+            "question": "O processo é igual em todas as comunidades autónomas?",
+            "answer": "Nem sempre. O sistema público de saúde em Espanha está transferido para cada comunidade autónoma, pelo que procedimentos como a incapacidade temporária, a validade de determinadas declarações médicas ou os circuitos de referenciação podem variar consoante o local onde vive. Os nossos médicos têm isto em conta durante a consulta e irão orientá-lo sobre o passo seguinte mais adequado de acordo com a sua comunidade autónoma, embora a gestão final das prestações públicas caiba sempre ao INSS e ao serviço de saúde autonómico correspondente. Se a sua situação depender de um procedimento específico da sua região, refira-o ao médico no início da consulta para que o possa orientar com precisão."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Marcações",
+        "title": "Como marcar a sua consulta",
+        "items": [
+          {
+            "question": "Como marco uma consulta?",
+            "answer": "Marcar uma consulta é simples: escolhe o tipo de consulta de que precisa, o médico e um horário disponível, e confirma o pagamento de forma segura no site. Antes de confirmar, verá o preço da consulta com clareza. Receberá a confirmação por email com a ligação para a videochamada e, se precisar, um lembrete antes da hora combinada. Não precisa de se deslocar nem de esperar em nenhuma sala: basta ter ligação à internet e um dispositivo com câmara. Se tiver dúvidas sobre que tipo de consulta marcar, pode escrever-nos por email e orientamo-lo antes de marcar."
+          },
+          {
+            "question": "Posso conseguir consulta no próprio dia?",
+            "answer": "Em muitos casos, sim. A disponibilidade depende do tipo de consulta e dos médicos com agenda aberta nesse dia, mas, por ser um serviço online, costumamos oferecer consultas com maior rapidez do que uma consulta presencial, incluindo, com frequência, no próprio dia em que marca. O calendário de marcações mostra em tempo real os horários realmente disponíveis, por isso o que vê ao marcar é o que existe. Se a sua necessidade for urgente no sentido médico — e não apenas por rapidez de agenda — lembre-se de que uma consulta online não substitui uma urgência real: nesse caso, ligue para o 112."
+          },
+          {
+            "question": "Posso alterar ou cancelar a minha consulta?",
+            "answer": "Sim. Pode alterar o horário ou cancelar a sua consulta a partir da sua conta, com a antecedência indicada nas condições de marcação, que são apresentadas antes de confirmar o pagamento. Cancelar ou reagendar com tempo suficiente liberta o horário para outro doente e, consoante o prazo, pode permitir-lhe recuperar o valor pago. Se precisar de ajuda para fazer a alteração, ou se surgir um imprevisto mesmo antes da consulta, pode escrever-nos por email e ajudamo-lo a encontrar uma solução. Recomendamos que reveja as condições de cancelamento da sua consulta em concreto, uma vez que podem variar consoante o tipo de consulta marcada."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultas",
+        "title": "Como são as consultas online",
+        "items": [
+          {
+            "question": "Como é uma consulta por videochamada?",
+            "answer": "A consulta é feita por videochamada segura, tal como uma consulta presencial, mas a partir de onde estiver. O médico analisa o motivo da consulta, faz-lhe as perguntas necessárias e, se for preciso, pede-lhe que mostre algo através da câmara ou que descreva os sintomas com mais pormenor. No final da avaliação, explica-lhe o diagnóstico provável, o plano a seguir e, quando clinicamente adequado, entrega-lhe uma receita, um relatório ou uma declaração médica. A duração é semelhante à de uma consulta presencial normal. Só precisa de um dispositivo com câmara e microfone, e de um local tranquilo onde possa falar com privacidade."
+          },
+          {
+            "question": "O que posso consultar numa consulta online?",
+            "answer": "Pode marcar uma consulta geral com um médico de família para sintomas comuns, acompanhamento de tratamentos ou dúvidas de saúde, bem como consultas com especialistas, de acordo com a disponibilidade em cada momento. A plataforma indica claramente que tipo de consulta está a marcar e o que inclui. Nem todas as situações são adequadas para uma avaliação online: se o médico considerar, durante a consulta, que precisa de um exame físico, de exames presenciais ou de cuidados urgentes, irá dizer-lho e orientá-lo sobre onde se dirigir. O objetivo é sempre oferecer-lhe a avaliação mais segura possível, e não forçar uma solução online quando esta não é a adequada."
+          },
+          {
+            "question": "Em que línguas são feitas as consultas?",
+            "answer": "As consultas para doentes em Espanha são oferecidas em espanhol e em inglês. A língua de cada médico está indicada no seu perfil, por isso pode escolher com quem marcar de acordo com a língua em que se sente mais à vontade para explicar os seus sintomas. As questões administrativas — marcações, pagamentos, dúvidas sobre a sua conta — também são tratadas por email em espanhol e inglês. Se tiver preferência por uma língua em concreto para a sua consulta clínica, reveja o perfil do médico antes de marcar, uma vez que nem todos os profissionais da plataforma atendem nas mesmas línguas."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Baixas e receitas",
+        "title": "Baixas, declarações médicas e receitas",
+        "items": [
+          {
+            "question": "Podem dar-me baixa médica (incapacidade temporária)?",
+            "answer": "Não diretamente. A baixa médica, ou incapacidade temporária, é um procedimento oficial que em Espanha é gerido através do sistema público: é emitida por um médico do serviço de saúde da sua comunidade autónoma, e a prestação económica associada é reconhecida pelo INSS segundo os seus próprios critérios. Uma consulta online connosco não substitui esse circuito público. O que o médico lhe pode oferecer, quando a avaliação clínica o justifica, é um relatório ou uma declaração médica privada que documenta o seu estado de saúde e que pode servir de apoio perante a sua entidade patronal enquanto trata da baixa oficial pela via pública correspondente à sua comunidade autónoma."
+          },
+          {
+            "question": "O que é uma declaração médica e em que se distingue da baixa?",
+            "answer": "A declaração médica (justificante médico) é um documento que comprova que foi avaliado por um médico numa data concreta e que regista a apreciação clínica desse médico; não é o mesmo que o parte de baja, que é o documento oficial que reconhece a incapacidade temporária para trabalhar dentro do sistema público. Os nossos médicos podem emitir uma declaração médica privada após a avaliação, quando clinicamente adequado, para que a apresente à sua entidade patronal ou onde precisar. A baixa oficial e a respetiva prestação económica continuam a depender do serviço de saúde da sua comunidade autónoma e do INSS, com os seus próprios procedimentos e requisitos."
+          },
+          {
+            "question": "Podem receitar-me medicação numa consulta online?",
+            "answer": "Sim, quando o médico o considerar clinicamente adequado após avaliá-lo. Se a sua situação o permitir, pode emitir uma receita eletrónica no final da consulta, que poderá levantar em qualquer farmácia com o seu cartão de saúde (tarjeta sanitaria) ou documento de identificação, segundo o circuito habitual em Espanha. Nem todas as consultas terminam com uma receita: há tratamentos, exames ou referenciações que exigem avaliação presencial, e o médico dir-lhe-á se for o seu caso. A prescrição de determinados medicamentos, especialmente os sujeitos a maior controlo, pode exigir uma consulta presencial adicional segundo a legislação em vigor, e o médico explicar-lho-á durante a consulta."
+          },
+          {
+            "question": "Posso pedir um relatório médico para a minha entidade patronal?",
+            "answer": "Sim. Se, após a consulta, o médico considerar que está clinicamente justificado, pode emitir-lhe um relatório ou uma declaração médica que registe a avaliação realizada e o seu estado de saúde nesse momento, para que o apresente à sua entidade patronal. Cada entidade patronal define os seus próprios requisitos sobre a documentação que aceita, por isso convém confirmar com o seu departamento de recursos humanos o que precisam exatamente antes da consulta. Tenha em conta que este relatório é diferente do parte de baja oficial: se a sua situação exigir uma incapacidade temporária reconhecida e a respetiva prestação económica, esse procedimento depende do serviço de saúde da sua comunidade autónoma e do INSS."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Privacidade",
+        "title": "Privacidade e dados médicos",
+        "items": [
+          {
+            "question": "Como protegem os meus dados médicos?",
+            "answer": "Os seus dados de saúde são tratados de acordo com o RGPD e com a legislação espanhola de proteção de dados, com acesso restrito ao pessoal médico e administrativo que precisa de os consultar para lhe prestar o serviço. As videochamadas são feitas através de ligações cifradas, e o seu processo clínico é guardado em sistemas com controlos de segurança e cópias de segurança, e não em documentos soltos nem em emails. Não partilhamos a sua informação médica com terceiros sem o seu consentimento, exceto quando a lei nos obrigue a fazê-lo. Se quiser mais pormenores sobre como tratamos os seus dados, pode consultar a nossa política de privacidade ou escrever-nos diretamente."
+          },
+          {
+            "question": "Posso aceder ao historial das minhas consultas?",
+            "answer": "Sim. A partir da sua conta pode consultar o historial das suas consultas anteriores, incluindo os relatórios, declarações médicas ou receitas que o médico tenha emitido em cada consulta. Este historial permite-lhe, por exemplo, partilhar com outro profissional de saúde o que foi avaliado numa consulta anterior, ou recuperar um documento que precise de apresentar mais tarde. O acesso está protegido pelo seu início de sessão pessoal, e só o próprio pode consultá-lo, salvo se autorizar expressamente outra pessoa a fazê-lo. Se não encontrar um documento que esperava ver, escreva-nos por email e analisamos a situação consigo."
+          },
+          {
+            "question": "Quem pode ver a minha informação médica?",
+            "answer": "Só podem aceder à sua informação médica o médico que o atende e o pessoal estritamente necessário para o funcionamento do serviço, como o suporte técnico ou administrativo nas tarefas que o exijam, sempre sob o mesmo dever de confidencialidade que se aplica a qualquer profissional de saúde. Não partilhamos o seu processo clínico com a sua entidade patronal, a sua seguradora ou qualquer terceiro sem o seu consentimento expresso, salvo obrigação legal. Se em algum momento precisar que partilhemos um documento com outra pessoa ou entidade — por exemplo, outro médico — pode autorizá-lo diretamente a partir da sua conta ou pedindo-o por escrito."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Pagamentos",
+        "title": "Preços e pagamentos",
+        "items": [
+          {
+            "question": "Quanto custa uma consulta?",
+            "answer": "O preço depende do tipo de consulta que marcar — geral, com especialista ou outro serviço — e é sempre apresentado com clareza antes de confirmar e pagar a sua consulta, por isso saberá exatamente quanto vai pagar antes de marcar. Não há custos ocultos: se durante a consulta o médico recomendar um serviço adicional, ser-lhe-á indicado o custo antes de decidir se quer continuar. Os preços podem ser atualizados ao longo do tempo, pelo que o valor definitivo é sempre o que vê no ecrã de marcação no momento de confirmar, e não uma tarifa fixa publicada à parte."
+          },
+          {
+            "question": "Que métodos de pagamento aceitam?",
+            "answer": "Aceitamos pagamento com cartão de crédito ou de débito, de forma segura, através da plataforma, no momento de marcar a sua consulta. O pagamento é processado através de ligações cifradas antes de o horário ser confirmado, e receberá o comprovativo do pagamento por email juntamente com a confirmação da sua consulta. Se tiver um plano de subscrição ativo, o custo das consultas incluídas é gerido automaticamente, sem que tenha de introduzir os seus dados de pagamento em cada marcação. Se tiver dúvidas sobre uma cobrança em concreto, pode escrever-nos e analisamos consigo o detalhe da transação."
+          }
+        ]
+      }
+    ]
+  }
+}

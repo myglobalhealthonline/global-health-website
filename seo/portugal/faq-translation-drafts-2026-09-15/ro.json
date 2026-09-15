@@ -1,0 +1,136 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/ro/faq-markets.json under the market key.",
+  "_source": "frontend/locales/pt/faq-markets.json#pt",
+  "_locale": "ro",
+  "_keywordsUsed": [
+    { "keyword": "medic online în portugalia", "volume": null, "where": "1.0 question" }
+  ],
+  "_reviewNotes": [
+    { "group": 0, "item": 0, "note": "Ordem dos Médicos kept in Portuguese with the gloss 'Ordinul Medicilor din Portugalia' on first use. 'Inscritos' rendered as 'înscriși' (enrolled), not 'autorizați' (licensed), to avoid strengthening the claim." },
+    { "group": 0, "item": 0, "note": "'Atestado' rendered as 'certificat medical' throughout (same choice as the Ireland ro draft). 'Adeverință medicală' was rejected because the site uses it in the Romania/CNAS context." },
+    { "group": 0, "item": 1, "note": "SNS24 and 112 kept. Serviço Nacional de Saúde kept in Portuguese with the gloss 'SNS, sistemul public de sănătate din Portugalia'; the abbreviation SNS is not in the native sentence and was added only as part of the gloss." },
+    { "group": 0, "item": 2, "note": "'Hemorragia importante' rendered as 'sângerare semnificativă'. 'Serviço de urgência hospitalar' rendered as 'serviciul de urgență al unui spital', not the Romanian 'UPU'. Clinical reviewer to confirm the red-flag symptom list." },
+    { "group": 1, "item": 0, "note": "Keyword placement: 'consulta online em Portugal' became 'consultație cu un medic online în Portugalia'. The words 'cu un medic' are implicit in the source (a medical consultation). No other content was added." },
+    { "group": 1, "item": 1, "note": "The source question literally asks 'how long until I am seen'; rendered as 'Cât trebuie să aștept'. No availability promise was added. The answer keeps the 112/emergency service instruction." },
+    { "group": 2, "item": 2, "note": "Languages: the source offers Portuguese and English only. No Romanian-language consultations are implied; the reviewer may want to confirm whether a Romanian-language page should say so explicitly (no change made)." },
+    { "group": 3, "item": 0, "note": "Certificado de Incapacidade Temporária kept in Portuguese with the gloss 'certificat de incapacitate temporară'; 'baixa médica' and 'subsídio de doença' kept in quotes. The Romanian 'concediu medical' is deliberately not used. 'Subsídio de doença' rendered as 'indemnizația de boală'." },
+    { "group": 3, "item": 0, "note": "Segurança Social kept in Portuguese with the gloss 'sistemul portughez de securitate socială' on first use." },
+    { "group": 3, "item": 1, "note": "IMT expanded as 'Instituto da Mobilidade e dos Transportes, autoritatea portugheză pentru permise' (gloss added; please verify the gloss). 'Carta de condução' rendered as 'permisul de conducere'." },
+    { "group": 3, "item": 3, "note": "The source does not say yes. The answer stays non-committal: the employer and Segurança Social rules decide. No acceptance guarantee was added." },
+    { "group": 4, "item": 0, "note": "'Área de doente' rendered as 'contul de pacient' throughout. 'Regulamento Geral de Proteção de Dados' rendered with the official Romanian name 'Regulamentul general privind protecția datelor', without an abbreviation (none in the source)." },
+    { "group": 4, "item": 2, "note": "'Titular dos dados' rendered with the Romanian GDPR term 'persoană vizată'." },
+    { "group": 5, "item": 1, "note": "'Checkout' rendered as 'la finalizarea comenzii'; 'comprovativo' as 'dovadă de plată' (not 'factură', which would promise an invoice)." }
+  ],
+  "pt": {
+    "groups": [
+      {
+        "eyebrow": "Portugalia",
+        "title": "Întrebări despre Portugalia",
+        "items": [
+          {
+            "question": "Medicii sunt înscriși la Ordem dos Médicos?",
+            "answer": "Da. Medicii care consultă pacienți în Portugalia prin Global Health sunt înscriși la Ordem dos Médicos (Ordinul Medicilor din Portugalia). Înainte de a propune orice tratament, certificat medical sau rețetă, medicul face o evaluare clinică prin apel video. Dacă doriți să verificați o înregistrare înainte de programare, o puteți căuta direct pe site-ul Ordem dos Médicos."
+          },
+          {
+            "question": "Care este diferența dintre Global Health și SNS24?",
+            "answer": "Global Health este un serviciu privat, iar SNS24 este serviciul public de triaj și consiliere al Serviço Nacional de Saúde (SNS, sistemul public de sănătate din Portugalia). Puteți folosi SNS24 pentru triaj și îndrumare inițială, iar Global Health pentru a programa o consultație medicală privată prin apel video. Dacă situația necesită îngrijiri urgente sau o examinare față în față, SNS24, 112 sau serviciul de urgență rămân calea corectă."
+          },
+          {
+            "question": "Ce trebuie să fac dacă am nevoie de ajutor urgent în Portugalia?",
+            "answer": "Global Health nu este un serviciu de urgență, iar linia noastră telefonică nu este pregătită pentru urgențe clinice. Dacă aveți simptome grave, durere în piept, dificultăți de respirație, sângerare semnificativă, pierderea cunoștinței sau o altă situație de risc, sunați la 112 sau mergeți la cel mai apropiat serviciu de urgență al unui spital. Consultațiile online sunt destinate situațiilor care nu sunt urgente."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Programări",
+        "title": "Cum se programează o consultație",
+        "items": [
+          {
+            "question": "Cum programez o consultație cu un medic online în Portugalia?",
+            "answer": "Puteți programa o consultație direct pe site, alegând tipul de consultație căutat, de exemplu medicină generală, o specialitate sau un certificat medical. După ce introduceți datele dumneavoastră și motivul consultației, alegeți un interval orar disponibil din calendar și confirmați plata. Prețul consultației este afișat înainte de finalizarea programării. După programare, primiți confirmarea cu ora apelului video și instrucțiunile de acces, pe e-mail și în contul dumneavoastră de pacient."
+          },
+          {
+            "question": "Cât trebuie să aștept pentru o consultație online în Portugalia?",
+            "answer": "Timpul de așteptare depinde de tipul de consultație și de disponibilitatea afișată în calendar în momentul în care faceți programarea. Calendarul prezintă intervalele libere în acel moment. Dacă situația dumneavoastră este gravă, nu așteptați o consultație online: sunați la 112 sau mergeți la un serviciu de urgență."
+          },
+          {
+            "question": "Pot programa consultații în afara programului de lucru?",
+            "answer": "Puteți programa online la orice oră din zi. Intervalele de consultație disponibile depind de programul clinic afișat în calendar în acel moment și pot include perioade în afara programului obișnuit de lucru. Dacă nu găsiți un interval convenabil, reveniți mai târziu."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Consultații",
+        "title": "Cum decurg consultațiile",
+        "items": [
+          {
+            "question": "Cum decurge o consultație medicală online?",
+            "answer": "Consultația are loc prin apel video securizat, de pe calculator, tabletă sau telefon mobil, la ora programată. Medicul vă confirmă identitatea și motivul consultației, vă pune întrebări despre simptome și istoricul medical relevant și decide pașii următori pe baza evaluării clinice. În funcție de situație, puteți primi îndrumare, o rețetă, un certificat medical sau recomandarea de a solicita îngrijiri față în față. La final, aveți la dispoziție un rezumat al consultației în contul dumneavoastră de pacient, inclusiv orice document emis."
+          },
+          {
+            "question": "Trebuie să pregătesc ceva înainte de consultație?",
+            "answer": "Este util să aveți la îndemână o listă cu medicamentele pe care le luați în prezent, inclusiv dozele, și o scurtă descriere a simptomelor și a perioadei de când le aveți. Dacă aveți investigații, analize sau rapoarte medicale recente legate de motivul consultației, faptul că le aveți la îndemână îi permite medicului să vă evalueze cazul cu mai multe informații. Asigurați-vă, de asemenea, că aveți o conexiune stabilă la internet și un loc liniștit, pentru ca apelul video să decurgă fără întreruperi."
+          },
+          {
+            "question": "Medicii vorbesc portugheză și engleză?",
+            "answer": "Oferta include consultații în portugheză și în engleză. Verificați limbile indicate pe profilul fiecărui medic înainte de a face programarea."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Certificate medicale",
+        "title": "Certificate medicale și rețete",
+        "items": [
+          {
+            "question": "Eliberați certificat medical de incapacitate de muncă („baixa médica”)?",
+            "answer": "Da, este unul dintre serviciile disponibile. Dacă, după evaluare, medicul consideră că este adecvat din punct de vedere clinic, poate emite un Certificado de Incapacidade Temporária (certificat de incapacitate temporară) pentru muncă, cunoscut și sub numele de „baixa médica”. Documentul depinde întotdeauna de evaluarea clinică și nu este automat. Eventuala indemnizație de boală („subsídio de doença”) este decisă separat de Segurança Social (sistemul portughez de securitate socială), conform propriilor reguli."
+          },
+          {
+            "question": "Eliberați certificat medical pentru permisul de conducere?",
+            "answer": "Există un serviciu separat pentru certificatul medical pentru permisul de conducere. Înainte de a programa, consultați pagina serviciului pentru a vedea ce acoperă consultația și pașii prevăzuți. Certificatele medicale pentru permisul de conducere respectă cerințele IMT (Instituto da Mobilidade e dos Transportes, autoritatea portugheză pentru permise)."
+          },
+          {
+            "question": "Îmi puteți reînnoi rețeta sau tratamentul obișnuit?",
+            "answer": "Da, reînnoirea tratamentului este un motiv frecvent de consultație. Într-o consultație de reînnoire, medicul analizează medicația pe care o luați deja și confirmă dacă aceasta rămâne adecvată din punct de vedere clinic. Nu este o reînnoire automată: medicul poate solicita mai multe informații, poate sugera o ajustare sau poate recomanda o consultație față în față dacă situația o justifică."
+          },
+          {
+            "question": "Certificatul medical este acceptat de angajator și de Segurança Social?",
+            "answer": "Certificatul medical este emis de un medic înscris la Ordem dos Médicos, după o evaluare clinică. Modul de comunicare a absenței către angajator și acordarea indemnizației de boală urmează regulile companiei și ale Segurança Social. Dacă aveți nelămuriri despre cazul dumneavoastră, confirmați cerințele direct cu aceste instituții."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Confidențialitate",
+        "title": "Confidențialitate și dosarul medical",
+        "items": [
+          {
+            "question": "Datele mele medicale sunt protejate?",
+            "answer": "Da. Datele dumneavoastră de sănătate sunt tratate ca informații clinice sensibile, cu acces limitat la persoanele implicate în îngrijirea dumneavoastră, și sunt protejate în conformitate cu Regulamentul general privind protecția datelor. Apelurile video au loc prin conexiuni securizate, iar înregistrarea consultației este păstrată în contul dumneavoastră de pacient, cu excepția cazului în care legea prevede altfel."
+          },
+          {
+            "question": "Cine are acces la dosarul meu medical?",
+            "answer": "Dosarul dumneavoastră medical este accesibil medicului care vă consultă și, atunci când este cazul, echipei implicate direct în îngrijirea dumneavoastră. Nu partajăm datele dumneavoastră de sănătate cu angajatori, asigurători sau terți fără consimțământul dumneavoastră explicit, cu excepția situațiilor impuse de lege. Puteți consulta istoricul consultațiilor, al certificatelor medicale și al rețetelor dumneavoastră în contul de pacient."
+          },
+          {
+            "question": "Pot cere ștergerea datelor mele medicale?",
+            "answer": "Da. În calitate de persoană vizată, puteți solicita accesul la datele dumneavoastră personale, rectificarea sau ștergerea acestora, în condițiile Regulamentului general privind protecția datelor. O parte din informațiile clinice poate trebui păstrată în temeiul obligațiilor legale aplicabile înregistrărilor medicale. Pentru a exercita acest drept, ne puteți contacta prin canalele indicate pe pagina de contact."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Plăți",
+        "title": "Prețuri și plată",
+        "items": [
+          {
+            "question": "Cât costă o consultație?",
+            "answer": "Prețul fiecărui tip de consultație, fie de medicină generală, de specialitate sau pentru un certificat medical, este afișat înainte de confirmarea programării. Prețurile variază în funcție de tipul de consultație și pot fi actualizate în timp, de aceea afișăm valoarea actuală în momentul programării. Dacă aveți întrebări despre un anumit serviciu, puteți verifica prețul pe pagina acestuia."
+          },
+          {
+            "question": "Ce metode de plată acceptați?",
+            "answer": "Plata se face online, în momentul programării, prin metodele afișate la finalizarea comenzii, de regulă cu cardul. După plată, primiți o dovadă de plată asociată programării, disponibilă și în contul dumneavoastră de pacient. Dacă doriți să solicitați rambursarea de la o asigurare de sănătate, verificați mai întâi condițiile poliței dumneavoastră."
+          }
+        ]
+      }
+    ]
+  }
+}

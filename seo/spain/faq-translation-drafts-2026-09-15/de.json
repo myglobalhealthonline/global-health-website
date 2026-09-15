@@ -1,0 +1,139 @@
+{
+  "_status": "DRAFT — AI-drafted translation, NOT reviewed. Requires clinical approval (and ideally native-language review) before it may be copied into frontend/locales/de/faq-markets.json under the market key.",
+  "_source": "frontend/locales/es/faq-markets.json#es",
+  "_locale": "de",
+  "_keywordsUsed": [
+    { "keyword": "gesundheitssystem in spanien", "volume": 320, "where": "0.2 answer" },
+    { "keyword": "hausarzt", "volume": 10, "where": "2.1 answer" }
+  ],
+  "_reviewNotes": [
+    { "group": 0, "item": null, "note": "Register: source uses informal 'tú'; rendered with formal 'Sie' throughout. Em dash '—' as in existing de locale strings. Terms matched to site: 'Konsultation', 'Rezept', 'Hausarzt', 'Facharzt', 'Videoanruf', 'Konto'. 'justificante médico' = 'ärztliche Bescheinigung'; 'informe' = 'ärztlicher Bericht'." },
+    { "group": 0, "item": 0, "note": "'clínica online' = 'Online-Praxis' and 'consulta física' = 'Praxis vor Ort' ('Klinik' in German suggests a hospital). 'centro tradicional' = 'herkömmliche Einrichtung'. 'colegiados para ejercer' = 'als Mitglieder der Ärztekammer (colegiados) zur Behandlung ... berechtigt'. Source claims (Irish registered office; 'mayor disponibilidad'; 'mismo nivel de valoración clínica') translated as-is, not strengthened." },
+    { "group": 0, "item": 1, "note": "'Colegio Oficial de Médicos' kept, gloss '(der zuständigen Ärztekammer)'. LEGAL/CLINICAL FLAG (source claim, translated faithfully): 'con la misma validez legal que una consulta presencial' = 'mit derselben rechtlichen Gültigkeit wie bei einer Konsultation vor Ort'; and colegios are organised by province, while the source says 'especialidad y provincia' — worth checking in the native copy too. 'colegiación' = 'Kammermitgliedschaft'." },
+    { "group": 0, "item": 2, "note": "KEYWORD: 'La sanidad pública en España' = 'Das öffentliche Gesundheitssystem in Spanien' — contains 'gesundheitssystem in spanien' (closest measured: 'gesundheitssystem spanien', 320). 'está transferida a' = 'liegt in der Zuständigkeit'. 'comunidad autónoma' = 'Autonome Gemeinschaft' with Spanish term on first use (question). 'INSS' glossed '(Instituto Nacional de la Seguridad Social, der spanischen Sozialversicherungsanstalt)' — verify gloss. 'circuitos de derivación' = 'Überweisungswege'." },
+    { "group": 1, "item": 1, "note": "SAME-DAY FLAG: the native source itself says 'En muchos casos sí' and 'con frecuencia, el mismo día'. Translated exactly ('In vielen Fällen ja', 'häufig auch am selben Tag'); 'solemos' = 'in der Regel' — not strengthened to a promise. Clinical reviewer may still want to confirm this claim is intended for German readers. 112 unchanged." },
+    { "group": 1, "item": 2, "note": "'con la antelación indicada' = 'mit der in den Buchungsbedingungen angegebenen Vorlaufzeit'. 'puede permitirte recuperar el importe' kept conditional ('können Sie ... möglicherweise zurückerhalten'); no refund promised." },
+    { "group": 2, "item": 0, "note": "'igual que una cita presencial' = 'wie bei einem Termin vor Ort' (not 'genau wie', which would strengthen). 'diagnóstico probable' = 'wahrscheinliche Diagnose'. 'cuando corresponde clínicamente' = 'wenn es klinisch angezeigt ist'." },
+    { "group": 2, "item": 1, "note": "KEYWORD: 'médico de familia' = 'Hausarzt (médico de familia)' — site term 'Hausarzt' (home.json, account.json); closest measured 'hausarzt spanien', 10 (phrase without 'spanien'). 'pruebas presenciales' = 'Tests vor Ort'; 'seguimiento de tratamientos' = 'Verlaufskontrolle von Behandlungen'." },
+    { "group": 2, "item": 2, "note": "Source offers Spanish and English only; no German-language consultation implied." },
+    { "group": 3, "item": null, "note": "'Bajas' rendered 'Arbeitsunfähigkeit' in eyebrow/title; 'baja médica' and 'parte de baja' kept in Spanish with a German gloss on first use. Deliberately NOT 'Krankschreibung', 'Krankenschein' or 'AU-Bescheinigung' (German statutory process). 'prestación económica' = 'Geldleistung' (deliberately not 'Krankengeld')." },
+    { "group": 3, "item": 0, "note": "'No directamente' = 'Nicht direkt' — the key limitation (no official baja via online consult) preserved. 'sistema público' = 'öffentliches System' (not expanded). 'puede servirte de apoyo ante tu empresa' = 'Ihnen gegenüber Ihrem Arbeitgeber zur Unterstützung dienen kann' — not strengthened to 'Nachweis'." },
+    { "group": 3, "item": 1, "note": "'justificante médico' glossed here, where the source defines it. 'recoge su apreciación clínica' = 'hält seine klinische Einschätzung fest'." },
+    { "group": 3, "item": 2, "note": "'receta electrónica' kept with Spanish term. 'tarjeta sanitaria' = 'Gesundheitskarte (tarjeta sanitaria)'. KEYWORD REJECTED: 'Krankenversicherungskarte' would have placed 'krankenversicherung' (480) but implies an insurer's card and could mislead on where the e-prescription can be dispensed. 'retirar' = 'einlösen'. 'medicamentos de mayor control' = 'Medikamente, die strengeren Kontrollen unterliegen'." },
+    { "group": 4, "item": 0, "note": "'RGPD' = 'DSGVO (RGPD)' — official German name of the same EU regulation. 'historial clínico' = 'Krankengeschichte'; 'copias de respaldo' = 'Datensicherungen'." },
+    { "group": 4, "item": 2, "note": "KEYWORD NOT PLACED: 'tu aseguradora' = 'Ihre Versicherung' — deliberately NOT narrowed to 'Krankenversicherung' (480), which would shrink the no-sharing promise to one insurer type. The Spain source mentions insurance nowhere else, so 'krankenversicherung spanien' is unused in this file. 'krankenhaus spanien' (50) also unused: the source never mentions a hospital. 'deber de confidencialidad' = 'Schweigepflicht'." },
+    { "group": 5, "item": 1, "note": "'plan de suscripción' = 'Abonnement' (site term in subscription.json context). 'se gestiona automáticamente' = 'automatisch verrechnet'. 'justificante del cobro' = 'Zahlungsbeleg'." }
+  ],
+  "es": {
+    "groups": [
+      {
+        "eyebrow": "Spanien",
+        "title": "Fragen zu Spanien",
+        "items": [
+          {
+            "question": "Gibt es in Spanien eine Praxis vor Ort?",
+            "answer": "Nein. In Spanien arbeiten wir ausschließlich als Online-Praxis: Es gibt weder Praxisräume noch ein Wartezimmer, die Sie aufsuchen könnten. Alle Termine finden per sicherem Videoanruf über Smartphone oder Computer statt, mit derselben Privatsphäre wie bei einer Konsultation vor Ort. Unser Firmensitz ist in Irland eingetragen, die Ärzte, die Sie behandeln, sind jedoch als Mitglieder der Ärztekammer (colegiados) zur Behandlung von Patienten in Spanien berechtigt. Dieses Modell ermöglicht Termine mit größerer Verfügbarkeit, ohne Anfahrtswege und ohne Wartezimmer, bei demselben Niveau der klinischen Beurteilung, das Sie in einer herkömmlichen Einrichtung erhalten würden. Wenn Sie eine Adresse suchen, die Sie persönlich aufsuchen können, ist dieser Dienst nicht der richtige für Sie."
+          },
+          {
+            "question": "Sind die Ärzte in Spanien bei der Ärztekammer eingetragen (colegiados)?",
+            "answer": "Ja. Alle Ärzte, die Patienten in Spanien behandeln, sind Mitglied des Colegio Oficial de Médicos (der zuständigen Ärztekammer), das ihrer Fachrichtung und Provinz entspricht, und erfüllen dieselben Ausbildungs- und Zulassungsvoraussetzungen wie jeder Arzt, der im Land vor Ort praktiziert. Das Profil jedes Arztes auf unserer Plattform gibt seine Kammermitgliedschaft an, damit Sie diese vor der Buchung überprüfen können. Die Zusammenarbeit mit kammerzugehörigen Ärzten ermöglicht es uns, klinische Beurteilungen, ärztliche Berichte und, wenn angemessen, Rezepte mit derselben rechtlichen Gültigkeit wie bei einer Konsultation vor Ort anzubieten. Wenn Sie Fragen zur Kammermitgliedschaft eines bestimmten Arztes haben, können Sie sich vor Ihrem Termin per E-Mail bei uns erkundigen."
+          },
+          {
+            "question": "Ist das Verfahren in allen Autonomen Gemeinschaften (comunidades autónomas) gleich?",
+            "answer": "Nicht immer. Das öffentliche Gesundheitssystem in Spanien liegt in der Zuständigkeit der einzelnen Autonomen Gemeinschaften, daher können Verfahren wie die vorübergehende Arbeitsunfähigkeit (incapacidad temporal), die Gültigkeit bestimmter Bescheinigungen oder die Überweisungswege je nach Wohnort unterschiedlich sein. Unsere Ärzte berücksichtigen dies während der Konsultation und geben Ihnen Orientierung zum passendsten nächsten Schritt entsprechend Ihrer Autonomen Gemeinschaft; die abschließende Bearbeitung öffentlicher Leistungen liegt jedoch immer beim INSS (Instituto Nacional de la Seguridad Social, der spanischen Sozialversicherungsanstalt) und beim zuständigen regionalen Gesundheitsdienst. Wenn Ihre Situation von einem bestimmten Verfahren in Ihrer Region abhängt, sprechen Sie dies zu Beginn der Konsultation beim Arzt an, damit er Ihnen genaue Orientierung geben kann."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Buchung",
+        "title": "So buchen Sie Ihre Konsultation",
+        "items": [
+          {
+            "question": "Wie buche ich eine Konsultation?",
+            "answer": "Eine Konsultation zu buchen ist einfach: Sie wählen die Art des Termins, die Sie benötigen, den Arzt und eine freie Uhrzeit aus und bestätigen die Zahlung sicher über die Website. Vor der Bestätigung sehen Sie den Preis der Konsultation deutlich angezeigt. Sie erhalten die Bestätigung per E-Mail mit dem Link zum Videoanruf und, falls Sie diese benötigen, eine Erinnerung vor der vereinbarten Uhrzeit. Sie müssen weder anreisen noch in einem Wartezimmer warten: Sie benötigen nur eine Internetverbindung und ein Gerät mit Kamera. Wenn Sie unsicher sind, welche Art von Konsultation Sie buchen sollen, können Sie uns per E-Mail schreiben, und wir geben Ihnen vor der Buchung Orientierung."
+          },
+          {
+            "question": "Kann ich einen Termin am selben Tag bekommen?",
+            "answer": "In vielen Fällen ja. Die Verfügbarkeit hängt von der Art der Konsultation und davon ab, welche Ärzte an diesem Tag freie Termine haben; da es sich um einen Online-Dienst handelt, bieten wir Termine jedoch in der Regel schneller an als eine Konsultation vor Ort, häufig auch am selben Tag, an dem Sie buchen. Der Buchungskalender zeigt in Echtzeit die tatsächlich verfügbaren Uhrzeiten an — was Sie bei der Buchung sehen, ist das, was verfügbar ist. Wenn Ihr Anliegen im medizinischen Sinne dringend ist — nicht nur wegen eines schnellen Termins —, denken Sie daran, dass eine Online-Konsultation keine echte Notfallversorgung ersetzt: Rufen Sie in diesem Fall die 112 an."
+          },
+          {
+            "question": "Kann ich meinen Termin ändern oder stornieren?",
+            "answer": "Ja. Sie können Ihren Termin in Ihrem Konto mit der in den Buchungsbedingungen angegebenen Vorlaufzeit verschieben oder stornieren; diese Bedingungen werden angezeigt, bevor Sie die Zahlung bestätigen. Wenn Sie rechtzeitig stornieren oder umbuchen, wird die Uhrzeit für einen anderen Patienten frei, und je nach Frist können Sie den gezahlten Betrag möglicherweise zurückerhalten. Wenn Sie Hilfe bei der Änderung benötigen oder kurz vor dem Termin etwas Unvorhergesehenes passiert, können Sie uns per E-Mail schreiben, und wir helfen Ihnen, eine Lösung zu finden. Wir empfehlen Ihnen, die Stornierungsbedingungen Ihres konkreten Termins zu prüfen, da sie je nach gebuchter Konsultationsart unterschiedlich sein können."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Konsultationen",
+        "title": "So laufen Online-Konsultationen ab",
+        "items": [
+          {
+            "question": "Wie läuft eine Konsultation per Videoanruf ab?",
+            "answer": "Die Konsultation findet per sicherem Videoanruf statt, wie bei einem Termin vor Ort, aber von dort aus, wo Sie sich gerade befinden. Der Arzt prüft den Grund Ihrer Konsultation, stellt Ihnen die notwendigen Fragen und bittet Sie bei Bedarf, ihm etwas vor der Kamera zu zeigen oder Ihre Symptome genauer zu beschreiben. Am Ende der Beurteilung erklärt er Ihnen die wahrscheinliche Diagnose und das weitere Vorgehen und stellt Ihnen, wenn es klinisch angezeigt ist, ein Rezept, einen ärztlichen Bericht oder eine ärztliche Bescheinigung aus. Die Dauer ist ähnlich wie bei einer üblichen Konsultation vor Ort. Sie benötigen nur ein Gerät mit Kamera und Mikrofon sowie einen ruhigen Ort, an dem Sie vertraulich sprechen können."
+          },
+          {
+            "question": "Welche Anliegen kann ich in einem Online-Termin besprechen?",
+            "answer": "Sie können eine allgemeine Konsultation bei einem Hausarzt (médico de familia) für häufige Symptome, die Verlaufskontrolle von Behandlungen oder Gesundheitsfragen buchen sowie, je nach aktueller Verfügbarkeit, Konsultationen bei Fachärzten. Die Plattform zeigt deutlich an, welche Art von Konsultation Sie buchen und was sie umfasst. Nicht jede Situation eignet sich für eine Online-Beurteilung: Wenn der Arzt während der Konsultation der Ansicht ist, dass Sie eine körperliche Untersuchung, Tests vor Ort oder dringende Versorgung benötigen, wird er Sie darauf hinweisen und Ihnen Orientierung geben, wohin Sie sich wenden können. Ziel ist immer, Ihnen die sicherste mögliche Beurteilung zu bieten und keine Online-Lösung zu erzwingen, wenn sie nicht angemessen ist."
+          },
+          {
+            "question": "In welchen Sprachen finden die Konsultationen statt?",
+            "answer": "Konsultationen für Patienten in Spanien werden auf Spanisch und auf Englisch angeboten. Die Sprache jedes Arztes ist in seinem Profil angegeben, sodass Sie danach wählen können, bei wem Sie buchen, je nachdem, in welcher Sprache Sie Ihre Symptome am liebsten erklären. Administrative Anliegen — Buchungen, Zahlungen, Fragen zu Ihrem Konto — werden ebenfalls per E-Mail auf Spanisch und Englisch bearbeitet. Wenn Sie eine bestimmte Sprache für Ihre ärztliche Konsultation bevorzugen, prüfen Sie vor der Buchung das Profil des Arztes, da nicht alle Ärzte auf der Plattform in denselben Sprachen behandeln."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Arbeitsunfähigkeit und Rezepte",
+        "title": "Arbeitsunfähigkeit, Bescheinigungen und Rezepte",
+        "items": [
+          {
+            "question": "Kann ich bei Ihnen eine baja médica (vorübergehende Arbeitsunfähigkeit, „incapacidad temporal“) bekommen?",
+            "answer": "Nicht direkt. Die baja médica bzw. incapacidad temporal ist ein offizielles Verfahren, das in Spanien über das öffentliche System abgewickelt wird: Sie wird von einem Arzt des Gesundheitsdienstes Ihrer Autonomen Gemeinschaft ausgestellt, und die damit verbundene Geldleistung erkennt das INSS nach seinen eigenen Kriterien an. Eine Online-Konsultation bei uns ersetzt diesen öffentlichen Weg nicht. Was der Arzt Ihnen jedoch anbieten kann, wenn die klinische Beurteilung dies rechtfertigt, ist ein privater ärztlicher Bericht oder eine private ärztliche Bescheinigung, die Ihren Gesundheitszustand dokumentiert und Ihnen gegenüber Ihrem Arbeitgeber zur Unterstützung dienen kann, während Sie sich um die offizielle baja médica über den zuständigen öffentlichen Weg Ihrer Autonomen Gemeinschaft kümmern."
+          },
+          {
+            "question": "Was ist eine ärztliche Bescheinigung (justificante médico) und wie unterscheidet sie sich von der baja médica?",
+            "answer": "Die ärztliche Bescheinigung ist ein Dokument, das bestätigt, dass Sie an einem bestimmten Datum von einem Arzt beurteilt wurden, und seine klinische Einschätzung festhält; sie ist nicht dasselbe wie der parte de baja, das offizielle Dokument, mit dem die vorübergehende Arbeitsunfähigkeit im öffentlichen System anerkannt wird. Unsere Ärzte können nach der Beurteilung, wenn es klinisch angemessen ist, eine private ärztliche Bescheinigung ausstellen, die Sie Ihrem Arbeitgeber oder dort vorlegen können, wo Sie sie benötigen. Die offizielle baja médica und die zugehörige Geldleistung hängen weiterhin vom Gesundheitsdienst Ihrer Autonomen Gemeinschaft und vom INSS ab, mit deren eigenen Verfahren und Voraussetzungen."
+          },
+          {
+            "question": "Können mir in einer Online-Konsultation Medikamente verschrieben werden?",
+            "answer": "Ja, wenn der Arzt es nach der Beurteilung für klinisch angemessen hält. Wenn Ihre Situation es erlaubt, kann er am Ende der Konsultation ein elektronisches Rezept (receta electrónica) ausstellen, das Sie nach dem in Spanien üblichen Ablauf in jeder Apotheke mit Ihrer Gesundheitskarte (tarjeta sanitaria) oder Ihrem Ausweisdokument einlösen können. Nicht jede Konsultation endet mit einem Rezept: Manche Behandlungen, Untersuchungen oder Überweisungen erfordern eine Beurteilung vor Ort, und der Arzt wird Sie darauf hinweisen, wenn das bei Ihnen der Fall ist. Die Verschreibung bestimmter Medikamente, insbesondere solcher, die strengeren Kontrollen unterliegen, kann nach den geltenden Vorschriften eine zusätzliche Konsultation vor Ort erfordern; der Arzt wird Ihnen dies während des Termins erklären."
+          },
+          {
+            "question": "Kann ich einen ärztlichen Bericht für meinen Arbeitgeber anfordern?",
+            "answer": "Ja. Wenn der Arzt nach der Konsultation der Ansicht ist, dass es klinisch gerechtfertigt ist, kann er Ihnen einen ärztlichen Bericht oder eine ärztliche Bescheinigung ausstellen, die die durchgeführte Beurteilung und Ihren Gesundheitszustand zu diesem Zeitpunkt festhält, damit Sie diese Ihrem Arbeitgeber vorlegen können. Jedes Unternehmen legt eigene Anforderungen fest, welche Unterlagen es akzeptiert; klären Sie daher am besten vor dem Termin mit Ihrer Personalabteilung, was genau benötigt wird. Beachten Sie, dass sich dieser Bericht vom offiziellen parte de baja unterscheidet: Wenn Ihre Situation eine anerkannte vorübergehende Arbeitsunfähigkeit mit der entsprechenden Geldleistung erfordert, hängt dieses Verfahren vom Gesundheitsdienst Ihrer Autonomen Gemeinschaft und vom INSS ab."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Datenschutz",
+        "title": "Datenschutz und medizinische Daten",
+        "items": [
+          {
+            "question": "Wie werden meine medizinischen Daten geschützt?",
+            "answer": "Ihre Gesundheitsdaten werden gemäß der DSGVO (RGPD) und den spanischen Datenschutzvorschriften verarbeitet, wobei der Zugriff auf das medizinische und administrative Personal beschränkt ist, das sie einsehen muss, um den Dienst für Sie zu erbringen. Die Videoanrufe laufen über verschlüsselte Verbindungen, und Ihre Krankengeschichte wird in Systemen mit Sicherheitskontrollen und Datensicherungen gespeichert, nicht in losen Dokumenten oder E-Mails. Wir geben Ihre medizinischen Informationen ohne Ihre Einwilligung nicht an Dritte weiter, außer wenn wir gesetzlich dazu verpflichtet sind. Wenn Sie mehr darüber erfahren möchten, wie wir Ihre Daten verarbeiten, können Sie unsere Datenschutzerklärung lesen oder uns direkt schreiben."
+          },
+          {
+            "question": "Kann ich den Verlauf meiner Konsultationen einsehen?",
+            "answer": "Ja. In Ihrem Konto können Sie den Verlauf Ihrer bisherigen Termine einsehen, einschließlich der ärztlichen Berichte, Bescheinigungen oder Rezepte, die der Arzt bei der jeweiligen Konsultation ausgestellt hat. Mit diesem Verlauf können Sie zum Beispiel einer anderen medizinischen Fachkraft mitteilen, was bei einem früheren Termin beurteilt wurde, oder ein Dokument abrufen, das Sie später vorlegen müssen. Der Zugang ist durch Ihre persönliche Anmeldung geschützt, und nur Sie können den Verlauf einsehen, es sei denn, Sie ermächtigen ausdrücklich eine andere Person dazu. Wenn Sie ein erwartetes Dokument nicht finden, schreiben Sie uns eine E-Mail, und wir prüfen es gemeinsam mit Ihnen."
+          },
+          {
+            "question": "Wer kann meine medizinischen Informationen sehen?",
+            "answer": "Zugriff auf Ihre medizinischen Informationen haben nur der Arzt, der Sie behandelt, und das für den Betrieb des Dienstes unbedingt erforderliche Personal, etwa technischer oder administrativer Support bei Aufgaben, die dies erfordern, stets unter derselben Schweigepflicht, die für jede medizinische Fachkraft gilt. Wir geben Ihre Krankengeschichte ohne Ihre ausdrückliche Einwilligung nicht an Ihren Arbeitgeber, Ihre Versicherung oder sonstige Dritte weiter, außer bei gesetzlicher Verpflichtung. Wenn Sie irgendwann möchten, dass wir ein Dokument mit einer anderen Person oder Stelle teilen — zum Beispiel einem anderen Arzt —, können Sie dies selbst in Ihrem Konto freigeben oder schriftlich beantragen."
+          }
+        ]
+      },
+      {
+        "eyebrow": "Zahlungen",
+        "title": "Preise und Zahlungen",
+        "items": [
+          {
+            "question": "Was kostet eine Konsultation?",
+            "answer": "Der Preis hängt von der Art der Konsultation ab, die Sie buchen — allgemein, beim Facharzt oder ein anderer Dienst — und wird immer deutlich angezeigt, bevor Sie Ihren Termin bestätigen und bezahlen, sodass Sie vor der Buchung genau wissen, was Sie zahlen werden. Es gibt keine versteckten Kosten: Wenn der Arzt während der Konsultation eine zusätzliche Leistung empfiehlt, werden Ihnen die Kosten mitgeteilt, bevor Sie entscheiden, ob Sie fortfahren möchten. Die Preise können sich im Laufe der Zeit ändern; maßgeblich ist daher immer der Betrag, den Sie beim Bestätigen auf dem Buchungsbildschirm sehen, und kein separat veröffentlichter Festpreis."
+          },
+          {
+            "question": "Welche Zahlungsmethoden werden akzeptiert?",
+            "answer": "Wir akzeptieren die sichere Zahlung per Kredit- oder Debitkarte über die Plattform bei der Buchung Ihres Termins. Die Zahlung wird über verschlüsselte Verbindungen abgewickelt, bevor die Uhrzeit bestätigt wird, und Sie erhalten einen Zahlungsbeleg per E-Mail zusammen mit der Terminbestätigung. Wenn Sie ein aktives Abonnement haben, werden die Kosten der enthaltenen Konsultationen automatisch verrechnet, ohne dass Sie bei jeder Buchung Ihre Zahlungsdaten eingeben müssen. Wenn Sie Fragen zu einer bestimmten Abbuchung haben, schreiben Sie uns, und wir prüfen sie anhand der Transaktionsdetails."
+          }
+        ]
+      }
+    ]
+  }
+}
