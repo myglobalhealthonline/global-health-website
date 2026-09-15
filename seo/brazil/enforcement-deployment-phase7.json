@@ -1,0 +1,10 @@
+{
+  "deploymentId": "821c3d95-621e-47c4-a8ed-cad75cd006c5",
+  "service": "Backend (Railway Production)",
+  "status": "SUCCESS",
+  "commit": "bb5a1564",
+  "branch": "main",
+  "createdAt": "2026-09-15T04:53:12.721Z",
+  "readiness": "https://api.myglobalhealth.online/ready checked after deploy",
+  "note": "bb5a1564 includes 8770c0f5, the phase-7 approved Brazil state for manifest c1bea18f (Dr. Renato Sarmento profile FAQ superlative)."
+}
