@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "agent": "A2b",
+  "auditId": "123d7af8-8b93-4480-b137-348792f2c61d",
+  "startUrl": "https://www.myglobalhealth.online/",
+  "extractionTimeUtc": "2026-09-15T05:23:18.386422+00:00",
+  "pagesCrawled": 600,
+  "pagesByMarket": {
+    "ireland": 430,
+    "brazil": 42,
+    "portugal": 42,
+    "czechia": 39,
+    "romania": 33,
+    "spain": 6,
+    "(root)": 1,
+    "account": 1,
+    "cart": 1,
+    "forgot-password": 1,
+    "login": 1,
+    "privacy": 1,
+    "register": 1,
+    "terms": 1
+  },
+  "pagesByFetchClass": {
+    "ok": 600
+  },
+  "pagesByStatusCode": {
+    "200": 599,
+    "307": 1
+  },
+  "issuesTotal": 323,
+  "issuesBySeverity": {
+    "warning": 29,
+    "info": 294
+  },
+  "issuesByType": {
+    "meta-description-too-long": 150,
+    "title-too-long": 117,
+    "noindex-page": 23,
+    "duplicate-meta-description": 20,
+    "duplicate-title": 8,
+    "meta-description-too-short": 4,
+    "thin-content": 1
+  },
+  "issueSummaryFromApi": [
+    {
+      "issueType": "duplicate-meta-description",
+      "title": "Duplicate meta description",
+      "severity": "warning",
+      "count": 20
+    },
+    {
+      "issueType": "duplicate-title",
+      "title": "Duplicate title",
+      "severity": "warning",
+      "count": 8
+    },
+    {
+      "issueType": "thin-content",
+      "title": "Thin content",
+      "severity": "warning",
+      "count": 1
+    },
+    {
+      "issueType": "meta-description-too-long",
+      "title": "Meta description too long",
+      "severity": "info",
+      "count": 150
+    },
+    {
+      "issueType": "title-too-long",
+      "title": "Title too long",
+      "severity": "info",
+      "count": 117
+    },
+    {
+      "issueType": "noindex-page",
+      "title": "Page is noindex",
+      "severity": "info",
+      "count": 23
+    },
+    {
+      "issueType": "meta-description-too-short",
+      "title": "Meta description too short",
+      "severity": "info",
+      "count": 4
+    }
+  ],
+  "lighthouse": {
+    "totalScheduled": 20,
+    "completed": 10,
+    "failed": 10,
+    "perPageDetailAvailableViaApi": false,
+    "rowsInLighthouseCsv": 0
+  },
+  "limits": {
+    "pageBudget": "600 of ~2,265 sitemap URLs crawled (audit page budget)",
+    "issuesLimit": "requested limit=1000, no severity filter; API returned 323 issues matching the audit summary total exactly (no truncation, so per-severity re-pulls were skipped)",
+    "pagesLimit": "requested limit=1000; API returned 600 (== pagesCrawled, no truncation, so per-fetchClass re-pulls were skipped: all 600 pages are fetchClass=ok)",
+    "fieldsNotInApi": [
+      "h1",
+      "noindex_reason",
+      "canonical",
+      "internal_links_in",
+      "lighthouse_performance_score",
+      "lighthouse_lcp",
+      "lighthouse_cls",
+      "lighthouse_inp_tbt",
+      "lighthouse_fcp"
+    ]
+  }
+}

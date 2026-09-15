@@ -1,0 +1,291 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.ers.pt","https://www.ordemdosmedicos.pt","https://www.cnpd.pt","https://www.livroreclamacoes.pt","https://www.infarmed.pt","https://www.sns24.gov.pt","https://www.dgs.pt","https://www.insa.min-saude.pt","https://www.spc.pt","https://www.ihmt.unl.pt","https://www.apmgf.pt","https://www.deco.pt","https://www.utente.min-saude.pt","https://www.sosvozamiga.org","https://www.fpcardiologia.pt"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Vysoký cholesterol: co je hypercholesterolémie","description":"Vysoký cholesterol postihuje přibližně 1 ze 2 dospělých Portugalců, ale nezpůsobuje příznaky, dokud nedojde k infarktu nebo CMP. Seznamte se s příčinami, varovnými příznaky a současnou léčbou (statiny, inhibitory PCSK9, inclisiran) — napsáno lékařem registrovaným v Ordem dos Médicos.","url":"https://www.myglobalhealth.online/portugal/cs/blog/vysoky-cholesterol-co-je-hypercholesterolemie","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/portugal/cs/blog/vysoky-cholesterol-co-je-hypercholesterolemie#webpage","url":"https://www.myglobalhealth.online/portugal/cs/blog/vysoky-cholesterol-co-je-hypercholesterolemie","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/cs/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-21"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Vysok%C3%BD+cholesterol%3A+co+je+hypercholesterol%C3%A9mie&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F9235304a-5bd7-4a77-a7b4-5b8fb03f7e83-34306.webp&v=2026-07-20.1-xbekdh","width":1200,"height":630},"about":{"@type":"Thing","name":"Cardiologia"},"datePublished":"2026-07-20T22:08:20.712Z","dateModified":"2026-07-21T13:19:22.551Z","publishingPrinciples":"https://www.myglobalhealth.online/portugal/cs/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/portugal/cs/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Domů","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/portugal/cs/blog"},{"@type":"ListItem","position":3,"name":"Vysoký cholesterol: co je hypercholesterolémie","item":"https://www.myglobalhealth.online/portugal/cs/blog/vysoky-cholesterol-co-je-hypercholesterolemie"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Je vysoký cholesterol v Portugalsku běžný?","acceptedAnswer":{"@type":"Answer","text":"Ano. Vysoký cholesterol patří v Portugalsku mezi nejrozšířenější ovlivnitelné kardiovaskulární rizikové faktory. Údaje INSA a Národního zdravotního průzkumu ukazují, že přibližně polovina dospělých Portugalců má zvýšený celkový cholesterol. Většina z nich není diagnostikována, protože hypercholesterolemie nezpůsobuje příznaky. Familiární hypercholesterolemie — dědičná forma způsobující výrazně zvýšený LDL už od narození — postihuje asi 1 z 250 lidí v Portugalsku, přičemž více než 90 % případů zůstává odhadem nediagnostikováno."}},{"@type":"Question","name":"Jaké jsou příznaky vysokého cholesterolu?","acceptedAnswer":{"@type":"Answer","text":"Hypercholesterolemie je v podstatě tiché onemocnění — většina lidí nemá žádné příznaky, dokud nedojde k závažné kardiovaskulární příhodě. U závažné nebo familiární hypercholesterolemie se mohou objevit fyzické příznaky, jako jsou xantomy (usazeniny tuku pod kůží, zejména na Achillově šlaše nebo na kloubech prstů), xantelasmata (žlutavé plochy u víček) a corneální arkus (šedý prstenec kolem duhovky — významný u lidí mladších 45 let). Jediným spolehlivým způsobem, jak zjistit vysoký cholesterol, je krevní test: lipidový profil nalačno."}},{"@type":"Question","name":"Co způsobuje vysoký cholesterol?","acceptedAnswer":{"@type":"Answer","text":"Vysoký cholesterol má genetické příčiny i příčiny související se životním stylem. Nejvýznamnější genetickou příčinou je familiární hypercholesterolemie (FH), způsobená mutacemi v genu pro LDL receptor. Mezi příčiny související se životním stylem patří strava bohatá na nasycené a trans-tuky, sedavý způsob života, obezita, kouření a nadměrná konzumace alkoholu. Sekundární příčiny zahrnují hypotyreózu, diabetes 2. typu, chronické onemocnění ledvin a některé léky. U většiny lidí je hodnota cholesterolu dána kombinací genetické predispozice a faktorů životního stylu."}},{"@type":"Question","name":"Jaká je nejlepší léčba vysokého cholesterolu v Portugalsku?","acceptedAnswer":{"@type":"Answer","text":"Léčba závisí na celkovém kardiovaskulárním riziku a cílové hodnotě LDL, nikoli pouze na samotné hodnotě cholesterolu. Základem pro všechny pacienty je úprava životního stylu — strava, pohyb, odvykání kouření, kontrola hmotnosti. Statiny (zejména vysoce intenzivní atorvastatin a rosuvastatin) jsou farmakologickou léčbou první volby, široce dostupnou v rámci SNS v Portugalsku. U pacientů, kteří nedosahují cílových hodnot LDL, se přidává ezetimib. U vysoce rizikových pacientů nebo pacientů s familiární hypercholesterolemií jsou prostřednictvím specializovaných pracovišť dostupné inhibitory PCSK9 (evolokumab, alirokumab) a inklisiran — injekce RNA podávaná dvakrát ročně. Kyselina bempedoová je nyní dostupná pro pacienty netolerující statiny."}},{"@type":"Question","name":"Jak často bych si měl(a) v Portugalsku nechat vyšetřit cholesterol?","acceptedAnswer":{"@type":"Answer","text":"DGS doporučuje, aby si všichni dospělí starší 40 let nechali vyšetřit cholesterol alespoň jednou za 5 let, případně častěji, pokud existují rizikové faktory (rodinná anamnéza, obezita, hypertenze, kouření nebo diabetes). Pokud užíváte léky na cholesterol, měl by váš lékař zopakovat lipidový profil nalačno 8 až 12 týdnů po zahájení léčby nebo jakékoli změně dávky, a poté jednou ročně, jakmile se hodnoty ustálí. Každý, kdo má příbuzného prvního stupně s předčasným kardiovaskulárním onemocněním (před 60. rokem věku) nebo prokázanou FH, by měl být vyšetřen dříve, ideálně již kolem 20 nebo 30 let věku."}},{"@type":"Question","name":"Mohu snížit cholesterol bez léků?","acceptedAnswer":{"@type":"Answer","text":"U pacientů s nízkým až středním kardiovaskulárním rizikem a mírně zvýšeným LDL může samotná úprava životního stylu — zejména středomořský styl stravování, pravidelný aerobní pohyb, ukončení kouření a snížení nadváhy — dosáhnout klinicky významného snížení LDL o 10 až 20 % a v některých případech vyloučit potřebu léků. U pacientů s vysokým nebo velmi vysokým kardiovaskulárním rizikem nebo familiární hypercholesterolemií však samotná úprava životního stylu obvykle nestačí k dosažení cílových hodnot stanovených normami a farmakoterapie se doporučuje jako doplněk, nikoli náhrada změn životního stylu. Poraďte se se svým lékařem, co je vhodné pro váš konkrétní rizikový profil."}},{"@type":"Question","name":"Mohu v Portugalsku konzultovat vysoký cholesterol s lékařem online?","acceptedAnswer":{"@type":"Answer","text":"Ano. Global Health nabízí online konzultace s lékaři registrovanými u portugalské lékařské komory (Ordem dos Médicos). Ty zahrnují posouzení kardiovaskulárního rizika, vyhodnocení výsledků cholesterolu, předepsání statinů a dalších léků, je-li to klinicky indikováno, a žádost o laboratorní vyšetření (lipidový profil nalačno, glykemie, funkce štítné žlázy a kompletní metabolický panel). Konzultace jsou dostupné v den objednání, sedm dní v týdnu. Objednejte se na myglobalhealth.online/pt/portugal/family-and-general-medicine."}}]}]Všechny článkyCardiologiaVysoký cholesterol: co je hypercholesterolémieOdhaduje se, že 1 z každých 2 portugalských dospělých má zvýšený cholesterol, a většina o tom neví. Tato příručka vysvětluje příčiny, tiché příznaky a nejnovější léčbu — od statinů po inhibitory PCSK9 — která mění kardiovaskulární péči v Portugalsku.Global Health Medical Team20. července 202622 min čteníPoslední kontrola 21. července 2026+Na této stránceVysoký cholesterol v Portugalsku: rozsah problémuTypy hypercholesterolemiePříčiny a rizikové faktoryPříznaky a projevySoučasná léčba hypercholesterolemie v PortugalskuPrevence a životní styl: co můžete udělatVýznam pravidelného screeninguVýzkum a budoucí léčbaKlíčové portugalské instituceČasté otázky
+
+
+
+Kardiovaskulární zdraví v Portugalsku
+Příčiny, příznaky, současná léčba, prevence a screening hypercholesterolemie.
+Kardiovaskulární onemocnění jsou v Portugalsku hlavní příčinou úmrtí. A jedním z jejich hlavních hnacích motorů – zvýšeným cholesterolem v krvi – trpí přibližně polovina dospělých Portugalců, přičemž naprostá většina o tom neví. Hypercholesterolemie je svou povahou onemocnění, které se neohlašuje příznaky, ale událostmi: infarktem myokardu, cévní mozkovou příhodou (CMP) nebo náhlou srdeční smrtí.
+
+Zobrazit doporučený screening
+Prozkoumat možnosti léčby
+
+
+
+Aktualizovaný klinický průvodce
+Mimořádná zákeřnost vysokého cholesterolu spočívá právě v této tichosti. Na rozdíl od cukrovky, která může způsobovat únavu nebo žízeň, nebo hypertenze, jež občas vyvolává bolesti hlavy, hypercholesterolemie nezpůsobuje žádný pocit – dokud roky nezužuje tepny zásobující srdce a mozek. Když se projeví, poškození už bývá často hotové.
+Dobrá zpráva je stejně významná: hypercholesterolemie patří mezi nejlépe léčitelná onemocnění v celé medicíně. Dnes dostupné hypolipidemické léky – od dobře zavedených statinů až po nejnovější léky na bázi RNA – patří k terapeutickým postupům s nejsilnější důkazní podporou v moderní farmakologii. A fungují nejlépe, pokud se nasadí včas, dříve než se poškození nahromadí. Odhalení jednoduchým krevním testem je vším, co je potřeba.
+
+
+
+
+
+
+Sekce 01
+Vysoký cholesterol v Portugalsku: rozsah problému
+Cholesterol je vosková, tukům podobná látka, kterou přirozeně vytváří játra a kterou také přijímáme stravou. Je nezbytný pro stavbu buněčných membrán, tvorbu hormonů a syntézu vitaminu D. Problém nastává, když jeho hladiny – zejména cholesterolu v lipoproteinech o nízké hustotě (LDL) – překročí prahovou hodnotu, od které začíná docházet k poškození tepen. Tento proces, ateroskleróza, je základem většiny infarktů a cévních mozkových příhod.
+Údaje Instituto Nacional de Saúde Doutor Ricardo Jorge (INSA) a Národního zdravotního průzkumu (INS), zveřejněné Generálním ředitelstvím zdravotnictví (DGS), ukazují, že hypercholesterolemie patří mezi nejčastější nekontrolované kardiovaskulární rizikové faktory u dospělé populace v Portugalsku. Podle Národního programu pro cerebrovaskulární a kardiovaskulární onemocnění DGS jsou kardiovaskulární onemocnění v Portugalsku první příčinou úmrtí a zvýšený cholesterol v tom hraje rozhodující roli.
+
+
+~50 %
+Dospělých Portugalců má zvýšený celkový cholesterol
+
+
+1 z 250
+Lidí v Portugalsku postiženo familiární hypercholesterolemií (FH)
+
+
+1. příčina
+Kardiovaskulární onemocnění — hlavní příčina úmrtí v Portugalsku
+
+
+>90 %
+Případů FH v Portugalsku je odhadem nediagnostikovaných
+
+
+Zdroj: INSA — Národní zdravotní průzkum; DGS — Národní program pro cerebrovaskulární a kardiovaskulární onemocnění; Portugalská kardiologická nadace; Portugalská asociace pro familiární hypercholesterolemii.
+Familiární hypercholesterolemie (FH) si zaslouží zvláštní pozornost. Toto dědičné genetické onemocnění — které postihuje přibližně 1 z 250 lidí, tedy asi 40 000 osob v Portugalsku — způsobuje dramaticky zvýšené hodnoty LDL už od narození, a vystavuje tak postižené riziku infarktu často o desítky let dříve, než by se dalo očekávat. Associação Portuguesa de Hipercolesterolemia Familiar (APHF) odhaduje, že více než 90 % případů FH v Portugalsku zůstává nediagnostikováno. Bez léčby mají muži s FH 50% riziko koronární příhody před 50. rokem věku; ženy před 60. rokem věku.
+
+Máte v rodině předčasné srdeční onemocnění?
+      Pokud někdo z vašich rodičů, sourozenců nebo prarodičů prodělal infarkt nebo cévní mozkovou příhodu před 60. rokem věku, můžete mít výrazně zvýšené riziko familiární hypercholesterolemie nebo dědičného kardiovaskulárního rizika. Poraďte se se svým lékařem o vyšetření nalačno zaměřeném na lipidový profil. Včasný záchyt FH může předejít kardiovaskulárním příhodám, k nimž by jinak došlo ve středním věku.
+    
+
+
+
+
+
+Sekce 02
+Typy hypercholesterolemie
+Ne každý zvýšený cholesterol má stejnou příčinu nebo stejný klinický význam. Pochopení typu a vzorce vaší poruchy lipidů je klíčové pro rozhodování o léčbě.
+
+
+
+
+Familiární hypercholesterolemie (FH)
+Genetická · Autozomálně dominantní · Vysoké riziko
+Způsobena mutacemi v genu pro LDL receptor (nejčastěji), APOB nebo PCSK9. Vede k výrazně zvýšenému LDL už od narození — typicky nad 4,9 mmol/l. Bez léčby vede k předčasné ateroskleróze a kardiovaskulárním příhodám. Vyžaduje včasnou identifikaci a agresivní léčbu, obvykle vysoce intenzivními statiny a dalšími přípravky.
+
+
+
+
+Primární hypercholesterolemie (životní styl)
+Získaná · Ovlivnitelná · Nejčastější
+Nejčastější forma. Podmíněná stravou bohatou na nasycené a trans-tuky, sedavým způsobem života, obezitou a kouřením. Zvýšení LDL je ve většině případů mírné a dobře reaguje na úpravu životního stylu v kombinaci s farmakoterapií, je-li potřeba.
+
+
+
+
+Sekundární hypercholesterolemie
+Základní onemocnění · Léčitelná příčina
+Zvýšený cholesterol způsobený základním onemocněním — hypotyreózou, nekompenzovaným diabetem 2. typu, chronickým onemocněním ledvin, nefrotickým syndromem nebo jaterním onemocněním — nebo léky, jako jsou kortikosteroidy, thiazidová diuretika či některá antipsychotika. Léčba základního onemocnění často výrazně zlepší lipidové hodnoty.
+
+
+
+
+Smíšená dyslipidemie
+Zvýšený LDL + triglyceridy · Komplexní riziko
+Kombinace zvýšeného LDL a zvýšených triglyceridů, často s nízkým HDL ("dobrým cholesterolem"). Často spojena s metabolickým syndromem, inzulinovou rezistencí a obezitou. Vyžaduje mnohostranný terapeutický přístup zaměřený na více lipidových frakcí.
+
+
+
+
+
+
+
+Sekce 03
+Příčiny a rizikové faktory
+Genetické příčiny
+Familiární hypercholesterolemie je nejvýznamnější genetickou příčinou předčasného kardiovaskulárního onemocnění. Vzniká především mutacemi v genu kódujícím LDL receptor — buněčný mechanismus, kterým je LDL cholesterol odstraňován z krevního oběhu. Když LDL receptory chybí nebo je jich nedostatek, LDL se hromadí v krvi a postupně se ukládá ve stěnách tepen. Onemocnění je autozomálně dominantní, což znamená, že k jeho vzniku stačí jedna kopie postiženého genu. Děti postiženého rodiče mají 50% pravděpodobnost, že onemocnění zdědí.
+Příčiny související se životním stylem a prostředím
+U většiny lidí je vysoký cholesterol výsledkem kombinace genetické predispozice a životního stylu. Následující rizikové faktory jsou každý samostatně spojeny se zvýšeným LDL nebo celkovým cholesterolem a jejich kombinace riziko podstatně zvyšuje.
+
+
+
+
+Strava bohatá na nasycené tuky
+Červené maso, tučné mléčné výrobky, máslo, kokosový a palmový olej zvyšují LDL. Nejškodlivější jsou trans-tuky, které jsou nyní ve výrobě potravin v EU do značné míry zakázány.
+
+
+
+
+Sedavý způsob života
+Pravidelný aerobní pohyb zvyšuje HDL ("dobrý cholesterol") a snižuje triglyceridy. Sedavé chování má opačný účinek a nezávisle zhoršuje lipidový profil.
+
+
+
+
+Obezita
+Nadměrná tělesná hmotnost — zejména centrální obezita — je spojena se zvýšenými triglyceridy, nízkým HDL a často i zvýšeným LDL. Úbytek hmotnosti zlepšuje všechny lipidové parametry.
+
+
+
+
+Kouření
+Tabákový kouř snižuje HDL a urychluje oxidační modifikaci LDL — čímž jej činí více aterogenním (škodlivějším pro tepny) — i při srovnatelných hodnotách celkového cholesterolu.
+
+
+
+
+Nadměrná konzumace alkoholu
+Vysoká konzumace alkoholu výrazně zvyšuje triglyceridy. Mírná konzumace může mírně zvýšit HDL, to však nevyváží širší kardiovaskulární škody způsobené nadměrným pitím.
+
+
+
+
+Věk
+Hodnoty cholesterolu mají tendenci s věkem stoupat, jak klesá aktivita LDL receptorů. U žen po menopauze dochází k výraznému nárůstu LDL, což částečně vysvětluje sbližování kardiovaskulárního rizika mezi pohlavími po menopauze.
+
+
+
+
+Rodinná anamnéza
+Příbuzný prvního stupně s předčasným kardiovaskulárním onemocněním nebo prokázanou FH výrazně zvyšuje osobní riziko a měl by být důvodem k dřívějšímu a častějšímu screeningu.
+
+
+
+
+Přidružená onemocnění
+Hypotyreóza, diabetes 2. typu, chronické onemocnění ledvin, nefrotický syndrom a obstrukční onemocnění jater nezávisle zvyšují cholesterol a vyžadují cílenou léčbu.
+
+
+
+
+
+
+
+Sekce 04
+Příznaky a projevy
+V tom spočívá hlavní klinická výzva hypercholesterolemie: je téměř zcela bez příznaků, dokud nedojde k výraznému poškození tepen. Neexistují žádné bolesti, horečka ani dušnost způsobené přímo cholesterolem. Prvním "příznakem" je pro mnoho pacientů infarkt nebo cévní mozková příhoda — často u člověka, který se den předtím cítil naprosto dobře.
+Při závažném nebo dlouhodobém zvýšení — zejména u familiární hypercholesterolemie — se mohou objevit určité fyzické příznaky. Je důležité je rozpoznat, protože často bývají jedinými viditelnými známkami významné poruchy lipidů:
+
+
+
+
+
+Xantomy
+Usazeniny cholesterolu pod kůží. Šlachové xantomy (typicky na Achillově šlaše nebo na kloubech prstů) úzce souvisejí s FH a jsou téměř diagnostické.
+
+
+
+
+
+
+Xantelasmata
+Žlutavé, měkké plochy na víčkách nebo v jejich blízkosti. I když si jich lidé často všimnou z estetických důvodů, jsou ukazatelem dyslipidemie a jsou důvodem k vyšetření lipidového profilu.
+
+
+
+
+
+
+Corneální arkus
+Šedý nebo bílý prstenec kolem duhovky oka. U lidí mladších 45 let může corneální arkus poukazovat na hypercholesterolemii a je důvodem k dalšímu vyšetření.
+
+
+
+
+
+
+Bolest na hrudi (angina pectoris)
+Není způsobena přímo cholesterolem, ale je důsledkem aterosklerózy, kterou vyvolává. Svírání nebo nepříjemný pocit na hrudi při námaze vyžaduje urgentní kardiovaskulární vyšetření.
+
+
+
+
+
+
+Bolest nohou při chůzi
+Ischemická choroba dolních končetin — bolest lýtka při námaze, která ustupuje v klidu (klaudikace) — je způsobena aterosklerózou tepen dolních končetin.
+
+
+
+
+
+
+Příznaky TIA nebo CMP
+Náhlá slabost, potíže s řečí, asymetrie obličeje nebo ztráta zraku mohou signalizovat tranzitorní ischemickou ataku (TIA) nebo cévní mozkovou příhodu — stav vyžadující neodkladnou lékařskou péči.
+
+
+
+
+FAST — Poznejte příznaky cévní mozkové příhody:
+      Face — asymetrie obličeje · Arm (paže) — slabost · Speech (řeč) — potíže · Time — volejte 112. CMP je neodkladný stav. Pokud tyto příznaky zaznamenáte, ihned volejte 112. Nejezděte do nemocnice sami. Každá minuta se počítá.
+    
+Základní klinické sdělení je jednoznačné: nečekejte na příznaky. Lipidový profil nalačno je jedinou spolehlivou metodou, jak zjistit zvýšený cholesterol. Je jednoduchý, dostupný a snadno proveditelný u praktického lékaře. Absence příznaků není zárukou zdraví — je to právě situace, kdy je nejdůležitější jednat.
+
+
+
+
+
+Sekce 05
+Současná léčba hypercholesterolemie v Portugalsku
+Léčba hypercholesterolemie v Portugalsku se řídí doporučeními Direcção-Geral da Saúde (DGS), Normami Evropské kardiologické společnosti (ESC) / Evropské aterosklerotické společnosti (EAS) pro dyslipidemie (aktualizovanými v roce 2024) a doporučeními Sociedade Portuguesa de Cardiologia (SPC). Cíl léčby není určen pouze hodnotou cholesterolu, ale cílovou hodnotou LDL stanovenou podle individuálního kardiovaskulárního rizika — pacienti s vyšším rizikem vyžadují agresivnější snížení LDL.
+Cílové hodnoty LDL podle kategorie rizika
+Normy ESC/EAS 2024 stanovují následující cíle LDL: velmi vysoké riziko (prokázané kardiovaskulární onemocnění, závažné onemocnění ledvin, diabetes s orgánovým poškozením) — LDL pod 1,4 mmol/l; vysoké riziko — pod 1,8 mmol/l; střední riziko — pod 2,6 mmol/l; nízké riziko — pod 3,0 mmol/l. Váš lékař vypočítá vaše kardiovaskulární riziko pomocí ověřených nástrojů (SCORE2, QRISK3) a určí, jaký cíl se týká vašeho případu.
+
+
+První linie · Všechny rizikové skupiny
+Statiny (inhibitory HMG-CoA reduktázy)
+Atorvastatin · Rosuvastatin · Simvastatin
+Základní kámen léčby cholesterolu už tři desetiletí. Statiny inhibují HMG-CoA reduktázu, klíčový enzym syntézy cholesterolu v játrech, a snižují LDL o 30 až 55 % podle přípravku a dávky. Vysoce intenzivní statiny (atorvastatin 40–80 mg, rosuvastatin 20–40 mg) jsou preferovány u pacientů s vysokým a velmi vysokým rizikem. V Portugalsku dostupné v rámci SNS. Důkazní základna — včetně studie Heart Protection Study a řady metaanalýz — patří k nejsolidnějším ve farmakologii.
+
+
+Druhá linie · Doplňková léčba
+Ezetimib
+Ezetrol · Generický ezetimib
+Snižuje střevní vstřebávání cholesterolu. Při přidání ke statinu dále snižuje LDL o 15 až 22 %. Studie IMPROVE-IT prokázala mírné, ale reálné snížení kardiovaskulárních příhod při přidání k simvastatinu u vysoce rizikových pacientů. Dobře snášená a dostupná v rámci SNS. Standardní léčba druhé linie v Portugalsku, pokud monoterapie statinem nedosáhne cílového LDL.
+
+
+Vysoké riziko a FH · Zahajuje specialista
+Inhibitory PCSK9
+Evolokumab (Repatha) · Alirokumab (Praluent)
+Monoklonální protilátky blokující PCSK9 — protein odpovědný za odbourávání LDL receptorů v jaterních buňkách. Dramaticky zvyšují dostupnost LDL receptorů a snižují LDL o 50 až 65 % navíc ke statinu. Studie FOURIER a ODYSSEY OUTCOMES prokázaly snížení hlavních kardiovaskulárních příhod o 15 až 20 %. Podávají se podkožní injekcí každé 2 nebo 4 týdny. V Portugalsku dostupné na předpis specialisty pro pacienty s FH a velmi vysokým rizikem.
+
+
+Inovativní · Injekce dvakrát ročně
+Inklisiran
+Leqvio
+Léčba pomocí malé interferující RNA (siRNA), která na genetické úrovni umlčuje jaterní produkci PCSK9 a snižuje LDL přibližně o 50 % pouhými dvěma injekcemi ročně po počáteční nasycovací dávce. Program studií ORION prokázal trvalé snížení LDL s vynikajícím bezpečnostním profilem. V Portugalsku dostupný prostřednictvím specializovaných lipidologických a kardiologických pracovišť.
+
+
+Zvýšené triglyceridy
+Fibráty a omega-3 mastné kyseliny
+Fenofibrát · Kyselina ikosapentaenová (Vascepa)
+Fibráty snižují především triglyceridy a mírně zvyšují HDL. Vysoce čištěná kyselina ikosapentaenová (omega-3 EPA) prokázala ve studii REDUCE-IT snížení kardiovaskulárních příhod o 25 % u vysoce rizikových pacientů se zvýšenými triglyceridy i přes léčbu statiny — tento zásadní výsledek se promítl do aktualizovaných mezinárodních doporučení. V Portugalsku dostupná na předpis specialisty.
+
+
+Intolerance statinů · Alternativa
+Kyselina bempedoová
+Nilemdo · Nustendi (s ezetimibem)
+Perorální lék, který inhibuje syntézu cholesterolu ještě před statiny, prostřednictvím ATP-citrát lyázy. Protože se aktivuje pouze v játrech (nikoli ve svalové tkáni), nezpůsobuje myopatii, kvůli které někteří pacienti statiny vysazují. Studie CLEAR Outcomes (2023) potvrdila, že kyselina bempedoová snižuje hlavní kardiovaskulární příhody u pacientů netolerujících statiny. V Portugalsku dostupná pro pacienty, kteří statiny netolerují.
+
+
+
+Aktualizace norem ESC/EAS 2024:
+Aktualizované evropské normy potvrdily, že pacienti s velmi vysokým rizikem — s prokázaným kardiovaskulárním onemocněním nebo familiární hypercholesterolemií — by měli dosáhnout LDL pod 1,4 mmol/l, a že kombinovaná léčba (statin + ezetimib ± inhibitor PCSK9 nebo inklisiran) by měla být zahájena včas, nikoli postupně, pokud je nepravděpodobné, že monoterapie dosáhne cílů. Pokud máte prokázané srdeční onemocnění a váš LDL zůstává nad cílovou hodnotou, poraďte se se svým lékařem nebo kardiologem o zintenzivnění léčby.
+
+
+
+
+
+
+Sekce 06
+Prevence a životní styl: co můžete udělat
+Úprava životního stylu je první a nejudržitelnější intervencí při léčbě cholesterolu a snižování kardiovaskulárního rizika. U pacientů s nízkým až středním kardiovaskulárním rizikem mohou trvale dodržované změny stravy a životního stylu dosáhnout klinicky významného snížení LDL a v mnoha případech i vyloučit potřebu léků. I u pacientů užívajících léky změny životního stylu zvyšují účinnost léčby a nezávisle snižují kardiovaskulární riziko prostřednictvím mechanismů, které přesahují samotný cholesterol.
+
+
+
+
+Zvolte kardioprotektivní stravu
+Nahraďte nasycené tuky (červené maso, máslo, smetanu, kokosový olej) nenasycenými tuky (olivový olej, ořechy, avokádo, tučné ryby). Středomořský styl stravování — široce doporučovaný ESC a podpořený studií PREDIMED — snižuje kardiovaskulární příhody nezávisle na hodnotách cholesterolu. Zvyšte příjem vlákniny z ovsa, luštěnin a zeleniny.
+
+
+
+
+Pravidelně cvičte
+Alespoň 150 minut týdně aerobního cvičení střední intenzity (rychlá chůze, jízda na kole, plavání). Pravidelný aerobní pohyb zvyšuje HDL, snižuje triglyceridy a snižuje kardiovaskulární riziko i nad rámec svého účinku na cholesterol. Silový trénink přináší další přínosy pro metabolické zdraví.
+
+
+
+
+Přestaňte kouřit
+Ukončení kouření je jedním z nejúčinnějších dostupných zásahů pro snížení kardiovaskulárního rizika. Zanechání kouření zvyšuje HDL

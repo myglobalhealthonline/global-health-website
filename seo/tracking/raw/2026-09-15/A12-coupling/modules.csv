@@ -1,0 +1,43 @@
+file,size_bytes,kind,referenced_from_runtime,gating_expression,markets_named
+backend/src/content/czechia-page-content-seo-drafts.ts,12291,ts,no,,cz
+backend/src/content/czechia-profile-blog-tool-seo-drafts.ts,23395,ts,no,,cz
+backend/src/content/czechia-seo-service-drafts.ts,61037,ts,no,,cz
+backend/src/content/ireland-consultation-hub-patch.ts,1893,ts,no,,ie
+backend/src/content/ireland-consultation-hubs.ts,13672,ts,no,,ie
+backend/src/content/ireland-doctor-profile-faqs.ts,10831,ts,no,,ie
+backend/src/content/ireland-doctor-profile-keywords.ts,9487,ts,no,,ie
+backend/src/content/ireland-general-service-keyword-patch.ts,1667,ts,no,,ie
+backend/src/content/ireland-general-service-keywords-localized-completion.ts,21350,ts,yes:backend/src/content/ireland-general-service-keywords.ts,* One commercial intent owner for each active Ireland GENERAL service.,ie
+backend/src/content/ireland-general-service-keywords.ts,30398,ts,yes:backend/src/content/ireland-general-service-keyword-patch.ts|backend/src/content/ireland-general-service-keywords-localized-completion.ts,/** Localized completion payload for the ten owner-approved Ireland GENERAL pages. */,ie
+backend/src/content/ireland-profile-specialist-faq-patch.ts,3647,ts,no,,ie
+backend/src/content/ireland-profile-specialist-keyword-patch.ts,2545,ts,no,,ie
+backend/src/content/ireland-public-copy-humanizer.ts,6875,ts,no,,ie
+backend/src/content/ireland-specialist-service-faqs.ts,24507,ts,no,,ie
+backend/src/content/ireland-specialist-service-keywords.ts,23260,ts,no,,ie
+backend/src/content/portugal-clinical-approval.ts,15318,ts,yes:backend/src/content/portugal-seo-metadata-patch.ts,"throw new Error(""Portugal SEO confirmation token does not match the selected draft"");",pt
+backend/src/content/portugal-faq-safety-patch.ts,1249,ts,no,,pt
+backend/src/content/portugal-faq-safety-patches.ts,8779,ts,yes:backend/src/content/portugal-faq-safety-patch.ts,"throw new Error(""Portugal FAQ source SHA-256 does not match the current record"");",pt
+backend/src/content/portugal-home-cta-patch.ts,4050,ts,no,,pt
+backend/src/content/portugal-seo-metadata-drafts.ts,5100,ts,yes:backend/src/content/portugal-clinical-approval.ts|backend/src/content/portugal-seo-metadata-patch.ts|backend/src/content/portugal-seo-remaining-drafts.ts,throw new Error(`${label} contains a non-official Portugal source`);,pt
+backend/src/content/portugal-seo-metadata-patch.ts,5436,ts,yes:backend/src/content/portugal-faq-safety-patch.ts,"throw new Error(""Portugal FAQ source SHA-256 does not match the current record"");",pt
+backend/src/content/portugal-seo-remaining-drafts.ts,5006,ts,yes:backend/src/content/portugal-seo-metadata-patch.ts,"throw new Error(""Portugal SEO confirmation token does not match the selected draft"");",pt
+backend/src/content/romania-clinical-review.ts,81175,ts,yes:backend/src/modules/doctor-faqs/doctor-faqs.service.ts|backend/src/modules/doctor-market-profiles/doctor-market-profiles.service.ts|backend/src/modules/doctor-profile-change-requests/doctor-profile-change-requests.service.ts|backend/src/modules/doctors/doctors.service.ts|backend/src/modules/service-links/service-links.service.ts|backend/src/modules/services/services.service.ts|backend/src/routes/admin-doctor-faqs.route.ts|backend/src/routes/admin-doctor-markets.route.ts|backend/src/routes/admin-doctors.route.ts|backend/src/routes/admin-service-links.route.ts|backend/src/routes/admin-services.route.ts|backend/src/services/service-faq.service.ts,* country (so admin can't accidentally attach a Romania-only doctor to,ro
+backend/src/lib/ie-sick-cert-blog-content.ts,16577,ts,no,,
+backend/src/modules/brazil-consent/brazil-consent-link.service.ts,3158,ts,yes:backend/src/lib/email/templates.ts|backend/src/modules/brazil-consent/brazil-consent.service.ts|backend/src/routes/brazil-consent.route.ts,"* Invoice email copy, keyed by `Country.code` — ie, cz, es, ro, br. Portugal is",br
+backend/src/modules/brazil-consent/brazil-consent.service.ts,5461,ts,yes:backend/src/routes/brazil-consent.route.ts,"return reply.status(404).send(errorResponse(""Brazil appointment not found""));",br
+backend/src/modules/invoices/pt-invoice-mirror.service.ts,5695,ts,yes:backend/src/modules/invoices/pt-invoicexpress.service.ts,* Portugal only: issue the legal InvoiceReceipt through the InvoiceExpress REST,
+backend/src/modules/invoices/pt-invoicexpress.service.ts,10105,ts,yes:backend/src/modules/invoices/pt-stripe-invoice-data.ts|backend/src/modules/orders/complete-order-payment.service.ts,* Portugal: InvoiceExpress's native Stripe integration auto-issues the legal,
+backend/src/modules/invoices/pt-stripe-invoice-data.ts,3784,ts,yes:backend/src/modules/appointments/manual-booking.service.ts|backend/src/modules/appointments/manual-test-booking.service.ts|backend/src/modules/cross-border-rx/cross-border-rx.service.ts|backend/src/modules/orders/order-payment-url.service.ts|backend/src/routes/orders.route.ts,// should correct one rather than being silently dropped (fixes Brazil,
+backend/src/routes/brazil-consent.route.ts,5806,ts,no,,br
+frontend/app/(portal)/(doctor)/doctor/appointments/[id]/_components/brazil-consent-panel.tsx,2430,other,yes:frontend/app/(portal)/(doctor)/doctor/appointments/[id]/page.tsx,"{appointment.countryCode.toLowerCase() === ""br"" ? (",br
+frontend/lib/content/czechia-approved-doctor-faqs.ts,4401,ts,yes:frontend/lib/content/doctor-profile-data.ts,* Legacy Wix URLs carried Czech and Portuguese diacritics; the live slugs are,cz
+frontend/lib/content/czechia-static-page-seo.ts,4172,ts,yes:frontend/app/[country]/[lang]/about/page.tsx|frontend/app/[country]/[lang]/blog/page.tsx|frontend/app/[country]/[lang]/book/page.tsx|frontend/app/[country]/[lang]/careers/page.tsx|frontend/app/[country]/[lang]/contact/page.tsx|frontend/app/[country]/[lang]/faq/page.tsx|frontend/app/[country]/[lang]/legal/page.tsx|frontend/app/[country]/[lang]/legal/[type]/page.tsx|frontend/app/[country]/[lang]/press/page.tsx|frontend/app/[country]/[lang]/pricing/page.tsx|frontend/lib/content/blog-index-page.tsx,"const irelandSeo = code === ""ie"" ? irelandStaticPageSeo(""ABOUT"", lang as LocaleCode) : null;",cz
+frontend/lib/content/ireland-static-page-seo.ts,6916,ts,yes:frontend/app/[country]/[lang]/about/page.tsx|frontend/app/[country]/[lang]/contact/page.tsx|frontend/app/[country]/[lang]/pricing/page.tsx,"const irelandSeo = code === ""ie"" ? irelandStaticPageSeo(""ABOUT"", lang as LocaleCode) : null;",ie
+frontend/lib/content/merge-ireland-home-media.ts,1398,ts,yes:frontend/app/[country]/[lang]/layout.tsx|frontend/components/layout/PublicShell.tsx,// may resolve to the fallback (Ireland). Use the URL pathname as the source of,ie
+frontend/lib/content/portugal-static-page-seo.ts,1364,ts,yes:frontend/app/[country]/[lang]/faq/page.tsx|frontend/app/[country]/[lang]/pricing/page.tsx,"const irelandSeo = code === ""ie"" ? irelandStaticPageSeo(""PRICING"", lang as LocaleCode) : null;",pt
+frontend/lib/i18n/brazil-editorial-copy.json,11145,json,yes:frontend/lib/i18n/load-locale.ts,"const homeByLocale = { en: enHome, pt: ptHome, es: esHome, cs: csHome, ro: roHome, de: deHome } as const;",br
+frontend/lib/i18n/romania-editorial-copy.json,49474,json,yes:frontend/lib/i18n/load-locale.ts,"const homeByLocale = { en: enHome, pt: ptHome, es: esHome, cs: csHome, ro: roHome, de: deHome } as const;",ro
+frontend/lib/i18n/spain-editorial-copy.json,4433,json,yes:frontend/lib/i18n/load-locale.ts,"const homeByLocale = { en: enHome, pt: ptHome, es: esHome, cs: csHome, ro: roHome, de: deHome } as const;",es
+frontend/lib/tools/czechia-approved-tool-seo.json,2413,json,yes:frontend/lib/tools/market-copy.ts,"* decline after prepositions in Czech (""v Irsku"", not ""v Irsko"") and take",cz
+frontend/lib/tools/portugal-approved-tool-seo.json,2022,json,yes:frontend/lib/tools/market-copy.ts,"* decline after prepositions in Czech (""v Irsku"", not ""v Irsko"") and take",pt
+frontend/lib/tools/romania-editorial-tool-copy.json,392910,json,yes:frontend/lib/tools/market-copy.ts,"* decline after prepositions in Czech (""v Irsku"", not ""v Irsko"") and take",ro

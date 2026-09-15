@@ -1,0 +1,104 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cmr.ro","https://regmed.cmr.ro","https://www.dataprotection.ro"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}]{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Legal information","item":"https://www.myglobalhealth.online/romania/en/legal"},{"@type":"ListItem","position":3,"name":"Complaints Procedure","item":"https://www.myglobalhealth.online/romania/en/legal/complaints-procedure"}]}LegalRomania · LegalComplaints ProcedureVersion 2 · Last updated 18 July 2026All legal documentsDownload PDFGLOBAL HEALTH
+Complaints ProcedureAll Markets | www.myglobalhealth.online/complaintsEffective Date: 1 July 2026
+
+We take every complaint seriously. If something has not gone right, we want to hear from you and fix it. This page explains how to raise a concern, what happens next, and where to go if we cannot resolve it to your satisfaction.
+
+How to Submit a Complaint
+Email us at globalhealth@myglobalhealth.online with the subject line "Formal Complaint" and include:
+
+Your full name and account email address.
+Your booking reference number (if the complaint relates to a specific consultation or order).
+The date of the consultation, booking, or incident.
+A clear description of your complaint and the outcome you are seeking.
+Any supporting documentation or screenshots where relevant.
+
+We accept complaints in English, Portuguese, Czech, Spanish, Romanian, and Arabic.
+
+What Happens Next
+
+Acknowledgement: within 2 business days. We will confirm receipt of your complaint, assign it a reference number, and let you know whether it is a platform matter (handled by us directly) or a clinical matter (referred to the Clinician).
+Investigation: within 14 business days. We investigate your complaint and, where it involves a Clinician, we engage with them to understand what happened. We may contact you during this period for further information.
+Resolution: written outcome. We will send you a written outcome explaining our findings and any action taken or remedy offered. If we cannot resolve the matter within 14 business days, we will update you with a revised timeline.
+
+
+Response Timeframes
+
+StepTimeframeApplies to
+Acknowledgement2 business daysAll complaints
+Resolution: platform matter14 business daysPayment, booking, technical
+Resolution: clinical matter (referred to Clinician)14 business days from referralConsultation quality, conduct
+Refund (where applicable)14 days (EU) / 7 business days (Brazil)Following confirmed refund decision
+
+
+Types of Complaint
+
+Platform complaints
+These include: payment errors; booking failures; cancellation or refund disputes; technical issues; data protection concerns; or anything related to the operation of the Platform. These are handled directly by Global Health.
+
+Clinical complaints
+These include: concerns about the quality, conduct, or outcome of a medical consultation; concerns about a Clinician's professional behaviour; or concerns about a prescription or referral issued through the Platform. Clinical complaints are referred to the relevant Clinician under our formal escalation process. If the Clinician does not respond adequately, Global Health will escalate including, where appropriate, suspension or removal from the Platform and referral to the relevant medical regulatory body.
+
+Data protection complaints
+If your complaint concerns how your personal data has been handled, please contact our Data Protection Officer directly at a7med.maklad@outlook.com. You also have the right to contact the supervisory authority for data protection in your country: see below.
+
+If We Cannot Resolve Your Complaint
+If you are not satisfied with our response, you have the right to escalate to an independent body. The relevant bodies depend on your country and the nature of your complaint:
+
+Ireland
+
+Irish Medical Council (IMC): Professional conduct of a Clinician. www.medicalcouncil.ie
+Competition and Consumer Protection Commission (CCPC): Consumer rights disputes. www.ccpc.ie
+Data Protection Commission (DPC): Data protection complaints. www.dataprotection.ie
+Health Information and Quality Authority (HIQA): Healthcare service standards. www.hiqa.ie
+
+
+Portugal
+
+Ordem dos Médicos: Professional conduct of a Clinician. www.ordemdosmedicos.pt
+Entidade Reguladora da Saúde (ERS): Healthcare service quality. www.ers.pt
+CNPD: Data protection complaints. www.cnpd.pt
+Rede de Arbitragem de Conflitos de Consumo: Consumer disputes. www.consumidor.gov.pt
+
+
+Czech Republic
+
+Česká lékařská komora (ČLK): Professional conduct of a Clinician. www.lkcr.cz
+Ministerstvo zdravotnictví ČR (MZČR): Healthcare provider complaints. www.mzcr.cz
+ÚOÚ: Data protection complaints. www.uoou.cz
+Česká obchodní inspekce (ČOI): Consumer disputes. www.coi.cz
+
+
+Spain
+
+Consejo General de Colegios Oficiales de Médicos (CGCOM): Professional conduct of a Clinician. www.cgcom.es
+AEPD: Data protection complaints. www.aepd.es
+Dirección General de Consumo / OMIC: Consumer disputes. www.consumo.gob.es
+
+
+Romania
+
+Colegiul Medicilor din România (CMR): Professional conduct of a Clinician. www.cmr.ro
+ANSPDCP: Data protection complaints. www.dataprotection.ro
+ANPC: Consumer protection disputes. www.anpc.ro
+
+
+Brazil
+
+Conselho Federal de Medicina (CFM): Professional conduct of a Medical Provider. portal.cfm.org.br
+ANPD: Data protection complaints. www.gov.br/anpd
+Procon / consumidor.gov.br: Consumer protection disputes. www.consumidor.gov.br
+
+
+EU Online Dispute Resolution
+For patients in EU member states, the European Commission provides an Online Dispute Resolution (ODR) platform for resolving disputes with online traders. You may submit a complaint at:
+https://ec.europa.eu/consumers/odr
+The ODR platform is available to patients in Ireland, Portugal, Czech Republic, Spain, and Romania. It is not available to patients in Brazil or the United Kingdom.
+
+Contact
+Global Health: Complaints
+Email: globalhealth@myglobalhealth.online
+Subject line: "Formal Complaint"
+Data Protection Officer: a7med.maklad@outlook.com
+Website: www.myglobalhealth.online/complaints
+
+This Complaints Procedure applies across all markets in which Global Health operates. It is reviewed annually and updated when our services, regulatory obligations, or operating markets change.

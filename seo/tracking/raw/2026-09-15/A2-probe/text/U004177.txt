@@ -1,0 +1,285 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cgcom.es","https://www.aepd.es"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}]{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Domů","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Právní informace","item":"https://www.myglobalhealth.online/spain/cs/legal"},{"@type":"ListItem","position":3,"name":"Zásady ochrany osobních údajů","item":"https://www.myglobalhealth.online/spain/cs/legal/privacy-policy"}]}PrávníŠpanělsko · Právní informaceZásady ochrany osobních údajůVerze 2 · Naposledy aktualizováno 18 July 2026Všechny právní dokumentyZásady ochrany osobních údajů
+Všechny trhy | GDPR • LGPD • ePrivacy
+Datum účinnosti: 1. července 2026
+
+Zásady ochrany osobních údajů — klíčové informace
+
+Správce údajůGlobal Guest s.r.o., podnikající pod obchodní značkou Global Health
+IČO19071680
+SídloRybná 24, 110 00 Praha 1, Česká republika
+Vedoucí dozorový úřadÚÔÚ (Česká republika) — mechanismus jednotného kontaktního místa GDPR
+Registrace u DPC (Irsko)DPC-13-2106-163222
+Registrace u CNPD (Portugalsko)DPO-20260621-174447-NBQGPS
+Oznámení DPO úřadu ÚÔÚID zprávy datové schránky: 1718793255
+Pověřenec pro ochranu osobních údajůDr. Ahmed Maklad
+E-mail DPOdpo@myglobalhealth.online
+Obecný kontaktglobalhealth@myglobalhealth.online
+Platné právoGDPR (EU) • LGPD (Brazílie) • vnitrostátní prováděcí předpisy
+Datum účinnosti1. července 2026
+
+
+1. Kdo jsme
+Global Health je telemedicínská platforma provozovaná společností Global Guest s.r.o. (IČO: 19071680), společností s ručením omezeným založenou v České republice se sídlem Rybná 24, 110 00 Praha 1, podnikající pod obchodní značkou Global Health.
+Působíme na řadě trhů v Evropě a v Brazílii. Úplný seznam trhů je zveřejněn na www.myglobalhealth.online/markets. Na některých trzích působíme jako registrovaný poskytovatel zdravotních služeb (Model poskytovatele); na jiných působíme jako technologická platforma propojující pacienty s nezávislými Zdravotnickými pracovníky (Model platformy). Model uplatňovaný na vašem trhu je uveden v Dodatku pro danou zemi na www.myglobalhealth.online/terms.
+Tyto Zásady ochrany osobních údajů vysvětlují, jak shromažďujeme, používáme, uchováváme, sdílíme a chráníme vaše osobní údaje při používání platformy Global Health na www.myglobalhealth.online („Platforma"). Vztahují se na všechny uživatele Platformy na všech trzích, na kterých působíme.
+Odkazy na „my", „nás" nebo „naše" v těchto Zásadách se vztahují na společnost Global Guest s.r.o., podnikající pod obchodní značkou Global Health. Odkazy na „vy" se vztahují na jakoukoli fyzickou osobu, která přistupuje k Platformě nebo ji používá.
+
+2. Správce údajů a Pověřenec pro ochranu osobních údajů
+
+2.1 Správce údajů
+Global Guest s.r.o., podnikající pod obchodní značkou Global Health, je správcem osobních údajů shromážděných prostřednictvím Platformy, s výjimkou případů uvedených jinak v těchto Zásadách (viz oddíl 3.3 pro klinické údaje na trzích s Modelem platformy).
+
+2.2 Pověřenec pro ochranu osobních údajů
+V souladu s článkem 37 GDPR jsme jmenovali Pověřence pro ochranu osobních údajů (DPO). Náš DPO odpovídá za dohled nad dodržováním předpisů o ochraně osobních údajů na všech trzích a je kontaktní osobou pro dozorové úřady pro ochranu osobních údajů a pro pacienty, kteří chtějí uplatnit svá práva k údajům.
+DPO: Dr. Ahmed Maklad
+E-mail DPO: dpo@myglobalhealth.online
+V případě jakýchkoli dotazů k těmto Zásadám ochrany osobních údajů nebo k tomu, jak nakládáme s vašimi údaji, kontaktujte prosím našeho DPO.
+
+2.3 Vedoucí dozorový úřad
+Vzhledem k tomu, že společnost Global Guest s.r.o. je založena v České republice, je naším vedoucím dozorovým úřadem podle mechanismu jednotného kontaktního místa GDPR Úřad pro ochranu osobních údajů (ÚÔÚ) v České republice. Jsme rovněž registrováni u úřadů pro ochranu osobních údajů v Irsku (DPC — ref.: DPC-13-2106-163222) a v Portugalsku (CNPD — ref.: DPO-20260621-174447-NBQGPS). Oznámení DPO probíhají u AEPD (Španělsko) a ANSPDCP (Rumunsko). Zpracování údajů v Brazílii rovněž podléhá LGPD a dohledu ANPD.
+
+3. Jaké osobní údaje shromažďujeme
+
+3.1 Údaje, které nám poskytujete
+Při registraci, rezervaci konzultace nebo používání Platformy shromažďujeme:
+
+Identifikační údaje: jméno a příjmení, datum narození, pohlaví.
+Kontaktní údaje: e-mailovou adresu, telefonní číslo, poštovní adresu.
+Údaje o účtu: uživatelské jméno, heslo (uložené v hašované podobě), předvolby účtu.
+Zdravotní údaje: zdravotní historii, příznaky, aktuálně užívané léky, alergie a veškeré další zdravotní informace, které poskytnete při registraci nebo konzultaci.
+Údaje o konzultacích: poznámky z konzultací, vydané předpisy, doporučující dopisy a zdravotnickou dokumentaci vytvořenou při vašem používání Platformy.
+Platební údaje: údaje o platební metodě zpracovávané bezpečně společností Stripe. Úplná čísla karet neukládáme v našich systémech.
+Komunikace: e-maily, zprávy a záznamy jakéhokoli kontaktu s naším týmem.
+Údaje k ověření totožnosti: pokud jsou vyžadovány pro služby vydávání předpisů nebo ověření věku.
+
+
+3.2 Údaje, které shromažďujeme automaticky
+Při používání Platformy automaticky shromažďujeme:
+
+Technické údaje: IP adresu, typ a verzi prohlížeče, typ zařízení, operační systém, časové pásmo.
+Údaje o používání: navštívené stránky, používané funkce, historii rezervací, dobu trvání relace.
+Údaje o souborech cookie: jak je popsáno v naší Zásadě používání souborů cookie na www.myglobalhealth.online/cookies.
+Údaje o interakci s GHAIA: když využíváte našeho AI asistenta pro rezervace GHAIA prostřednictvím chatu nebo telefonu, zpracováváme obsah vaší interakce výhradně za účelem usnadnění vaší rezervace. Záznamy konverzace s GHAIA nejsou uchovávány po skončení relace. Je-li rezervace prostřednictvím GHAIA dokončena, jsou údaje o rezervaci (jméno, typ schůzky, čas a kontaktní údaje) uchovávány jako součást záznamu vašeho účtu a řídí se dobou uchovávání údajů o účtu uvedenou v oddíle 11.
+
+
+3.3 Klinické údaje na trzích s Modelem platformy
+Na trzích, kde Global Health působí v rámci Modelu platformy (Španělsko, Rumunsko, Brazílie), jsou klinické údaje vytvořené během konzultací spravovány jednotlivým Zdravotnickým pracovníkem nebo poskytovatelem zdravotní péče, nikoli společností Global Health. Global Health zpracovává tyto údaje jako zpracovatel jménem Zdravotnického pracovníka. Žádosti týkající se klinických údajů na trzích s Modelem platformy je třeba primárně směřovat na ošetřujícího Zdravotnického pracovníka.
+
+3.4 Údaje o dětech
+Platforma není určena k používání osobami mladšími 18 let bez aktivní účasti a písemného souhlasu rodiče nebo zákonného zástupce. Osobní údaje dětí mladších 18 let vědomě neshromažďujeme bez souhlasu rodičů. Domníváte-li se, že jsme shromáždili údaje dítěte bez odpovídajícího souhlasu, kontaktujte nás neprodleně na adrese globalhealth@myglobalhealth.online.
+
+4. Jak vaše osobní údaje používáme
+
+4.1 Poskytování Služeb
+Vaše osobní údaje používáme k:
+
+Vytvoření a správě vašeho účtu.
+Zpracování rezervací a plateb.
+Usnadnění lékařských konzultací prostřednictvím Platformy.
+Vydávání předpisů, doporučení a zdravotnické dokumentace, je-li to relevantní.
+Provozu GHAIA, našeho AI asistenta pro rezervace, za účelem usnadnění rezervace schůzek.
+Zasílání potvrzení schůzek, upomínek a následné komunikace.
+Doručování souprav pro domácí zdravotní testy a telemedicínských zařízení v případě objednávky.
+Usnadnění domácího doručování léků na předpis v Irsku.
+
+
+4.2 Klinické účely
+Zdravotní údaje zpracovávají Zdravotničtí pracovníci za účelem poskytování lékařských konzultací, vydávání zdravotnické dokumentace a vedení zdravotnických záznamů. Na trzích s Modelem poskytovatele probíhá toto zpracování v rámci rámce klinického řízení kvality Global Health. Na trzích s Modelem platformy je správcem klinických údajů Zdravotnický pracovník.
+
+4.3 Dodržování právních a regulačních povinností
+Vaše údaje zpracováváme, abychom dodrželi naše právní povinnosti, včetně požadavků na vedení zdravotnické dokumentace, daňových a účetních povinností a povinností regulačního výkaznictví na každém trhu, na kterém působíme.
+
+4.4 Zlepšování platformy a analytika
+S vaším souhlasem (prostřednictvím přijetí souborů cookie) používáme Google Analytics, abychom porozuměli tomu, jak je Platforma používána, a zlepšili její funkčnost a uživatelský komfort. Analytická data jsou, pokud je to možné, zpracovávána v anonymizované nebo agregované podobě.
+
+4.5 Marketingová komunikace
+S vaším výslovným souhlasem vám můžeme zasílat marketingové e-maily o nových službách, zdravotních informacích a aktualizacích Platformy. Od odběru marketingové komunikace se můžete kdykoli odhlásit kliknutím na odhlašovací odkaz v jakémkoli marketingovém e-mailu nebo kontaktováním globalhealth@myglobalhealth.online. Odhlášení z marketingové komunikace nemá vliv na doručování provozní komunikace, jako jsou potvrzení schůzek.
+
+4.6 Bezpečnost a prevence podvodů
+Určité údaje zpracováváme za účelem ochrany zabezpečení Platformy, prevence podvodů a zajištění souladu s našimi Všeobecnými obchodními podmínkami, včetně odhalování a předcházení vytváření více účtů v rozporu s našimi podmínkami.
+
+5. Právní základy zpracování
+
+5.1 GDPR — trhy EU
+Vaše osobní údaje zpracováváme na následujících právních základech podle GDPR:
+
+Čl. 6 odst. 1 písm. b) — plnění smlouvy: zpracování nezbytné k poskytnutí Služeb, které jste si rezervovali.
+Čl. 6 odst. 1 písm. c) — právní povinnost: zpracování vyžadované za účelem dodržení zdravotnických, daňových a regulačních povinností na jednotlivých trzích.
+Čl. 6 odst. 1 písm. a) — souhlas: zpracování pro analytické soubory cookie, marketingovou komunikaci a v případech, kdy je souhlas výslovně vyžádán.
+Čl. 6 odst. 1 písm. f) — oprávněné zájmy: zpracování za účelem zabezpečení platformy, prevence podvodů a zlepšování Platformy, pokud nad ním nepřevažují vaše práva.
+Čl. 9 odst. 2 písm. a) — výslovný souhlas se Zdravotními údaji: získaný při registraci a znovu potvrzovaný před každou konzultací. Před každou konzultací budete požádáni o potvrzení souhlasu se zpracováním svých Zdravotních údajů pro účely dané konzultace. Tento souhlas můžete kdykoli odvolat, což však znemožní pokračování konzultace.
+Čl. 9 odst. 2 písm. h) — zdravotní účely: zpracování nezbytné pro preventivní medicínu, lékařskou diagnostiku a poskytování zdravotní péče, prováděné zdravotnickými pracovníky, na které se vztahuje povinnost mlčenlivosti.
+
+
+5.2 LGPD — Brazílie
+U brazilských pacientů zpracováváme osobní údaje na následujících právních základech podle LGPD:
+
+Artigo 7, V — plnění smlouvy, jejíž stranou je subjekt údajů.
+Artigo 7, II — dodržení právní nebo regulační povinnosti.
+Artigo 7, IX — oprávněné zájmy správce, pokud nad nimi nepřevažují základní práva.
+Artigo 11, I — výslovný souhlas se zpracováním citlivých (zdravotních) údajů.
+Artigo 11, II(f) — výkon práv v soudním, správním nebo rozhodčím řízení.
+
+
+6. GHAIA — AI asistent pro rezervace a automatizované zpracování
+GHAIA je náš AI asistent pro rezervace, dostupný prostřednictvím textového chatu a telefonu. GHAIA je postavena na technologii ElevenLabs Conversational AI a provozována na infrastruktuře Railway.
+
+6.1 Co GHAIA dělá
+GHAIA pomáhá pacientům s rezervací konzultací, kontrolou dostupnosti a orientací na Platformě. GHAIA neprovádí klinickou triáž, neposkytuje lékařské poradenství ani nečiní klinická rozhodnutí. Veškerá klinická rozhodnutí činí lidští Zdravotničtí pracovníci během konzultací.
+
+6.2 Co GHAIA zpracovává
+Při interakci s GHAIA jsou zpracovávány následující údaje:
+
+Vaše hlasové nebo psané vstupy za účelem usnadnění žádosti o rezervaci.
+Vaše jméno a kontaktní údaje, jsou-li poskytnuty za účelem dokončení rezervace.
+Typ konzultace, o kterou žádáte.
+Identifikátory relace za účelem udržení kontextu konverzace.
+
+Data konverzace s GHAIA zpracovává společnost ElevenLabs (viz registr zpracovatelů v oddíle 10). GHAIA neuchovává obsah konverzace po skončení relace, ledaže je dokončena rezervace.
+
+6.3 Vaše práva ve vztahu ke GHAIA
+Podle článku 22 GDPR a rovnocenných ustanovení LGPD máte právo vědět, kdy je použito automatizované zpracování. GHAIA je systém umělé inteligence — při používání GHAIA nekomunikujete s člověkem. Máte kdykoli právo:
+
+Požádat, aby vaši rezervaci namísto GHAIA vyřídil člověk.
+Klást dotazy ohledně toho, jak GHAIA zpracovala vaši žádost.
+Kontaktovat nás na adrese globalhealth@myglobalhealth.online a hovořit s lidským členem týmu.
+
+Automatizované zpracování rezervací systémem GHAIA nemá právní účinky ani vás obdobně významně neovlivňuje. Výsledek rezervace vždy závisí na dostupnosti Zdravotnického pracovníka a vašem vlastním potvrzení.
+
+7. Soubory cookie a sledovací technologie
+Na Platformě používáme soubory cookie a podobné sledovací technologie. Nezbytně nutné soubory cookie jsou používány bez souhlasu. Analytické a funkční soubory cookie jsou umístěny pouze s vaším předchozím souhlasem prostřednictvím našeho banneru pro souhlas se soubory cookie.
+Úplné podrobnosti o souborech cookie, které používáme, jejich účelech, poskytovatelích a o tom, jak spravovat své předvolby, jsou uvedeny v naší Zásadě používání souborů cookie na www.myglobalhealth.online/cookies.
+Pro analytiku platformy používáme Google Analytics. Analytické soubory cookie jsou načteny pouze poté, co udělíte výslovný souhlas. IP adresy jsou před přenosem společnosti Google anonymizovány. Data Google Analytics jsou předávána do USA na základě standardních smluvních doložek prostřednictvím smlouvy o zpracování údajů Google Workspace.
+
+8. S kým sdílíme vaše údaje
+
+8.1 Zdravotničtí pracovníci
+Vaše zdravotní údaje a informace o rezervaci jsou sdíleny se Zdravotnickým pracovníkem provádějícím vaši konzultaci. Na trzích s Modelem poskytovatele přistupují Zdravotničtí pracovníci k údajům prostřednictvím platformy Global Health v rámci našeho rámce klinického řízení kvality. Na trzích s Modelem platformy je Zdravotnický pracovník nezávislým správcem údajů.
+
+8.2 Zpracovatelé (sub-processoři)
+Údaje sdílíme se schválenými zpracovateli, kteří pro nás poskytují služby. Všichni zpracovatelé jsou vázáni smlouvami o zpracování údajů a odpovídajícími zárukami pro předávání údajů. Úplný registr zpracovatelů, včetně názvů poskytovatelů, účelů, umístění údajů a mechanismů předávání, je uveden v oddíle 10 těchto Zásad.
+
+8.3 Právní a regulační zveřejnění
+Vaše osobní údaje můžeme zpřístupnit regulačním orgánům, orgánům činným v trestním řízení nebo soudům, je-li to vyžadováno zákonem, je-li to nezbytné pro ochranu bezpečnosti pacientů nebo Zdravotnických pracovníků, nebo je-li to vyžadováno v souvislosti se soudním řízením.
+
+8.4 Podnikové transakce
+V případě fúze, akvizice nebo prodeje podstatné části našich aktiv mohou být vaše osobní údaje předány nabývajícímu subjektu. O jakémkoli takovém předání a jakékoli podstatné změně postupů nakládání s údaji budete vyrozuměni s předstihem nejméně 30 dnů.
+
+8.5 Co neděláme
+Vaše osobní údaje neprodáváme třetím stranám. Vaše Zdravotní údaje nesdílíme s pojišťovnami, zaměstnavateli ani marketingovými společnostmi. Vaše Zdravotní údaje nepoužíváme k jiným účelům, než jsou uvedeny v těchto Zásadách.
+
+9. Mezinárodní předávání údajů
+Global Health je provozovatel působící na více trzích a některé z vašich osobních údajů mohou být předávány do zahraničí. Veškeré mezinárodní přenosy osobních údajů probíhají s odpovídajícími zárukami.
+
+9.1 Předávání v rámci EU/EHP
+Předávání osobních údajů mezi zeměmi EU/EHP je podle GDPR povoleno bez dalších záruk. Global Health působí v několika členských státech EU a údaje mohou v rámci naší činnosti proudit mezi těmito zeměmi.
+
+9.2 Předávání do USA
+Naši zpracovatelé — Google, Stripe, Railway a ElevenLabs — sídlí v USA. Předávání vašich osobních údajů těmto poskytovatelům probíhá na základě standardních smluvních doložek (SCC) schválených Evropskou komisí, které zajišťují odpovídající úroveň ochrany údajů. Podrobnosti o SCC platných pro jednotlivé poskytovatele jsou k dispozici v jejich příslušných smlouvách o zpracování údajů.
+
+9.3 Předávání údajů brazilských pacientů
+Předávání údajů brazilských pacientů do zemí mimo Brazílii probíhá v souladu s kapitolou V LGPD, s využitím odpovídajících záruk, včetně standardních smluvních doložek nebo rovnocenných mechanismů uznaných ANPD.
+
+9.4 Vaše práva ve vztahu k předávání údajů
+Máte právo získat kopii záruk pro předávání údajů, které používáme pro mezinárodní přenosy. Další informace vám poskytne náš DPO na adrese dpo@myglobalhealth.online.
+
+10. Registr zpracovatelů
+V souladu s článkem 28 GDPR vedeme registr všech zpracovatelů, kteří pro nás zpracovávají osobní údaje. Aktuální registr zpracovatelů je následující:
+
+PoskytovatelÚčelUmístěníZáruka pro předáváníZásady ochrany osobních údajů
+Google WorkspaceVideokonzultace (Meet), firemní e-mail (Gmail), analytika webu (Analytics)USASCC prostřednictvím DPA Google Workspacepolicies.google.com/privacy
+StripeBezpečné zpracování plateb a správa transakcíUSASCC prostřednictvím DPA Stripestripe.com/privacy
+Railway (AWS)Hosting platformy, aplikační infrastruktura, hosting AI GHAIAUSASCC prostřednictvím DPA Railwayrailway.app/legal/dpa
+ElevenLabsKonverzační AI GHAIA — hlasové zpracování a generování odpovědí asistenta pro rezervaceUSASCC prostřednictvím DPA ElevenLabselevenlabs.io/privacy
+
+Tento registr je průběžně přezkoumáván a aktualizován, jsou-li zpracovatelé přidáni, odebráni nebo změněni. O jakýchkoli podstatných změnách našich zpracovatelů, které ovlivňují zpracování vašich Zdravotních údajů, vás vyrozumíme s předstihem nejméně 30 dnů, je-li to vyžadováno platným právem.
+
+11. Jak dlouho uchováváme vaše údaje
+Osobní údaje uchováváme po dobu ne delší, než je nezbytné pro účely, pro které byly shromážděny, s výhradou jakýchkoli právních povinností vyžadujících delší uchovávání. Doby uchovávání platné pro jednotlivé kategorie údajů jsou:
+
+Kategorie údajůDoba uchováváníPrávní základ uchovávání
+Klinické záznamy / záznamy o konzultacíchIE: 8 let (26. narozeniny u nezletilých) PT: 5 let (28. narozeniny u nezletilých) CZ: 10 let (28. narozeniny u nezletilých) ES / RO: dle povinností Zdravotnického pracovníka BR: 20 let (pokyny CFM)Zdravotnické regulační požadavky na jednotlivých trzích
+Údaje o rezervacích a transakcích5 letDodržování daňových, účetních a právních povinností
+Finanční / fakturační záznamyIE: 7 let | PT: 10 let | CZ: 10 let | ES: 5 let | RO: 5 let | BR: 5 letDaňové právní předpisy jednotlivých trhů
+Údaje o účtuDoba trvání účtu + 2 roky po jeho zrušeníPromlčecí lhůty pro právní nároky
+Záznamy o marketingovém souhlasuDoba trvání souhlasu + 3 rokyProkázání zákonného základu pro marketing
+Záznamy o stížnostech5 let od uzavřeníPrávní obrana a regulační audit
+Záznamy o souhlasu se soubory cookie12 měsíců od udělení souhlasuSoulad s ePrivacy
+Záznamy konverzace s GHAIAPouze po dobu trvání relace (bez trvalého uchovávání)Výhradně usnadnění rezervace
+
+Po uplynutí příslušné doby uchovávání jsou osobní údaje bezpečně smazány nebo anonymizovány. Zdravotnická dokumentace je mazána v souladu s pokyny ošetřujícího Zdravotnického pracovníka a platnými zdravotnickými předpisy.
+
+12. Jak chráníme vaše údaje
+Zavádíme vhodná technická a organizační opatření na ochranu vašich osobních údajů před náhodným nebo protiprávním zničením, ztrátou, změnou, neoprávněným zpřístupněním nebo přístupem. Tato opatření zahrnují:
+
+Šifrování dat při přenosu pomocí TLS (Transport Layer Security).
+Šifrování dat v klidovém stavu na infrastruktuře Railway.
+Kontroly přístupu omezující přístup k údajům pouze na oprávněné osoby.
+Kontroly přístupu založené na rolích zajišťující, že Zdravotničtí pracovníci mají přístup pouze k záznamům vlastních pacientů.
+Pravidelné bezpečnostní hodnocení a penetrační testování Platformy.
+Postupy reakce na incidenty v případě narušení zabezpečení osobních údajů.
+Školení zaměstnanců o povinnostech v oblasti ochrany osobních údajů.
+
+V případě narušení zabezpečení osobních údajů, které pravděpodobně povede k vysokému riziku pro vaše práva a svobody, vás bez zbytečného odkladu vyrozumíme v souladu s našimi povinnostmi podle platných právních předpisů o ochraně osobních údajů.
+
+13. Vaše práva na ochranu osobních údajů
+V závislosti na zemi vašeho bydliště a platných právních předpisech o ochraně osobních údajů máte některá nebo všechna z následujících práv:
+
+PrávoCo znamenáUplatní se naJak jej uplatnit
+Právo na přístupZískat kopii osobních údajů, které o vás uchovávámeVšechny trhyglobalhealth@myglobalhealth.online
+Právo na opravuOpravit nepřesné nebo neúplné údajeVšechny trhyglobalhealth@myglobalhealth.online
+Právo na výmazPožádat o smazání vašich údajů (s výhradou zákonných povinností uchovávání)Všechny trhyglobalhealth@myglobalhealth.online
+Právo na omezeníOmezit způsob, jakým zpracováváme vaše údaje za určitých okolnostíTrhy EU + Brazílieglobalhealth@myglobalhealth.online
+Právo na přenositelnostObdržet své údaje ve strukturovaném, strojově čitelném formátuTrhy EU + Brazílieglobalhealth@myglobalhealth.online
+Právo vznést námitkuVznést námitku proti zpracování založenému na oprávněných zájmech nebo pro přímý marketingTrhy EU + Brazílieglobalhealth@myglobalhealth.online
+Právo ve vztahu k automatizovaným rozhodnutímPožádat o lidský přezkum jakéhokoli automatizovaného rozhodnutí, které se vás týkáVšechny trhyglobalhealth@myglobalhealth.online
+Právo odvolat souhlasKdykoli odvolat souhlas, aniž by to ovlivnilo předchozí zpracováníVšechny trhyglobalhealth@myglobalhealth.online
+Právo podat stížnostPodat stížnost u svého dozorového úřaduVšechny trhyViz oddíl 14
+
+Přístup ke zdravotnické dokumentaci: Kromě obecného práva na přístup k osobním údajům máte podle zdravotnických právních předpisů platných ve vaší zemi zvláštní právo na přístup ke své zdravotnické dokumentaci. Pro vyžádání kopie záznamů o konzultacích, předpisů nebo doporučujících dopisů kontaktujte globalhealth@myglobalhealth.online s předmětem „Žádost o zdravotnickou dokumentaci". Odpovíme do 30 dnů. Na trzích s Modelem poskytovatele (Irsko, Portugalsko, Česká republika) uchovává záznamy Global Health. Na trzích s Modelem platformy (Španělsko, Rumunsko, Brazílie) byste měli kontaktovat přímo ošetřujícího Zdravotnického pracovníka — na požádání toto zprostředkujeme.
+Pro uplatnění kteréhokoli z těchto práv nás kontaktujte na adrese globalhealth@myglobalhealth.online nebo kontaktujte našeho DPO na adrese dpo@myglobalhealth.online. Odpovíme ve lhůtě vyžadované platným právem — v každém případě do 30 dnů u trhů EU a do 15 dnů u brazilských pacientů (dle pokynů ANPD). Před vyřízením vaší žádosti může být nutné ověřit vaši totožnost.
+Uplatnění vašich práv je bezplatné. Je-li však vaše žádost zjevně neopodstatněná nebo nepřiměřená, můžeme účtovat přiměřený poplatek nebo odmítnout na žádost reagovat.
+
+14. Dozorové úřady
+Máte právo kdykoli podat stížnost u úřadu pro ochranu osobních údajů ve své zemi. Kontaktování nás nejprve nám dává příležitost vyřešit váš podnět přímo, není to však podmínkou pro kontaktování dozorového úřadu.
+
+Česká republika (ÚÔÚ — vedoucí úřad): www.uoou.cz
+Irsko (DPC): www.dataprotection.ie
+Portugalsko (CNPD): www.cnpd.pt
+Španělsko (AEPD): www.aepd.es
+Rumunsko (ANSPDCP): www.dataprotection.ro
+Brazílie (ANPD): www.gov.br/anpd
+
+
+15. Marketingová komunikace
+Marketingové e-maily vám budeme zasílat pouze v případě, že jste s jejich zasíláním výslovně souhlasili. Souhlas můžete udělit při registraci nebo kdykoli později prostřednictvím nastavení účtu.
+Od odběru marketingových e-mailů se můžete kdykoli odhlásit:
+
+Kliknutím na odhlašovací odkaz v jakémkoli marketingovém e-mailu.
+Aktualizací svých předvoleb v nastavení účtu.
+Kontaktováním nás na adrese globalhealth@myglobalhealth.online.
+
+Odhlášení z marketingové komunikace nemá vliv na provozní komunikaci, jako jsou potvrzení schůzek, souhrny konzultací nebo oznámení o předpisech.
+Vaše kontaktní údaje nesdílíme s třetími stranami pro marketingové účely.
+
+16. Ochrana soukromí dětí
+Platforma není určena k samostatnému používání osobami mladšími 18 let. Pacienti mladší 18 let mohou Platformu používat pouze za aktivní účasti a s písemným souhlasem rodiče nebo zákonného zástupce, který za ně přijímá naše Všeobecné obchodní podmínky.
+Zdravotnická dokumentace týkající se pacientů, kteří byli v době léčby mladší 18 let, podléhá prodlouženým dobám uchovávání uvedeným v oddíle 11.
+Domníváte-li se, že jsme shromáždili osobní údaje dítěte mladšího 18 let bez odpovídajícího souhlasu rodičů, kontaktujte nás neprodleně na adrese globalhealth@myglobalhealth.online a my podnikneme kroky k jejich smazání.
+
+17. Změny těchto Zásad ochrany osobních údajů
+Tyto Zásady ochrany osobních údajů můžeme čas od času aktualizovat tak, aby odrážely změny v našich činnostech zpracování údajů, platném právu nebo našich službách. O jakýchkoli podstatných změnách vás vyrozumíme:
+
+Zasláním e-mailového oznámení na adresu spojenou s vaším účtem nejméně 30 dnů před nabytím účinnosti změn.
+Zobrazením výrazného upozornění na Platformě.
+Opětovným vyžádáním souhlasu, mají-li změny vliv na zpracování, u kterého se opíráme o souhlas jako právní základ.
+
+Datum účinnosti v záhlaví těchto Zásad uvádí, kdy byly naposledy aktualizovány. Drobné změny, které se nedotýkají vašich zásadních práv, mohou být provedeny bez předchozího oznámení.
+
+18. Kontaktujte nás
+V případě jakýchkoli dotazů k těmto Zásadám ochrany osobních údajů, pro uplatnění svých práv k údajům nebo v případě jakéhokoli podnětu ohledně ochrany osobních údajů:
+Global Health — ochrana osobních údajů
+Global Guest s.r.o., podnikající pod obchodní značkou Global Health | IČO: 19071680
+Sídlo: Rybná 24, 110 00 Praha 1, Česká republika
+Obecné dotazy: globalhealth@myglobalhealth.online
+Pověřenec pro ochranu osobních údajů: Dr. Ahmed Maklad —

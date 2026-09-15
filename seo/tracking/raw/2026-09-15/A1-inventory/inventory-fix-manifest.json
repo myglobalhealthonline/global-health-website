@@ -1,0 +1,8 @@
+{
+ "orig_rows": 4653,
+ "malformed_raw_url_rows": 1038,
+ "garbage_dropped": 0,
+ "merged_duplicates": 901,
+ "final_rows": 3752,
+ "rule": "raw_url truncated at first comma for legacy_export rows whose value was an unquoted CSV line; normalized; duplicates merged into the pre-existing url_id with discovery_sources unioned"
+}

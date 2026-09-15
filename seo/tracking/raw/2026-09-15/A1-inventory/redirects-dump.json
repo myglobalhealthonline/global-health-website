@@ -1,0 +1,2857 @@
+[
+  {
+    "source": "/portugal/:lang/services/cardiology-consultation",
+    "destination": "/portugal/:lang/services/consulta-cardiologia",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/cardiology-consultation",
+    "destination": "/portugal/:lang/services/consulta-cardiologia",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/driving-license-medical-certificate",
+    "destination": "/portugal/:lang/services/certificado-medico-carta-de-conducao",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/driving-license-medical-certificate",
+    "destination": "/portugal/:lang/services/certificado-medico-carta-de-conducao",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/family-and-general-medicine",
+    "destination": "/portugal/:lang/services/medicina-geral-e-familiar",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/family-and-general-medicine",
+    "destination": "/portugal/:lang/services/medicina-geral-e-familiar",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/hair-loss-consultation",
+    "destination": "/portugal/:lang/services/consulta-queda-de-cabelo",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/hair-loss-consultation",
+    "destination": "/portugal/:lang/services/consulta-queda-de-cabelo",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/medical-certificates-consultation",
+    "destination": "/portugal/:lang/services/certificados-medicos",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/medical-certificates-consultation",
+    "destination": "/portugal/:lang/services/certificados-medicos",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/medical-consultation",
+    "destination": "/portugal/:lang/services/consulta-medica",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/medical-consultation",
+    "destination": "/portugal/:lang/services/consulta-medica",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/mens-health-consultation",
+    "destination": "/portugal/:lang/services/saude-do-homem",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/mens-health-consultation",
+    "destination": "/portugal/:lang/services/saude-do-homem",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/mental-health-consultation",
+    "destination": "/portugal/:lang/services/saude-mental",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/mental-health-consultation",
+    "destination": "/portugal/:lang/services/saude-mental",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/oncology-consultation",
+    "destination": "/portugal/:lang/services/consulta-de-oncologia",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/oncology-consultation",
+    "destination": "/portugal/:lang/services/consulta-de-oncologia",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/paediatric-primary-care-consultation",
+    "destination": "/portugal/:lang/services/pediatria-geral",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/paediatric-primary-care-consultation",
+    "destination": "/portugal/:lang/services/pediatria-geral",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/pain-management-consultation",
+    "destination": "/portugal/:lang/services/gestao-da-dor",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/pain-management-consultation",
+    "destination": "/portugal/:lang/services/gestao-da-dor",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/pediatric-consultation",
+    "destination": "/portugal/:lang/services/consulta-de-pediatria",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/pediatric-consultation",
+    "destination": "/portugal/:lang/services/consulta-de-pediatria",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/psychiatry-consultation",
+    "destination": "/portugal/:lang/services/consulta-de-psiquiatria",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/psychiatry-consultation",
+    "destination": "/portugal/:lang/services/consulta-de-psiquiatria",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/psychology-consultation",
+    "destination": "/portugal/:lang/services/consulta-de-psicologia",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/psychology-consultation",
+    "destination": "/portugal/:lang/services/consulta-de-psicologia",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/referral-consultation",
+    "destination": "/portugal/:lang/services/consulta-de-referenciacao",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/referral-consultation",
+    "destination": "/portugal/:lang/services/consulta-de-referenciacao",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/second-opinion-consultation",
+    "destination": "/portugal/:lang/services/segunda-opiniao-medica",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/second-opinion-consultation",
+    "destination": "/portugal/:lang/services/segunda-opiniao-medica",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/sick-leave",
+    "destination": "/portugal/:lang/services/baixa-medica",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/sick-leave",
+    "destination": "/portugal/:lang/services/baixa-medica",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/skin-dermatology-consultation",
+    "destination": "/portugal/:lang/services/consulta-dermatologia",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/skin-dermatology-consultation",
+    "destination": "/portugal/:lang/services/consulta-dermatologia",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/smoking-cessation-consultation",
+    "destination": "/portugal/:lang/services/deixar-de-fumar",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/smoking-cessation-consultation",
+    "destination": "/portugal/:lang/services/deixar-de-fumar",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/travelers-consultation",
+    "destination": "/portugal/:lang/services/consulta-do-viajante",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/travelers-consultation",
+    "destination": "/portugal/:lang/services/consulta-do-viajante",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/treatment-renewal",
+    "destination": "/portugal/:lang/services/renovacao-de-tratamento",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/treatment-renewal",
+    "destination": "/portugal/:lang/services/renovacao-de-tratamento",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/weight-loss-consultation",
+    "destination": "/portugal/:lang/services/perda-de-peso",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/weight-loss-consultation",
+    "destination": "/portugal/:lang/services/perda-de-peso",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/services/womens-health-consultation",
+    "destination": "/portugal/:lang/services/saude-da-mulher",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang/consult/womens-health-consultation",
+    "destination": "/portugal/:lang/services/saude-da-mulher",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/chronic-disease-management",
+    "destination": "/czechia/:lang/services/chronicka-onemocneni",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/chronic-disease-management",
+    "destination": "/czechia/:lang/services/chronicka-onemocneni",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/hair-loss-online",
+    "destination": "/czechia/:lang/services/vypadavani-vlasu-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/hair-loss-online",
+    "destination": "/czechia/:lang/services/vypadavani-vlasu-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/mens-health-online",
+    "destination": "/czechia/:lang/services/muzske-zdravi-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/mens-health-online",
+    "destination": "/czechia/:lang/services/muzske-zdravi-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/mental-health-online",
+    "destination": "/czechia/:lang/services/dusevni-zdravi-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/mental-health-online",
+    "destination": "/czechia/:lang/services/dusevni-zdravi-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/musculoskeletal-pain",
+    "destination": "/czechia/:lang/services/bolesti-pohyboveho-aparatu",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/musculoskeletal-pain",
+    "destination": "/czechia/:lang/services/bolesti-pohyboveho-aparatu",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/paediatric-gp-online",
+    "destination": "/czechia/:lang/services/detsky-lekar-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/paediatric-gp-online",
+    "destination": "/czechia/:lang/services/detsky-lekar-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/prague-doctor-online",
+    "destination": "/czechia/:lang/services/lekar-online-praha",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/prague-doctor-online",
+    "destination": "/czechia/:lang/services/lekar-online-praha",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/referrals-and-investigations",
+    "destination": "/czechia/:lang/services/doporuceni-a-vysetreni",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/referrals-and-investigations",
+    "destination": "/czechia/:lang/services/doporuceni-a-vysetreni",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/second-opinion-prague",
+    "destination": "/czechia/:lang/services/druhy-nazor-praha",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/second-opinion-prague",
+    "destination": "/czechia/:lang/services/druhy-nazor-praha",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/sick-note-czech-republic",
+    "destination": "/czechia/:lang/services/neschopenka-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/sick-note-czech-republic",
+    "destination": "/czechia/:lang/services/neschopenka-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/skin-consultation-prague",
+    "destination": "/czechia/:lang/services/kozni-konzultace-praha",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/skin-consultation-prague",
+    "destination": "/czechia/:lang/services/kozni-konzultace-praha",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/travel-health-prague",
+    "destination": "/czechia/:lang/services/cestovni-medicina-praha",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/travel-health-prague",
+    "destination": "/czechia/:lang/services/cestovni-medicina-praha",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/treatment-renewal",
+    "destination": "/czechia/:lang/services/obnoveni-lecby",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/treatment-renewal",
+    "destination": "/czechia/:lang/services/obnoveni-lecby",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/weight-management-online",
+    "destination": "/czechia/:lang/services/kontrola-vahy-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/weight-management-online",
+    "destination": "/czechia/:lang/services/kontrola-vahy-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/services/womens-health-online",
+    "destination": "/czechia/:lang/services/zenske-zdravi-online",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang/consult/womens-health-online",
+    "destination": "/czechia/:lang/services/zenske-zdravi-online",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/chronic-disease-romania",
+    "destination": "/romania/:lang/services/boli-cronice-online",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/chronic-disease-romania",
+    "destination": "/romania/:lang/services/boli-cronice-online",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/hair-loss-romania",
+    "destination": "/romania/:lang/services/caderea-parului-online",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/hair-loss-romania",
+    "destination": "/romania/:lang/services/caderea-parului-online",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/mens-health-romania",
+    "destination": "/romania/:lang/services/sanatatea-barbatului-online",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/mens-health-romania",
+    "destination": "/romania/:lang/services/sanatatea-barbatului-online",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/mental-health-romania",
+    "destination": "/romania/:lang/services/sanatate-mintala-online",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/mental-health-romania",
+    "destination": "/romania/:lang/services/sanatate-mintala-online",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/musculoskeletal-pain-romania",
+    "destination": "/romania/:lang/services/dureri-musculo-scheletice",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/musculoskeletal-pain-romania",
+    "destination": "/romania/:lang/services/dureri-musculo-scheletice",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/neurology-consultation-romania",
+    "destination": "/romania/:lang/services/consultatie-neurologie",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/neurology-consultation-romania",
+    "destination": "/romania/:lang/services/consultatie-neurologie",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/online-doctor-romania",
+    "destination": "/romania/:lang/services/medic-online-romania",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/online-doctor-romania",
+    "destination": "/romania/:lang/services/medic-online-romania",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/paediatric-gp-romania",
+    "destination": "/romania/:lang/services/medic-pediatru-online",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/paediatric-gp-romania",
+    "destination": "/romania/:lang/services/medic-pediatru-online",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/referrals-and-investigations-romania",
+    "destination": "/romania/:lang/services/trimiteri-si-investigatii",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/referrals-and-investigations-romania",
+    "destination": "/romania/:lang/services/trimiteri-si-investigatii",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/second-opinion-romania",
+    "destination": "/romania/:lang/services/a-doua-opinie-medicala",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/second-opinion-romania",
+    "destination": "/romania/:lang/services/a-doua-opinie-medicala",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/skin-consultation-romania",
+    "destination": "/romania/:lang/services/consultatie-dermatologica",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/skin-consultation-romania",
+    "destination": "/romania/:lang/services/consultatie-dermatologica",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/specialist-paediatrician-romania",
+    "destination": "/romania/:lang/services/consultatie-pediatrie",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/specialist-paediatrician-romania",
+    "destination": "/romania/:lang/services/consultatie-pediatrie",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/specialist-pain-assessment-romania",
+    "destination": "/romania/:lang/services/evaluare-durere",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/specialist-pain-assessment-romania",
+    "destination": "/romania/:lang/services/evaluare-durere",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/travel-health-romania",
+    "destination": "/romania/:lang/services/medicina-calatoriei",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/travel-health-romania",
+    "destination": "/romania/:lang/services/medicina-calatoriei",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/treatment-renewal-romania",
+    "destination": "/romania/:lang/services/reinnoire-tratament",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/treatment-renewal-romania",
+    "destination": "/romania/:lang/services/reinnoire-tratament",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/weight-management-romania",
+    "destination": "/romania/:lang/services/controlul-greutatii",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/weight-management-romania",
+    "destination": "/romania/:lang/services/controlul-greutatii",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/services/womens-health-romania",
+    "destination": "/romania/:lang/services/sanatatea-femeii-online",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:lang/consult/womens-health-romania",
+    "destination": "/romania/:lang/services/sanatatea-femeii-online",
+    "permanent": true
+  },
+  {
+    "source": "/ireland/:lang(en|pt|es|cs|ro|de)/health/international-students",
+    "destination": "/ireland/:lang/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/ireland/:lang(en|pt|es|cs|ro|de)/health/sick-cert-online",
+    "destination": "/ireland/:lang/services/sick-certificate-ireland",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang(en|pt|es|cs|ro|de)/health/atestado-medico-online",
+    "destination": "/portugal/:lang/services/baixa-medica",
+    "permanent": true
+  },
+  {
+    "source": "/:country/:lang(en|pt|es|cs|ro|de)/services",
+    "destination": "/:country/:lang",
+    "permanent": true
+  },
+  {
+    "source": "/:country/:lang(en|pt|es|cs|ro|de)/book-online",
+    "destination": "/:country/:lang/book",
+    "permanent": true
+  },
+  {
+    "source": "/:country/:lang(en|pt|es|cs|ro|de)/gp-appointment",
+    "destination": "/:country/:lang/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:country/:lang(en|pt|es|cs|ro|de)/general-consultation",
+    "destination": "/:country/:lang/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:country(ireland|portugal|spain|romania)/:lang(en|pt|es|cs|ro|de)/specialist-consultation",
+    "destination": "/:country/:lang/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:country/:lang(en|pt|es|cs|ro|de)/prescriptions",
+    "destination": "/:country/:lang/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:country(ireland|romania)/:lang(en|pt|es|cs|ro|de)/tests",
+    "destination": "/:country/:lang/lab-tests",
+    "permanent": true
+  },
+  {
+    "source": "/:country/:lang(en|pt|es|cs|ro|de)/online-doctor-visit",
+    "destination": "/:country/:lang/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:country(ireland|portugal|spain|romania)/:lang(en|pt|es|cs|ro|de)/specialist-appointment",
+    "destination": "/:country/:lang/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:country/:lang(en|pt|es|cs|ro|de)/repeat-prescription",
+    "destination": "/:country/:lang/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:country(ireland)/:lang(en|pt|es|cs|ro|de)/medical-consultation",
+    "destination": "/:country/:lang/acute-medical-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/:country(ireland)/:lang(en|pt|es|cs|ro|de)/family-medicine-consultation",
+    "destination": "/:country/:lang/chronic-disease-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/:country(ireland)/:lang(en|pt|es|cs|ro|de)/pain-management-consultation",
+    "destination": "/:country/:lang/musculoskeletal-pain-assessment",
+    "permanent": true
+  },
+  {
+    "source": "/:country(ireland)/:lang(en|pt|es|cs|ro|de)/erectyle-dysfunction-consultation",
+    "destination": "/:country/:lang/mens-health-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/:country(ireland)/:lang(en|pt|es|cs|ro|de)/treatment-refill",
+    "destination": "/:country/:lang/treatment-review",
+    "permanent": true
+  },
+  {
+    "source": "/:country(ireland)/:lang(en|pt|es|cs|ro|de)/referral-consultation",
+    "destination": "/:country/:lang/referral-and-investigations",
+    "permanent": true
+  },
+  {
+    "source": "/:country(ireland)/:lang(en|pt|es|cs|ro|de)/self-referral",
+    "destination": "/:country/:lang/referral-and-investigations",
+    "permanent": true
+  },
+  {
+    "source": "/:country/:lang(en|pt|es|cs|ro|de)/respiractory-infections",
+    "destination": "/:country/:lang/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:country(ireland)/:lang(en|pt|es|cs|ro|de)/sick-leave",
+    "destination": "/:country/:lang/services/sick-certificate-ireland",
+    "permanent": true
+  },
+  {
+    "source": "/home",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/partner-clinics",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/home-delivery",
+    "destination": "/ireland/en/lab-tests",
+    "permanent": true
+  },
+  {
+    "source": "/category/health-education",
+    "destination": "/ireland/en/blog",
+    "permanent": true
+  },
+  {
+    "source": "/pricing-plans/list",
+    "destination": "/ireland/en/pricing",
+    "permanent": true
+  },
+  {
+    "source": "/pricing-plans/:slug",
+    "destination": "/ireland/en/pricing",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/pricing-plans/:slug",
+    "destination": "/ireland/en/pricing",
+    "permanent": true
+  },
+  {
+    "source": "/services-1-4",
+    "destination": "/ireland/en",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/services-1-4",
+    "destination": "/ireland/en",
+    "permanent": true
+  },
+  {
+    "source": "/online-prescription",
+    "destination": "/ireland/en/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-test",
+    "destination": "/ireland/en/lab-tests",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/psa-test-%28prostatic-specific-antigen%29",
+    "destination": "/ireland/en/lab-tests/psa-prostate-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/psa-test-%28prostatic-specific-antigen%29",
+    "destination": "/ireland/:locale/lab-tests/psa-prostate-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/psa-test-%28prostatic-specific-antigen%29",
+    "destination": "/ireland/en/lab-tests/psa-prostate-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/psa-test-%28prostatic-specific-antigen%29",
+    "destination": "/ireland/:locale/lab-tests/psa-prostate-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/amh-test-%28anti-m%C3%BCllerian-hormone%29",
+    "destination": "/ireland/en/lab-tests/amh-fertility-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/amh-test-%28anti-m%C3%BCllerian-hormone%29",
+    "destination": "/ireland/:locale/lab-tests/amh-fertility-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/amh-test-%28anti-m%C3%BCllerian-hormone%29",
+    "destination": "/ireland/en/lab-tests/amh-fertility-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/amh-test-%28anti-m%C3%BCllerian-hormone%29",
+    "destination": "/ireland/:locale/lab-tests/amh-fertility-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/genetic-lactose-intolereance-test",
+    "destination": "/ireland/en/lab-tests/genetic-lactose-intolerance-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/genetic-lactose-intolereance-test",
+    "destination": "/ireland/:locale/lab-tests/genetic-lactose-intolerance-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/heart-health-home-test",
+    "destination": "/ireland/en/lab-tests/heart-health-cholesterol-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/heart-health-home-test",
+    "destination": "/ireland/:locale/lab-tests/heart-health-cholesterol-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/female-hormone-test",
+    "destination": "/ireland/en/lab-tests/female-hormone-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/female-hormone-test",
+    "destination": "/ireland/:locale/lab-tests/female-hormone-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/male-hormone-test",
+    "destination": "/ireland/en/lab-tests/male-hormone-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/male-hormone-test",
+    "destination": "/ireland/:locale/lab-tests/male-hormone-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/psa-test-prostatic-specific-antigen",
+    "destination": "/ireland/en/lab-tests/psa-prostate-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/psa-test-prostatic-specific-antigen",
+    "destination": "/ireland/:locale/lab-tests/psa-prostate-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/amh-test-anti-m%C3%BCllerian-hormone",
+    "destination": "/ireland/en/lab-tests/amh-fertility-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/amh-test-anti-m%C3%BCllerian-hormone",
+    "destination": "/ireland/:locale/lab-tests/amh-fertility-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/gut-microbiome-test",
+    "destination": "/ireland/en/lab-tests/gut-microbiome-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/gut-microbiome-test",
+    "destination": "/ireland/:locale/lab-tests/gut-microbiome-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/coeliac-disease-test",
+    "destination": "/ireland/en/lab-tests/genetic-coeliac-disease-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/coeliac-disease-test",
+    "destination": "/ireland/:locale/lab-tests/genetic-coeliac-disease-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/osentia-fracture-risk-assessment-test",
+    "destination": "/ireland/en/lab-tests/fracture-risk-assessment-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/osentia-fracture-risk-assessment-test",
+    "destination": "/ireland/:locale/lab-tests/fracture-risk-assessment-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/general-health-blood-hometest",
+    "destination": "/ireland/en/lab-tests/general-health-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/general-health-blood-hometest",
+    "destination": "/ireland/:locale/lab-tests/general-health-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/nutrition-and-lifestyle-home-dna-test",
+    "destination": "/ireland/en/lab-tests/nutrition-lifestyle-dna-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/nutrition-and-lifestyle-home-dna-test",
+    "destination": "/ireland/:locale/lab-tests/nutrition-lifestyle-dna-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/haemochromatosis-test",
+    "destination": "/ireland/en/lab-tests/genetic-haemochromatosis-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/haemochromatosis-test",
+    "destination": "/ireland/:locale/lab-tests/genetic-haemochromatosis-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/vitamin-d-blood-test",
+    "destination": "/ireland/en/lab-tests/vitamin-d-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/vitamin-d-blood-test",
+    "destination": "/ireland/:locale/lab-tests/vitamin-d-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/vitamin-b12-blood-test",
+    "destination": "/ireland/en/lab-tests/vitamin-b12-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/vitamin-b12-blood-test",
+    "destination": "/ireland/:locale/lab-tests/vitamin-b12-test",
+    "permanent": true
+  },
+  {
+    "source": "/product-page/:slug((?!(?:beauty-focus-multibeauty|telemedicine-kit)/?$)[^/]+)",
+    "destination": "/ireland/en/lab-tests",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/product-page/:slug((?!(?:beauty-focus-multibeauty|telemedicine-kit)/?$)[^/]+)",
+    "destination": "/ireland/:locale/lab-tests",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/heart-health-home-test",
+    "destination": "/ireland/en/lab-tests/heart-health-cholesterol-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/heart-health-home-test",
+    "destination": "/ireland/:locale/lab-tests/heart-health-cholesterol-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/heart-health-home-test",
+    "destination": "/ireland/en/lab-tests/heart-health-cholesterol-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/heart-health-home-test",
+    "destination": "/ireland/:locale/lab-tests/heart-health-cholesterol-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/female-hormone-test",
+    "destination": "/ireland/en/lab-tests/female-hormone-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/female-hormone-test",
+    "destination": "/ireland/:locale/lab-tests/female-hormone-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/female-hormone-test",
+    "destination": "/ireland/en/lab-tests/female-hormone-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/female-hormone-test",
+    "destination": "/ireland/:locale/lab-tests/female-hormone-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/male-hormone-test",
+    "destination": "/ireland/en/lab-tests/male-hormone-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/male-hormone-test",
+    "destination": "/ireland/:locale/lab-tests/male-hormone-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/male-hormone-test",
+    "destination": "/ireland/en/lab-tests/male-hormone-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/male-hormone-test",
+    "destination": "/ireland/:locale/lab-tests/male-hormone-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/gut-microbiome-test",
+    "destination": "/ireland/en/lab-tests/gut-microbiome-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/gut-microbiome-test",
+    "destination": "/ireland/:locale/lab-tests/gut-microbiome-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/gut-microbiome-test",
+    "destination": "/ireland/en/lab-tests/gut-microbiome-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/gut-microbiome-test",
+    "destination": "/ireland/:locale/lab-tests/gut-microbiome-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/nutrition-and-lifestyle-home-dna-test",
+    "destination": "/ireland/en/lab-tests/nutrition-lifestyle-dna-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/nutrition-and-lifestyle-home-dna-test",
+    "destination": "/ireland/:locale/lab-tests/nutrition-lifestyle-dna-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/nutrition-and-lifestyle-home-dna-test",
+    "destination": "/ireland/en/lab-tests/nutrition-lifestyle-dna-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/nutrition-and-lifestyle-home-dna-test",
+    "destination": "/ireland/:locale/lab-tests/nutrition-lifestyle-dna-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/osentia-fracture-risk-assessment-test",
+    "destination": "/ireland/en/lab-tests/fracture-risk-assessment-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/osentia-fracture-risk-assessment-test",
+    "destination": "/ireland/:locale/lab-tests/fracture-risk-assessment-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/osentia-fracture-risk-assessment-test",
+    "destination": "/ireland/en/lab-tests/fracture-risk-assessment-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/osentia-fracture-risk-assessment-test",
+    "destination": "/ireland/:locale/lab-tests/fracture-risk-assessment-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/haemochromatosis-test",
+    "destination": "/ireland/en/lab-tests/genetic-haemochromatosis-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/haemochromatosis-test",
+    "destination": "/ireland/:locale/lab-tests/genetic-haemochromatosis-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/haemochromatosis-test",
+    "destination": "/ireland/en/lab-tests/genetic-haemochromatosis-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/haemochromatosis-test",
+    "destination": "/ireland/:locale/lab-tests/genetic-haemochromatosis-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/vitamin-d-blood-test",
+    "destination": "/ireland/en/lab-tests/vitamin-d-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/vitamin-d-blood-test",
+    "destination": "/ireland/:locale/lab-tests/vitamin-d-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/vitamin-d-blood-test",
+    "destination": "/ireland/en/lab-tests/vitamin-d-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/vitamin-d-blood-test",
+    "destination": "/ireland/:locale/lab-tests/vitamin-d-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/vitamin-b12-blood-test",
+    "destination": "/ireland/en/lab-tests/vitamin-b12-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/vitamin-b12-blood-test",
+    "destination": "/ireland/:locale/lab-tests/vitamin-b12-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/vitamin-b12-blood-test",
+    "destination": "/ireland/en/lab-tests/vitamin-b12-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/vitamin-b12-blood-test",
+    "destination": "/ireland/:locale/lab-tests/vitamin-b12-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/coeliac-disease-test",
+    "destination": "/ireland/en/lab-tests/genetic-coeliac-disease-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/coeliac-disease-test",
+    "destination": "/ireland/:locale/lab-tests/genetic-coeliac-disease-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/coeliac-disease-test",
+    "destination": "/ireland/en/lab-tests/genetic-coeliac-disease-test",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/coeliac-disease-test",
+    "destination": "/ireland/:locale/lab-tests/genetic-coeliac-disease-test",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests/:slug",
+    "destination": "/ireland/en/lab-tests",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar",
+    "destination": "/ireland/en/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/sick-leave",
+    "destination": "/ireland/en/services/sick-certificate-ireland",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/travel-consultation",
+    "destination": "/ireland/en/services/travel-health-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/treatment-refill",
+    "destination": "/ireland/en/services/treatment-review",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/weight-loss-consultation",
+    "destination": "/ireland/en/services/weight-management-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/cardiology-consultation",
+    "destination": "/ireland/en/services/cardiology-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/dermathology-consultation",
+    "destination": "/ireland/en/services/skin-dermatology-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/neurology-consultation",
+    "destination": "/ireland/en/services/neurology-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/migraine-consultation",
+    "destination": "/ireland/en/services/neurology-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/psychiatric-consultation",
+    "destination": "/ireland/en/services/psychiatry-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/psychology-consultation",
+    "destination": "/ireland/en/services/psychology-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/physiotherapy-consultation",
+    "destination": "/ireland/en/services/physiotherapy-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pediatrics-consultation",
+    "destination": "/ireland/en/services/paediatric-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/dietitian-consultation",
+    "destination": "/ireland/en/services/nutrition-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/diabetes-consultation",
+    "destination": "/ireland/en/services/chronic-disease-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/hypertension-consultation",
+    "destination": "/ireland/en/services/chronic-disease-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/orthopedic-consultation",
+    "destination": "/ireland/en/services/musculoskeletal-pain-assessment",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pain-management-consultation",
+    "destination": "/ireland/en/services/musculoskeletal-pain-assessment",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/referral-consultation",
+    "destination": "/ireland/en/services/referral-and-investigations",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/self-referral",
+    "destination": "/ireland/en/services/referral-and-investigations",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/erectile-dysfunction-consultation",
+    "destination": "/ireland/en/services/mens-health-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/respiratory-infections",
+    "destination": "/ireland/en/services/acute-medical-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ie-aesthetic-medicine-online-consultat",
+    "destination": "/ireland/en/services/aesthetic-medicine-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ie-mental-health-assessment",
+    "destination": "/ireland/en/services/mental-health-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ie-paediatric-primary-care-cons",
+    "destination": "/ireland/en/services/paediatric-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ie-in-person-manual-therapy",
+    "destination": "/ireland/en/services/physiotherapy-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/baixa-medica",
+    "destination": "/portugal/pt/services/baixa-medica",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/medicare-baixa-medica",
+    "destination": "/portugal/pt/services/baixa-medica",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/certificado-medico-para-carta-condu%C3%A7%C3%A3o",
+    "destination": "/portugal/pt/services/certificado-medico-carta-de-conducao",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/medicare-cert-medico-carta-condu%C3%A7%C3%A3o",
+    "destination": "/portugal/pt/services/certificado-medico-carta-de-conducao",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-do-viajante",
+    "destination": "/portugal/pt/services/consulta-do-viajante",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pt-medicare-consulta-do-viajante-1",
+    "destination": "/portugal/pt/services/consulta-do-viajante",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-medica",
+    "destination": "/portugal/pt/services/consulta-medica",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-medicina",
+    "destination": "/portugal/pt/services/consulta-medica",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pt-consulta-de-medicina-1",
+    "destination": "/portugal/pt/services/consulta-medica",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pt-medicare-consulta-de-medicina",
+    "destination": "/portugal/pt/services/consulta-medica",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pt-cons-de-medicina-geral-e-familiar",
+    "destination": "/portugal/pt/services/medicina-geral-e-familiar",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pt-cons-cessa%C3%A7%C3%A3o-tabagica",
+    "destination": "/portugal/pt/services/deixar-de-fumar",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-cardiologia",
+    "destination": "/portugal/pt/services/consulta-cardiologia",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pt-medicare-consulta-de-cardiologia",
+    "destination": "/portugal/pt/services/consulta-cardiologia",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-dermatologia",
+    "destination": "/portugal/pt/services/consulta-dermatologia",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pt-medicare-consulta-de-dermatologia",
+    "destination": "/portugal/pt/services/consulta-dermatologia",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-oncologia",
+    "destination": "/portugal/pt/services/consulta-de-oncologia",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pt-medicare-consulta-de-oncologia",
+    "destination": "/portugal/pt/services/consulta-de-oncologia",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-psicologia",
+    "destination": "/portugal/pt/services/consulta-de-psicologia",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pt-medicare-consulta-de-psicologia",
+    "destination": "/portugal/pt/services/consulta-de-psicologia",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-psiquiatria",
+    "destination": "/portugal/pt/services/consulta-de-psiquiatria",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pt-medicare-consulta-de-psiquiatria",
+    "destination": "/portugal/pt/services/consulta-de-psiquiatria",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pt-medicare-consulta-pedi%C3%A1trica",
+    "destination": "/portugal/pt/services/consulta-de-pediatria",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-perda-de-peso",
+    "destination": "/portugal/pt/services/perda-de-peso",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pt-medicare-consulta-de-perda-de-peso",
+    "destination": "/portugal/pt/services/perda-de-peso",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/renova%C3%A7%C3%A3o-tratamento",
+    "destination": "/portugal/pt/services/renovacao-de-tratamento",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/medicare-renova%C3%A7%C3%A3o-tratamento",
+    "destination": "/portugal/pt/services/renovacao-de-tratamento",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/medicare-consulta-disfun%C3%A7%C3%A3o-erectil",
+    "destination": "/portugal/pt/services/saude-do-homem",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-para-a-dsifun%C3%A7%C3%A3o-erectil",
+    "destination": "/portugal/pt/services/saude-do-homem",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/baja-medica",
+    "destination": "/spain/es/services/justificante-medico-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-cardiolog%C3%ADa",
+    "destination": "/spain/es/services/cardiologo-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-dermatolog%C3%ADa",
+    "destination": "/spain/es/services/dermatologia-especialista-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-psicolog%C3%ADa",
+    "destination": "/spain/es/services/psicologo-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-psiquiatr%C3%ADa",
+    "destination": "/spain/es/services/psiquiatra-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-p%C3%A9rdida-de-peso",
+    "destination": "/spain/es/services/control-peso-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/renovacion-de-tratamiento",
+    "destination": "/spain/es/services/renovacion-tratamiento-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-para-disfunci%C3%B3n-er%C3%A9ctil",
+    "destination": "/spain/es/services/salud-masculina-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/medicina-fisica-y-rehabilitacion",
+    "destination": "/spain/es/services/musculoesqueletico-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/sp-consulta-medica-pediatrica",
+    "destination": "/spain/es/services/pediatria-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/pracovn%C3%AD-neschopnost",
+    "destination": "/czechia/cs/services/neschopenka-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/obnova-l%C3%A9%C4%8Dby",
+    "destination": "/czechia/cs/services/obnoveni-lecby",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/l%C3%A9ka%C5%99sk%C3%A1-konzultace",
+    "destination": "/czechia/cs/services/lekar-online-praha",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/konsultace-s-dermatologem",
+    "destination": "/czechia/cs/services/kozni-konzultace-praha",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/konsultace-s-pediatrem",
+    "destination": "/czechia/cs/services/detsky-lekar-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/konsultace-s-psychiatrem",
+    "destination": "/czechia/cs/services/dusevni-zdravi-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/konsultace-s-psychologem",
+    "destination": "/czechia/cs/services/dusevni-zdravi-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/konzultace-pro-hubnut%C3%AD",
+    "destination": "/czechia/cs/services/kontrola-vahy-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/konzultace-pro-diabetes",
+    "destination": "/czechia/cs/services/chronicka-onemocneni",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/konzultace-pro-erektiln%C3%AD-dysfunkci",
+    "destination": "/czechia/cs/services/muzske-zdravi-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ortopedick%C3%A1-konsultace",
+    "destination": "/czechia/cs/services/bolesti-pohyboveho-aparatu",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/konsultace-s-fyzioterapeutem",
+    "destination": "/czechia/cs/services/bolesti-pohyboveho-aparatu",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-de-dermatologie",
+    "destination": "/romania/ro/services/consultatie-dermatologica",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-de-neurologie",
+    "destination": "/romania/ro/services/consultatie-neurologie",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-pentru-migren%C4%83",
+    "destination": "/romania/ro/services/consultatie-neurologie",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-de-pediatrie",
+    "destination": "/romania/ro/services/consultatie-pediatrie",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-de-psihiatrie",
+    "destination": "/romania/ro/services/sanatate-mintala-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-de-psihologie",
+    "destination": "/romania/ro/services/sanatate-mintala-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-de-nutri%C8%9Bie",
+    "destination": "/romania/ro/services/controlul-greutatii",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-diabet",
+    "destination": "/romania/ro/services/boli-cronice-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-hipertensiune",
+    "destination": "/romania/ro/services/boli-cronice-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-medic-de-familie",
+    "destination": "/romania/ro/services/medic-online-romania",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-respiratorie",
+    "destination": "/romania/ro/services/medic-online-romania",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-pentru-managementul-dure",
+    "destination": "/romania/ro/services/evaluare-durere",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-de-ortopedie",
+    "destination": "/romania/ro/services/dureri-musculo-scheletice",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-de-fizioterapie",
+    "destination": "/romania/ro/services/dureri-musculo-scheletice",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-disfunc%C8%9Bie-erectil%C4%83",
+    "destination": "/romania/ro/services/sanatatea-barbatului-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-consulta%C8%9Bie-de-ginecologie-obstet",
+    "destination": "/romania/ro/services/sanatatea-femeii-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ro-re%C3%AEnnoire-tratament",
+    "destination": "/romania/ro/services/reinnoire-tratament",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/ie-gp-family-medicine",
+    "destination": "/ireland/en/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/:slug(konsultace-.*)",
+    "destination": "/czechia/cs/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/:slug(konzultace-.*)",
+    "destination": "/czechia/cs/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-con-dietista",
+    "destination": "/spain/es/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-endocrinolog%C3%ADa",
+    "destination": "/spain/es/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-gastroenterolog%C3%ADa",
+    "destination": "/spain/es/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-inmunoalergolog%C3%ADa",
+    "destination": "/spain/es/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-neumolog%C3%ADa",
+    "destination": "/spain/es/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-neurolog%C3%ADa",
+    "destination": "/spain/es/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-oncolog%C3%ADa",
+    "destination": "/spain/es/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-reumatolog%C3%ADa",
+    "destination": "/spain/es/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-urolog%C3%ADa",
+    "destination": "/spain/es/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-com-dietista",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-da-diabetes",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/medicare-consulta-da-diabetes",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-para-diabetes",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-endocrinologia",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-gastroenterologia",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-immunoalergologia",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-neurologia",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-pneumologia",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-reumatologia",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-urologia",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-venerologia",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-fisioterapia",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/consulta-de-fisioterapia-1",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/:slug(ro-.*)",
+    "destination": "/romania/ro/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/:slug(pt-.*)",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/:slug(cz-.*)",
+    "destination": "/czechia/cs/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/:slug(sp-.*)",
+    "destination": "/spain/es/book",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/booking-calendar/:slug(ro-.*)",
+    "destination": "/romania/ro/book",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/booking-calendar/:slug(pt-.*)",
+    "destination": "/portugal/pt/book",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/booking-calendar/:slug(cz-.*)",
+    "destination": "/czechia/cs/book",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/booking-calendar/:slug(sp-.*)",
+    "destination": "/spain/es/book",
+    "permanent": true
+  },
+  {
+    "source": "/booking-calendar/:slug",
+    "destination": "/ireland/en/book",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/booking-calendar/:slug",
+    "destination": "/ireland/en/book",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-team",
+    "destination": "/ireland/en/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/general-consultation-ie",
+    "destination": "/ireland/en/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/specialty-ie",
+    "destination": "/ireland/en/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/home-cz",
+    "destination": "/czechia/cs",
+    "permanent": true
+  },
+  {
+    "source": "/czechia-team",
+    "destination": "/czechia/cs/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/general-consultation-cz",
+    "destination": "/czechia/cs/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/specialty-cz",
+    "destination": "/czechia/cs",
+    "permanent": true
+  },
+  {
+    "source": "/home-pt",
+    "destination": "/portugal/pt",
+    "permanent": true
+  },
+  {
+    "source": "/portugal-team",
+    "destination": "/portugal/pt/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/general-consultation-pt",
+    "destination": "/portugal/pt/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/specialty-pt",
+    "destination": "/portugal/pt/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/home-sp",
+    "destination": "/spain/es",
+    "permanent": true
+  },
+  {
+    "source": "/spain-team",
+    "destination": "/spain/es/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/general-consultation-sp",
+    "destination": "/spain/es/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/specialty-sp",
+    "destination": "/spain/es/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/home-rm",
+    "destination": "/romania/ro",
+    "permanent": true
+  },
+  {
+    "source": "/romania-team",
+    "destination": "/romania/ro/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/general-consultation-rm",
+    "destination": "/romania/ro/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/specialty-rm",
+    "destination": "/romania/ro/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/home-br",
+    "destination": "/brazil/pt",
+    "permanent": true
+  },
+  {
+    "source": "/brazil-team",
+    "destination": "/brazil/pt/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/general-consultation-br",
+    "destination": "/brazil/pt/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/specialty-br",
+    "destination": "/brazil/pt",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-doctors/dr-miraim-faiz",
+    "destination": "/ireland/en/doctors/dr-mariam-faiz",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/ireland-doctors/dr-miraim-faiz",
+    "destination": "/ireland/en/doctors/dr-mariam-faiz",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-doctors/silvia-alexandra-raminhos-fernandes",
+    "destination": "/ireland/en/doctors/silvia-alexandre-fernandes",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/ireland-doctors/silvia-alexandra-raminhos-fernandes",
+    "destination": "/ireland/en/doctors/silvia-alexandre-fernandes",
+    "permanent": true
+  },
+  {
+    "source": "/portugal-doctors/dr-vitor-pais",
+    "destination": "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal-doctors/dr-vitor-pais",
+    "destination": "/portugal/pt/doctors/dr-vitor-hugo-de-matos-pais",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-doctors/dr.-mohamed-fadzly-mustafar",
+    "destination": "/ireland/en/doctors/dr-mohamed-fadzly-bin-mohamed",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/ireland-doctors/dr.-mohamed-fadzly-mustafar",
+    "destination": "/ireland/en/doctors/dr-mohamed-fadzly-bin-mohamed",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-doctors/dr-khoiamul-islam",
+    "destination": "/ireland/en/doctors/khoiamul-islam",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/ireland-doctors/dr-khoiamul-islam",
+    "destination": "/ireland/en/doctors/khoiamul-islam",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-doctors/dr-maristela-ferro-nepomuceno",
+    "destination": "/ireland/en/doctors/maristela-ferro-nepomuceno",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/ireland-doctors/dr-maristela-ferro-nepomuceno",
+    "destination": "/ireland/en/doctors/maristela-ferro-nepomuceno",
+    "permanent": true
+  },
+  {
+    "source": "/czechia-doctors/mudr-ahmed-maklad",
+    "destination": "/czechia/cs/doctors/dr-ahmed-maklad",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/czechia-doctors/mudr-ahmed-maklad",
+    "destination": "/czechia/cs/doctors/dr-ahmed-maklad",
+    "permanent": true
+  },
+  {
+    "source": "/spain-doctors/javier-villarte-betancor",
+    "destination": "/spain/es/doctors/dr-javier-villarte-betancor",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/spain-doctors/javier-villarte-betancor",
+    "destination": "/spain/es/doctors/dr-javier-villarte-betancor",
+    "permanent": true
+  },
+  {
+    "source": "/spain-doctors/tomás-ruiz-palacios",
+    "destination": "/spain/es/doctors/dr-tomas-ruiz-palacios",
+    "permanent": true
+  },
+  {
+    "source": "/czechia-doctors/mudr-michael-nytra",
+    "destination": "/czechia/cs/doctors/dr-michael-nytra",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/czechia-doctors/mudr-michael-nytra",
+    "destination": "/czechia/cs/doctors/dr-michael-nytra",
+    "permanent": true
+  },
+  {
+    "source": "/czechia-doctors/mudr-jana-cyplinska",
+    "destination": "/czechia/cs/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/czechia-doctors/mudr-jana-cyplinska",
+    "destination": "/czechia/cs/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang(en|pt|es|cs|ro|de)/doctors/mudr-jana-cyplinska",
+    "destination": "/czechia/:lang/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/czechia-doctors/mudr-libor-hlavaty",
+    "destination": "/czechia/cs/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/czechia-doctors/mudr-libor-hlavaty",
+    "destination": "/czechia/cs/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang(en|pt|es|cs|ro|de)/doctors/mudr-libor-hlavaty",
+    "destination": "/czechia/:lang/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/czechia-doctors/mudr-andrei-lavrov",
+    "destination": "/czechia/cs/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/czechia-doctors/mudr-andrei-lavrov",
+    "destination": "/czechia/cs/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:lang(en|pt|es|cs|ro|de)/doctors/mudr-andrei-lavrov",
+    "destination": "/czechia/:lang/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-doctors/:slug((?!(?:dr-grainne-ahern|dr-mala-vili-rajan|dr-andra-cristea|dr-mirza-aun-mohammad)/?$)[^/]+)",
+    "destination": "/ireland/en/doctors/:slug",
+    "permanent": true
+  },
+  {
+    "source": "/czechia-doctors/:slug",
+    "destination": "/czechia/cs/doctors/:slug",
+    "permanent": true
+  },
+  {
+    "source": "/pt/portugal-doctors/:slug((?!(?:dr-luis-infante)/?$)[^/]+)",
+    "destination": "/portugal/pt/doctors/:slug",
+    "permanent": true
+  },
+  {
+    "source": "/spain-doctors/:slug((?!(?:irene-galve-moros|dr-yliana-muñoz-bravo|dr-yliana-mu%C3%B1oz-bravo|dr-daniela-stefani-)/?$)[^/]+)",
+    "destination": "/spain/es/doctors/:slug",
+    "permanent": true
+  },
+  {
+    "source": "/romania-doctors/:slug",
+    "destination": "/romania/ro/doctors/:slug",
+    "permanent": true
+  },
+  {
+    "source": "/pt/about",
+    "destination": "/ireland/en/about",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/medical-certificate-for-driving-license",
+    "destination": "/portugal/pt/services/certificado-medico-carta-de-conducao",
+    "permanent": true
+  },
+  {
+    "source": "/brazil/cs/:path*",
+    "destination": "/brazil/pt/:path*",
+    "permanent": true
+  },
+  {
+    "source": "/brazil/ro/:path*",
+    "destination": "/brazil/pt/:path*",
+    "permanent": true
+  },
+  {
+    "source": "/brazil/de/:path*",
+    "destination": "/brazil/pt/:path*",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-specialist-consultations/cardiology-consultation",
+    "destination": "/ireland/en/services/cardiology-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-specialist-consultations/neurology-consultation",
+    "destination": "/ireland/en/services/neurology-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-specialist-consultations/nutrition-consultation",
+    "destination": "/ireland/en/services/nutrition-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-specialist-consultations/pediatric-consultation",
+    "destination": "/ireland/en/services/paediatric-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-specialist-consultations/physiotherapy-consultation",
+    "destination": "/ireland/en/services/physiotherapy-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-specialist-consultations/psychiatry-consultation",
+    "destination": "/ireland/en/services/psychiatry-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-specialist-consultations/psychology-consultation",
+    "destination": "/ireland/en/services/psychology-specialist-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-specialist-consultations/:slug",
+    "destination": "/ireland/en/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/service-page/:slug",
+    "destination": "/ireland/en/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/ireland/sick-leave",
+    "destination": "/ireland/en/services/sick-certificate-ireland",
+    "permanent": true
+  },
+  {
+    "source": "/ireland/self-referral",
+    "destination": "/ireland/en/services/referral-and-investigations",
+    "permanent": true
+  },
+  {
+    "source": "/ireland/referral-consultation",
+    "destination": "/ireland/en/services/referral-and-investigations",
+    "permanent": true
+  },
+  {
+    "source": "/ireland/mental-health-assessment-consultation",
+    "destination": "/ireland/en/services/mental-health-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/ireland/hypertension-consultation",
+    "destination": "/ireland/en/health/hypertension",
+    "permanent": true
+  },
+  {
+    "source": "/ireland/migraine-consultation",
+    "destination": "/ireland/en/health/migraine",
+    "permanent": true
+  },
+  {
+    "source": "/ireland/medical-consultation",
+    "destination": "/ireland/en/services/acute-medical-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/ireland/weight-loss-consultation",
+    "destination": "/ireland/en/services/weight-management-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/ireland/erectyle-dysfunction-consultation",
+    "destination": "/ireland/en/services/mens-health-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/ireland/:slug([a-z0-9-]{3,})",
+    "destination": "/ireland/en/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/czechia-doctors/:slug",
+    "destination": "/czechia/cs/doctors/:slug",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/ireland-doctors/:slug((?!(?:dr-grainne-ahern|dr-mala-vili-rajan|dr-andra-cristea|dr-mirza-aun-mohammad)/?$)[^/]+)",
+    "destination": "/ireland/en/doctors/:slug",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal-doctors/:slug((?!(?:dr-luis-infante)/?$)[^/]+)",
+    "destination": "/portugal/pt/doctors/:slug",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/spain-doctors/:slug((?!(?:irene-galve-moros|dr-yliana-muñoz-bravo|dr-yliana-mu%C3%B1oz-bravo|dr-daniela-stefani-)/?$)[^/]+)",
+    "destination": "/spain/es/doctors/:slug",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/romania-doctors/:slug",
+    "destination": "/romania/ro/doctors/:slug",
+    "permanent": true
+  },
+  {
+    "source": "/portugal-doctors/:slug((?!(?:dr-luis-infante)/?$)[^/]+)",
+    "destination": "/portugal/pt/doctors/:slug",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/ireland-team",
+    "destination": "/ireland/en/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal-team",
+    "destination": "/portugal/pt/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/spain-team",
+    "destination": "/spain/es/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/romania-team",
+    "destination": "/romania/ro/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/brazil-team",
+    "destination": "/brazil/pt/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-pt",
+    "destination": "/portugal/:locale",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-sp",
+    "destination": "/spain/:locale",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-cz",
+    "destination": "/czechia/:locale",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-rm",
+    "destination": "/romania/:locale",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(es|pt)/home-br",
+    "destination": "/brazil/:locale",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|ro)/home-br",
+    "destination": "/brazil/pt",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home",
+    "destination": "/ireland/:locale",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-delivery",
+    "destination": "/ireland/:locale/lab-tests",
+    "permanent": true
+  },
+  {
+    "source": "/cs",
+    "destination": "/czechia/cs",
+    "permanent": true
+  },
+  {
+    "source": "/careers",
+    "destination": "/ireland/en/about",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/careers",
+    "destination": "/ireland/en/about",
+    "permanent": true
+  },
+  {
+    "source": "/legal-notices",
+    "destination": "/ireland/en/legal",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/legal-notices",
+    "destination": "/ireland/en/legal",
+    "permanent": true
+  },
+  {
+    "source": "/book-online",
+    "destination": "/ireland/en/book",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/book-online",
+    "destination": "/ireland/en/book",
+    "permanent": true
+  },
+  {
+    "source": "/plans-pricing",
+    "destination": "/ireland/en/pricing",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/plans-pricing",
+    "destination": "/ireland/en/pricing",
+    "permanent": true
+  },
+  {
+    "source": "/corporate-plans",
+    "destination": "/ireland/en/pricing",
+    "permanent": true
+  },
+  {
+    "source": "/return-and-refund-policy",
+    "destination": "/privacy",
+    "permanent": true
+  },
+  {
+    "source": "/copy-of-privacy-policy",
+    "destination": "/privacy",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/copy-of-privacy-policy",
+    "destination": "/privacy",
+    "permanent": true
+  },
+  {
+    "source": "/term-and-conditions",
+    "destination": "/terms",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/term-and-conditions",
+    "destination": "/terms",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/specialty-ie",
+    "destination": "/ireland/en/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/specialty-pt",
+    "destination": "/portugal/pt/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/specialty-sp",
+    "destination": "/spain/es/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/specialty-rm",
+    "destination": "/romania/ro/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/specialty-cz",
+    "destination": "/czechia/cs",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/specialty-br",
+    "destination": "/brazil/pt",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/general-consultation-ie",
+    "destination": "/ireland/en/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/general-consultation-pt",
+    "destination": "/portugal/pt/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/general-consultation-sp",
+    "destination": "/spain/es/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/general-consultation-cz",
+    "destination": "/czechia/cs/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/general-consultation-rm",
+    "destination": "/romania/ro/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/general-consultation-br",
+    "destination": "/brazil/pt/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/czechia-team",
+    "destination": "/czechia/cs/doctors",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/online-prescription",
+    "destination": "/ireland/en/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/portugal-specialist-consultations/:slug",
+    "destination": "/portugal/pt/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/portugal-specialist-consultations-1/:slug",
+    "destination": "/portugal/pt/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal-specialist-consultations-1/:slug",
+    "destination": "/portugal/pt/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/spain/aesthetic-medicine-online-consultation",
+    "destination": "/spain/es/services/consulta-online-medicina-estetica",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/spain/weight-loss-consultation",
+    "destination": "/spain/es/services/control-peso-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/spain/pain-management-consultation",
+    "destination": "/spain/es/services/musculoesqueletico-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/spain/vascular-circulatory-health-consultation",
+    "destination": "/spain/es/services/consulta-salud-vascular-circulatoria",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/spain/treatment-renewal",
+    "destination": "/spain/es/services/renovacion-tratamiento-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal/medical-certificate-for-driving-license",
+    "destination": "/portugal/pt/services/certificado-medico-carta-de-conducao",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal/weight-loss-consultation",
+    "destination": "/portugal/pt/services/perda-de-peso",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal/family-and-general-medicine",
+    "destination": "/portugal/pt/services/medicina-geral-e-familiar",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal/smoking-cessation-consultation",
+    "destination": "/portugal/pt/services/deixar-de-fumar",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal/medical-consultation",
+    "destination": "/portugal/pt/services/consulta-medica",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal/travelers-consultation",
+    "destination": "/portugal/pt/services/consulta-do-viajante",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal/traveler's-consultation",
+    "destination": "/portugal/pt/services/consulta-do-viajante",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal/traveler/'s-consultation",
+    "destination": "/portugal/pt/services/consulta-do-viajante",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/traveler/'s-consultation",
+    "destination": "/portugal/pt/services/consulta-do-viajante",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/ireland/mental-health-assessment-consultation",
+    "destination": "/ireland/en/services/mental-health-consultation",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/spain/:slug",
+    "destination": "/spain/es/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal/:slug",
+    "destination": "/portugal/pt/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/czechia/:slug",
+    "destination": "/czechia/cs",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/romania/:slug",
+    "destination": "/romania/ro/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/ireland/:slug",
+    "destination": "/ireland/en/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/brazil/:slug",
+    "destination": "/brazil/pt",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/blog",
+    "destination": "/ireland/en/blog",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests/:slug",
+    "destination": "/ireland/:locale/lab-tests",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/home-health-tests-1/:slug",
+    "destination": "/ireland/:locale/lab-tests",
+    "permanent": true
+  },
+  {
+    "source": "/services/:slug",
+    "destination": "/ireland/en/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/privacy",
+    "destination": "/privacy",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/about",
+    "destination": "/ireland/en/about",
+    "permanent": true
+  },
+  {
+    "source": "/frequent-asked-questions",
+    "destination": "/ireland/en/faq",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/partner-clinics",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/es/partnerclinics",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/category/all-products",
+    "destination": "/ireland/:locale/lab-tests",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/category/health-education",
+    "destination": "/ireland/:locale/blog",
+    "permanent": true
+  },
+  {
+    "source": "/ireland-partner-clinic/:slug",
+    "destination": "/ireland/en",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/ireland-partner-clinic/:slug",
+    "destination": "/ireland/en",
+    "permanent": true
+  },
+  {
+    "source": "/online-prescriptions/:slug",
+    "destination": "/ireland/en/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/online-prescriptions/:slug",
+    "destination": "/ireland/en/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/service-page/:slug",
+    "destination": "/ireland/en/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/ireland-specialist-consultations/:slug",
+    "destination": "/ireland/en/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/portugal-specialist-consultations/:slug",
+    "destination": "/portugal/pt/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/czechia-specialist-consultations/:slug",
+    "destination": "/czechia/cs",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/czechia-specialist-consultations/:slug",
+    "destination": "/czechia/cs",
+    "permanent": true
+  },
+  {
+    "source": "/spain-specialist-consultations/:slug",
+    "destination": "/spain/es/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/spain-specialist-consultations/:slug",
+    "destination": "/spain/es/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/pt/general-consultation-sp",
+    "destination": "/spain/es/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/cs/general-consultation-pt",
+    "destination": "/portugal/pt/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/cs/general-consultation-rm",
+    "destination": "/romania/ro/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/cs/general-consultation-sp",
+    "destination": "/spain/es/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/es/general-consultation-cz",
+    "destination": "/czechia/cs/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/es/general-consultation-rm",
+    "destination": "/romania/ro/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/es/general-consultation-sp",
+    "destination": "/spain/es/gp-consultation-online",
+    "permanent": true
+  },
+  {
+    "source": "/pt/specialty-pt",
+    "destination": "/portugal/pt/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/pt/specialty-ie",
+    "destination": "/ireland/en/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/cs/specialty-pt",
+    "destination": "/portugal/pt/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/es/specialty-pt",
+    "destination": "/portugal/pt/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/traveler's-consultation",
+    "destination": "/portugal/pt/services/consulta-do-viajante",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/travelers-consultation",
+    "destination": "/portugal/pt/services/consulta-do-viajante",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/weight-loss-consultation",
+    "destination": "/portugal/pt/services/perda-de-peso",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/smoking-cessation-consultation",
+    "destination": "/portugal/pt/services/deixar-de-fumar",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/medical-consultation",
+    "destination": "/portugal/pt/services/consulta-medica",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/family-and-general-medicine",
+    "destination": "/portugal/pt/services/medicina-geral-e-familiar",
+    "permanent": true
+  },
+  {
+    "source": "/spain/vascular-circulatory-health-consultation",
+    "destination": "/spain/es/services/consulta-salud-vascular-circulatoria",
+    "permanent": true
+  },
+  {
+    "source": "/spain/pain-management-consultation",
+    "destination": "/spain/es/services/musculoesqueletico-online",
+    "permanent": true
+  },
+  {
+    "source": "/spain/weight-loss-consultation",
+    "destination": "/spain/es/services/control-peso-online",
+    "permanent": true
+  },
+  {
+    "source": "/spain/treatment-renewal",
+    "destination": "/spain/es/services/renovacion-tratamiento-online",
+    "permanent": true
+  },
+  {
+    "source": "/spain/aesthetic-medicine-online-consultation",
+    "destination": "/spain/es/services/consulta-online-medicina-estetica",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:slug([a-z0-9%'-]{3,})",
+    "destination": "/portugal/pt/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/spain/:slug([a-z0-9%'-]{3,})",
+    "destination": "/spain/es/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/czechia/:slug([a-z0-9%'-]{3,})",
+    "destination": "/czechia/cs",
+    "permanent": true
+  },
+  {
+    "source": "/romania/:slug([a-z0-9%'-]{3,})",
+    "destination": "/romania/ro/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/brazil/:slug([a-z0-9%'-]{3,})",
+    "destination": "/brazil/pt",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang(en|pt|es|cs|ro|de)/services/nutrition-consultation",
+    "destination": "/portugal/:lang/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang(en|pt|es|cs|ro|de)/consult/nutrition-consultation",
+    "destination": "/portugal/:lang/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang(en|pt|es|cs|ro|de)/services/consulta-de-nutricao",
+    "destination": "/portugal/:lang/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/portugal/:lang(en|pt|es|cs|ro|de)/consult/consulta-de-nutricao",
+    "destination": "/portugal/:lang/see-a-specialist",
+    "permanent": true
+  },
+  {
+    "source": "/czech-republic/:slug",
+    "destination": "/czechia/cs",
+    "permanent": true
+  },
+  {
+    "source": "/home-health-tests-1/:slug",
+    "destination": "/ireland/en/lab-tests",
+    "permanent": true
+  },
+  {
+    "source": "/post/diabetes-a-silent-disease",
+    "destination": "/ireland/en/blog/diabetes-a-silent-disease",
+    "permanent": true
+  },
+  {
+    "source": "/post/hand-foot-and-mouth-disease",
+    "destination": "/ireland/en/blog/hand-foot-and-mouth-disease-signs-and-treatment",
+    "permanent": true
+  },
+  {
+    "source": "/post/hand-foot-and-mouth-disease-signs-and-treatment",
+    "destination": "/ireland/en/blog/hand-foot-and-mouth-disease-signs-and-treatment",
+    "permanent": true
+  },
+  {
+    "source": "/post/when-to-see-a-gp-online-vs-in-person",
+    "destination": "/ireland/en/blog/when-to-see-a-gp-online-vs-in-person",
+    "permanent": true
+  },
+  {
+    "source": "/post/sick-certificate-ireland-employee-rights",
+    "destination": "/ireland/en/blog/sick-certificate-ireland-employee-rights",
+    "permanent": true
+  },
+  {
+    "source": "/post/:slug",
+    "destination": "/ireland/en/blog",
+    "permanent": true
+  },
+  {
+    "source": "/:locale(cs|es|pt|ro)/post/:slug",
+    "destination": "/ireland/en/blog",
+    "permanent": true
+  },
+  {
+    "source": "/blog/categories/:slug",
+    "destination": "/ireland/en/blog",
+    "permanent": true
+  },
+  {
+    "source": "/about",
+    "destination": "/ireland/en/about",
+    "permanent": true
+  },
+  {
+    "source": "/faq",
+    "destination": "/ireland/en/faq",
+    "permanent": true
+  },
+  {
+    "source": "/blog",
+    "destination": "/ireland/en/blog",
+    "permanent": true
+  },
+  {
+    "source": "/blog/page/:n",
+    "destination": "/ireland/en/blog",
+    "permanent": true
+  }
+]

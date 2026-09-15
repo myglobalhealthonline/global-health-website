@@ -1,0 +1,165 @@
+{
+  "agent": "A3c-1",
+  "dataset": "C",
+  "window": "W1",
+  "window_start": "2026-08-15",
+  "window_end": "2026-09-11",
+  "project_id": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+  "calls": [
+    {
+      "dataset_group": "query_page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 0},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 1000,
+      "output_file": "C_W1_querypage_r0.jsonl",
+      "timestamp_utc": "2026-09-15T05:28:36.940Z"
+    },
+    {
+      "dataset_group": "query_page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 1000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 2000,
+      "output_file": "C_W1_querypage_r1000.jsonl",
+      "timestamp_utc": "2026-09-15T05:29:17.937Z"
+    },
+    {
+      "dataset_group": "query_page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 2000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 3000,
+      "output_file": "C_W1_querypage_r2000.jsonl",
+      "timestamp_utc": "2026-09-15T05:29:34.219Z"
+    },
+    {
+      "dataset_group": "query_page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 3000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 4000,
+      "output_file": "C_W1_querypage_r3000.jsonl",
+      "timestamp_utc": "2026-09-15T05:29:46.939Z"
+    },
+    {
+      "dataset_group": "query_page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 4000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 5000,
+      "output_file": "C_W1_querypage_r4000.jsonl",
+      "timestamp_utc": "2026-09-15T05:30:06.698Z"
+    },
+    {
+      "dataset_group": "query_page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 5000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 6000,
+      "output_file": "C_W1_querypage_r5000.jsonl",
+      "timestamp_utc": "2026-09-15T05:30:23.444Z"
+    },
+    {
+      "dataset_group": "query_page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 6000},
+      "rowCount": 474, "hasMore": false, "nextStartRow": null,
+      "output_file": "C_W1_querypage_r6000.jsonl",
+      "timestamp_utc": "2026-09-15T05:30:41.462Z",
+      "note": "final page; query_page pagination complete at 6474 rows, under 15000 cap, no truncation"
+    },
+    {
+      "dataset_group": "query_country",
+      "params": {"dimensions": ["query", "country"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 0},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 1000,
+      "output_file": "C_W1_querycountry_r0.jsonl",
+      "timestamp_utc": "2026-09-15T05:31:02.372Z"
+    },
+    {
+      "dataset_group": "query_country",
+      "params": {"dimensions": ["query", "country"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 1000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 2000,
+      "output_file": "C_W1_querycountry_r1000.jsonl",
+      "timestamp_utc": "2026-09-15T05:31:17.752Z"
+    },
+    {
+      "dataset_group": "query_country",
+      "params": {"dimensions": ["query", "country"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 2000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 3000,
+      "output_file": "C_W1_querycountry_r2000.jsonl",
+      "timestamp_utc": "2026-09-15T05:31:35.273Z"
+    },
+    {
+      "dataset_group": "query_country",
+      "params": {"dimensions": ["query", "country"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 3000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 4000,
+      "output_file": "C_W1_querycountry_r3000.jsonl",
+      "timestamp_utc": "2026-09-15T05:31:49.106Z"
+    },
+    {
+      "dataset_group": "query_country",
+      "params": {"dimensions": ["query", "country"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 4000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 5000,
+      "output_file": "C_W1_querycountry_r4000.jsonl",
+      "timestamp_utc": "2026-09-15T05:32:04.006Z",
+      "note": "5000-row cap for this dataset reached with hasMore still true; pagination stopped per instructions -> TRUNCATED"
+    },
+    {
+      "dataset_group": "query_device",
+      "params": {"dimensions": ["query", "device"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 0},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 1000,
+      "output_file": "C_W1_querydevice_r0.jsonl",
+      "timestamp_utc": "2026-09-15T05:32:20.080Z"
+    },
+    {
+      "dataset_group": "query_device",
+      "params": {"dimensions": ["query", "device"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 1000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 2000,
+      "output_file": "C_W1_querydevice_r1000.jsonl",
+      "timestamp_utc": "2026-09-15T05:32:35.635Z"
+    },
+    {
+      "dataset_group": "query_device",
+      "params": {"dimensions": ["query", "device"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 2000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 3000,
+      "output_file": "C_W1_querydevice_r2000.jsonl",
+      "timestamp_utc": "2026-09-15T05:32:48.897Z"
+    },
+    {
+      "dataset_group": "query_device",
+      "params": {"dimensions": ["query", "device"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 3000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 4000,
+      "output_file": "C_W1_querydevice_r3000.jsonl",
+      "timestamp_utc": "2026-09-15T05:33:02.378Z"
+    },
+    {
+      "dataset_group": "query_device",
+      "params": {"dimensions": ["query", "device"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 4000},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 5000,
+      "output_file": "C_W1_querydevice_r4000.jsonl",
+      "timestamp_utc": "2026-09-15T05:33:16.868Z",
+      "note": "5000-row cap for this dataset reached with hasMore still true; pagination stopped per instructions -> TRUNCATED"
+    },
+    {
+      "dataset_group": "search_appearance",
+      "params": {"dimensions": ["searchAppearance"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 0},
+      "rowCount": 1, "hasMore": false, "nextStartRow": null,
+      "output_file": "C_W1_appearance_r0.jsonl",
+      "timestamp_utc": "2026-09-15T05:33:30Z"
+    },
+    {
+      "dataset_group": "search_appearance_page",
+      "params": {"dimensions": ["searchAppearance", "page"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 0},
+      "result": "error",
+      "reason": "invalid_request",
+      "output_file": null,
+      "timestamp_utc": "2026-09-15T05:33:45Z",
+      "note": "First attempt failed with ok:false, reason:invalid_request. Retried without startRow to rule out a transient issue."
+    },
+    {
+      "dataset_group": "search_appearance_page",
+      "params": {"dimensions": ["searchAppearance", "page"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000},
+      "result": "error",
+      "reason": "invalid_request",
+      "output_file": null,
+      "timestamp_utc": "2026-09-15T05:33:55Z",
+      "note": "Reproduced on retry. The GSC API/MCP tool rejects searchAppearance combined with a second dimension for this property+window. No C_W1_appearance_page*.jsonl file produced -- BLOCKED, not a truncation."
+    },
+    {
+      "dataset_group": "property_total_date",
+      "params": {"dimensions": ["date"], "type": "web", "dataState": "all", "startDate": "2026-08-15", "endDate": "2026-09-11", "rowLimit": 1000, "startRow": 0},
+      "rowCount": 28, "hasMore": false, "nextStartRow": null,
+      "output_file": null,
+      "timestamp_utc": "2026-09-15T05:34:10Z",
+      "note": "Extra call for manifest anonymized-query-share calculation only; not one of the four required output files. Summed clicks=1008, impressions=69925 across 28 daily rows."
+    }
+  ]
+}

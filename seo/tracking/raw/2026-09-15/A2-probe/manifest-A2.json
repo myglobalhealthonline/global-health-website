@@ -1,0 +1,16 @@
+{
+  "run_at": "2026-09-15T06:04:25+00:00",
+  "audited_commit": "f055a9b78a567502051c7c81b9f9313da32cdc4d",
+  "urls_requested": 4672,
+  "urls_probed": 4672,
+  "urls_failed": 0,
+  "rate_limit": "4/s, 4 concurrent",
+  "timeout_s": 20,
+  "retries": 2,
+  "this_run": {
+    "requested": 4672,
+    "fetched_this_run": 4666,
+    "errors_this_run": 0,
+    "seconds_this_run": 1324.0
+  }
+}

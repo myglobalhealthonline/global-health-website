@@ -1,0 +1,61 @@
+{
+  "agent": "A3d-1",
+  "purpose": "GSC page x date (no country/device) for 2026-07-21..2026-08-06, to backfill impression loss from sparse-row filtering on the page x date x country x device pull",
+  "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+  "calls": [
+    {
+      "params": {"type": "web", "dimensions": ["page", "date"], "dataState": "all", "rowLimit": 1000, "startDate": "2026-07-21", "endDate": "2026-07-24", "startRow": 0},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 1000,
+      "timestamp_utc": "2026-09-15T05:51:09.543Z",
+      "output_file": "B2_web_2026-07-21_2026-07-24_r0.jsonl"
+    },
+    {
+      "params": {"type": "web", "dimensions": ["page", "date"], "dataState": "all", "rowLimit": 1000, "startDate": "2026-07-21", "endDate": "2026-07-24", "startRow": 1000},
+      "rowCount": 347, "hasMore": false, "nextStartRow": null,
+      "timestamp_utc": "2026-09-15T05:54:37.986Z",
+      "output_file": "B2_web_2026-07-21_2026-07-24_r1000.jsonl"
+    },
+    {
+      "params": {"type": "web", "dimensions": ["page", "date"], "dataState": "all", "rowLimit": 1000, "startDate": "2026-07-25", "endDate": "2026-07-28", "startRow": 0},
+      "rowCount": 939, "hasMore": false, "nextStartRow": null,
+      "timestamp_utc": "2026-09-15T05:51:12.198Z",
+      "output_file": "B2_web_2026-07-25_2026-07-28_r0.jsonl"
+    },
+    {
+      "params": {"type": "web", "dimensions": ["page", "date"], "dataState": "all", "rowLimit": 1000, "startDate": "2026-07-29", "endDate": "2026-08-01", "startRow": 0},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 1000,
+      "timestamp_utc": "2026-09-15T05:51:14.447Z",
+      "output_file": "B2_web_2026-07-29_2026-08-01_r0.jsonl"
+    },
+    {
+      "params": {"type": "web", "dimensions": ["page", "date"], "dataState": "all", "rowLimit": 1000, "startDate": "2026-07-29", "endDate": "2026-08-01", "startRow": 1000},
+      "rowCount": 18, "hasMore": false, "nextStartRow": null,
+      "timestamp_utc": "2026-09-15T05:54:00Z",
+      "output_file": "B2_web_2026-07-29_2026-08-01_r1000.jsonl"
+    },
+    {
+      "params": {"type": "web", "dimensions": ["page", "date"], "dataState": "all", "rowLimit": 1000, "startDate": "2026-08-02", "endDate": "2026-08-05", "startRow": 0},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 1000,
+      "timestamp_utc": "2026-09-15T05:51:17.351Z",
+      "output_file": "B2_web_2026-08-02_2026-08-05_r0.jsonl"
+    },
+    {
+      "params": {"type": "web", "dimensions": ["page", "date"], "dataState": "all", "rowLimit": 1000, "startDate": "2026-08-02", "endDate": "2026-08-05", "startRow": 1000},
+      "rowCount": 37, "hasMore": false, "nextStartRow": null,
+      "timestamp_utc": "2026-09-15T05:54:00Z",
+      "output_file": "B2_web_2026-08-02_2026-08-05_r1000.jsonl"
+    },
+    {
+      "params": {"type": "web", "dimensions": ["page", "date"], "dataState": "all", "rowLimit": 1000, "startDate": "2026-08-06", "endDate": "2026-08-06", "startRow": 0},
+      "rowCount": 330, "hasMore": false, "nextStartRow": null,
+      "timestamp_utc": "2026-09-15T05:52:00Z",
+      "output_file": "B2_web_2026-08-06_2026-08-06_r0.jsonl"
+    }
+  ],
+  "totals": {
+    "calls": 8,
+    "rows": 4671,
+    "days_covered": 17,
+    "date_range": ["2026-07-21", "2026-08-06"]
+  }
+}

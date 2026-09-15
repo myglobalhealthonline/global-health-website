@@ -1,0 +1,45 @@
+window,breakdown,dimension_value,sessions,active_users,engaged_sessions,engagement_rate,key_events,transactions,purchase_revenue,flag,refresh_id,source
+2026-07-25..2026-08-01,channel_group,Direct,45,26,26,0.5777777777777777,0,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window1.json
+2026-07-25..2026-08-01,channel_group,Organic Search,24,22,16,0.6666666666666666,0,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window1.json
+2026-07-25..2026-08-01,channel_group,Organic Social,9,8,7,0.7777777777777778,0,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window1.json
+2026-07-25..2026-08-01,channel_group,Organic Shopping,4,3,2,0.5,0,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window1.json
+2026-07-25..2026-08-01,channel_group,Referral,2,1,0,0,0,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window1.json
+2026-07-25..2026-08-01,channel_group,AI Assistant,1,1,1,1,0,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window1.json
+2026-07-25..2026-08-01,channel_group,Paid Social,1,1,1,1,0,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window1.json
+2026-09-09..2026-09-14,channel_group,Organic Search,260,180,157,0.6038461538461538,27,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window2.json
+2026-09-09..2026-09-14,channel_group,Direct,159,106,109,0.6855345911949685,41,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window2.json
+2026-09-09..2026-09-14,channel_group,Unassigned,64,46,0,0,8,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window2.json
+2026-09-09..2026-09-14,channel_group,Organic Social,34,33,18,0.5294117647058824,4,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window2.json
+2026-09-09..2026-09-14,channel_group,Organic Shopping,20,8,5,0.25,4,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window2.json
+2026-09-09..2026-09-14,channel_group,Referral,12,4,7,0.5833333333333334,2,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window2.json
+2026-09-09..2026-09-14,channel_group,AI Assistant,10,9,7,0.7,1,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window2.json
+2026-09-09..2026-09-14,channel_group,Cross-network,9,9,2,0.2222222222222222,1,0,0,,R2026-09-15-GA4,ga4_acquisition_channel_group_window2.json
+2026-07-25..2026-08-01,source_medium,(direct) / (none),45,26,26,0.5777777777777777,0,0,0,,R2026-09-15-GA4,ga4_acquisition_source_medium_window1.json
+2026-07-25..2026-08-01,source_medium,google / organic,24,22,16,0.6666666666666666,0,0,0,,R2026-09-15-GA4,ga4_acquisition_source_medium_window1.json
+2026-07-25..2026-08-01,source_medium,l.instagram.com / referral,7,6,5,0.7142857142857143,0,0,0,referral_review,R2026-09-15-GA4,ga4_acquisition_source_medium_window1.json
+2026-07-25..2026-08-01,source_medium,checkout.stripe.com / referral,4,3,2,0.5,0,0,0,payment_provider_referral,R2026-09-15-GA4,ga4_acquisition_source_medium_window1.json
+2026-07-25..2026-08-01,source_medium,jsc6.pimeyes.com / referral,2,1,0,0,0,0,0,referral_review,R2026-09-15-GA4,ga4_acquisition_source_medium_window1.json
+2026-07-25..2026-08-01,source_medium,chatgpt.com / ai-assistant,1,1,1,1,0,0,0,,R2026-09-15-GA4,ga4_acquisition_source_medium_window1.json
+2026-07-25..2026-08-01,source_medium,facebook.com / referral,1,1,1,1,0,0,0,referral_review,R2026-09-15-GA4,ga4_acquisition_source_medium_window1.json
+2026-07-25..2026-08-01,source_medium,ig / paid,1,1,1,1,0,0,0,,R2026-09-15-GA4,ga4_acquisition_source_medium_window1.json
+2026-07-25..2026-08-01,source_medium,m.facebook.com / referral,1,1,1,1,0,0,0,referral_review,R2026-09-15-GA4,ga4_acquisition_source_medium_window1.json
+2026-09-09..2026-09-14,source_medium,google / organic,238,167,141,0.592436974789916,26,0,0,,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,(direct) / (none),159,106,109,0.6855345911949685,41,0,0,,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,(not set),64,46,0,0,8,0,0,unattributed,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,checkout.stripe.com / referral,20,8,5,0.25,4,0,0,payment_provider_referral,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,facebook.com / referral,12,12,5,0.4166666666666667,0,0,0,referral_review,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,seznam / organic,11,3,7,0.6363636363636364,1,0,0,,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,(data not available),9,9,2,0.2222222222222222,1,0,0,unattributed,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,bing / organic,9,9,7,0.7777777777777778,0,0,0,,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,chatgpt.com / ai-assistant,9,8,6,0.6666666666666666,1,0,0,,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,l.instagram.com / referral,8,8,5,0.625,1,0,0,referral_review,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,m.facebook.com / referral,8,8,4,0.5,2,0,0,referral_review,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,tagassistant.google.com / referral,7,1,5,0.7142857142857143,0,0,0,self_or_tooling_referral,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,l.wl.co / referral,5,3,2,0.4,2,0,0,referral_review,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,instagram.com / referral,2,2,2,1,0,0,0,referral_review,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,l.facebook.com / referral,2,1,0,0,0,0,0,referral_review,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,lm.facebook.com / referral,2,2,2,1,1,0,0,referral_review,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,duckduckgo / organic,1,1,1,1,0,0,0,,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,es.search.yahoo.com / referral,1,1,1,1,0,0,0,referral_review,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,perplexity.ai / ai-assistant,1,1,1,1,0,0,0,,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json
+2026-09-09..2026-09-14,source_medium,[DIAGNOSTIC] attribution_not_set_share_high,64,,,,,,,A notable share of sessions has no source/medium attribution.,R2026-09-15-GA4,ga4_acquisition_source_medium_window2.json

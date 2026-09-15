@@ -1,0 +1,379 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.lkcr.cz","https://www.sukl.cz","https://www.uoou.cz"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes: Die stille Krankheit","description":"Diabetes in Tschechien: Ursachen, Symptome, moderne Therapien (GLP-1, SGLT2) und Vorsorge. Von MUDr. Ahmed Maklad, ČLK 117 668 619 8.","url":"https://www.myglobalhealth.online/czechia/de/blog/diabetes-die-stille-krankheit-2","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/czechia/de/blog/diabetes-die-stille-krankheit-2#webpage","url":"https://www.myglobalhealth.online/czechia/de/blog/diabetes-die-stille-krankheit-2","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/de/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-19"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes%3A+Die+stille+Krankheit&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F58c09201-812d-4a9f-b12b-a5bade2ba3a8-33850.webp&v=2026-07-20.1-j6acnf","width":1200,"height":630},"about":{"@type":"Thing","name":"Endokrinologie"},"datePublished":"2026-07-19T06:14:43.687Z","dateModified":"2026-07-19T06:15:25.832Z","publishingPrinciples":"https://www.myglobalhealth.online/czechia/de/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/czechia/de/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Startseite","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/czechia/de/blog"},{"@type":"ListItem","position":3,"name":"Diabetes: Die stille Krankheit","item":"https://www.myglobalhealth.online/czechia/de/blog/diabetes-die-stille-krankheit-2"}]}]Alle ArtikelEndokrinologieDiabetes: Die stille KrankheitDiabetes mellitus, im Tschechischen meist als "cukrovka" bezeichnet, gehört zu den häufigsten und zugleich am meisten unterschätzten chronischen Erkrankungen in Tschechien — schätzungsweise 10 % der Bevölkerung sind betroffen. Die gute Nachricht: Dank moderner Therapien, darunter GLP-1-Agonisten und SGLT2-Hemmer, lässt sich Diabetes heute besser behandeln als je zuvor.Global Health Medical Team19. Juli 202618 Minuten Lesezeit+Auf dieser SeiteDiabetes in der Tschechischen Republik: Ausmaß des ProblemsDiabetesformenUrsachen und RisikofaktorenAnzeichen und Symptome von DiabetesAktuelle Behandlungsmöglichkeiten für Diabetes in der Tschechischen RepublikWarum regelmäßige ärztliche Kontrollen wichtig sindDie Zukunft der DiabetesbehandlungWichtige Institutionen und Anlaufstellen in der Tschechischen RepublikHäufig gestellte Fragen
+
+
+
+  
+  
+    
+      
+      
+      
+      Ursachen, Symptome, Behandlung und die Zukunft der Versorgung
+      Schätzungsweise 10 % der Bevölkerung der Tschechischen Republik leben mit Diabetes – und Tausende weitere wissen noch nichts von ihrer Erkrankung. Dieser Leitfaden behandelt alles Wissenswerte: Ursachen, Warnzeichen, die besten verfügbaren Behandlungsansätze, die Bedeutung regelmäßiger Kontrollen und neue Therapien, die die Diabetesversorgung in den kommenden Jahren grundlegend verändern könnten.
+      
+        — Evidenzbasiert
+
+        — Im Einklang mit ČDS und ÚZIS ČR
+
+        — Aktualisiert im Juni 2026
+
+      
+      — Verfasst von Dr. Tiago Miguel Figueira · Klinischer Direktor, Global Health— Für den tschechischen Markt angepasst und medizinisch geprüft von: MUDr. Ahmed Maklad · Tschechische Ärztekammer (ČLK), Nr. 117 668 619 8
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      AM
+      
+        Verfasst von Dr. Tiago Miguel Figueira
+
+        Klinischer Direktor · Global Health · Für Tschechien angepasst und medizinisch geprüft von: 
+
+MUDr. Ahmed Maklad
+
+ · Tschechische Ärztekammer (ČLK), Nr. 117 668 619 8
+      
+      10 MIN. LESEZEIT
+    
+
+    Diabetes mellitus – allgemein als Diabetes bezeichnet – gehört zu den häufigsten chronischen Erkrankungen in der Tschechischen Republik und zugleich zu den am meisten unterschätzten. Typ-2-Diabetes, der etwa 92 % aller Fälle ausmacht, kann sich über viele Jahre unbemerkt und ohne deutliche Beschwerden entwickeln. Bei vielen Betroffenen besteht die Erkrankung zum Zeitpunkt der Diagnose bereits seit längerer Zeit.
+
+    Die gute Nachricht: Mit der richtigen Behandlung und regelmäßiger Überwachung lässt sich Diabetes sehr gut kontrollieren. Menschen mit Diabetes können ein erfülltes und gesundes Leben führen. Gerade das vergangene Jahrzehnt brachte bahnbrechende Fortschritte – insbesondere GLP-1-Rezeptoragonisten und SGLT2-Hemmer (Gliflozine) – sodass heute mehr wirksame Behandlungsmöglichkeiten denn je zur Verfügung stehen.
+
+    
+    
+    Abschnitt 01
+    Diabetes in der Tschechischen Republik: Ausmaß des Problems
+
+    Nach Angaben des Tschechischen Statistikamts (ČSÚ) wurden 2024 etwa 884.500 Menschen medikamentös gegen Diabetes behandelt. Das Institut für Gesundheitsinformationen und Statistik der Tschechischen Republik (ÚZIS ČR), das das Nationale Diabetesregister (NDR) führt, schätzt, dass Diabetes mellitus etwa 10 % der tschechischen Bevölkerung betrifft. Die Tschechische Republik zählt regelmäßig zu den EU-Ländern mit der höchsten Diabetesprävalenz; dies dokumentiert auch die Tschechische Diabetesvereinigung.
+
+    
+      
+        884k
+        Menschen in Tschechien, die 2024 medikamentös gegen Diabetes behandelt wurden (ČSÚ)
+      
+      
+        ~10 %
+        Geschätzter Anteil der tschechischen Bevölkerung mit Diabetes (ÚZIS ČR)
+      
+      
+        92 %
+        der Fälle entfallen auf Typ-2-Diabetes
+      
+      
+        TopEU
+        Tschechien zählt wiederholt zu den EU-Ländern mit der höchsten Diabetesprävalenz
+      
+    
+    Quelle: Tschechisches Statistikamt (ČSÚ) 2024; ÚZIS ČR – Nationales Diabetesregister; Tschechische Diabetesvereinigung; NZIP.
+
+    Eine wissenschaftliche Prognose von ÚZIS ČR auf Grundlage des Nationalen Registers der vergüteten Gesundheitsleistungen (NRHZS) zeigt, dass die Zahl der Menschen mit Diabetes in Tschechien steigt und ohne deutliche Veränderungen des Lebensstils in der Bevölkerung in den kommenden Jahren weiter zunehmen wird. Ein Forschungsartikel der Universitätsklinik Motol (Vnitřní lékařství 2025;71(3):144–151) betont die Notwendigkeit einer individuellen Behandlung mit besonderem Augenmerk auf Herz-Kreislauf- und Nierenschutz.
+
+    
+      Könnten Sie gefährdet sein, ohne es zu wissen?
+      Schätzungen zufolge ist bei einem erheblichen Teil der Menschen mit Typ-2-Diabetes in Tschechien die Erkrankung noch nicht diagnostiziert. Wenn bei Ihnen Risikofaktoren vorliegen – Diabetes in der Familie, Übergewicht, Bluthochdruck oder Bewegungsmangel –, sprechen Sie mit Ihrer Hausärztin oder Ihrem Hausarzt über eine Nüchternglukose- oder HbA1c-Messung. Eine frühe Diagnose ist entscheidend, um Komplikationen vorzubeugen.
+    
+
+    
+    
+    Abschnitt 02
+    Diabetesformen
+
+    Diabetes ist nicht nur eine einzige Erkrankung. Zu wissen, welche Form Sie haben oder für welche Form ein Risiko besteht, ist der erste Schritt zu einer wirksamen Behandlung.
+
+    
+      
+        🔵
+        Typ-1-Diabetes (T1D)
+        Autoimmun · Insulinabhängig
+        Das Immunsystem zerstört die insulinproduzierenden Betazellen der Bauchspeicheldrüse. Der Körper bildet nur wenig oder gar kein Insulin. Eine lebenslange Insulintherapie ist erforderlich. Die Erkrankung beginnt meist im Kindes- oder jungen Erwachsenenalter. Sie macht etwa 6–8 % aller Diabetesfälle in Tschechien aus; NRHZS-Daten erfassten 2013 mehr als 58.900 Menschen mit T1D in Tschechien.
+      
+      
+        🟠
+        Typ-2-Diabetes (T2D)
+        Lebensstil & Genetik · Fortschreitend
+        Der Körper wird insulinresistent oder bildet nicht genug Insulin. Die Erkrankung ist eng mit dem Lebensstil verbunden und mit rund 92 % der Fälle die häufigste Form in Tschechien. Anfangs lässt sie sich häufig mit Ernährung, Bewegung und Tabletten behandeln; später benötigen viele Betroffene Insulin. Typischerweise betrifft sie Menschen im mittleren und höheren Alter.
+      
+      
+        🟡
+        Schwangerschaftsdiabetes
+        Schwangerschaftsbedingt · Meist vorübergehend
+        Er entsteht während der Schwangerschaft, wenn hormonelle Veränderungen die Insulinwirkung beeinträchtigen. Meist bildet er sich nach der Geburt zurück, erhöht jedoch das lebenslange T2D-Risiko für Mutter und Kind deutlich. In tschechischen Geburtskliniken und gynäkologischen Praxen gehört das Screening zwischen der 24. und 28. Schwangerschaftswoche zur Standardversorgung.
+      
+      
+        ⚪
+        Prädiabetes
+        Vermeidbar · Häufig reversibel
+        Der Blutzucker liegt über dem Normalbereich, aber noch nicht im Diabetesbereich. Dies ist ein wichtiges Zeitfenster: Änderungen des Lebensstils können die Entstehung von Typ-2-Diabetes verhindern oder deutlich hinauszögern. Viele Menschen in Tschechien befinden sich in diesem Stadium, ohne es zu wissen.
+      
+    
+
+    
+    
+    Abschnitt 03
+    Ursachen und Risikofaktoren
+
+    Typ-1-Diabetes
+    Die genaue Ursache von T1D ist noch nicht vollständig geklärt. Es handelt sich um eine Autoimmunerkrankung, bei der das Immunsystem irrtümlich die insulinproduzierenden Betazellen der Bauchspeicheldrüse angreift und zerstört. Genetische Faktoren spielen eine Rolle; vermutlich tragen auch bestimmte Virusinfektionen bei. Die Forschung wird in Tschechien über die Tschechische Diabetesgesellschaft ČLS JEP (ČDS) sowie Einrichtungen wie das Universitätsklinikum Motol und das Universitätsklinikum Brno.
+
+    Typ-2-Diabetes
+    T2D hat komplexere, größtenteils beeinflussbare Ursachen: genetische Veranlagung verbindet sich mit Lebensstil- und Umweltfaktoren. Der zentrale Mechanismus ist die Insulinresistenz – Körperzellen reagieren nicht mehr ausreichend auf Insulin – zusammen mit einer allmählich nachlassenden Fähigkeit der Bauchspeicheldrüse, dies durch eine höhere Insulinproduktion auszugleichen.
+
+    
+      
+        ⚖️
+        Übergewicht und Adipositas
+        Vor allem Bauchfett (viszerales Fett). Adipositas ist der wichtigste beeinflussbare Risikofaktor für T2D.
+      
+      
+        🛋️
+        Bewegungsmangel
+        Zu wenig körperliche Aktivität verringert die Insulinempfindlichkeit. Regelmäßige Bewegung gehört zu den wirksamsten Maßnahmen zur Vorbeugung und Behandlung.
+      
+      
+        🍞
+        Ernährung mit vielen verarbeiteten Lebensmitteln
+        Ein hoher Verzehr raffinierter Kohlenhydrate, Zucker und stark verarbeiteter Lebensmittel steht in engem Zusammenhang mit Insulinresistenz.
+      
+      
+        👨‍👩‍👧
+        Familiäre Vorbelastung
+        Ein Verwandter ersten Grades mit T2D erhöht das persönliche Erkrankungsrisiko deutlich.
+      
+      
+        🎂
+        Alter über 45 Jahre
+        Das Risiko steigt mit dem Alter. Daten von ÚZIS ČR zeigen eine deutlich höhere Diabetesprävalenz in älteren Bevölkerungsgruppen.
+      
+      
+        🩺
+        Bluthochdruck oder Dyslipidämie
+        Stoffwechselbedingte Risikofaktoren treten häufig gemeinsam auf. Bluthochdruck und Fettstoffwechselstörungen gehen oft mit Insulinresistenz einher.
+      
+      
+        🤰
+        Schwangerschaftsdiabetes in der Vorgeschichte
+        Frauen, die während einer Schwangerschaft einen Gestationsdiabetes hatten, tragen ein deutlich höheres lebenslanges T2D-Risiko.
+      
+      
+        🚬
+        Rauchen
+        Rauchen erhöht das Risiko, an T2D zu erkranken, und verschlechtert die kardiovaskuläre Prognose bei Menschen mit Diabetes. Die ČDS empfiehlt den Rauchstopp als Teil einer umfassenden Versorgung.
+      
+    
+
+    
+    
+    Abschnitt 04
+    Anzeichen und Symptome von Diabetes
+
+    Die Symptome unterscheiden sich bei T1D und T2D erheblich. T1D tritt häufig akut auf: Die Beschwerden beginnen rasch und können auf eine diabetische Ketoazidose (DKA) hinweisen, einen lebensbedrohlichen Zustand. T2D entwickelt sich dagegen meist langsam und über Jahre unbemerkt. Die Symptome sind oft so mild oder schleichend, dass sie Alter, Stress oder Müdigkeit zugeschrieben werden.
+
+    
+      
+        💧
+        
+          Übermäßiger Durst
+          Anhaltender, kaum zu stillender Durst – Polydipsie –, weil die Nieren verstärkt überschüssige Glukose filtern.
+        
+      
+      
+        🚽
+        
+          Häufiges Wasserlassen
+          Polyurie, besonders nachts (Nykturie). Häufig ist dies das auffälligste frühe Symptom, das Betroffene ärztliche Hilfe suchen lässt.
+        
+      
+      
+        😴
+        
+          Anhaltende Müdigkeit
+          Erschöpfung trotz ausreichenden Schlafs, weil den Zellen Glukose als Energiequelle fehlt.
+        
+      
+      
+        ⚖️
+        
+          Unerklärlicher Gewichtsverlust
+          Besonders bei T1D, wenn der Körper bei Insulinmangel Fett und Muskulatur zur Energiegewinnung abbaut.
+        
+      
+      
+        👁️
+        
+          Verschwommenes Sehen
+          Hoher Blutzucker führt zu Flüssigkeitsverschiebungen in der Augenlinse und beeinträchtigt vorübergehend die Fokussierung.
+        
+      
+      
+        🩹
+        
+          Langsame Wundheilung
+          Durchblutungsstörungen und eine geschwächte Immunabwehr verzögern die Heilung von Schnitten, Abschürfungen und Infektionen.
+        
+      
+      
+        🤚
+        
+          Kribbeln oder Taubheitsgefühl
+          Eine periphere Neuropathie an Händen und Füßen kann besonders bei T2D ein frühes Symptom sein.
+        
+      
+      
+        🍽️
+        
+          Gesteigerter Appetit
+          Polyphagie – anhaltender Hunger auch nach dem Essen – tritt auf, wenn Zellen Glukose nicht wirksam aufnehmen können.
+        
+      
+    
+
+    
+      Wann Sie sofort Hilfe suchen sollten:
+      Wenn bei Ihnen oder einem Familienmitglied plötzlich starker Durst, übermäßiges Wasserlassen, Erbrechen, Bauchschmerzen, Verwirrtheit oder acetonartig-fruchtiger Atem auftreten – besonders bei einem Kind oder jungen Erwachsenen –, kann es sich um eine diabetische Ketoazidose (DKA) handeln, einen schweren medizinischen Notfall. Rufen Sie sofort 155 (Rettungsdienst) oder 112 an oder suchen Sie die nächste Notaufnahme auf.
+    
+
+    
+    
+    Abschnitt 05
+    Aktuelle Behandlungsmöglichkeiten für Diabetes in der Tschechischen Republik
+
+    Die Diabetesbehandlung hat sich im vergangenen Jahrzehnt grundlegend verändert. In Tschechien veröffentlicht die Tschechische Diabetesgesellschaft ČLS JEP (ČDS) die klinischen Leitlinien. Ihr Empfohlener Versorgungsstandard für Diabetes mellitus Typ 2 (aktualisiert 2020, mit weiteren Standards von 2021–2025) ist für Diabetesambulanzen und Hausarztpraxen im ganzen Land maßgeblich. Die Verfügbarkeit von Arzneimitteln richtet sich nach den Erstattungsbedingungen des Staatlichen Instituts für Arzneimittelkontrolle (SÚKL).
+
+    Lebensstiländerungen – Grundlage jeder Behandlung
+    Bei T1D und T2D ist der Lebensstil ein Eckpfeiler der Therapie. Bei T2D können eine Ernährungsumstellung und mehr körperliche Aktivität den HbA1c-Wert deutlich senken, die Insulinempfindlichkeit verbessern und in manchen Fällen – besonders nach bariatrischer Operation oder bei sehr kalorienarmer Ernährung – zu einer anhaltenden Remission führen. Strukturierte Patientenschulungen gehören zur Versorgung in Diabetesambulanzen und werden auch in den ČDS-Standards empfohlen.
+
+    Medikamentöse Behandlung
+    Im Folgenden sind die wichtigsten in Tschechien verfügbaren Wirkstoffklassen aufgeführt. Therapieentscheidungen werden individuell getroffen: Sowohl die ČDS- als auch die ADA-Leitlinien 2025 betonen einen patientenzentrierten Ansatz, der Herz-Kreislauf-Risiko, Nierenfunktion, Körpergewicht und persönliche Präferenzen berücksichtigt. Ein Forschungsartikel in Vnitřním lékařství (2025;71(3):144–151) aus der Klinik für Innere Medizin der 2. Medizinischen Fakultät der Karls-Universität und des Universitätsklinikums Motol weist darauf hin, dass bei Herz-Kreislauf-Erkrankungen, Herzinsuffizienz oder diabetischer Nierenerkrankung der Beginn einer Therapie mit GLP-1-Agonisten oder SGLT2-Hemmern nicht vom HbA1c-Wert abhängig gemacht werden sollte.
+
+    
+      
+        Erste Wahl · T2D
+        Metformin
+        Glucophage · Metformin-Generika (von der Krankenversicherung erstattet)
+        Bewährtes Mittel der ersten Wahl bei T2D. Es senkt den Blutzucker, indem es die Glukoseproduktion der Leber verringert. Es ist gut verträglich, kostengünstig und wird von tschechischen Krankenversicherungen vollständig erstattet. Für die meisten Menschen mit T2D bleibt es der übliche Ausgangspunkt der Behandlung.
+      
+      
+        Herz- und Nierenschutz
+        GLP-1-Rezeptoragonisten
+        Semaglutid (Ozempic, Wegovy) · Liraglutid (Victoza)
+        Eine wegweisende Klasse injizierbarer und inzwischen auch oral verfügbarer Arzneimittel, die das Darmhormon GLP-1 nachahmen. Sie senken den Blutzucker, fördern eine deutliche Gewichtsabnahme und reduzieren das kardiovaskuläre Risiko. Nach den Leitlinien ADA 2025 und ČDS werden sie bei kardiovaskulärer Erkrankung oder hohem kardiovaskulärem Risiko bevorzugt. In Tschechien sind sie verschreibungspflichtig; die Erstattungsbedingungen legt SÚKL fest.
+      
+      
+        Herz- und Nierenschutz
+        SGLT2-Hemmer (Gliflozine)
+        Empagliflozin (Jardiance) · Dapagliflozin (Forxiga)
+        Diese Tabletten senken den Blutzucker, indem die Nieren überschüssige Glukose über den Urin ausscheiden. Sie schützen unabhängig davon Herz und Nieren und werden bei Herzinsuffizienz oder chronischer Nierenerkrankung unabhängig vom HbA1c als vorrangige Therapie empfohlen. Die Studien EMPA-REG OUTCOME und CREDENCE liefern eine starke Evidenzbasis. In Tschechien können Fachärztinnen und Fachärzte für Diabetologie, Endokrinologie oder Innere Medizin sie entsprechend den SÚKL-Indikationskriterien verordnen.
+      
+      
+        Blutzuckerkontrolle
+        DPP-4-Hemmer (Gliptine)
+        Sitagliptin (Januvia) · Linagliptin (Trajenta)
+        Diese Tabletten steigern die Insulinfreisetzung abhängig vom Blutzuckerspiegel. Sie sind gewichtsneutral und bergen ein geringes Hypoglykämierisiko. Sie kommen zum Einsatz, wenn GLP-1-Agonisten oder SGLT2-Hemmer nicht vertragen werden oder nicht angezeigt sind. Bei erfüllten Indikationskriterien übernehmen tschechische Krankenversicherungen die Kosten.
+      
+      
+        T1D & fortgeschrittener T2D
+        Insulintherapie
+        Basal-, Bolus- und Mischinsuline · Insulinpumpen
+        Unverzichtbar für alle Menschen mit T1D und viele mit T2D. Moderne Insulinanaloga haben ein besser vorhersehbares Wirkprofil als ältere Präparate. Insulinpumpen zur kontinuierlichen subkutanen Insulininfusion sind in Tschechien für ausgewählte Patientengruppen verfügbar und werden nach geltenden Bedingungen von den Krankenversicherungen erstattet.
+      
+      
+        T1D · Neuer Standard
+        Kontinuierliche Glukosemessung (CGM)
+        FreeStyle Libre · Dexcom · Medtronic
+        CGM erspart wiederholte Fingerstiche, liefert Blutzuckerwerte in Echtzeit samt Trends und Warnmeldungen und verbessert die Stoffwechseleinstellung. In Tschechien übernehmen Krankenversicherungen CGM für Menschen mit T1D und ausgewählte Gruppen mit T2D, wenn die Kriterien erfüllt sind. Systeme zur automatisierten Insulinabgabe (Closed Loop) sind in spezialisierten Zentren verfügbar.
+      
+    
+
+    
+      Aktualisierung der Leitlinien ADA 2025 und ČDS:
+      Sowohl die internationalen ADA-Leitlinien 2025 als auch die Empfehlungen der Tschechischen Diabetesgesellschaft betonen, dass GLP-1-Agonisten und SGLT2-Hemmer bei Menschen mit T2D und nachgewiesener Herz-Kreislauf-Erkrankung, Herzinsuffizienz oder chronischer Nierenerkrankung unabhängig vom HbA1c bevorzugt eingesetzt werden sollten. Wenn Sie T2D und eine dieser Erkrankungen haben, fragen Sie Ihre Diabetologin, Ihren Diabetologen oder Ihre Hausarztpraxis, ob diese Medikamente für Sie geeignet sind.
+    
+
+    
+    
+    Abschnitt 06
+    Warum regelmäßige ärztliche Kontrollen wichtig sind
+
+    Diabetes ist eine fortschreitende chronische Erkrankung. Bei unzureichender Kontrolle können Komplikationen schwerwiegend und unumkehrbar sein. Diabetische Retinopathie zählt in Tschechien zu den wichtigsten Erblindungsursachen im erwerbsfähigen Alter. Diabetische Nephropathie ist eine wesentliche Ursache für dialysepflichtiges Nierenversagen. Periphere Neuropathie begünstigt das diabetische Fußsyndrom, das in schweren Fällen zu Amputationen führen kann. Das Herz-Kreislauf-Risiko ist bei Menschen mit Diabetes deutlich erhöht, wie auch der ČDS-Empfohlene Versorgungsstandard für das diabetische Fußsyndrom von 2025 festhält.
+
+    Eine zentrale Erkenntnis aus Jahrzehnten klinischer Forschung lautet: Die meisten dieser Komplikationen lassen sich durch eine gute Blutzuckereinstellung, Blutdruckkontrolle und regelmäßige Untersuchungen weitgehend verhindern oder deutlich hinauszögern. Eine strukturierte jährliche Diabeteskontrolle gehört zu den am besten belegten und kosteneffektivsten Maßnahmen in der Medizin.
+
+    Was Ihre jährliche Diabeteskontrolle umfassen sollte
+
+    
+      HbA1c-Test (durchschnittlicher Blutzucker der vergangenen 3 Monate)
+      Blutdruckmessung und Überprüfung der blutdrucksenkenden Behandlung
+      Nierenfunktion – eGFR und Albumin-Kreatinin-Quotient im Urin (ACR)
+      Cholesterin und vollständiges Lipidprofil
+      Beurteilung von Körpergewicht und BMI
+      Fußuntersuchung – Pulse, Empfindung, Hautzustand
+      Screening auf diabetische Retinopathie – Augenuntersuchung oder Netzhautfotografie
+      Überprüfung und gegebenenfalls Anpassung der Medikamente
+      Beurteilung der Schulung zur Selbstkontrolle
+      Erfassung des Rauchstatus und Unterstützung beim Rauchstopp, falls relevant
+      Grippeimpfung (für Menschen mit Diabetes dringend empfohlen)
+    
+
+    Screening bei bislang nicht diagnostizierten Personen
+    Wenn Sie Risikofaktoren für T2D haben und noch nie untersucht wurden, kann Ihre Hausarztpraxis eine einfache Nüchternglukose- oder HbA1c-Messung veranlassen. Besonders wichtig ist dies ab 45 Jahren, bei Diabetes in der Familie, Bluthochdruck oder Übergewicht während der Schwangerschaft. Ein früh erkannter Prädiabetes bietet die echte Chance, T2D durch Lebensstiländerungen zu verhindern oder hinauszuzögern.
+
+    
+      Screening auf diabetische Retinopathie in Tschechien:
+      Nach Empfehlung der Tschechischen Diabetesgesellschaft sollten alle Menschen mit Diabetes jährlich zu einer Augenuntersuchung auf diabetische Retinopathie überwiesen werden. 2023 veröffentlichte die ČDS eine aktualisierte Stellungnahme zum Screening auf diabetische Retinopathie in Diabetesambulanzen, die Netzhautfotografie direkt in Diabetesambulanzen als Alternative zur augenärztlichen Untersuchung ermöglicht. Die Krankenversicherungen übernehmen das Retinopathie-Screening.
+    
+
+    
+    
+    Abschnitt 07
+    Die Zukunft der Diabetesbehandlung
+
+    Das Innovationstempo in der Diabetologie ist beispiellos. Mehrere Forschungsbereiche – einige bereits in fortgeschrittenen klinischen Studien – könnten das Leben mit Diabetes im kommenden Jahrzehnt grundlegend verändern.
+
+    
+      
+        Phase 1/2/3 · Zulassungsantrag 2026
+        Stammzelltherapie (Betazellen)
+        Zimislecel (früher VX-880) von Vertex Pharmaceuticals umfasst die Infusion vollständig differenzierter, aus Stammzellen gewonnener insulinproduzierender Zellen in die Pfortader. Ziel ist es, die körpereigene Insulinproduktion bei T1D wiederherzustellen. Bis Juni 2025 waren 50 Teilnehmende in die zulassungsrelevante Studie aufgenommen; der Zulassungsantrag wird 2026 erwartet. Eine Übersichtsarbeit in PMC (2025) bezeichnet die Therapie als potenziell „transformativ“, da sie die Regeneration von Betazellen mit einer Modulation der Immunantwort verbindet.
+      
+      
+        Klinische Entwicklung
+        Künstliche Bauchspeicheldrüse (Closed-Loop-Systeme)
+        Systeme zur automatisierten Insulinabgabe (AID), die CGM mit einer automatisierten Insulinpumpe verbinden, sind bereits ein großer Fortschritt für Menschen mit T1D. Sie stehen in spezialisierten tschechischen Zentren wie den Universitätskliniken Motol und Brno zur Verfügung. Eine neue Generation nutzt maschinelles Lernen, um Blutzuckerschwankungen vorherzusagen, bevor sie auftreten.
+      
+      
+        Neue Therapien
+        Duale und dreifache Rezeptoragonisten
+        Tirzepatid (Mounjaro), ein dualer GIP/GLP-1-Agonist, senkt HbA1c stärker und führt zu mehr Gewichtsverlust als bisherige GLP-1-Agonisten; es ist in Tschechien verfügbar. Dreifachagonisten für GLP-1/GIP/Glukagon befinden sich in fortgeschrittenen klinischen Studien und könnten noch größere metabolische Vorteile bieten.
+      
+      
+        Immuntherapie
+        Immunmodulation bei T1D
+        Teplizumab, ein monoklonaler Anti-CD3-Antikörper, verzögerte in klinischen Studien den klinischen Beginn von T1D bei Hochrisikopersonen um etwa zwei Jahre. Die Forschung zu Immuntherapie und Toleranzinduktion wird fortgesetzt, um die verbliebene Betazellfunktion zum Diagnosezeitpunkt zu erhalten.
+      
+      
+        Präzisionsmedizin
+        Genomik und KI-gestützte Behandlung
+        Genomische Profile beginnen Diabetesunterformen zu identifizieren, die unterschiedlich auf bestimmte Medikamente ansprechen. KI-gestützte CGM-Systeme, die individuelle Stoffwechselmuster lernen und personalisierte Empfehlungen geben, befinden sich in Entwicklung und könnten den täglichen Umgang mit Diabetes verändern.
+      
+      
+        Regenerative Medizin
+        Verkapselung von Betazellen
+        Eine parallele Strategie zur Stammzelltransplantation: Insulinproduzierende Zellen werden in schützende Biomaterialien eingekapselt, die sie vor der Zerstörung durch das Immunsystem bewahren und möglicherweise eine Immunsuppression überflüssig machen. Das Diabetes Research Institute der University of Miami hat das Konzept in klinischen Studien bestätigt; der erste Patient erreichte Insulinunabhängigkeit.
+      
+    
+
+    Die Stammzellforschung bei T1D wird ausführlich in einer Veröffentlichung aus dem Jahr 2025 in PMC (PMID: PMC12689004) behandelt. Dort heißt es, die Stammzelltherapie biete eine doppelte Strategie: Regeneration insulinproduzierender Betazellen und Regulierung der Immunantwort. Eine endgültige Heilung bleibt ein Zukunftsziel, doch die Forschungsrichtung war nie klarer.
+
+    
+    
+    Abschnitt 08
+    Wichtige Institutionen und Anlaufstellen in der Tschechischen Republik
+
+    Wenn Sie in Tschechien mit Diabetes leben oder befürchten, gefährdet zu sein, sind die folgenden Organisationen und Dienste wichtige Anlaufstellen

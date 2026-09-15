@@ -1,0 +1,188 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.ers.pt","https://www.ordemdosmedicos.pt","https://www.cnpd.pt","https://www.livroreclamacoes.pt","https://www.infarmed.pt","https://www.sns24.gov.pt","https://www.dgs.pt","https://www.insa.min-saude.pt","https://www.spc.pt","https://www.ihmt.unl.pt","https://www.apmgf.pt","https://www.deco.pt","https://www.utente.min-saude.pt","https://www.sosvozamiga.org","https://www.fpcardiologia.pt"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Compreendendo a hipercolesterolemia","description":"O colesterol alto afecta cerca de 1 em cada 2 portugueses adultos, mas não causa sintomas até surgir um enfarte ou AVC. Conheça as causas, os sinais de alerta e os tratamentos actuais (estatinas, inibidores de PCSK9, inclisiran) — escrito por um médico registado na Ordem dos Médicos.","url":"https://www.myglobalhealth.online/portugal/pt/blog/compreendendo-a-hipercolesterolemia","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/portugal/pt/blog/compreendendo-a-hipercolesterolemia#webpage","url":"https://www.myglobalhealth.online/portugal/pt/blog/compreendendo-a-hipercolesterolemia","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/pt/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-21"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Compreendendo+a+hipercolesterolemia&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F9235304a-5bd7-4a77-a7b4-5b8fb03f7e83-34306.webp&v=2026-07-20.1-qq3ax9","width":1200,"height":630},"about":{"@type":"Thing","name":"Cardiologia"},"datePublished":"2026-07-20T22:08:20.712Z","dateModified":"2026-07-21T13:19:22.551Z","publishingPrinciples":"https://www.myglobalhealth.online/portugal/pt/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/portugal/pt/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/portugal/pt/blog"},{"@type":"ListItem","position":3,"name":"Compreendendo a hipercolesterolemia","item":"https://www.myglobalhealth.online/portugal/pt/blog/compreendendo-a-hipercolesterolemia"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"O colesterol alto é comum em Portugal?","acceptedAnswer":{"@type":"Answer","text":"Sim. O colesterol alto é um dos factores de risco cardiovascular modificáveis mais prevalentes em Portugal. Dados do INSA e do Inquérito Nacional de Saúde indicam que aproximadamente metade dos adultos portugueses tem colesterol total elevado. A maioria não está diagnosticada, porque a hipercolesterolemia não provoca sintomas. A hipercolesterolemia familiar — uma forma hereditária que causa LDL muito elevado desde o nascimento — afecta cerca de 1 em 250 pessoas em Portugal, com mais de 90% estimados por diagnosticar."}},{"@type":"Question","name":"Quais são os sinais e sintomas do colesterol alto?","acceptedAnswer":{"@type":"Answer","text":"A hipercolesterolemia é essencialmente uma doença silenciosa — a maioria das pessoas não apresenta sintomas até ocorrer um evento cardiovascular grave. Em casos de hipercolesterolemia severa ou familiar, podem surgir sinais físicos como xantomas (depósitos de gordura sob a pele, especialmente no tendão de Aquiles ou nos nós dos dedos), xantelasmas (placas amareladas junto às pálpebras) e arco corneal (anel cinzento em torno da íris — significativo em pessoas com menos de 45 anos). A única forma fiável de detectar o colesterol alto é através de uma análise ao sangue: um perfil lipídico em jejum."}},{"@type":"Question","name":"O que causa o colesterol alto?","acceptedAnswer":{"@type":"Answer","text":"O colesterol alto tem causas genéticas e relacionadas com o estilo de vida. A causa genética mais importante é a hipercolesterolemia familiar (HF), provocada por mutações no gene do receptor de LDL. As causas relacionadas com o estilo de vida incluem uma alimentação rica em gorduras saturadas e trans, sedentarismo, obesidade, tabagismo e consumo excessivo de álcool. As causas secundárias incluem hipotiroidismo, diabetes tipo 2, doença renal crónica e certos medicamentos. Na maioria das pessoas, é uma combinação de predisposição genética e factores de estilo de vida que determina o valor do colesterol."}},{"@type":"Question","name":"Quais são os melhores tratamentos para o colesterol alto em Portugal?","acceptedAnswer":{"@type":"Answer","text":"O tratamento depende do risco cardiovascular global e do valor-alvo de LDL, e não apenas do valor de colesterol isolado. A modificação do estilo de vida — alimentação, exercício, cessação tabágica, controlo do peso — é a base para todos os doentes. As estatinas (em particular atorvastatina e rosuvastatina em alta intensidade) são o tratamento farmacológico de primeira linha, amplamente disponíveis no SNS em Portugal. Para doentes que não atingem os valores-alvo de LDL, adiciona-se ezetimiba. Para doentes de alto risco ou com hipercolesterolemia familiar, os inibidores de PCSK9 (evolocumab, alirocumab) e o inclisiran — uma injecção semestral de ARN — estão disponíveis através de serviços especializados. O ácido bempedóico está agora disponível para doentes intolerantes às estatinas."}},{"@type":"Question","name":"Com que frequência devo analisar o colesterol em Portugal?","acceptedAnswer":{"@type":"Answer","text":"A DGS recomenda que todos os adultos com mais de 40 anos realizem análises ao colesterol pelo menos de 5 em 5 anos, ou com maior frequência se existirem factores de risco (história familiar, obesidade, hipertensão, tabagismo ou diabetes). Se estiver a tomar medicação para o colesterol, o seu médico deverá repetir o perfil lipídico em jejum 8 a 12 semanas após o início ou qualquer alteração de dose, e depois anualmente, uma vez estabilizados os valores. Qualquer pessoa com um familiar de primeiro grau com doença cardiovascular prematura (antes dos 60 anos) ou HF conhecida deve ser rastreada mais cedo, idealmente na casa dos 20 ou 30 anos."}},{"@type":"Question","name":"Posso baixar o colesterol sem medicação?","acceptedAnswer":{"@type":"Answer","text":"Para doentes com risco cardiovascular baixo a moderado e LDL ligeiramente elevado, a modificação do estilo de vida isolada — em particular adoptar um padrão alimentar mediterrânico, praticar exercício aeróbico regular, deixar de fumar e perder o excesso de peso — pode alcançar reduções de LDL clinicamente significativas de 10 a 20% e em alguns casos dispensar a necessidade de medicação. No entanto, para doentes com risco cardiovascular alto ou muito elevado, ou com hipercolesterolemia familiar, a modificação do estilo de vida isolada é geralmente insuficiente para atingir os valores-alvo definidos nas normas, e a terapêutica farmacológica é recomendada em complemento das mudanças de estilo de vida, e não em alternativa a estas. Consulte o seu médico sobre o que é adequado para o seu perfil de risco específico."}},{"@type":"Question","name":"Posso consultar um médico sobre o colesterol alto online em Portugal?","acceptedAnswer":{"@type":"Answer","text":"Sim. A Global Health oferece consultas médicas online com médicos registados na Ordem dos Médicos. Estas incluem avaliação do risco cardiovascular, revisão de análises ao colesterol, prescrição de estatinas e outros medicamentos quando clinicamente indicado, e pedido de análises laboratoriais (perfil lipídico em jejum, glicose, função tiroideia e painel metabólico completo). As consultas estão disponíveis no próprio dia, sete dias por semana. Marque a sua consulta em myglobalhealth.online/pt/portugal/family-and-general-medicine."}}]}]Todos os artigosCardiologiaCompreendendo a hipercolesterolemiaEstima-se que 1 em cada 2 adultos portugueses tenha colesterol elevado, e a maioria não sabe. Este guia explica as causas, os sinais silenciosos e os tratamentos mais recentes — das estatinas aos inibidores de PCSK9 — que estão a transformar os cuidados cardiovasculares em Portugal.Global Health Medical Team20 de julho de 202626 min de leituraÚltima revisão 21 de julho de 2026+Nesta páginaColesterol Alto em Portugal: A Dimensão do ProblemaTipos de HipercolesterolemiaCausas e Factores de RiscoSinais e SintomasTratamentos Actuais da Hipercolesterolemia em PortugalPrevenção e Estilo de Vida: O Que Pode FazerA Importância do Rastreio RegularInvestigação e Tratamentos do FuturoInstituições Portuguesas de ReferênciaPerguntas Frequentes
+Saúde cardiovascular em PortugalCausas, sinais, tratamentos atuais, prevenção e rastreio da hipercolesterolemia.A doença cardiovascular é a principal causa de morte em Portugal. E um dos seus principais impulsionadores — o colesterol sanguíneo elevado — afecta aproximadamente metade dos adultos portugueses, sendo que a grande maioria desconhece esta situação. A hipercolesterolemia é, pela sua própria natureza, uma condição que não se anuncia com sintomas, mas com eventos: um enfarte do miocárdio, um acidente vascular cerebral (AVC), uma morte súbita cardíaca.Ver rastreio recomendadoExplorar tratamentosGuia clínico atualizadoO desafio extraordinário do colesterol alto reside precisamente neste silêncio. Ao contrário da diabetes, que pode provocar fadiga ou sede, ou da hipertensão, que ocasionalmente causa cefaleias, a hipercolesterolemia não causa qualquer sensação — até ter passado anos a estreitar as artérias que irrigam o coração e o cérebro. Quando se manifesta, o dano está muitas vezes já instalado.A boa notícia é igualmente significativa: a hipercolesterolemia é uma das condições mais tratáveis em toda a medicina. As terapêuticas hipolipemiantes disponíveis actualmente — desde as estatinas, amplamente estabelecidas, aos mais recentes medicamentos baseados em ARN — estão entre as intervenções melhor fundamentadas em evidência na farmacologia moderna. E funcionam melhor quando iniciadas precocemente, antes que o dano se acumule. A detecção, através de uma simples análise ao sangue, é tudo.Secção 01Colesterol Alto em Portugal: A Dimensão do ProblemaO colesterol é uma substância cerosa, semelhante à gordura, produzida naturalmente pelo fígado e obtida através da alimentação. É essencial para a construção das membranas celulares, a produção de hormonas e a síntese de vitamina D. O problema surge quando os níveis — em particular o colesterol de lipoproteína de baixa densidade (LDL) — ultrapassam o limiar a partir do qual começa a ocorrer lesão arterial. Este processo, a aterosclerose, é a base da maioria dos enfartes e AVCs.Dados do Instituto Nacional de Saúde Doutor Ricardo Jorge (INSA) e do Inquérito Nacional de Saúde (INS), publicado pela Direcção-Geral da Saúde, revelam que a hipercolesterolemia é um dos factores de risco cardiovascular não controlados mais frequentes na população adulta portuguesa. Segundo o Programa Nacional para as Doenças Cérebro-Cardiovasculares da DGS, as doenças cardiovasculares representam a primeira causa de morte em Portugal, tendo o colesterol elevado um papel determinante nessa realidade.
+
+~50%
+Dos adultos portugueses com colesterol total elevado
+
+
+1 em 250
+Pessoas em Portugal afectadas pela Hipercolesterolemia Familiar (HF)
+
+
+1.ª causa
+Doença cardiovascular — principal causa de morte em Portugal
+
+
+>90%
+Dos casos de HF em Portugal estimados por diagnosticar
+
+Fonte: INSA — Inquérito Nacional de Saúde; DGS — Programa Nacional para as Doenças Cérebro-Cardiovasculares; Fundação Portuguesa de Cardiologia; Associação Portuguesa de Hipercolesterolemia Familiar.A hipercolesterolemia familiar (HF) merece atenção particular. Esta condição genética hereditária — que afecta aproximadamente 1 em 250 pessoas, ou cerca de 40.000 indivíduos em Portugal — provoca valores de LDL dramaticamente elevados desde o nascimento, colocando os afectados em risco de enfarte muitas vezes décadas antes do que seria expectável. A Associação Portuguesa de Hipercolesterolemia Familiar (APHF) estima que mais de 90% dos casos de HF em Portugal continuam por diagnosticar. Sem tratamento, os homens com HF têm 50% de risco de evento coronário antes dos 50 anos; as mulheres antes dos 60 anos.
+Tem história familiar de doença cardíaca precoce?
+      Se um dos seus pais, irmãos ou avós sofreu um enfarte ou AVC antes dos 60 anos, pode estar em risco significativamente elevado de hipercolesterolemia familiar ou risco cardiovascular hereditário. Consulte o seu médico para realizar um perfil lipídico em jejum. A detecção precoce na HF pode prevenir eventos cardiovasculares que de outra forma ocorreriam em meia-idade.
+    Secção 02Tipos de HipercolesterolemiaNem todo o colesterol elevado tem a mesma causa ou a mesma implicação clínica. Compreender o tipo e o padrão da sua anomalia lipídica orienta as decisões de tratamento.
+
+
+Hipercolesterolemia Familiar (HF)
+Genética · Autossómica dominante · Alto risco
+Causada por mutações no gene do receptor de LDL (mais frequentemente), APOB ou PCSK9. Resulta em LDL muito elevado desde o nascimento — tipicamente acima de 4,9 mmol/L. Sem tratamento, leva a aterosclerose precoce e eventos cardiovasculares. Requer identificação precoce e tratamento agressivo, geralmente com estatinas em alta intensidade e agentes adicionais.
+
+
+
+Hipercolesterolemia Primária (Estilo de Vida)
+Adquirida · Modificável · Mais comum
+A forma mais comum. Condicionada por uma alimentação rica em gorduras saturadas e trans, sedentarismo, obesidade e tabagismo. A elevação de LDL é moderada na maioria dos casos e responde bem à modificação do estilo de vida combinada com terapêutica farmacológica quando necessário.
+
+
+
+Hipercolesterolemia Secundária
+Condição subjacente · Causa tratável
+Colesterol elevado decorrente de uma condição médica subjacente — hipotiroidismo, diabetes tipo 2 descontrolada, doença renal crónica, síndrome nefrótico ou doença hepática — ou de medicamentos como corticosteróides, diuréticos tiazídicos ou certos antipsicóticos. O tratamento da causa subjacente melhora frequentemente os valores lipídicos de forma significativa.
+
+
+
+Dislipidemia Mista
+LDL elevado + triglicéridos · Risco complexo
+Combinação de LDL elevado e triglicéridos elevados, frequentemente com HDL baixo ("bom colesterol" reduzido). Frequentemente associada à síndrome metabólica, resistência à insulina e obesidade. Requer uma abordagem terapêutica multifacetada que actue sobre várias fracções lipídicas.
+
+Secção 03Causas e Factores de RiscoCausas GenéticasA hipercolesterolemia familiar é a causa genética mais importante de doença cardiovascular prematura. Resulta principalmente de mutações no gene que codifica o receptor de LDL — o mecanismo celular através do qual o colesterol LDL é eliminado da corrente sanguínea. Quando os receptores de LDL estão ausentes ou em número insuficiente, o LDL acumula-se no sangue e deposita-se progressivamente nas paredes arteriais. A condição é autossómica dominante, o que significa que uma única cópia do gene afectado é suficiente para a causar. Os filhos de um progenitor afectado têm 50% de probabilidade de a herdar.Causas Relacionadas com o Estilo de Vida e o AmbientePara a maioria das pessoas, o colesterol alto resulta da intersecção entre predisposição genética e estilo de vida. Os seguintes factores de risco estão cada um deles associado de forma independente a LDL ou colesterol total elevados, e a sua combinação amplifica substancialmente o risco.
+
+
+Alimentação rica em gordura saturada
+Carnes vermelhas, lacticínios gordos, manteiga, óleo de coco e óleo de palma elevam o LDL. As gorduras trans são as mais prejudiciais e estão agora amplamente proibidas na produção alimentar na UE.
+
+
+
+Sedentarismo
+O exercício aeróbico regular eleva o HDL ("bom colesterol") e reduz os triglicéridos. O comportamento sedentário tem o efeito oposto e agrava independentemente o perfil lipídico.
+
+
+
+Obesidade
+O excesso de peso corporal — em particular a adiposidade central — está associado a triglicéridos elevados, HDL baixo e frequentemente LDL aumentado. A perda de peso melhora todos os parâmetros lipídicos.
+
+
+
+Tabagismo
+O fumo do tabaco reduz o HDL e acelera a modificação oxidativa do LDL — tornando-o mais aterogénico (prejudicial para as artérias) — mesmo com valores de colesterol total comparáveis.
+
+
+
+Consumo excessivo de álcool
+O consumo elevado de álcool eleva significativamente os triglicéridos. O consumo moderado pode aumentar ligeiramente o HDL, mas não compensa os danos cardiovasculares mais amplos do consumo excessivo.
+
+
+
+Idade
+Os valores de colesterol tendem a aumentar com a idade à medida que a actividade dos receptores de LDL diminui. As mulheres na pós-menopausa experimentam um aumento significativo do LDL, explicando em parte a convergência do risco cardiovascular entre os sexos após a menopausa.
+
+
+
+História familiar
+Um familiar de primeiro grau com doença cardiovascular precoce ou HF conhecida eleva substancialmente o risco pessoal e deve motivar um rastreio mais precoce e frequente.
+
+
+
+Comorbilidades
+Hipotiroidismo, diabetes tipo 2, doença renal crónica, síndrome nefrótico e doença hepática obstrutiva elevam independentemente o colesterol e requerem gestão específica.
+
+Secção 04Sinais e SintomasEste é o desafio clínico central da hipercolesterolemia: é quase totalmente assintomática até que ocorra uma lesão arterial significativa. Não há sinais de dor, febre ou falta de ar causados directamente pelo colesterol. O primeiro "sintoma" para muitos doentes é um enfarte ou AVC — frequentemente numa pessoa que se sentia completamente bem no dia anterior.Em casos de elevação grave ou prolongada — em particular na hipercolesterolemia familiar — podem surgir determinados sinais físicos. É importante reconhecê-los, pois são frequentemente as únicas pistas visíveis de que existe uma anomalia lipídica significativa:
+
+
+
+Xantomas
+Depósitos de colesterol sob a pele. Os xantomas tendinosos (tipicamente no tendão de Aquiles ou nos nós dos dedos) estão fortemente associados à HF e são praticamente diagnósticos.
+
+
+
+
+
+Xantelasmas
+Placas amareladas, macias, nas pálpebras ou junto a elas. Embora frequentemente notadas por razões estéticas, são um marcador de dislipidemia e justificam a realização de um perfil lipídico.
+
+
+
+
+
+Arco corneal
+Um arco ou anel cinzento ou branco em torno da íris do olho. Em pessoas com menos de 45 anos, o arco corneal pode ser um indicador de hipercolesterolemia e justifica investigação.
+
+
+
+
+
+Dor no peito (angina)
+Não é causada directamente pelo colesterol, mas é uma consequência da aterosclerose que este provoca. Aperto ou desconforto torácico com o esforço requer avaliação cardiovascular urgente.
+
+
+
+
+
+Dor nas pernas ao caminhar
+A doença arterial periférica — dor na barriga da perna com o esforço que cede com o repouso (claudicação) — é causada pela aterosclerose nas artérias dos membros inferiores.
+
+
+
+
+
+Sintomas de AIT ou AVC
+Fraqueza súbita, dificuldade na fala, assimetria facial ou perda de visão podem indicar um acidente isquémico transitório (AIT) ou AVC — uma emergência médica.
+
+
+
+FAST — Reconheça os sinais de AVC:
+      Face assimétrica · Arm (braço) — fraqueza · Speech (fala) — dificuldade · Time — ligue 112. O AVC é uma emergência médica. Se observar estes sinais, ligue 112 imediatamente. Não conduza até ao hospital. Cada minuto conta.
+    A mensagem clínica fundamental é inequívoca: não espere por sintomas. Um perfil lipídico em jejum é o único método fiável para detectar o colesterol elevado. É simples, acessível e amplamente disponível através do seu médico de família. A ausência de sintomas não é garantia de saúde — é precisamente quando mais importa agir.Secção 05Tratamentos Actuais da Hipercolesterolemia em PortugalO tratamento da hipercolesterolemia em Portugal segue as orientações da Direcção-Geral da Saúde (DGS), as Normas da Sociedade Europeia de Cardiologia (ESC) / Sociedade Europeia de Aterosclerose (EAS) para as Dislipidemias (actualizadas em 2024) e as recomendações da Sociedade Portuguesa de Cardiologia (SPC). O objectivo do tratamento não é definido apenas por um valor de colesterol, mas por um valor-alvo de LDL determinado pelo risco cardiovascular individual — sendo que os doentes de maior risco requerem uma redução de LDL mais agressiva.Valores-Alvo de LDL por Categoria de RiscoAs normas ESC/EAS 2024 definem os seguintes objectivos de LDL: risco muito elevado (doença cardiovascular estabelecida, doença renal grave, diabetes com lesão de órgão) — LDL abaixo de 1,4 mmol/L; risco elevado — abaixo de 1,8 mmol/L; risco moderado — abaixo de 2,6 mmol/L; risco baixo — abaixo de 3,0 mmol/L. O seu médico calculará o seu risco cardiovascular com ferramentas validadas (SCORE2, QRISK3) para determinar qual o objectivo que se aplica ao seu caso.
+
+Primeira Linha · Todos os grupos de risco
+Estatinas (Inibidores da HMG-CoA Redutase)
+Atorvastatina · Rosuvastatina · Sinvastatina
+A pedra angular do tratamento do colesterol durante três décadas. As estatinas inibem a HMG-CoA redutase, a enzima limitante da síntese de colesterol no fígado, reduzindo o LDL em 30 a 55% conforme o agente e a dose. As estatinas de alta intensidade (atorvastatina 40–80 mg, rosuvastatina 20–40 mg) são preferidas para doentes de risco alto e muito elevado. Disponíveis no SNS em Portugal. A base de evidência — incluindo o estudo Heart Protection e múltiplas meta-análises — é das mais sólidas em farmacologia.
+
+
+Segunda Linha · Terapêutica adicional
+Ezetimiba
+Ezetrol · Ezetimiba genérica
+Reduz a absorção intestinal de colesterol. Diminui o LDL em mais 15 a 22% quando adicionada a uma estatina. O estudo IMPROVE-IT demonstrou uma redução modesta mas real de eventos cardiovasculares quando adicionada à sinvastatina em doentes de alto risco. Bem tolerada e disponível no SNS. Terapêutica padrão de segunda linha em Portugal quando a monoterapia com estatina não atinge o LDL-alvo.
+
+
+Alto Risco e HF · Iniciado por especialista
+Inibidores de PCSK9
+Evolocumab (Repatha) · Alirocumab (Praluent)
+Anticorpos monoclonais que bloqueiam a PCSK9 — a proteína responsável pela degradação dos receptores de LDL nas células hepáticas. Aumentam dramaticamente a disponibilidade de receptores de LDL, reduzindo o LDL em 50 a 65% adicionalmente à estatina. Os estudos FOURIER e ODYSSEY OUTCOMES demonstraram reduções de 15 a 20% nos principais eventos cardiovasculares. Administrados por injecção subcutânea de 2 em 2 ou de 4 em 4 semanas. Disponíveis em Portugal mediante prescrição de especialista para HF e doentes de risco muito elevado.
+
+
+Inovador · Injecção semestral
+Inclisiran
+Leqvio
+Uma terapêutica de ARN de interferência pequeno (siARN) que silencia a produção hepática de PCSK9 ao nível genético, reduzindo o LDL em cerca de 50% com apenas duas injecções por ano após uma dose de carga inicial. O programa de estudos ORION demonstrou uma redução sustentada do LDL com excelente perfil de segurança. Disponível em Portugal através de serviços especializados de lipidologia e cardiologia.
+
+
+Triglicéridos Elevados
+Fibratos e Ácidos Gordos Ómega-3
+Fenofibrato · Ácido Icosapentaenóico (Vascepa)
+Os fibratos reduzem principalmente os triglicéridos e aumentam moderadamente o HDL. O ácido icosapentaenóico purificado (EPA ómega-3) demonstrou uma redução de 25% nos eventos cardiovasculares no estudo REDUCE-IT em doentes de alto risco com triglicéridos elevados apesar da terapêutica com estatinas — um resultado marcante reflectido nas orientações internacionais actualizadas. Disponível em Portugal mediante prescrição de especialista.
+
+
+Intolerância às Estatinas · Alternativa
+Ácido Bempedóico
+Nilemdo · Nustendi (com ezetimiba)
+Um agente oral que inibe a síntese de colesterol a montante das estatinas, através da ATP-citrato liase. Por ser activado apenas no fígado (e não no tecido muscular), não provoca a miopatia que leva alguns doentes a descontinuar as estatinas. O estudo CLEAR Outcomes (2023) confirmou que o ácido bempedóico reduz os principais eventos cardiovasculares em doentes intolerantes às estatinas. Disponível em Portugal para doentes que não toleram estatinas.
+
+
+Actualização das Normas ESC/EAS 2024:
+      As normas europeias actualizadas reforçaram que os doentes de risco muito elevado — com doença cardiovascular estabelecida ou hipercolesterolemia familiar — devem atingir um LDL abaixo de 1,4 mmol/L, e que a terapêutica combinada (estatina + ezetimiba ± inibidor de PCSK9 ou inclisiran) deve ser iniciada precocemente, em vez de sequencialmente, quando a monoterapia tem pouca probabilidade de atingir os objectivos. Se tem doença cardíaca estabelecida e o seu LDL permanece acima do objectivo, fale com o seu médico ou cardiologista sobre a intensificação do tratamento.
+    Secção 06Prevenção e Estilo de Vida: O Que Pode FazerA modificação do estilo de vida é a primeira e mais sustentável intervenção na gestão do colesterol e na redução do risco cardiovascular. Para doentes com risco cardiovascular baixo a moderado, as alterações alimentares e de estilo de vida — mantidas de forma consistente — podem alcançar reduções clinicamente significativas de LDL e dispensar a necessidade de medicação em muitos casos. Mesmo para quem faz terapêutica farmacológica, as mudanças de estilo de vida amplificam a eficácia do tratamento e reduzem independentemente o risco cardiovascular através de mecanismos que vão além do colesterol.
+
+
+Adopte uma alimentação cardioprotetora
+Substitua as gorduras saturadas (carnes vermelhas, manteiga, natas, óleo de coco) por gorduras insaturadas (azeite, frutos secos, abacate, peixe gordo). O padrão alimentar mediterrânico — amplamente recomendado pela ESC e suportado pelo estudo PREDIMED — reduz os eventos cardiovasculares independentemente dos valores de colesterol. Aumente o consumo de fibra proveniente de aveia, leguminosas e vegetais.
+
+
+
+Pratique exercício físico regularmente
+Pelo menos 150 minutos por semana de exercício aeróbico de intensidade moderada (caminhada rápida, ciclismo, natação). O exercício aeróbico regular eleva o HDL, reduz os triglicéridos e diminui o risco cardiovascular para além do seu efeito no colesterol. O treino de resistência traz benefícios adicionais para a saúde metabólica.
+
+
+
+Deixe de fumar
+A cessação tabágica é uma das intervenções de maior impacto na redução do risco cardiovascular disponíveis. Deixar de fumar eleva o HDL, reduz a oxidação do LDL e reduz para metade o risco cardiovascular em 1 a 2 anos. O seu médico pode prescrever apoio farmacológico (vareniclina, terapêutica d

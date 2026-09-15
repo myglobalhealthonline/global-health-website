@@ -1,0 +1,211 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cgcom.es","https://www.aepd.es"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}]{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Startseite","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Rechtliche Informationen","item":"https://www.myglobalhealth.online/spain/de/legal"},{"@type":"ListItem","position":3,"name":"Erstattungsrichtlinie","item":"https://www.myglobalhealth.online/spain/de/legal/refund-policy"}]}RechtlichesSpanien · RechtlichesErstattungsrichtlinieVersion 2 · Zuletzt aktualisiert 18 July 2026Alle RechtsdokumenteRückerstattungsrichtlinie
+Alle Märkte | Beratungen, Guthaben, physische Produkte, Lieferung nach Hause
+Datum des Inkrafttretens: 1. Juli 2026
+
+Rückerstattungsrichtlinie — Zusammenfassung
+
+BetreiberGlobal Guest s.r.o. handelnd als Global Health
+IČO19071680
+Kontaktglobalhealth@myglobalhealth.online
+MärkteSiehe www.myglobalhealth.online/markets
+Kontakt für Rückerstattungenglobalhealth@myglobalhealth.online — Betreff: „Refund Request"
+Bearbeitungszeit für RückerstattungenInnerhalb von 14 Tagen nach Genehmigung (EU) / 7 Werktage (Brasilien)
+Datum des Inkrafttretens1. Juli 2026
+
+
+Kurzübersicht — Rückerstattungsszenarien
+Die nachstehende Tabelle fasst das Rückerstattungsergebnis für jedes Szenario zusammen. Die vollständigen Einzelheiten zu jeder Kategorie sind in den nachfolgenden Abschnitten dargelegt.
+
+SzenarioErgebnisMärkte
+Beratung ≥24 Stunden vorher storniertGuthaben vollständig gutgeschriebenAlle Märkte
+Beratung <24 Stunden vorher storniertGuthaben verfälltAlle Märkte
+Beratung <24 Stunden vorher storniert — medizinischer NotfallGuthaben gutgeschrieben (mit Nachweis)Alle Märkte
+Beratung nicht erbracht — Verschulden der PlattformGuthaben gutgeschrieben + Option auf BarrückerstattungAlle Märkte
+NichterscheinenGuthaben verfälltAlle Märkte
+Guthaben-Plan — innerhalb 14-tägiger Widerrufsfrist, kein Guthaben verbrauchtVollständige BarrückerstattungEU-Märkte
+Guthaben-Plan — innerhalb 14-tägiger Widerrufsfrist, Guthaben verbrauchtAnteilige BarrückerstattungEU-Märkte
+Guthaben-Plan — innerhalb 7-tägiger Widerrufsfrist, kein Guthaben verbrauchtVollständige BarrückerstattungBrasilien
+Guthaben-Plan — nach Widerrufsfrist, ungenutztes GuthabenNicht erstattungsfähigAlle Märkte
+Einmalguthaben — ungenutztNicht erstattungsfähigAlle Märkte
+Heimtest-Kit — ungeöffnet, innerhalb von 14 TagenVollständige RückerstattungAlle Märkte
+Heimtest-Kit — geöffnet oder nach 14 TagenNicht erstattungsfähigAlle Märkte
+Heimtest-Kit — bei Ankunft beschädigtVollständige Rückerstattung oder ErsatzAlle Märkte
+Telemedizin-Gerät — ungenutzt, innerhalb von 30 TagenVollständige RückerstattungAlle Märkte
+Telemedizin-Gerät — genutzt oder nach 30 TagenNicht erstattungsfähigAlle Märkte
+Telemedizin-Gerät — bei Ankunft defektVollständige Rückerstattung oder ErsatzAlle Märkte
+Lieferung nach Hause — vor VersandVollständige RückerstattungNur Irland
+Lieferung nach Hause — nach VersandNicht erstattungsfähigNur Irland
+
+
+1. Einleitung
+Diese Rückerstattungsrichtlinie gilt für alle über die Global-Health-Plattform unter www.myglobalhealth.online erworbenen Produkte und Dienstleistungen, betrieben von Global Guest s.r.o. (IČO: 19071680), handelnd als Global Health.
+Global Health bietet vier Kategorien käuflicher Leistungen an, für die jeweils eigene Rückerstattungsregeln gelten: (1) medizinische Beratungen, einzeln gebucht oder mittels Guthaben; (2) Guthaben-Pläne (monatliche Abonnements); (3) physische Produkte einschließlich Heimtest-Kits und Telemedizin-Geräte; und (4) Lieferung nach Hause (nur Irland).
+Ihre gesetzlichen Verbraucherrechte in Ihrem Wohnsitzland bleiben von dieser Richtlinie unberührt und haben Vorrang, soweit sie einen größeren Schutz bieten. Die für Ihren Markt geltenden gesetzlichen Rechte sind im Länderanhang für Ihren Markt festgelegt, abrufbar unter www.myglobalhealth.online/terms.
+Um eine Rückerstattung zu beantragen, senden Sie bitte eine E-Mail an globalhealth@myglobalhealth.online mit dem Betreff „Refund Request". Geben Sie Ihren vollständigen Namen, Ihre Konto-E-Mail-Adresse, Ihre Buchungs- oder Bestellreferenz sowie den Grund Ihrer Anfrage an. Wir bestätigen den Eingang Ihrer Anfrage innerhalb von 2 Werktagen.
+
+2. Medizinische Beratungen
+
+2.1 Stornierung mehr als 24 Stunden vor dem Termin
+Wenn Sie eine bestätigte Beratung mindestens 24 Stunden vor dem geplanten Termin stornieren, wird jegliches zur Buchung der Beratung verwendete Guthaben in voller Höhe auf Ihr Konto zurückgebucht. Haben Sie per Direktzahlung (nicht mit Guthaben) bezahlt, erhalten Sie innerhalb von 14 Tagen eine vollständige Rückerstattung auf Ihre ursprüngliche Zahlungsmethode.
+
+2.2 Stornierung weniger als 24 Stunden vor dem Termin
+Wenn Sie eine bestätigte Beratung weniger als 24 Stunden vor dem geplanten Termin stornieren, verfällt das zur Buchung der Beratung verwendete Guthaben bzw. die Zahlung. Es erfolgt keine Rückerstattung oder Guthabengutschrift, außer in den in Klausel 2.3 genannten Fällen.
+
+2.3 Ausnahmen von der Regel zur kurzfristigen Stornierung
+Guthaben oder Zahlungen werden gutgeschrieben oder erstattet, wenn die kurzfristige Stornierung auf Folgendes zurückzuführen ist:
+
+Einen nachgewiesenen medizinischen Notfall, der Sie oder ein unmittelbares Familienmitglied betrifft — wir können nach eigenem Ermessen entsprechende Nachweise anfordern.
+Ein plattformseitiges Versagen, das Sie daran gehindert hat, auf die Beratung zuzugreifen oder diese abzuschließen — in diesem Fall erfolgt die Gutschrift automatisch.
+Die Stornierung durch den Kliniker oder dessen Nichterscheinen zur Beratung — siehe Klausel 2.5.
+
+
+2.4 Umbuchung
+Sie können eine bestätigte Beratung bis zu 12 Stunden vor dem geplanten Termin umbuchen, ohne dass eine Guthabenbelastung oder Gebühr anfällt. Jede Buchung kann einmal kostenfrei umgebucht werden. Weitere Umbuchungsanfragen werden als Stornierung gemäß Klausel 2.2 behandelt.
+
+2.5 Beratung nicht erbracht — Verschulden der Plattform oder des Klinikers
+Kann eine gebuchte Beratung aus einem Grund, der Global Health oder dem Kliniker zuzurechnen ist, nicht innerhalb von 2 Stunden nach dem geplanten Termin durchgeführt werden, wird Ihnen Folgendes angeboten:
+
+Vollständige Gutschrift des verwendeten Guthabens, unverzüglich Ihrem Konto gutgeschrieben; oder
+Eine vollständige Barrückerstattung des Geldwerts des verwendeten Guthabens oder der Zahlung, verarbeitet auf Ihre ursprüngliche Zahlungsmethode innerhalb von 14 Tagen.
+
+Sie können zwischen beiden Optionen wählen. Bitte kontaktieren Sie globalhealth@myglobalhealth.online, um Ihre bevorzugte Abhilfe zu beantragen.
+
+2.6 Nichterscheinen
+Wenn Sie ohne vorherige Stornierung oder Umbuchungsmitteilung nicht zu einer geplanten Beratung erscheinen, verfällt das zur Buchung dieser Beratung verwendete Guthaben bzw. die Zahlung. Es erfolgt keine Gutschrift oder Rückerstattung.
+
+2.7 Qualitätsbedenken
+Wenn Sie Bedenken hinsichtlich der Qualität einer Beratung haben, verweisen wir auf unser Beschwerdeverfahren unter www.myglobalhealth.online/complaints. Qualitätsbedenken werden im Rahmen unseres klinischen Governance-Prozesses behandelt und nicht als Rückerstattungsanträge bearbeitet. Ihre gesetzlichen Verbraucherrechte in Ihrer Rechtsordnung bleiben von dieser Klausel unberührt.
+
+3. Guthaben und Guthaben-Pläne
+
+3.1 Was sind Guthaben?
+Guthaben ist die Werteinheit, die zur Buchung von Leistungen auf der Plattform verwendet wird. Guthaben können durch das Abonnieren eines monatlichen Guthaben-Plans oder durch Einmalkauf erworben werden. Guthaben haben keinen Barwert und sind nicht zwischen Konten übertragbar.
+
+3.2 Gesetzliche Widerrufsfrist — Guthaben-Plan-Abonnements
+Ihre gesetzlichen Widerrufsrechte hängen von Ihrem Wohnsitzland ab:
+
+EU-Märkte (Irland, Portugal, Tschechische Republik, Spanien, Rumänien): Sie haben ein 14-tägiges Widerrufsrecht ab dem Datum des ersten Abonnements. Wenn Sie innerhalb von 14 Tagen stornieren und kein Guthaben verbraucht haben, erhalten Sie eine vollständige Barrückerstattung der Abonnementgebühr auf Ihre ursprüngliche Zahlungsmethode innerhalb von 14 Tagen. Wurde während der Widerrufsfrist Guthaben verbraucht, wird ein anteiliger Abzug in Höhe des Geldwerts des verbrauchten Guthabens vorgenommen.
+Brasilien: Sie haben ein 7-tägiges Widerrufsrecht ab dem Datum des ersten Abonnements gemäß Artigo 49 des Código de Defesa do Consumidor. Wenn Sie innerhalb von 7 Tagen stornieren und kein Guthaben verbraucht haben, erhalten Sie innerhalb von 7 Werktagen eine vollständige Barrückerstattung. Wurde Guthaben verbraucht, gilt ein anteiliger Abzug.
+
+
+3.3 Verbrauchtes Guthaben — nicht erstattungsfähig
+Guthaben, das zur Buchung einer Beratung oder Leistung verwendet wurde, ist nicht erstattungsfähig, vorbehaltlich der Stornierungs- und Verschuldensregelungen für Beratungen in Abschnitt 2.
+
+3.4 Ungenutztes Guthaben nach Ablauf der Widerrufsfrist — nicht erstattungsfähig
+Guthaben, das nach Ablauf der gesetzlichen Widerrufsfrist ungenutzt auf Ihrem Konto verbleibt, ist nicht erstattungsfähig. Dies gilt sowohl für Guthaben aus einem Guthaben-Plan als auch für außerhalb eines Plans erworbenes Einmalguthaben.
+
+3.5 Kündigung eines Guthaben-Plans — keine Rückerstattung für den ungenutzten Teil des laufenden Abrechnungszeitraums
+Wenn Sie einen Guthaben-Plan kündigen, wird die Kündigung zum Ende des laufenden monatlichen Abrechnungszeitraums wirksam. Sie behalten Zugang zu allen Guthaben und Plan-Vorteilen bis zum Ende des bezahlten Zeitraums. Nach Ablauf der Widerrufsfrist wird für keinen ungenutzten Teil des laufenden Abrechnungszeitraums eine anteilige Rückerstattung geleistet.
+
+3.6 Übertrag von ungenutztem Plan-Guthaben nach Kündigung
+Im Rahmen eines gekündigten Guthaben-Plans zugewiesenes Guthaben bleibt für 12 Monate ab dem Kündigungsdatum auf Ihrem Konto verfügbar. Nach 12 Monaten verfällt ungenutztes Plan-Guthaben und ist nicht erstattungsfähig. Außerhalb eines Plans erworbenes Einmalguthaben ist von der Plankündigung nicht betroffen und verfällt nicht.
+
+3.7 Kontoschließung
+Wenn Sie Ihr Global-Health-Konto schließen, verfällt jegliches auf Ihrem Konto verbliebenes Guthaben und ist nicht erstattungsfähig, es sei denn, Sie schließen Ihr Konto als Reaktion auf eine wesentliche Änderung dieser Bedingungen; in diesem Fall wird Ihnen das Guthaben zu seinem Geldwert innerhalb von 10 Werktagen erstattet, wie in den Allgemeinen Geschäftsbedingungen festgelegt.
+
+3.8 Einmalguthaben
+Außerhalb eines Guthaben-Plans einmalig erworbenes Guthaben ist nach dem Kauf nicht erstattungsfähig, außer soweit dies nach geltendem Verbraucherrecht in Ihrer Rechtsordnung vorgeschrieben ist. Einmalguthaben verfällt nicht und wird unbegrenzt übertragen, solange Ihr Konto aktiv ist.
+
+4. Heimtest-Kits
+Heimtest-Kits sind physische Produkte, die an Ihre Adresse versandt werden. Für alle über die Plattform erworbenen Test-Kits gilt die folgende Rückerstattungsrichtlinie.
+
+4.1 14-tägiges Rückgaberecht — ungeöffnete Kits
+Sie können ein Heimtest-Kit innerhalb von 14 Tagen nach Lieferung zurücksenden und erhalten eine vollständige Rückerstattung, sofern das Kit:
+
+vollständig ungeöffnet und in der originalversiegelten Verpackung ist.
+unbenutzt und nicht aktiviert ist — einschließlich etwaiger digitaler Aktivierungscodes oder Registrierungsschritte.
+mit allen Originalbestandteilen, Anleitungen und der Verpackung zurückgesendet wird.
+
+Die Rücksendekosten trägt der Kunde, es sei denn, die Rücksendung erfolgt aufgrund eines Mangels oder eines falsch gelieferten Artikels.
+
+4.2 Geöffnete oder aktivierte Kits — nicht erstattungsfähig
+Aus Gründen des Gesundheits-, Hygiene- und Sicherheitsschutzes können wir Rücksendungen von Heimtest-Kits, die geöffnet, aktiviert oder in irgendeiner Weise verwendet wurden, nicht akzeptieren. Dies gilt auch dann, wenn der Test nicht abgeschlossen oder die Ergebnisse nicht verarbeitet wurden. Für geöffnete oder aktivierte Kits wird keine Rückerstattung geleistet.
+
+4.3 Beschädigte, defekte oder falsche Artikel
+Sollte Ihr Kit beschädigt oder defekt ankommen oder nicht Ihrer Bestellung entsprechen, kontaktieren Sie uns bitte innerhalb von 48 Stunden nach Lieferung unter globalhealth@myglobalhealth.online mit Fotos des Artikels und der Verpackung. Wir bieten Ihnen an:
+
+eine vollständige Rückerstattung auf Ihre ursprüngliche Zahlungsmethode innerhalb von 14 Tagen; oder
+ein Ersatz-Kit, das ohne zusätzliche Kosten versandt wird.
+
+Sie wählen Ihre bevorzugte Abhilfe. Wir übernehmen die Rücksendekosten für beschädigte, defekte oder falsch gelieferte Artikel.
+
+4.4 Einleitung einer Rücksendung
+Senden Sie eine E-Mail an globalhealth@myglobalhealth.online mit dem Betreff „Refund Request — Test Kit". Geben Sie Ihren vollständigen Namen, die Bestellreferenznummer, den Grund für die Rücksendung sowie gegebenenfalls Fotos an. Nach Genehmigung stellen wir Ihnen Rücksendeanweisungen und eine Rücksendeadresse zur Verfügung. Die Rücksendekosten trägt der Kunde. Erfolgt eine Rücksendung aus dem Ausland außerhalb Irlands, beraten wir Sie zur kostengünstigsten Rücksendemethode — sollten die Rücksendekosten unverhältnismäßig hoch sein, können wir eine alternative Abhilfe wie Ersatz oder Gutschrift vereinbaren.
+
+5. Telemedizin-Geräte
+Telemedizin-Geräte sind physische elektronische Gegenstände, die in Verbindung mit der Global-Health-Plattform verwendet werden. Beispiele hierfür sind vernetzte Gesundheitsüberwachungsgeräte, digitale Stethoskope und ähnliche Ausrüstung.
+
+5.1 30-tägiges Rückgaberecht — unbenutzte Geräte
+Sie können ein Telemedizin-Gerät innerhalb von 30 Tagen nach Lieferung zurücksenden und erhalten eine vollständige Rückerstattung, sofern das Gerät:
+
+unbenutzt und in seinem Originalzustand ohne Anzeichen von Gebrauch oder Abnutzung ist.
+sich in der Originalverpackung mit allem Zubehör, Kabeln, Anleitungen und Schutzmaterialien befindet.
+nicht registriert, aktiviert oder mit einem Konto oder einer Anwendung gekoppelt ist.
+
+Die Rücksendekosten trägt der Kunde, es sei denn, die Rücksendung erfolgt aufgrund eines Mangels oder eines falsch gelieferten Artikels.
+
+5.2 Benutzte Geräte — nicht erstattungsfähig
+Telemedizin-Geräte, die Gebrauchsspuren aufweisen, aktiviert oder registriert wurden oder nach Ablauf von 30 Tagen nach Lieferung zurückgesendet werden, sind von einer Rückerstattung ausgeschlossen.
+
+5.3 Defekte oder falsch gelieferte Geräte
+Sollte ein Gerät defekt oder beschädigt ankommen oder nicht Ihrer Bestellung entsprechen, kontaktieren Sie uns bitte innerhalb von 48 Stunden nach Lieferung unter globalhealth@myglobalhealth.online mit Fotos. Wir bieten Ihnen entweder eine vollständige Rückerstattung oder einen kostenlosen Ersatz an. Die Rücksendekosten für defekte oder falsch gelieferte Geräte übernehmen wir.
+
+5.4 Garantie
+Telemedizin-Geräte unterliegen der Herstellergarantie. Die Garantiebedingungen variieren je nach Gerät und Hersteller und sind in der Produktdokumentation enthalten. Garantieansprüche nach Ablauf der 30-tägigen Rückgabefrist sind an den Hersteller zu richten. Global Health unterstützt Sie nach Möglichkeit bei der Geltendmachung von Garantieansprüchen.
+
+6. Lieferung nach Hause — nur Irland
+Nur Irland: Der Dienst „Lieferung nach Hause" ist derzeit ausschließlich in Irland verfügbar.
+„Lieferung nach Hause" bezeichnet die Lieferung verschreibungspflichtiger Medikamente oder Gesundheitsprodukte an Ihre Adresse in Irland, vermittelt durch Global Health in Zusammenarbeit mit einem registrierten Apothekenpartner.
+
+6.1 Stornierung vor Versand
+Wenn Sie eine Bestellung zur Lieferung nach Hause stornieren, bevor sie von der Apotheke versandt wurde, erhalten Sie innerhalb von 14 Tagen eine vollständige Rückerstattung auf Ihre ursprüngliche Zahlungsmethode. Um vor Versand zu stornieren, kontaktieren Sie globalhealth@myglobalhealth.online so bald wie möglich nach Aufgabe der Bestellung.
+
+6.2 Stornierung nach Versand — nicht erstattungsfähig
+Sobald eine Bestellung zur Lieferung nach Hause von der Apotheke versandt wurde, kann sie aufgrund der Beschaffenheit verschreibungspflichtiger Medikamente und der geltenden irischen Arzneimittelvorschriften nicht storniert oder zurückgegeben werden. Nach Versand wird keine Rückerstattung geleistet.
+
+6.3 Nichtlieferung oder Fehllieferung
+Wenn Ihre Bestellung nicht innerhalb des erwarteten Zeitrahmens geliefert wird oder der falsche Artikel geliefert wird, kontaktieren Sie bitte globalhealth@myglobalhealth.online innerhalb von 48 Stunden. Wir werden die Angelegenheit untersuchen und, soweit angebracht, eine Ersatzlieferung oder eine vollständige Rückerstattung veranlassen.
+
+6.4 Bei Lieferung beschädigte Artikel
+Sollten Artikel beschädigt ankommen, fotografieren Sie bitte die Artikel und die Verpackung und kontaktieren Sie uns innerhalb von 48 Stunden nach Lieferung. Wir veranlassen einen kostenlosen Ersatz.
+
+7. Ihre gesetzlichen Verbraucherrechte
+Diese Rückerstattungsrichtlinie legt die Standard-Rückerstattungsbedingungen von Global Health fest. In allen Märkten, in denen Global Health tätig ist, gelten Ihre gesetzlichen Verbraucherrechte und können durch diese Richtlinie weder ausgeschlossen noch eingeschränkt werden.
+Wesentliche gesetzliche Rechte nach Markt:
+
+Irland: Consumer Rights Act 2022 — 14-tägige Widerrufsfrist für Fernabsatzverträge; Abhilfen bei nicht vertragsgemäßen Dienstleistungen.
+Portugal: Decreto-Lei No. 24/2014 — 14-tägiges Widerrufsrecht; Rückerstattung innerhalb von 14 Tagen nach Stornierung.
+Tschechische Republik: Občanský zákoník (Zákon č. 89/2012 Sb.) — 14-tägiges Widerrufsrecht für Fernabsatzverträge.
+Spanien: TRLGDCU — 14-tägiges Widerrufsrecht; vollständige Rückerstattung jeder geleisteten Zahlung.
+Rumänien: OUG 34/2014 — 14-tägiges Widerrufsrecht für Fernabsatzverträge.
+Brasilien: Código de Defesa do Consumidor — 7-tägiges Widerrufsrecht; Rückerstattung innerhalb von 7 Werktagen.
+
+Sofern Ihre gesetzlichen Rechte eine für Sie günstigere Abhilfe vorsehen als in dieser Richtlinie festgelegt, gelten Ihre gesetzlichen Rechte. Wenn Sie sich über Ihre Rechte nicht sicher sind, können Sie sich an die Verbraucherschutzbehörde in Ihrem Land wenden — Einzelheiten finden Sie im Länderanhang für Ihren Markt.
+
+8. So beantragen Sie eine Rückerstattung
+Um eine Rückerstattung für ein Produkt oder eine Dienstleistung zu beantragen:
+
+Senden Sie eine E-Mail an globalhealth@myglobalhealth.online mit dem Betreff „Refund Request".
+Geben Sie an: Ihren vollständigen Namen, Ihre Konto-E-Mail-Adresse, Ihre Buchungs- oder Bestellreferenznummer, das Produkt oder die Dienstleistung, für die Sie eine Rückerstattung beantragen, sowie den Grund Ihrer Anfrage.
+Bei Rücksendungen physischer Produkte (Test-Kits oder Geräte) fügen Sie bitte Fotos bei, falls der Artikel beschädigt oder defekt ist.
+
+Wir bestätigen den Eingang Ihrer Anfrage innerhalb von 2 Werktagen und bemühen uns, sie innerhalb von 14 Werktagen zu bearbeiten. Genehmigte Rückerstattungen werden auf Ihre ursprüngliche Zahlungsmethode verarbeitet innerhalb von:
+
+14 Tagen nach Bestätigung der Rückerstattungsentscheidung — EU-Märkte.
+7 Werktagen nach Bestätigung der Rückerstattungsentscheidung — Brasilien.
+
+Rückerstattungen werden über Stripe, unseren Zahlungsdienstleister, abgewickelt. Sobald wir eine Rückerstattung veranlassen, hängt die Zeit, bis die Mittel auf Ihrem Konto erscheinen, von Ihrem Kartenaussteller ab und dauert in der Regel weitere 5–10 Werktage nach Einleitung des Vorgangs. Dieser Zeitrahmen liegt außerhalb unserer Kontrolle.
+Rückerstattungen werden auf die zum Zeitpunkt des Kaufs verwendete ursprüngliche Zahlungsmethode geleistet. Ist Ihre ursprüngliche Zahlungsmethode nicht mehr gültig — beispielsweise eine abgelaufene Karte oder ein geschlossenes Konto —, kontaktieren Sie uns bitte unter globalhealth@myglobalhealth.online, damit wir eine alternative Rückerstattungsmethode vereinbaren können.
+
+9. Änderungen dieser Rückerstattungsrichtlinie
+Wir können diese Rückerstattungsrichtlinie von Zeit zu Zeit aktualisieren, um Änderungen unserer Dienstleistungen, Produkte oder des geltenden Rechts widerzuspiegeln. Über wesentliche Änderungen werden Sie mindestens 30 Tage vor deren Inkrafttreten per E-Mail informiert. Ihre gesetzlichen Rechte bleiben von Änderungen dieser Richtlinie unberührt.
+Die aktuelle Fassung dieser Richtlinie ist stets abrufbar unter www.myglobalhealth.online/refund-policy.
+
+10. Kontakt
+Für Rückerstattungsanträge oder Fragen zu dieser Richtlinie:
+Global Health — Kundensupport
+Global Guest s.r.o. handelnd als Global Health | IČO: 19071680
+E-Mail: globalhealth@myglobalhealth.online
+Betreffzeile für Rückerstattungsanträge: „Refund Request"
+Website: www.myglobalhealth.online/refund-policy
+Diese Rückerstattungsrichtlinie gilt für alle Märkte, in denen Global Health tätig ist. Ihre gesetzlichen Verbraucherrechte in Ihrer Rechtsordnung gelten zusätzlich zu dieser Richtlinie und werden durch sie nicht eingeschränkt. Länderspezifische gesetzliche Rechte finden Sie im Länderanhang für Ihren Markt unter www.myglobalhealth.online/terms.

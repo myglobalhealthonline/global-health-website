@@ -1,0 +1,198 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.ers.pt","https://www.ordemdosmedicos.pt","https://www.cnpd.pt","https://www.livroreclamacoes.pt","https://www.infarmed.pt","https://www.sns24.gov.pt","https://www.dgs.pt","https://www.insa.min-saude.pt","https://www.spc.pt","https://www.ihmt.unl.pt","https://www.apmgf.pt","https://www.deco.pt","https://www.utente.min-saude.pt","https://www.sosvozamiga.org","https://www.fpcardiologia.pt"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Înțelegerea hipercolesterolemiei","description":"Colesterolul crescut afectează aproximativ 1 din 2 adulți, dar nu dă simptome până la infarct sau AVC. Află cauzele, semnele de alarmă și tratamentele actuale (statine, inhibitori de PCSK9, inclisiran).","url":"https://www.myglobalhealth.online/portugal/ro/blog/intelegerea-hipercolesterolemiei","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/portugal/ro/blog/intelegerea-hipercolesterolemiei#webpage","url":"https://www.myglobalhealth.online/portugal/ro/blog/intelegerea-hipercolesterolemiei","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/ro/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-21"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=%C3%8En%C8%9Belegerea+hipercolesterolemiei&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F9235304a-5bd7-4a77-a7b4-5b8fb03f7e83-34306.webp&v=2026-07-20.1-sxobkf","width":1200,"height":630},"about":{"@type":"Thing","name":"Cardiologia"},"datePublished":"2026-07-20T22:08:20.712Z","dateModified":"2026-07-21T13:19:22.551Z","publishingPrinciples":"https://www.myglobalhealth.online/portugal/ro/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/portugal/ro/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Acasă","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/portugal/ro/blog"},{"@type":"ListItem","position":3,"name":"Înțelegerea hipercolesterolemiei","item":"https://www.myglobalhealth.online/portugal/ro/blog/intelegerea-hipercolesterolemiei"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Colesterolul crescut este frecvent în Portugalia?","acceptedAnswer":{"@type":"Answer","text":"Da. Colesterolul crescut este unul dintre cei mai răspândiți factori modificabili de risc cardiovascular în Portugalia. Datele INSA și ale Anchetei Naționale de Sănătate indică faptul că aproximativ jumătate dintre adulții portughezi au colesterol total crescut. Majoritatea nu sunt diagnosticați, deoarece hipercolesterolemia nu provoacă simptome. Hipercolesterolemia familială, forma ereditară cu LDL foarte ridicat de la naștere, afectează aproximativ 1 din 250 de persoane, iar peste 90% dintre cazuri sunt estimate ca nediagnosticate."}},{"@type":"Question","name":"Care sunt semnele și simptomele colesterolului crescut?","acceptedAnswer":{"@type":"Answer","text":"Hipercolesterolemia este în esență o boală silențioasă — majoritatea persoanelor nu prezintă simptome până la apariția unui eveniment cardiovascular grav. În cazurile severe sau familiale pot apărea semne fizice precum xantoamele (depuneri de grăsime sub piele, mai ales la nivelul tendonului lui Ahile sau al articulațiilor degetelor), xantelasmele (plăci gălbui lângă pleoape) și arcul cornean (un inel cenușiu în jurul irisului — semnificativ la persoanele sub 45 de ani). Singura modalitate sigură de a depista colesterolul crescut este o analiză de sânge: profilul lipidic à jeun."}},{"@type":"Question","name":"Ce provoacă colesterolul crescut?","acceptedAnswer":{"@type":"Answer","text":"Colesterolul crescut are cauze genetice și legate de stilul de viață. Cea mai importantă cauză genetică este HF, produsă de mutații ale genei receptorului LDL. Alimentația bogată în grăsimi saturate și trans, sedentarismul, obezitatea, fumatul și alcoolul în exces contribuie, iar cauzele secundare includ hipotiroidismul, diabetul de tip 2, boala renală cronică și anumite medicamente. La majoritatea persoanelor, valoarea colesterolului rezultă din combinarea predispoziției genetice cu stilul de viață."}},{"@type":"Question","name":"Care sunt cele mai bune tratamente pentru colesterolul crescut în Portugalia?","acceptedAnswer":{"@type":"Answer","text":"Tratamentul depinde de riscul cardiovascular global și de ținta LDL, nu doar de valoarea izolată a colesterolului. Schimbarea stilului de viață — alimentație, mișcare, renunțarea la fumat și controlul greutății — este baza tratamentului pentru toți pacienții. Statinele, în special atorvastatina și rosuvastatina de intensitate mare, sunt tratamentul medicamentos de primă linie și sunt disponibile pe scară largă prin SNS în Portugalia. Dacă pacienții nu ating ținta LDL, se adaugă ezetimib. Pentru pacienții cu risc ridicat sau cu hipercolesterolemie familială, inhibitorii PCSK9 (evolocumab, alirocumab) și inclisiranul — o injecție cu ARN administrată la fiecare șase luni — sunt disponibile prin servicii specializate. Acidul bempedoic este acum disponibil pentru pacienții care nu tolerează statinele."}},{"@type":"Question","name":"Cât de des trebuie să îmi verific colesterolul în Portugalia?","acceptedAnswer":{"@type":"Answer","text":"DGS recomandă ca toți adulții de peste 40 de ani să își verifice colesterolul cel puțin din 5 în 5 ani, sau mai des dacă au factori de risc precum antecedente familiale, obezitate, hipertensiune, fumat ori diabet. Dacă luați medicamente pentru colesterol, medicul trebuie să repete profilul lipidic à jeun la 8 până la 12 săptămâni după începerea tratamentului sau după orice modificare a dozei, iar apoi anual, după stabilizarea valorilor. Orice persoană cu o rudă de gradul întâi care a avut boală cardiovasculară prematură (înainte de 60 de ani) sau cu HF cunoscută trebuie testată mai devreme, ideal la 20 sau 30 de ani."}},{"@type":"Question","name":"Pot să îmi reduc colesterolul fără medicamente?","acceptedAnswer":{"@type":"Answer","text":"La pacienții cu risc cardiovascular scăzut sau moderat și LDL ușor crescut, schimbarea stilului de viață ca unică intervenție — mai ales adoptarea alimentației mediteraneene, practicarea regulată a exercițiului aerobic, renunțarea la fumat și pierderea excesului ponderal — poate reduce LDL cu 10 până la 20% într-o măsură semnificativă clinic și, în unele cazuri, poate elimina nevoia de medicamente. Totuși, la pacienții cu risc cardiovascular ridicat sau foarte ridicat ori cu hipercolesterolemie familială, schimbarea stilului de viață singură este de obicei insuficientă pentru atingerea țintelor stabilite de ghiduri; tratamentul medicamentos este recomandat în completarea schimbărilor stilului de viață, nu ca alternativă la acestea. Discutați cu medicul despre ce este potrivit pentru profilul dumneavoastră specific de risc."}},{"@type":"Question","name":"Pot consulta online un medic despre colesterolul crescut în Portugalia?","acceptedAnswer":{"@type":"Answer","text":"Da. Global Health oferă consultații medicale online cu medici înregistrați la Ordem dos Médicos. Acestea pot include evaluarea riscului cardiovascular, interpretarea analizelor de colesterol, prescrierea statinelor și a altor medicamente când este indicat clinic și solicitarea analizelor de laborator (profil lipidic à jeun, glicemie, funcție tiroidiană și profil metabolic complet). Consultațiile sunt disponibile în aceeași zi, șapte zile pe săptămână. Programați-vă la myglobalhealth.online/pt/portugal/family-and-general-medicine."}}]}]Toate articoleleCardiologiaÎnțelegerea hipercolesterolemieiSe estimează că 1 din 2 adulți are colesterolul crescut, iar majoritatea nu știu acest lucru. Acest ghid explică cauzele, semnele silențioase și cele mai noi tratamente — de la statine la inhibitorii de PCSK9 — care transformă îngrijirea cardiovasculară.Global Health Medical Team20 iulie 202623 min citireUltima revizuire 21 iulie 2026+Pe această paginăColesterolul crescut în Portugalia: amploarea problemeiTipuri de hipercolesterolemieCauze și factori de riscSemne și simptomeTratamente actuale pentru hipercolesterolemie în PortugaliaPrevenție și stil de viață: ce puteți faceImportanța screeningului regulatCercetare și tratamente viitoareInstituții portugheze de referințăÎntrebări frecvente
+Sănătate cardiovasculară în PortugaliaCauze, semne, tratamente actuale, prevenție și screening pentru hipercolesterolemie.Boala cardiovasculară este principala cauză de deces în Portugalia. Iar unul dintre principalii ei factori favorizanți — colesterolul sangvin crescut — afectează aproximativ jumătate dintre adulții portughezi, marea majoritate necunoscând acest lucru. Hipercolesterolemia este, prin însăși natura ei, o afecțiune care nu se anunță prin simptome, ci prin evenimente: un infarct miocardic, un accident vascular cerebral (AVC), o moarte subită de cauză cardiacă.Vezi screeningul recomandatExplorează tratamenteleGhid clinic actualizatProvocarea extraordinară a colesterolului crescut constă exact în această tăcere. Spre deosebire de diabet, care poate provoca oboseală sau sete, sau de hipertensiune, care ocazional produce cefalee, hipercolesterolemia nu produce nicio senzație — până când au trecut ani de zile în care arterele care irigă inima și creierul s-au îngustat treptat. Când se manifestă, în multe cazuri, afectarea este deja instalată.Vestea bună este la fel de importantă: hipercolesterolemia este una dintre cele mai tratabile afecțiuni din întreaga medicină. Terapiile hipolipemiante disponibile astăzi — de la statine, larg consacrate, până la cele mai recente medicamente bazate pe ARN — se numără printre intervențiile cel mai bine susținute de dovezi din farmacologia modernă. Și funcționează cel mai bine atunci când sunt începute devreme, înainte ca afectarea să se acumuleze. Depistarea, printr-o simplă analiză de sânge, este tot ce este nevoie.Secțiunea 01Colesterolul crescut în Portugalia: amploarea problemeiColesterolul este o substanță ceroasă, asemănătoare grăsimilor, produsă în mod natural de ficat și obținută și din alimentație. Este esențial pentru construcția membranelor celulare, producerea hormonilor și sinteza vitaminei D. Problema apare atunci când nivelurile — în special colesterolul cu lipoproteine de densitate joasă (LDL) — depășesc pragul de la care începe să apară leziunea arterială. Acest proces, ateroscleroza, stă la baza majorității infarctelor și AVC-urilor.Datele publicate de Instituto Nacional de Saúde Doutor Ricardo Jorge (INSA) și de Inquérito Nacional de Saúde (INS), publicată de Direcção-Geral da Saúde, arată că hipercolesterolemia este unul dintre factorii de risc cardiovascular necontrolați cei mai frecvenți în populația adultă portugheză. Potrivit Programa Nacional para as Doenças Cérebro-Cardiovasculares da DGS, bolile cardiovasculare reprezintă prima cauză de deces în Portugalia, colesterolul crescut având un rol determinant în această realitate.
+
+~50%
+Dintre adulții portughezi au colesterol total crescut
+
+
+1 din 250
+Persoane din Portugalia afectate de hipercolesterolemia familială (HF)
+
+
+Cauza nr. 1
+Boala cardiovasculară — principala cauză de deces în Portugalia
+
+
+>90%
+Dintre cazurile de HF din Portugalia sunt estimate ca nediagnosticate
+
+Sursă: INSA — Inquérito Nacional de Saúde; DGS — Programa Nacional para as Doenças Cérebro-Cardiovasculares; Fundação Portuguesa de Cardiologia; Associação Portuguesa de Hipercolesterolemia Familiar.Hipercolesterolemia familială (HF) necesită o atenție deosebită. Această afecțiune genetică ereditară — care afectează aproximativ 1 din 250 de persoane, adică circa 40.000 de oameni în Portugalia — determină valori foarte ridicate ale LDL încă de la naștere și crește riscul de infarct cu zeci de ani mai devreme decât ar fi de așteptat.  Associação Portuguesa de Hipercolesterolemia Familiar (APHF)  estimează că peste 90% dintre cazurile de HF din Portugalia rămân nediagnosticate. Fără tratament, bărbații cu HF au un risc de 50% de eveniment coronarian înainte de 50 de ani, iar femeile înainte de 60 de ani.
+Aveți antecedente familiale de boală cardiacă precoce?
+      Dacă unul dintre părinți, frați sau bunici a suferit un infarct ori un AVC înainte de 60 de ani, este posibil să aveți un risc semnificativ crescut de hipercolesterolemie familială sau risc cardiovascular ereditar. Adresați-vă medicului pentru un profil lipidic à jeun. Depistarea precoce a HF poate preveni evenimente cardiovasculare care altfel ar apărea la vârsta mijlocie.
+    Secțiunea 02Tipuri de hipercolesterolemieNu toate valorile crescute ale colesterolului au aceeași cauză sau aceeași semnificație clinică. Înțelegerea tipului și a modelului anomaliei lipidice ghidează deciziile terapeutice.
+
+
+Hipercolesterolemie familială (HF)
+Genetică · Autozomal dominantă · Risc ridicat
+Este cauzată de mutații ale genei receptorului LDL (cel mai frecvent), APOB sau PCSK9. Produce valori foarte ridicate ale LDL încă de la naștere — de regulă peste 4,9 mmol/L. Fără tratament, duce la ateroscleroză precoce și evenimente cardiovasculare. Necesită identificare timpurie și tratament intensiv, de obicei cu statine în doză mare și medicamente suplimentare.
+
+
+
+Hipercolesterolemie primară (stil de viață)
+Dobândită · Modificabilă · Cea mai frecventă
+Este forma cea mai frecventă. Este favorizată de o alimentație bogată în grăsimi saturate și trans, sedentarism, obezitate și fumat. Creșterea LDL este moderată în majoritatea cazurilor și răspunde bine la schimbarea stilului de viață, combinată cu tratament medicamentos atunci când este necesar.
+
+
+
+Hipercolesterolemie secundară
+Afecțiune subiacentă · Cauză tratabilă
+Colesterolul crescut poate rezulta dintr-o afecțiune subiacentă — hipotiroidism, diabet zaharat de tip 2 necontrolat, boală renală cronică, sindrom nefrotic sau boală hepatică — ori din medicamente precum corticosteroizii, diureticele tiazidice sau anumite antipsihotice. Tratarea cauzei îmbunătățește adesea semnificativ valorile lipidice.
+
+
+
+Dislipidemie mixtă
+LDL crescut + trigliceride · Risc complex
+Combină LDL și trigliceride crescute, adesea cu HDL scăzut („colesterolul bun”). Este frecvent asociată cu sindrom metabolic, rezistență la insulină și obezitate. Necesită o abordare terapeutică multiplă, orientată asupra mai multor fracțiuni lipidice.
+
+Secțiunea 03Cauze și factori de riscCauze geneticeHipercolesterolemia familială este cea mai importantă cauză genetică a bolii cardiovasculare premature. Ea rezultă în principal din mutații ale genei receptorului LDL — mecanismul celular prin care colesterolul LDL este eliminat din sânge. Când receptorii LDL lipsesc sau sunt insuficienți, LDL se acumulează în sânge și se depune treptat în pereții arterelor. Afecțiunea este autozomal dominantă, ceea ce înseamnă că o singură copie a genei afectate este suficientă. Copiii unui părinte afectat au o probabilitate de 50% să o moștenească.Cauze legate de stilul de viață și mediuPentru majoritatea persoanelor, colesterolul crescut rezultă din interacțiunea dintre predispoziția genetică și stilul de viață. Fiecare dintre următorii factori este asociat independent cu valori crescute ale LDL sau colesterolului total, iar combinarea lor amplifică substanțial riscul.
+
+
+Alimentație bogată în grăsimi saturate
+Carnea roșie, lactatele grase, untul, uleiul de cocos și uleiul de palmier cresc LDL. Grăsimile trans sunt cele mai nocive și sunt în prezent în mare parte interzise în producția alimentară din UE.
+
+
+
+Sedentarism
+Exercițiul aerobic regulat crește HDL („colesterolul bun”) și reduce trigliceridele. Sedentarismul are efectul opus și agravează independent profilul lipidic.
+
+
+
+Obezitate
+Excesul ponderal — în special grăsimea abdominală — este asociat cu trigliceride crescute, HDL scăzut și adesea LDL crescut. Scăderea în greutate îmbunătățește toți parametrii lipidici.
+
+
+
+Fumat
+Fumul de tutun reduce HDL și accelerează oxidarea LDL, făcându-l mai aterogen, chiar și la valori comparabile ale colesterolului total.
+
+
+
+Consum excesiv de alcool
+Consumul ridicat de alcool crește semnificativ trigliceridele. Consumul moderat poate crește ușor HDL, dar nu compensează efectele cardiovasculare mai ample ale excesului.
+
+
+
+Vârstă
+Valorile colesterolului tind să crească odată cu vârsta, pe măsură ce activitatea receptorilor LDL scade. La femeile aflate după menopauză, LDL crește semnificativ, explicând parțial apropierea riscului cardiovascular dintre sexe după menopauză.
+
+
+
+Antecedente familiale
+O rudă de gradul întâi cu boală cardiovasculară precoce sau HF cunoscută crește substanțial riscul personal și justifică un screening mai timpuriu și mai frecvent.
+
+
+
+Comorbidități
+Hipotiroidismul, diabetul zaharat de tip 2, boala renală cronică, sindromul nefrotic și boala hepatică obstructivă cresc independent colesterolul și necesită o abordare specifică.
+
+Secțiunea 04Semne și simptomeAceasta este principala provocare clinică a hipercolesterolemiei: este aproape complet asimptomatică până când apare o afectare arterială importantă. Colesterolul nu provoacă direct durere, febră sau dificultăți de respirație. Pentru mulți pacienți, primul „simptom” este un infarct sau un AVC — adesea la o persoană care cu o zi înainte se simțea perfect.În cazurile severe sau de lungă durată — în special în hipercolesterolemia familială — pot apărea anumite semne fizice. Recunoașterea lor este importantă, deoarece sunt adesea singurele indicii vizibile ale unei anomalii lipidice semnificative:
+
+
+
+Xantoame
+Depozite de colesterol sub piele. Xantoamele tendinoase, de obicei la tendonul lui Ahile sau la articulațiile degetelor, sunt puternic asociate cu HF și sunt aproape diagnostice.
+
+
+
+
+
+Xantelasme
+Plăci moi, gălbui, pe pleoape sau în apropierea lor. Deși sunt observate adesea din motive estetice, reprezintă un marker de dislipidemie și justifică efectuarea unui profil lipidic.
+
+
+
+
+
+Arc cornean
+Un arc sau inel gri ori alb în jurul irisului. La persoanele sub 45 de ani, arcul cornean poate indica hipercolesterolemie și necesită investigații.
+
+
+
+
+
+Durere toracică (angină)
+Nu este provocată direct de colesterol, ci este o consecință a aterosclerozei pe care acesta o favorizează. Senzația de apăsare sau disconfortul toracic la efort necesită evaluare cardiovasculară urgentă.
+
+
+
+
+
+Durere la nivelul picioarelor în timpul mersului
+Boala arterială periferică — durerea de gambă la efort care cedează în repaus (claudicație) — este provocată de ateroscleroza arterelor membrelor inferioare.
+
+
+
+
+
+Simptome de AIT sau AVC
+Slăbiciunea bruscă, dificultățile de vorbire, asimetria feței sau pierderea vederii pot indica un accident ischemic tranzitoriu (AIT) sau un AVC — o urgență medicală.
+
+
+
+FAST — Recunoașteți semnele unui AVC:
+      Față asimetrică · Arm (braț) — slăbiciune · Speech (vorbire) — dificultate · Time (timp) — sunați la 112. AVC-ul este o urgență medicală. Dacă observați aceste semne, sunați imediat la 112. Nu conduceți până la spital. Fiecare minut contează.
+    Mesajul clinic esențial este clar: nu așteptați apariția simptomelor. Profilul lipidic à jeun este singura metodă sigură de a detecta colesterolul crescut. Este simplu, accesibil și disponibil pe scară largă prin medicul de familie. Absența simptomelor nu garantează sănătatea — tocmai atunci este cel mai important să acționați.Secțiunea 05Tratamente actuale pentru hipercolesterolemie în PortugaliaTratamentul hipercolesterolemiei în Portugalia urmează recomandările  Direcção-Geral da Saúde (DGS),  Ghidurile Societății Europene de Cardiologie (ESC) / Societății Europene de Ateroscleroză (EAS) pentru dislipidemii  (actualizate în 2024) și recomandările  Sociedade Portuguesa de Cardiologia (SPC). Obiectivul tratamentului nu este stabilit doar de o valoare a colesterolului, ci de ținta LDL determinată de riscul cardiovascular individual; pacienții cu risc mai mare necesită o reducere mai intensă a LDL.Ținte LDL în funcție de categoria de riscGhidurile ESC/EAS 2024 stabilesc următoarele ținte LDL: risc foarte ridicat (boală cardiovasculară existentă, boală renală severă, diabet cu afectare de organ) — sub 1,4 mmol/L; risc ridicat — sub 1,8 mmol/L; risc moderat — sub 2,6 mmol/L; risc scăzut — sub 3,0 mmol/L. Medicul vă va calcula riscul cardiovascular cu instrumente validate (SCORE2, QRISK3), pentru a stabili ținta potrivită.
+
+Prima linie · Toate grupele de risc
+Statine (inhibitori ai HMG-CoA reductazei)
+Atorvastatină · Rosuvastatină · Simvastatină
+Reprezintă baza tratamentului colesterolului de trei decenii. Statinele inhibă HMG-CoA reductaza, enzima-cheie a sintezei hepatice a colesterolului, reducând LDL cu 30 până la 55%, în funcție de substanță și doză. Statinele de intensitate mare (atorvastatină 40–80 mg, rosuvastatină 20–40 mg) sunt preferate la pacienții cu risc ridicat și foarte ridicat. Sunt disponibile prin SNS în Portugalia. Dovezile, inclusiv studiul Heart Protection și numeroase meta-analize, sunt printre cele mai solide din farmacologie.
+
+
+Linia a doua · Tratament suplimentar
+Ezetimib
+Ezetrol · Ezetimib generic
+Reduce absorbția intestinală a colesterolului și scade suplimentar LDL cu 15 până la 22% când este asociat unei statine. Studiul IMPROVE-IT a demonstrat o reducere modestă, dar reală, a evenimentelor cardiovasculare la pacienții cu risc ridicat. Este bine tolerat și disponibil prin SNS. În Portugalia, este tratamentul standard de linia a doua când statina singură nu atinge ținta LDL.
+
+
+Risc ridicat și HF · Inițiat de specialist
+Inhibitori PCSK9
+Evolocumab (Repatha) · Alirocumab (Praluent)
+Anticorpi monoclonali care blochează PCSK9 — proteina responsabilă de degradarea receptorilor LDL din celulele hepatice. Cresc disponibilitatea receptorilor și reduc LDL cu încă 50 până la 65% față de statină. Studiile FOURIER și ODYSSEY OUTCOMES au arătat reduceri de 15 până la 20% ale evenimentelor cardiovasculare majore. Se administrează prin injecție subcutanată din 2 în 2 sau din 4 în 4 săptămâni. În Portugalia sunt disponibile pe bază de prescripție de specialitate pentru HF și pacienți cu risc foarte ridicat.
+
+
+Inovator · Injecție la șase luni
+Inclisiran
+Leqvio
+O terapie cu ARN interferent mic (siARN) care reduce producția hepatică de PCSK9 la nivel genetic și scade LDL cu aproximativ 50%, prin doar două injecții pe an după doza inițială. Programul de studii ORION a demonstrat o reducere susținută a LDL și un profil de siguranță foarte bun. Este disponibilă în Portugalia prin servicii specializate de lipidologie și cardiologie.
+
+
+Trigliceride crescute
+Fibrați și acizi grași omega-3
+Fenofibrat · Acid icosapent etilic (Vascepa)
+Fibrații reduc în principal trigliceridele și cresc moderat HDL. Acidul icosapent etilic purificat (EPA omega-3) a redus cu 25% evenimentele cardiovasculare în studiul REDUCE-IT, la pacienți cu risc ridicat și trigliceride crescute în ciuda statinelor. Rezultatul este reflectat în ghidurile internaționale actualizate. Este disponibil în Portugalia cu prescripție de specialitate.
+
+
+Intoleranță la statine · Alternativă
+Acid bempedoic
+Nilemdo · Nustendi (cu ezetimib)
+Un medicament oral care inhibă sinteza colesterolului în amonte de statine, prin ATP-citrat liază. Deoarece este activat doar în ficat, nu în țesutul muscular, nu provoacă miopatia care îi face pe unii pacienți să renunțe la statine. Studiul CLEAR Outcomes (2023) a confirmat reducerea evenimentelor cardiovasculare majore la pacienții intoleranți la statine. Este disponibil în Portugalia pentru acești pacienți.
+
+
+Actualizarea ghidurilor ESC/EAS 2024:
+      Ghidurile europene actualizate subliniază că pacienții cu risc foarte ridicat — cu boală cardiovasculară existentă sau hipercolesterolemie familială — trebuie să atingă un LDL sub 1,4 mmol/L și că terapia combinată (statină + ezetimib ± inhibitor PCSK9 sau inclisiran) trebuie începută devreme, nu etapizat, când monoterapia are șanse mici să atingă ținta. Dacă aveți boală cardiacă și LDL rămâne peste țintă, discutați cu medicul sau cardiologul despre intensificarea tratamentului.
+    Secțiunea 06Prevenție și stil de viață: ce puteți faceSchimbarea stilului de viață este prima și cea mai durabilă intervenție pentru controlul colesterolului și reducerea riscului cardiovascular. La persoanele cu risc scăzut sau moderat, schimbările alimentare și de stil de viață menținute constant pot reduce clinic semnificativ LDL și, în multe cazuri, pot evita medicația. Chiar și în timpul tratamentului, aceste schimbări îi amplifică eficiența și reduc independent riscul cardiovascular prin mecanisme care depășesc colesterolul.
+
+
+Adoptați o alimentație cardioprotectoare
+Înlocuiți grăsimile saturate (carne roșie, unt, smântână, ulei de cocos) cu grăsimi nesaturate (ulei de măsline, nuci, avocado, pește gras). Alimentația mediteraneeană — recomandată pe scară largă de ESC și susținută de studiul PREDIMED — reduce evenimentele cardiovasculare independent de colesterol. Creșteți aportul de fibre din ovăz, leguminoase și legume.
+
+
+
+Faceți mișcare regulat
+Cel puțin 150 de minute pe săptămână de exercițiu aerobic moderat (mers rapid, ciclism, înot). Exercițiul aerobic crește HDL, reduce trigliceridele și scade riscul cardiovascular dincolo de efectul asupra colesterolului. Antrenamentul de forță aduce beneficii metabolice suplimentare.
+
+
+
+Renunțați la fumat
+Renunțarea la fumat este una dintre intervențiile cu cel mai mare impact asupra riscului cardiovascular. Crește HDL, reduce oxidarea LDL și înjumătățește riscul cardiovascular în 1 până la 2 ani. Medicul poate prescrie sprijin farmacologic (vareniclina, substituție nicotinică, bupropion), toate disponibile în Portugalia prin SNS.
+
+
+
+Mențineți o greutate sănătoasă
+O scădere de 5 până la 10% din greutatea corporală îmbunătățește semnificativ întregul profil lipidic: reduce LDL și trigliceridele și crește HDL. Controlul greutății reduce independent tensiunea arterială și rezistența la insulină, cele mai frecvente două comorbidități asociate colesterolului crescut.
+
+
+
+Limitați consumul de alcool
+Alcoolul crește semnificativ trigliceridele. Respectați recomandările DGS: nu mai mult de 10 până la 17 unități pe săptăm

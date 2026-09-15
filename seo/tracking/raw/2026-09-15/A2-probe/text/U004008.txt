@@ -1,0 +1,390 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cmr.ro","https://regmed.cmr.ro","https://www.dataprotection.ro"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetul: Boala Tăcută","description":"Peste 1,3 milioane de români trăiesc cu diabet, iar mulți alții rămân nediagnosticați. Ghid complet despre cauze, semne de alarmă, cele mai bune tratamente disponibile și dezvoltările viitoare. Scris de un medic înregistrat.","url":"https://www.myglobalhealth.online/romania/ro/blog/diabetul-boala-tacuta","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/romania/ro/blog/diabetul-boala-tacuta#webpage","url":"https://www.myglobalhealth.online/romania/ro/blog/diabetul-boala-tacuta","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/ro/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetul%3A+Boala+T%C4%83cut%C4%83&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F576be3ad-21fc-4d68-bf12-cca2b14a3e52-33852.webp&v=2026-07-20.1-60w6qg","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologie"},"datePublished":"2026-07-19T06:58:26.082Z","publishingPrinciples":"https://www.myglobalhealth.online/romania/ro/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/romania/ro/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Acasă","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/romania/ro/blog"},{"@type":"ListItem","position":3,"name":"Diabetul: Boala Tăcută","item":"https://www.myglobalhealth.online/romania/ro/blog/diabetul-boala-tacuta"}]}]Toate articoleleEndocrinologieDiabetul: Boala TăcutăDiabetul zaharat este una dintre cele mai răspândite boli cronice din România și, în același timp, una dintre cele mai subestimate. Cu un diagnostic corect și monitorizare regulată, persoanele cu diabet pot avea o viață plină și sănătoasă, mai ales datorită progreselor terapeutice recente precum GLP-1 și SGLT2.Global Health Medical Team19 iulie 202620 min citire+Pe această paginăDiabetul în România: Înțelegerea Dimensiunii ProblemeiTipuri de DiabetCauze și Factori de RiscSemne și SimptomeTratamente Actuale pentru Diabet în RomâniaImportanța Controalelor RegulateViitorul Tratamentului DiabetuluiInstituții și Resurse de Referință în RomâniaÎntrebări Frecvente
+
+
+
+  
+  
+    
+      
+      
+      
+      Cauze, Simptome, Tratamente și Viitorul Îngrijirii
+      Se estimează că peste 1,3 milioane de români trăiesc cu diabet, iar mii de alte cazuri rămân nediagnosticate. Ghidul prezintă cauze, semne de alarmă, tratamentele disponibile astăzi, importanța controalelor regulate și terapiile emergente care ar putea transforma îngrijirea diabetului în anii următori.
+      
+        Bazat pe dovezi
+        Aliniat cu SRDNBM și CNAS
+        Actualizat în iunie 2026
+      
+      Scris de Dr. Tiago Miguel Figueira · Ordem dos Médicos nr. 77986 · Director Clinic, Global Health
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      TF
+      
+        Scris de Dr. Tiago Miguel Figueira
+        Director Clinic · Ordem dos Médicos nr. 77986 · Medicină Generală și de Familie
+      
+      10 MIN CITIRE
+    
+
+    Diabetul zaharat este una dintre cele mai răspândite boli cronice din România și, în același timp, una dintre cele mai subestimate. Este adesea numit „boala tăcută”, deoarece diabetul de tip 2, care reprezintă peste 90% din cazuri, se poate dezvolta lent, de-a lungul mai multor ani, fără simptome vizibile. În momentul diagnosticării, boala este de multe ori deja prezentă de ceva vreme.
+
+    Diabetul poate fi gestionat prin tratament și monitorizare. Cu diagnosticul corect, tratamentul adecvat și monitorizare regulată, persoanele cu diabet pot avea o viață plină și sănătoasă. Iar odată cu progresele terapeutice din ultimul deceniu (în special apariția agoniștilor de receptor GLP-1 și a inhibitorilor SGLT2) opțiunile clinice disponibile astăzi în România s-au extins.
+
+    
+    
+    Secțiunea 01
+    Diabetul în România: Înțelegerea Dimensiunii Problemei
+
+    Conform studiului epidemiologic PREDATORR, realizat de Societatea Română de Diabet, Nutriție și Boli Metabolice (SRDNBM) în perioada 2012–2014 (singurul studiu național de prevalență a diabetului din România), aproximativ 11,6% din populația adultă suferă de diabet zaharat, iar 16,5% se află în stadiul de prediabet. Potrivit datelor Institutului Național de Sănătate Publică (INSP), 1.485.087 de persoane erau înregistrate în evidențele medicale în 2024, dintre care 114.904 diagnosticate în același an. Estimările Federației Internaționale de Diabet (IDF) indică aproximativ 1,3 milioane de adulți cu vârste între 20 și 79 de ani cu diabet în România în 2024, o prevalență comparabilă cu media europeană.
+
+    
+      
+        11,6%
+        Din populația adultă suferă de diabet zaharat (studiul PREDATORR, SRDNBM)
+      
+      
+        16,5%
+        Din populația adultă se află în stadiul de prediabet
+      
+      
+        1,48M
+        Persoane înregistrate în evidențele medicale în 2024 (INSP)
+      
+      
+        1,3M
+        Adulți (20–79 ani) cu diabet estimați de IDF pentru 2024
+      
+    
+    Surse: Societatea Română de Diabet, Nutriție și Boli Metabolice (studiul PREDATORR; Institutul Național de Sănătate Publică (INSP); Casa Națională de Asigurări de Sănătate (CNAS); International Diabetes Federation) Diabetes Atlas 2024.
+
+    Conform datelor Casei Naționale de Asigurări de Sănătate (CNAS), doar aproximativ 1,3 milioane de pacienți cu diabet se află sub tratament prin Programul Național de Diabet Zaharat: puțin peste jumătate din totalul cazurilor estimate. Diferența reprezintă fie persoane care nu urmează tratament farmacologic, fie cazuri încă nediagnosticate, confirmând tendința observată la nivel global. O particularitate a sistemului românesc, subliniată de SRDNBM, este că îngrijirea persoanelor cu diabet este asigurată exclusiv de medici specializați în diabet, nutriție și boli metabolice, o specialitate de sine stătătoare, prezentă în puține state la nivel mondial.
+
+    
+      Sunteți în risc și nu știți?
+      O parte semnificativă a persoanelor cu diabet de tip 2 din România rămâne nediagnosticată. Dacă aveți factori de risc (antecedente familiale de diabet, exces ponderal, tensiune arterială crescută sau sedentarism), discutați cu medicul de familie despre efectuarea unei glicemii a jeun sau a unei HbA1c. Diagnosticul precoce este esențial pentru prevenirea complicațiilor.
+    
+
+    
+    
+    Secțiunea 02
+    Tipuri de Diabet
+
+    Nu orice diabet este la fel. Înțelegerea tipului pe care îl aveți (sau pentru care sunteți în risc) este primul pas către un management eficient.
+
+    
+      
+        🔵
+        Diabet Tip 1
+        Autoimun · Insulinodependent
+        Sistemul imunitar distruge celulele beta producătoare de insulină din pancreas. Organismul produce puțină sau deloc insulină. Necesită insulinoterapie pe tot parcursul vieții. Apare de obicei în copilărie sau la vârsta adultă tânără.
+      
+      
+        🟠
+        Diabet Tip 2
+        Stil de viață & genetică · Progresiv
+        Organismul devine rezistent la insulină sau nu produce suficientă. Puternic asociat cu factorii de stil de viață. Cea mai frecventă formă în România, reprezentând peste 90% din cazuri. Poate fi inițial controlat prin alimentație, exercițiu fizic și medicație orală, deși mulți pacienți ajung să necesite insulină cu timpul.
+      
+      
+        🟡
+        Diabet Gestațional
+        Legat de sarcină · De obicei tranzitoriu
+        Se dezvoltă în timpul sarcinii, când modificările hormonale afectează funcția insulinei. De regulă se rezolvă după naștere, dar crește semnificativ riscul pe viață de diabet de tip 2 atât pentru mamă, cât și pentru copil. Cercetările recente arată o creștere a incidenței acestui tip de diabet în România, cu disparități tot mai reduse între mediul urban și cel rural.
+      
+      
+        ⚪
+        Prediabet
+        Prevenibil · Adesea reversibil
+        Glicemia este mai mare decât normal, dar fără a atinge nivelurile diagnostice de diabet. O fereastră critică de intervenție: schimbările stilului de viață în această etapă pot preveni sau întârzia semnificativ apariția diabetului de tip 2. Conform SRDNBM, 16,5% din populația adultă a României se află în această situație, adesea fără să știe.
+      
+    
+
+    
+    
+    Secțiunea 03
+    Cauze și Factori de Risc
+
+    Diabetul de Tip 1
+    Cauza exactă a diabetului de tip 1 rămâne incomplet elucidată. Este o boală autoimună: sistemul imunitar atacă și distruge în mod eronat celulele beta din pancreas, responsabile de producerea insulinei. Factorii genetici joacă un rol, la fel ca posibila expunere la anumite infecții virale. Cercetarea în acest domeniu este coordonată în România prin institute precum Institutul Național de Diabet, Nutriție și Boli Metabolice „N.C. Paulescu” din București, alături de societăți de specialitate precum SRDNBM.
+
+    Diabetul de Tip 2
+    Diabetul de tip 2 are un set de cauze mai complex și modificabil, combinând predispoziția genetică cu factori de stil de viață și de mediu. Mecanismul central este rezistența la insulină (celulele organismului nu mai răspund eficient la insulină) asociată cu un declin progresiv al capacității pancreasului de a compensa printr-o producție mai mare.
+
+    
+      
+        ⚖️
+        Excesul de greutate corporală
+        În special grăsimea abdominală (viscerală). Obezitatea este cel mai important factor de risc modificabil pentru diabetul de tip 2.
+      
+      
+        🛋️
+        Sedentarismul
+        Comportamentul sedentar reduce sensibilitatea la insulină. Peste 80% dintre adulții din România declară zero activitate aerobă de agrement săptămânal: unul dintre cele mai ridicate procente din UE.
+      
+      
+        🍞
+        Alimentație bogată în produse ultraprocesate
+        Consumul ridicat de carbohidrați rafinați, zahăr și alimente ultraprocesate este puternic asociat cu rezistența la insulină.
+      
+      
+        👨‍👩‍👧
+        Antecedente familiale
+        Un rudă de gradul întâi cu diabet de tip 2 crește semnificativ riscul personal de a dezvolta boala.
+      
+      
+        🎂
+        Vârsta peste 45 de ani
+        Riscul crește odată cu vârsta. Prevalența diabetului este semnificativ mai mare la persoanele vârstnice, conform datelor INSP.
+      
+      
+        🩺
+        Hipertensiune arterială sau dislipidemie
+        Factorii de risc metabolic tind să apară împreună. Hipertensiunea și tulburările lipidice coexistă frecvent cu rezistența la insulină.
+      
+      
+        🤰
+        Diabet gestațional în antecedente
+        Femeile care au dezvoltat diabet gestațional au un risc considerabil mai mare, pe tot parcursul vieții, de a dezvolta diabet de tip 2.
+      
+      
+        🚬
+        Fumatul
+        Fumatul crește riscul de diabet de tip 2 și agravează prognosticul cardiovascular la persoanele cu diabet. Renunțarea la fumat este recomandată ca parte a managementului complet al bolii.
+      
+    
+
+    
+    
+    Secțiunea 04
+    Semne și Simptome
+
+    Simptomele variază considerabil între diabetul de tip 1 și tip 2. Tipul 1 se manifestă adesea acut, cu debut rapid al simptomelor, ce pot indica cetoacidoză diabetică (CAD), o urgență medicală. Tipul 2, dimpotrivă, se dezvoltă de obicei lent și silențios, de-a lungul mai multor ani, cu simptome atât de ușoare sau graduale încât mulți oameni le atribuie îmbătrânirii, stresului sau oboselii.
+
+    
+      
+        💧
+        
+          Sete excesivă
+          Sete persistentă și greu de potolit (polidipsie) în timp ce rinichii lucrează intens pentru a filtra excesul de glucoză.
+        
+      
+      
+        🚽
+        
+          Urinare frecventă
+          Poliurie, în special noaptea (nicturie). Adesea cel mai deranjant simptom inițial.
+        
+      
+      
+        😴
+        
+          Oboseală persistentă
+          Epuizare constantă chiar și după odihnă adecvată, cauzată de lipsa glucozei ca sursă de energie pentru celule.
+        
+      
+      
+        ⚖️
+        
+          Pierdere inexplicabilă în greutate
+          Mai ales în cazul tipului 1: organismul descompune grăsimile și mușchii pentru energie în absența insulinei.
+        
+      
+      
+        👁️
+        
+          Vedere încețoșată
+          Glicemia ridicată provoacă modificări la nivelul cristalinului ochiului, afectând temporar focalizarea vizuală.
+        
+      
+      
+        🩹
+        
+          Vindecare lentă a rănilor
+          Circulația compromisă și funcția imunitară afectată încetinesc vindecarea tăieturilor, rănilor și infecțiilor.
+        
+      
+      
+        🤚
+        
+          Furnicături sau amorțeală
+          Neuropatia periferică (la nivelul mâinilor și picioarelor) poate fi un semn timpuriu, în special în tipul 2.
+        
+      
+      
+        🍽️
+        
+          Foame constantă
+          Polifagie (foame persistentă chiar și după masă) apare atunci când celulele nu pot absorbi eficient glucoza.
+        
+      
+    
+
+    
+      Când să solicitați îngrijire de urgență:
+      Dacă dumneavoastră sau un membru al familiei prezintă instalare bruscă a setei intense, urinare excesivă, vărsături, dureri abdominale, confuzie sau respirație cu miros de acetonă (mai ales la un copil sau adult tânăr), poate fi vorba de cetoacidoză diabetică (CAD), o urgență medicală. Sunați imediat la 112 sau prezentați-vă la cea mai apropiată unitate de urgență.
+    
+
+    
+    
+    Secțiunea 05
+    Tratamente Actuale pentru Diabet în România
+
+    Tratamentul diabetului a trecut printr-o adevărată revoluție în ultimul deceniu. În România, Societatea Română de Diabet, Nutriție și Boli Metabolice (SRDNBM) stabilește ghidurile clinice de referință, aliniate cu recomandările internaționale ale American Diabetes Association (ADA). Accesul la medicație și condițiile de decontare sunt reglementate prin Programul Național de Diabet Zaharat, administrat de Casa Națională de Asigurări de Sănătate (CNAS).
+
+    Modificarea Stilului de Viață: Baza Oricărui Tratament
+    Pentru tipul 1 și tipul 2 de diabet, stilul de viață este fundamentul managementului bolii. Pentru tipul 2 în special, schimbarea alimentației și creșterea activității fizice pot reduce semnificativ HbA1c, pot îmbunătăți sensibilitatea la insulină și, în unele cazuri (mai ales după chirurgie bariatrică sau diete cu aport caloric foarte scăzut) pot conduce la remisie susținută. Programele de educație structurată desfășurate în cabinetele de diabetologie oferă sprijin dovedit științific pentru gestionarea stilului de viață.
+
+    Tratamentul Farmacologic
+    Mai jos sunt prezentate principalele clase de medicamente disponibile în România. Deciziile terapeutice sunt individualizate: ghidurile SRDNBM și ADA 2025 subliniază o abordare centrată pe pacient, care ia în considerare riscul cardiovascular, funcția renală, greutatea și preferințele personale.
+
+    
+      
+        Prima linie · Tip 2
+        Metformină
+        Glucophage · Generice (decontate CNAS)
+        Agentul oral consacrat de primă linie pentru diabetul de tip 2. Reduce glicemia prin scăderea producției hepatice de glucoză. Bine tolerată, accesibilă și larg disponibilă. Rămâne punctul de pornire standard în majoritatea schemelor terapeutice pentru tipul 2 în România.
+      
+      
+        Protecție cardiorenală
+        Agoniști ai receptorului GLP-1
+        Semaglutidă (Ozempic, Wegovy) · Liraglutidă (Victoza)
+        O clasă transformatoare de medicamente injectabile (și acum orale) care imită hormonul intestinal GLP-1. Reduc glicemia, favorizează o pierdere semnificativă în greutate și reduc riscul cardiovascular. Ghidurile ADA 2025 le recomandă cu prioritate la pacienții cu boală cardiovasculară stabilită sau risc ridicat. Disponibile în România pe bază de prescripție medicală.
+      
+      
+        Protecție cardiorenală
+        Inhibitori SGLT2
+        Empagliflozin (Jardiance) · Dapagliflozin (Forxiga)
+        Aceste comprimate reduc glicemia determinând eliminarea excesului de zahăr prin urină. Protejează independent inima și rinichii și sunt recomandate ca primă linie la pacienții cu insuficiență cardiacă sau boală renală cronică, indiferent de valoarea HbA1c. Bază solidă de dovezi din studiile EMPA-REG OUTCOME și CREDENCE.
+      
+      
+        Control glicemic
+        Inhibitori DPP-4
+        Sitagliptină (Januvia) · Linagliptină (Trajenta)
+        Comprimate orale care stimulează secreția de insulină în funcție de nivelul glicemiei. Neutre din punct de vedere al greutății, cu risc scăzut de hipoglicemie. Folosite adesea atunci când agoniștii GLP-1 sau inhibitorii SGLT2 nu sunt toleraţi sau potriviți.
+      
+      
+        Tip 1 și tip 2 avansat
+        Insulinoterapia
+        Insuline bazale, bolus, premixate · Pompe de insulină
+        Esențială pentru toți pacienții cu tip 1 și pentru mulți cu tip 2. Insulinele analog moderne oferă profiluri de acțiune mai previzibile decât formulările mai vechi. Pompele de insulină sunt disponibile pentru pacienți selectați, decontate prin sistemul de asigurări de sănătate.
+      
+      
+        Tip 1 · Nou standard
+        Monitorizarea Continuă a Glicemiei (MCG)
+        FreeStyle Libre · Dexcom · Medtronic
+        MCG elimină necesitatea înțepăturilor în deget, oferă tendințe ale glicemiei în timp real și alerte, și îmbunătățește controlul glicemic. Accesul la MCG este decontat pentru pacienții cu diabet de tip 1 în anumite condiții stabilite de CNAS. Sistemele de tip „ansă închisă” sunt disponibile în centre specializate.
+      
+    
+
+    
+      Actualizarea ghidurilor ADA 2025:
+      Ghidurile ADA 2025 subliniază că agoniștii GLP-1 și inhibitorii SGLT2 ar trebui prioritizați la pacienții cu diabet de tip 2 care prezintă boală cardiovasculară stabilită sau risc ridicat, insuficiență cardiacă sau boală renală cronică, indiferent de valoarea HbA1c. Dacă aveți diabet de tip 2 și oricare dintre aceste afecțiuni, discutați cu medicul dumneavoastră dacă aceste clase terapeutice sunt potrivite pentru dumneavoastră.
+    
+
+    
+    
+    Secțiunea 06
+    Importanța Controalelor Regulate
+
+    Diabetul este o boală cronică ce evoluează în timp, iar complicațiile sale (dacă nu sunt detectate) pot fi grave și ireversibile. Retinopatia diabetică este una dintre principalele cauze de orbire la adulții în vârstă activă din România. Nefropatia diabetică este un factor major al bolii renale cronice terminale. Neuropatia periferică determină complicații ale piciorului diabetic care, în cazurile severe, pot duce la amputație.
+
+    Cercetările de decenii demonstrează că toate aceste complicații pot fi în mare măsură prevenite (sau semnificativ întârziate) printr-un bun control glicemic, gestionarea tensiunii arteriale și monitorizare regulată. Controlul anual structurat al pacientului cu diabet este una dintre cele mai bine fundamentate și mai eficiente intervenții din întreaga medicină.
+
+    Ce Trebuie să Includă Controlul Anual de Diabet
+
+    
+      Măsurarea HbA1c (media glicemiei din ultimele 3 luni)
+      Măsurarea tensiunii arteriale și revizuirea tratamentului antihipertensiv
+      Funcția renală: rata de filtrare glomerulară estimată (eGFR) și raportul albumină/creatinină urinară
+      Colesterol și profil lipidic complet
+      Evaluarea greutății și a indicelui de masă corporală (IMC)
+      Examinarea picioarelor, inclusiv evaluarea pulsului și a sensibilității
+      Screening pentru retinopatie diabetică: examen de fund de ochi sau retinografie
+      Revizuirea și ajustarea medicației, dacă este necesar
+      Evaluarea aderenței la planul de autogestionare a diabetului
+      Evaluarea statusului de fumător și sprijin pentru renunțare, dacă este cazul
+      Vaccinarea antigripală (recomandată ferm persoanelor cu diabet)
+    
+
+    Screening pentru Cei Fără Diagnostic
+    Dacă aveți factori de risc pentru diabetul de tip 2 și nu ați fost niciodată testat, medicul de familie poate solicita o glicemie a jeun sau o HbA1c: analize simple, disponibile în laboratoare din întreaga țară. Acest lucru este deosebit de important dacă aveți peste 45 de ani, antecedente familiale de diabet, tensiune arterială crescută sau ați avut exces ponderal în timpul sarcinii. Detectarea precoce a prediabetului oferă o fereastră reală de oportunitate pentru a preveni sau întârzia apariția diabetului de tip 2 prin schimbarea stilului de viață.
+
+    
+      Screening pentru retinopatie diabetică în România:
+      Societatea Română de Diabet, Nutriție și Boli Metabolice recomandă ca toți pacienții cu diabet să efectueze anual un screening pentru retinopatie diabetică, prin examen de fund de ochi sau retinografie. Dacă aveți diabet și nu ați efectuat recent acest control, discutați cu medicul dumneavoastră diabetolog sau de familie.
+    
+
+    
+    
+    Secțiunea 07
+    Viitorul Tratamentului Diabetului
+
+    Ritmul inovației în medicina diabetului este fără precedent. Mai multe direcții de cercetare (unele deja aflate în studii clinice avansate) au potențialul de a transforma fundamental ce înseamnă să trăiești cu diabet în următorul deceniu.
+
+    
+      
+        Fază 1/2/3 · Depunere reglementară în 2026
+        Terapia cu Celule Stem (celule beta)
+        Zimislecel (fost VX-880), dezvoltat de Vertex Pharmaceuticals, presupune infuzia de celule insulare producătoare de insulină, complet diferențiate din celule stem, în vena portă hepatică, cu scopul de a restabili producția endogenă de insulină în diabetul de tip 1. Până în iunie 2025, studiul pivot includea 50 de participanți, cu depunere reglementară estimată pentru 2026. O analiză publicată în PMC (2025) descrie această abordare ca fiind potențial „transformatoare”.
+      
+      
+        Dezvoltare clinică
+        Pancreasul Artificial
+        Sistemele de administrare automată a insulinei în buclă închisă (care combină monitorizarea continuă a glicemiei cu pompe de insulină automatizate) reprezintă deja un progres major pentru pacienții cu tip 1. Următoarea generație a acestor sisteme încorporează algoritmi de învățare automată pentru a anticipa fluctuațiile glicemiei înainte ca acestea să apară.
+      
+      
+        Terapii emergente
+        Agoniști Duali și Tripli de Receptori
+        Tirzepatida (Mounjaro), un agonist dual GIP/GLP-1, a demonstrat reduceri superioare ale HbA1c și pierderi în greutate mai mari comparativ cu agoniștii GLP-1 existenți și este deja disponibilă în România. Agoniștii tripli (GLP-1/GIP/glucagon) se află în studii clinice avansate și ar putea oferi beneficii metabolice și mai mari.
+      
+      
+        Cercetare în imunoterapie
+        Modularea Imunitară în Tipul 1
+        Teplizumab (anticorp monoclonal anti-CD3) a demonstrat, în studii clinice, întârzierea debutului clinic al diabetului de tip 1 cu aproximativ doi ani la persoanele cu risc crescut. Cercetarea privind inhibitorii de punct de control imunitar și inducerea toleranței continuă, cu scopul de a păstra funcția reziduală a celulelor beta la momentul diagnosticului.
+      
+      
+        Medicină de precizie
+        Genomică și Tratament Ghidat de IA
+        Caracterizarea genomică începe să identifice subtipuri de diabet care răspund diferit la anumite medicamente. Sistemele de monitorizare continuă a glicemiei bazate pe inteligență artificială, care învață tiparele metabolice individuale și oferă recomandări personalizate, sunt în dezvoltare.
+      
+      
+        Medicină regenerativă
+        Încapsularea Celulelor Beta
+        O strategie paralelă transplantului de celule stem constă în încapsularea celulelor producătoare de insulină în dispozitive protectoare de biomateriale, care le apără de distrugerea imunitară, eliminând potențial nevoia de imunosupresie. Diabetes Research Institute al Universității din Miami a demonstrat conceptul în studii clinice, primul pacient atingând independența de insulină.
+      
+    
+
+    Cercetarea privind terapia cu celule stem pentru diabetul de tip 1 este analizată în detaliu într-o publicație din 2025 în PMC (PMID: PMC12689004), care concluzionează că „terapia cu celule stem oferă o strategie dublă: regenerarea celulelor beta producătoare de insulină și reglarea răspunsurilor imunitare”. Deși un tratament definitiv rămâne un obiectiv al viitorului, direcția cercetării este mai promițătoare ca oricând.
+
+    
+    
+    Secțiunea 08
+    Instituții și Resurse de Referință în România
+
+    Dacă trăiți cu diabet în România, sau vă îngrijorează riscul de a-l dezvolta, următoarele organizații și servicii sunt principalele dumneavoastră puncte de referință pentru îngrijire clinică, educație și sprijin.
+
+    
+      🩺 Societatea Română de Diabet (SRDNBM)
+      🏥 CNAS: Programul Național de Diabet
+      📊 Institutul Național de Sănătate Publică
+      📋 Ministerul Sănătății
+      🔬 Institutul „N.C. Paulescu”
+      📋 Colegiul Medicilor din România
+      🚑 Urgențe: 112
+    
+
+    Societatea Română de Diabet, Nutriție și Boli Metabolice (SRDNBM)
+    SRDNBM este autoritatea științifică de referință pentru toate aspectele legate de îngrijirea diabetului în România. Este responsabilă de studiul epidemiologic PREDATORR (cel mai amplu studiu de prevalență a diabetului realizat în România) și emite anual comunicate și materiale de conștientizare cu ocazia Zilei Mondiale a Diabetului, 14 noiembrie.
+
+    CNAS și Programul Național de Diabet Zaharat
+    Casa Națională de Asigurări de Sănătate administrează Programul Național de Diabet Zaharat, prin care sunt decontate medicația și dispozitivele medicale pentru persoanele diagnosticate. Datele CNAS, corelate cu cele ale Institutului Național de Statistică, sunt folosite pentru monitorizarea evoluției bolii la nivel național.
+
+    Institutul Național de Sănătate Publică (INSP)
+    INSP, prin Centrul Național de Statistică și Inform

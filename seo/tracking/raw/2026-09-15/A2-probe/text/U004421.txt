@@ -1,0 +1,104 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cgcom.es","https://www.aepd.es"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}]{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Información legal","item":"https://www.myglobalhealth.online/spain/es/legal"},{"@type":"ListItem","position":3,"name":"Procedimiento de Reclamaciones","item":"https://www.myglobalhealth.online/spain/es/legal/complaints-procedure"}]}LegalEspaña · Aspectos legalesProcedimiento de ReclamacionesVersión 2 · Última actualización 18 July 2026Todos los documentos legalesGLOBAL HEALTH
+Procedimiento de ReclamacionesTodos los Mercados | www.myglobalhealth.online/complaintsFecha de entrada en vigor: 1 de julio de 2026
+
+Nos tomamos en serio todas las reclamaciones. Si algo no ha salido bien, queremos que nos lo comunique para poder solucionarlo. En esta página se explica cómo presentar una reclamación, qué ocurre a continuación y a dónde puede dirigirse si no logramos resolverla a su satisfacción.
+
+Cómo Presentar una Reclamación
+Escríbanos a globalhealth@myglobalhealth.online con el asunto "Formal Complaint" e incluya:
+
+Su nombre completo y la dirección de correo electrónico de su cuenta.
+Su número de referencia de reserva (si la reclamación se refiere a una consulta o pedido concreto).
+La fecha de la consulta, la reserva o el incidente.
+Una descripción clara de su reclamación y del resultado que desea obtener.
+Cualquier documentación justificativa o captura de pantalla pertinente.
+
+Aceptamos reclamaciones en inglés, portugués, checo, español, rumano y árabe.
+
+Qué Ocurre a Continuación
+
+Acuse de recibo — en un plazo de 2 días hábiles. Confirmaremos la recepción de su reclamación, le asignaremos un número de referencia y le indicaremos si se trata de un asunto de la Plataforma (gestionado directamente por nosotros) o de un asunto clínico (remitido al Facultativo).
+Investigación — en un plazo de 14 días hábiles. Investigamos su reclamación y, cuando afecte a un Facultativo, nos ponemos en contacto con él para conocer lo sucedido. Podremos contactar con usted durante este período para solicitar información adicional.
+Resolución — respuesta por escrito. Le enviaremos una respuesta por escrito en la que explicaremos nuestras conclusiones y cualquier medida adoptada o solución ofrecida. Si no podemos resolver el asunto en un plazo de 14 días hábiles, le informaremos de un nuevo plazo.
+
+
+Plazos de Respuesta
+
+FasePlazoAplicable a
+Acuse de recibo2 días hábilesTodas las reclamaciones
+Resolución — asunto de la Plataforma14 días hábilesPagos, reservas, cuestiones técnicas
+Resolución — asunto clínico (remitido al Facultativo)14 días hábiles desde la remisiónCalidad de la consulta, conducta profesional
+Reembolso (cuando proceda)14 días (UE) / 7 días hábiles (Brasil)Tras la decisión de reembolso confirmada
+
+
+Tipos de Reclamación
+
+Reclamaciones sobre la Plataforma
+Incluyen: errores de pago; fallos en la reserva; disputas sobre cancelaciones o reembolsos; incidencias técnicas; cuestiones de protección de datos; o cualquier asunto relacionado con el funcionamiento de la Plataforma. Estas reclamaciones son gestionadas directamente por Global Health.
+
+Reclamaciones clínicas
+Incluyen: cuestiones relativas a la calidad, la conducta o el resultado de una consulta médica; cuestiones relativas al comportamiento profesional de un Facultativo; o cuestiones relativas a una receta o derivación emitida a través de la Plataforma. Las reclamaciones clínicas se remiten al Facultativo correspondiente conforme a nuestro proceso formal de escalado. Si el Facultativo no responde de forma adecuada, Global Health procederá al escalado, incluyendo, cuando proceda, la suspensión o exclusión de la Plataforma y la remisión al colegio o autoridad reguladora médica correspondiente.
+
+Reclamaciones sobre protección de datos
+Si su reclamación se refiere al tratamiento de sus datos personales, póngase en contacto directamente con nuestro Delegado de Protección de Datos en a7med.maklad@outlook.com. Asimismo, tiene derecho a dirigirse a la autoridad de control en materia de protección de datos de su país — véase a continuación.
+
+Si No Podemos Resolver Su Reclamación
+Si no está satisfecho con nuestra respuesta, tiene derecho a acudir a un organismo independiente. Los organismos competentes dependen de su país y de la naturaleza de su reclamación:
+
+Irlanda
+
+Irish Medical Council (IMC) — Conducta profesional de un Facultativo. www.medicalcouncil.ie
+Competition and Consumer Protection Commission (CCPC) — Disputas sobre derechos de los consumidores. www.ccpc.ie
+Data Protection Commission (DPC) — Reclamaciones de protección de datos. www.dataprotection.ie
+Health Information and Quality Authority (HIQA) — Estándares de los servicios sanitarios. www.hiqa.ie
+
+
+Portugal
+
+Ordem dos Médicos — Conducta profesional de un Facultativo. www.ordemdosmedicos.pt
+Entidade Reguladora da Saúde (ERS) — Calidad de los servicios sanitarios. www.ers.pt
+CNPD — Reclamaciones de protección de datos. www.cnpd.pt
+Rede de Arbitragem de Conflitos de Consumo — Disputas de consumo. www.consumidor.gov.pt
+
+
+República Checa
+
+Česká lékařská komora (ČLK) — Conducta profesional de un Facultativo. www.lkcr.cz
+Ministerstvo zdravotnictví ČR (MZČR) — Reclamaciones sobre proveedores sanitarios. www.mzcr.cz
+ÚOÚ — Reclamaciones de protección de datos. www.uoou.cz
+Česká obchodní inspekce (ČOI) — Disputas de consumo. www.coi.cz
+
+
+España
+
+Consejo General de Colegios Oficiales de Médicos (CGCOM) — Conducta profesional de un Facultativo. www.cgcom.es
+AEPD — Reclamaciones de protección de datos. www.aepd.es
+Dirección General de Consumo / OMIC — Disputas de consumo. www.consumo.gob.es
+
+
+Rumanía
+
+Colegiul Medicilor din România (CMR) — Conducta profesional de un Facultativo. www.cmr.ro
+ANSPDCP — Reclamaciones de protección de datos. www.dataprotection.ro
+ANPC — Disputas de protección al consumidor. www.anpc.ro
+
+
+Brasil
+
+Conselho Federal de Medicina (CFM) — Conducta profesional de un Proveedor Médico. portal.cfm.org.br
+ANPD — Reclamaciones de protección de datos. www.gov.br/anpd
+Procon / consumidor.gov.br — Disputas de protección al consumidor. www.consumidor.gov.br
+
+
+Resolución de Litigios en Línea de la UE
+Para los pacientes en Estados miembros de la UE, la Comisión Europea pone a disposición una plataforma de Resolución de Litigios en Línea (RLL) para resolver disputas con comerciantes en línea. Puede presentar una reclamación en:
+https://ec.europa.eu/consumers/odr
+La plataforma de RLL está disponible para los pacientes en Irlanda, Portugal, República Checa, España y Rumanía. No está disponible para los pacientes en Brasil o el Reino Unido.
+
+Contacto
+Global Health — Reclamaciones
+Correo electrónico: globalhealth@myglobalhealth.online
+Asunto: "Formal Complaint"
+Delegado de Protección de Datos: a7med.maklad@outlook.com
+Sitio web: www.myglobalhealth.online/complaints
+
+El presente Procedimiento de Reclamaciones se aplica en todos los mercados en los que opera Global Health. Se revisa anualmente y se actualiza cuando cambian nuestros servicios, obligaciones normativas o mercados de operación.

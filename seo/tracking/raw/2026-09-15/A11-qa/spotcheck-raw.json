@@ -1,0 +1,697 @@
+[
+ {
+  "kind": "market_200",
+  "sheet": "08_Crawl_History",
+  "key": "U004633",
+  "url": "https://www.myglobalhealth.online/spain/ro/tools/sore-throat-checker",
+  "expected": {
+   "final_status": 200,
+   "http_status": 200,
+   "final_url": "https://www.myglobalhealth.online/spain/ro/tools/sore-throat-checker",
+   "title": "Amigdalit\u0103 sau Virus? Verificare Durere \u00een G\u00e2t Spania",
+   "canonical": "https://www.myglobalhealth.online/spain/ro/tools/sore-throat-checker"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/spain/ro/tools/sore-throat-checker",
+   "hops": [],
+   "title": "Amigdalit\u0103 sau Virus? Verificare Durere \u00een G\u00e2t Spania",
+   "canonical": "https://www.myglobalhealth.online/spain/ro/tools/sore-throat-checker",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "market_200",
+  "sheet": "08_Crawl_History",
+  "key": "U004570",
+  "url": "https://www.myglobalhealth.online/spain/ro/doctors/dr-alfredo-del-valle",
+  "expected": {
+   "final_status": 200,
+   "http_status": 200,
+   "final_url": "https://www.myglobalhealth.online/spain/ro/doctors/dr-alfredo-del-valle",
+   "title": "Dr Alfredo del Valle - Dermatolog | Global Health",
+   "canonical": "https://www.myglobalhealth.online/spain/ro/doctors/dr-alfredo-del-valle"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/spain/ro/doctors/dr-alfredo-del-valle",
+   "hops": [],
+   "title": "Dr Alfredo del Valle - Dermatolog | Global Health",
+   "canonical": "https://www.myglobalhealth.online/spain/ro/doctors/dr-alfredo-del-valle",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "market_200",
+  "sheet": "08_Crawl_History",
+  "key": "U004413",
+  "url": "https://www.myglobalhealth.online/spain/es/doctors/dr-silvina-irale",
+  "expected": {
+   "final_status": 200,
+   "http_status": 200,
+   "final_url": "https://www.myglobalhealth.online/spain/es/doctors/dr-silvina-irale",
+   "title": "Dra. Silvina Irale \u2014 Pediatr\u00eda y Medicina Est\u00e9tica | CGCOM 282889392",
+   "canonical": "https://www.myglobalhealth.online/spain/es/doctors/dr-silvina-irale"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/spain/es/doctors/dr-silvina-irale",
+   "hops": [],
+   "title": "Dra. Silvina Irale \u2014 Pediatr\u00eda y Medicina Est\u00e9tica | CGCOM 282889392",
+   "canonical": "https://www.myglobalhealth.online/spain/es/doctors/dr-silvina-irale",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "market_200",
+  "sheet": "08_Crawl_History",
+  "key": "U003088",
+  "url": "https://www.myglobalhealth.online/portugal/ro/doctors/dr-pedro-santos",
+  "expected": {
+   "final_status": 200,
+   "http_status": 200,
+   "final_url": "https://www.myglobalhealth.online/portugal/ro/doctors/dr-pedro-santos",
+   "title": "Dr Pedro Santos - Oncolog | Global Health",
+   "canonical": "https://www.myglobalhealth.online/portugal/ro/doctors/dr-pedro-santos"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/portugal/ro/doctors/dr-pedro-santos",
+   "hops": [],
+   "title": "Dr Pedro Santos - Oncolog | Global Health",
+   "canonical": "https://www.myglobalhealth.online/portugal/ro/doctors/dr-pedro-santos",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "market_200",
+  "sheet": "08_Crawl_History",
+  "key": "U002732",
+  "url": "https://www.myglobalhealth.online/portugal/de/legal/refund-policy",
+  "expected": {
+   "final_status": 200,
+   "http_status": 200,
+   "final_url": "https://www.myglobalhealth.online/portugal/de/legal/refund-policy",
+   "title": "Erstattungsrichtlinie \u00b7 Portugal \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online/portugal/de/legal/refund-policy"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/portugal/de/legal/refund-policy",
+   "hops": [],
+   "title": "Erstattungsrichtlinie \u00b7 Portugal \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online/portugal/de/legal/refund-policy",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "market_200",
+  "sheet": "08_Crawl_History",
+  "key": "U004459",
+  "url": "https://www.myglobalhealth.online/spain/es/tools/adhd-test",
+  "expected": {
+   "final_status": 200,
+   "http_status": 200,
+   "final_url": "https://www.myglobalhealth.online/spain/es/tools/adhd-test",
+   "title": "Test de TDAH Espa\u00f1a | Cribado Gratuito para Adultos",
+   "canonical": "https://www.myglobalhealth.online/spain/es/tools/adhd-test"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/spain/es/tools/adhd-test",
+   "hops": [],
+   "title": "Test de TDAH Espa\u00f1a | Cribado Gratuito para Adultos",
+   "canonical": "https://www.myglobalhealth.online/spain/es/tools/adhd-test",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "market_200",
+  "sheet": "08_Crawl_History",
+  "key": "U001882",
+  "url": "https://www.myglobalhealth.online/ireland/de/services/travel-health-consultation",
+  "expected": {
+   "final_status": 200,
+   "http_status": 200,
+   "final_url": "https://www.myglobalhealth.online/ireland/de/services/travel-health-consultation",
+   "title": "Online-Reisegesundheitsberatung in Irland | Reisemedizinischer Arzt",
+   "canonical": "https://www.myglobalhealth.online/ireland/de/services/travel-health-consultation"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/ireland/de/services/travel-health-consultation",
+   "hops": [],
+   "title": "Online-Reisegesundheitsberatung in Irland | Reisemedizinischer Arzt",
+   "canonical": "https://www.myglobalhealth.online/ireland/de/services/travel-health-consultation",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "market_200",
+  "sheet": "08_Crawl_History",
+  "key": "U001719",
+  "url": "https://www.myglobalhealth.online/ireland/cs/legal",
+  "expected": {
+   "final_status": 200,
+   "http_status": 200,
+   "final_url": "https://www.myglobalhealth.online/ireland/cs/legal",
+   "title": "Pr\u00e1vn\u00ed informace \u00b7 Irsko \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online/ireland/cs/legal"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/ireland/cs/legal",
+   "hops": [],
+   "title": "Pr\u00e1vn\u00ed informace \u00b7 Irsko \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online/ireland/cs/legal",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "market_200",
+  "sheet": "08_Crawl_History",
+  "key": "U000424",
+  "url": "https://www.myglobalhealth.online/brazil/es/tools/ovulation-calculator",
+  "expected": {
+   "final_status": 200,
+   "http_status": 200,
+   "final_url": "https://www.myglobalhealth.online/brazil/es/tools/ovulation-calculator",
+   "title": "Calculadora de Ovulaci\u00f3n Brasil | D\u00edas F\u00e9rtiles y Ovulaci\u00f3n",
+   "canonical": "https://www.myglobalhealth.online/brazil/es/tools/ovulation-calculator"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/brazil/es/tools/ovulation-calculator",
+   "hops": [],
+   "title": "Calculadora de Ovulaci\u00f3n Brasil | D\u00edas F\u00e9rtiles y Ovulaci\u00f3n",
+   "canonical": "https://www.myglobalhealth.online/brazil/es/tools/ovulation-calculator",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "market_200",
+  "sheet": "08_Crawl_History",
+  "key": "U002283",
+  "url": "https://www.myglobalhealth.online/ireland/pt/services/travel-health-consultation",
+  "expected": {
+   "final_status": 200,
+   "http_status": 200,
+   "final_url": "https://www.myglobalhealth.online/ireland/pt/services/travel-health-consultation",
+   "title": "Consulta de Sa\u00fade do Viajante Online na Irlanda | M\u00e9dico de Viagem",
+   "canonical": "https://www.myglobalhealth.online/ireland/pt/services/travel-health-consultation"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/ireland/pt/services/travel-health-consultation",
+   "hops": [],
+   "title": "Consulta de Sa\u00fade do Viajante Online na Irlanda | M\u00e9dico de Viagem",
+   "canonical": "https://www.myglobalhealth.online/ireland/pt/services/travel-health-consultation",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "redirect",
+  "sheet": "08_Crawl_History",
+  "key": "U004457",
+  "url": "https://www.myglobalhealth.online/spain/es/specialist-consultation",
+  "expected": {
+   "final_status": 200,
+   "http_status": 308,
+   "final_url": "https://www.myglobalhealth.online/spain/es/see-a-specialist",
+   "hop_chain": "308 https://www.myglobalhealth.online/spain/es/specialist-consultation | 200 https://www.myglobalhealth.online/spain/es/see-a-specialist",
+   "redirect_hops": 1,
+   "title": "Atenci\u00f3n especializada vinculada a un servicio activo \u00b7 Spain",
+   "canonical": "https://www.myglobalhealth.online/spain/es/see-a-specialist"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/spain/es/see-a-specialist",
+   "hops": [
+    [
+     "https://www.myglobalhealth.online/spain/es/specialist-consultation",
+     308,
+     "/spain/es/see-a-specialist"
+    ]
+   ],
+   "title": "Atenci\u00f3n especializada vinculada a un servicio activo \u00b7 Spain",
+   "canonical": "https://www.myglobalhealth.online/spain/es/see-a-specialist",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "redirect",
+  "sheet": "08_Crawl_History",
+  "key": "U003647",
+  "url": "https://www.myglobalhealth.online/romania/:lang/services/mens-health-romania",
+  "expected": {
+   "final_status": 404,
+   "http_status": 308,
+   "final_url": "https://www.myglobalhealth.online/romania/:lang/services/sanatatea-barbatului-online",
+   "hop_chain": "308 https://www.myglobalhealth.online/romania/:lang/services/mens-health-romania | 404 https://www.myglobalhealth.online/romania/:lang/services/sanatatea-barbatului-online",
+   "redirect_hops": 1,
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online/"
+  },
+  "observed": {
+   "status": 404,
+   "final_url": "https://www.myglobalhealth.online/romania/:lang/services/sanatatea-barbatului-online",
+   "hops": [
+    [
+     "https://www.myglobalhealth.online/romania/:lang/services/mens-health-romania",
+     308,
+     "/romania/:lang/services/sanatatea-barbatului-online"
+    ]
+   ],
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "redirect",
+  "sheet": "08_Crawl_History",
+  "key": "U000287",
+  "url": "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-pentru-managementul-dure",
+  "expected": {
+   "final_status": 200,
+   "http_status": 308,
+   "final_url": "https://www.myglobalhealth.online/romania/ro/services/evaluare-durere",
+   "hop_chain": "308 https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-pentru-managementul-dure | 200 https://www.myglobalhealth.online/romania/ro/services/evaluare-durere",
+   "redirect_hops": 1,
+   "title": "Evaluare specializat\u0103 a durerii online | Rom\u00e2nia",
+   "canonical": "https://www.myglobalhealth.online/romania/ro/services/evaluare-durere"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/romania/ro/services/evaluare-durere",
+   "hops": [
+    [
+     "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-pentru-managementul-dure",
+     308,
+     "/romania/ro/services/evaluare-durere"
+    ]
+   ],
+   "title": "Evaluare specializat\u0103 a durerii online | Rom\u00e2nia",
+   "canonical": "https://www.myglobalhealth.online/romania/ro/services/evaluare-durere",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "redirect",
+  "sheet": "08_Crawl_History",
+  "key": "U000272",
+  "url": "https://www.myglobalhealth.online/booking-calendar/renovacion-de-tratamiento",
+  "expected": {
+   "final_status": 200,
+   "http_status": 308,
+   "final_url": "https://www.myglobalhealth.online/spain/es/services/renovacion-tratamiento-online",
+   "hop_chain": "308 https://www.myglobalhealth.online/booking-calendar/renovacion-de-tratamiento | 200 https://www.myglobalhealth.online/spain/es/services/renovacion-tratamiento-online",
+   "redirect_hops": 1,
+   "title": "Renovaci\u00f3n de Tratamiento Online Espa\u00f1a | Revisi\u00f3n Cl\u00ednica | M\u00e9dico Colegiado",
+   "canonical": "https://www.myglobalhealth.online/spain/es/services/renovacion-tratamiento-online"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/spain/es/services/renovacion-tratamiento-online",
+   "hops": [
+    [
+     "https://www.myglobalhealth.online/booking-calendar/renovacion-de-tratamiento",
+     308,
+     "/spain/es/services/renovacion-tratamiento-online"
+    ]
+   ],
+   "title": "Renovaci\u00f3n de Tratamiento Online Espa\u00f1a | Revisi\u00f3n Cl\u00ednica | M\u00e9dico Colegiado",
+   "canonical": "https://www.myglobalhealth.online/spain/es/services/renovacion-tratamiento-online",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "redirect",
+  "sheet": "08_Crawl_History",
+  "key": "U000565",
+  "url": "https://www.myglobalhealth.online/cs/ireland-doctors/dr-mohammed-omar",
+  "expected": {
+   "final_status": 200,
+   "http_status": 308,
+   "final_url": "https://www.myglobalhealth.online/ireland/en/doctors/dr-mohammed-omar",
+   "hop_chain": "308 https://www.myglobalhealth.online/cs/ireland-doctors/dr-mohammed-omar | 200 https://www.myglobalhealth.online/ireland/en/doctors/dr-mohammed-omar",
+   "redirect_hops": 1,
+   "title": "Dr Mohammed Omar | Consultant Cardiologist in Ireland",
+   "canonical": "https://www.myglobalhealth.online/ireland/en/doctors/dr-mohammed-omar"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/ireland/en/doctors/dr-mohammed-omar",
+   "hops": [
+    [
+     "https://www.myglobalhealth.online/cs/ireland-doctors/dr-mohammed-omar",
+     308,
+     "/ireland/en/doctors/dr-mohammed-omar"
+    ]
+   ],
+   "title": "Dr Mohammed Omar | Consultant Cardiologist in Ireland",
+   "canonical": "https://www.myglobalhealth.online/ireland/en/doctors/dr-mohammed-omar",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "non_200",
+  "sheet": "08_Crawl_History",
+  "key": "U002371",
+  "url": "https://www.myglobalhealth.online/ireland/ro/lab-tests/genetic-lactose-intolerance-test",
+  "expected": {
+   "final_status": 404,
+   "http_status": 404,
+   "final_url": "https://www.myglobalhealth.online/ireland/ro/lab-tests/genetic-lactose-intolerance-test",
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online/"
+  },
+  "observed": {
+   "status": 404,
+   "final_url": "https://www.myglobalhealth.online/ireland/ro/lab-tests/genetic-lactose-intolerance-test",
+   "hops": [],
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "non_200",
+  "sheet": "08_Crawl_History",
+  "key": "U002589",
+  "url": "https://www.myglobalhealth.online/portugal/:locale",
+  "expected": {
+   "final_status": 404,
+   "http_status": 404,
+   "final_url": "https://www.myglobalhealth.online/portugal/:locale",
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online/"
+  },
+  "observed": {
+   "status": 404,
+   "final_url": "https://www.myglobalhealth.online/portugal/:locale",
+   "hops": [],
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "non_200",
+  "sheet": "08_Crawl_History",
+  "key": "U002112",
+  "url": "https://www.myglobalhealth.online/ireland/es/lab-tests/nutrition-lifestyle-dna-test",
+  "expected": {
+   "final_status": 404,
+   "http_status": 404,
+   "final_url": "https://www.myglobalhealth.online/ireland/es/lab-tests/nutrition-lifestyle-dna-test",
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online/"
+  },
+  "observed": {
+   "status": 404,
+   "final_url": "https://www.myglobalhealth.online/ireland/es/lab-tests/nutrition-lifestyle-dna-test",
+   "hops": [],
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "non_200",
+  "sheet": "08_Crawl_History",
+  "key": "U000796",
+  "url": "https://www.myglobalhealth.online/czechia/:lang/services/muzske-zdravi-online",
+  "expected": {
+   "final_status": 404,
+   "http_status": 404,
+   "final_url": "https://www.myglobalhealth.online/czechia/:lang/services/muzske-zdravi-online",
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online/"
+  },
+  "observed": {
+   "status": 404,
+   "final_url": "https://www.myglobalhealth.online/czechia/:lang/services/muzske-zdravi-online",
+   "hops": [],
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "non_200",
+  "sheet": "08_Crawl_History",
+  "key": "U004504",
+  "url": "https://www.myglobalhealth.online/spain/pt/legal/accessibility-statement",
+  "expected": {
+   "final_status": 404,
+   "http_status": 404,
+   "final_url": "https://www.myglobalhealth.online/spain/pt/legal/accessibility-statement",
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online/"
+  },
+  "observed": {
+   "status": 404,
+   "final_url": "https://www.myglobalhealth.online/spain/pt/legal/accessibility-statement",
+   "hops": [],
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "migration",
+  "sheet": "18_Migration",
+  "key": "https://www.myglobalhealth.online/service-page/sp-medicina-fisica-y-rehabilitacion",
+  "url": "https://www.myglobalhealth.online/service-page/sp-medicina-fisica-y-rehabilitacion",
+  "expected": {
+   "observed_status": 308,
+   "final_status": 200,
+   "final_url": "https://www.myglobalhealth.online/ireland/en/see-a-specialist",
+   "test_status": "pass",
+   "redirect_hops": 1
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/ireland/en/see-a-specialist",
+   "hops": [
+    [
+     "https://www.myglobalhealth.online/service-page/sp-medicina-fisica-y-rehabilitacion",
+     308,
+     "/ireland/en/see-a-specialist"
+    ]
+   ],
+   "title": "Online Specialist Consultations Ireland | Book by Specialty",
+   "canonical": "https://www.myglobalhealth.online/ireland/en/see-a-specialist",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "migration",
+  "sheet": "18_Migration",
+  "key": "https://www.myglobalhealth.online/portugal/weight-loss-consultation",
+  "url": "https://www.myglobalhealth.online/portugal/weight-loss-consultation",
+  "expected": {
+   "observed_status": 308,
+   "final_status": 200,
+   "final_url": "https://www.myglobalhealth.online/portugal/pt/services/perda-de-peso",
+   "test_status": "pass",
+   "redirect_hops": 1
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/portugal/pt/services/perda-de-peso",
+   "hops": [
+    [
+     "https://www.myglobalhealth.online/portugal/weight-loss-consultation",
+     308,
+     "/portugal/pt/services/perda-de-peso"
+    ]
+   ],
+   "title": "Consulta M\u00e9dica para Perda de Peso | Portugal",
+   "canonical": "https://www.myglobalhealth.online/portugal/pt/services/perda-de-peso",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "migration",
+  "sheet": "18_Migration",
+  "key": "https://www.myglobalhealth.online/home-health-tests/coeliac-disease-test",
+  "url": "https://www.myglobalhealth.online/home-health-tests/coeliac-disease-test",
+  "expected": {
+   "observed_status": 308,
+   "final_status": 404,
+   "final_url": "https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-coeliac-disease-test",
+   "test_status": "dead_end",
+   "redirect_hops": 1
+  },
+  "observed": {
+   "status": 404,
+   "final_url": "https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-coeliac-disease-test",
+   "hops": [
+    [
+     "https://www.myglobalhealth.online/home-health-tests/coeliac-disease-test",
+     308,
+     "/ireland/en/lab-tests/genetic-coeliac-disease-test"
+    ]
+   ],
+   "title": "Page not found \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "migration",
+  "sheet": "18_Migration",
+  "key": "https://www.myglobalhealth.online/spain/medical-consultation",
+  "url": "https://www.myglobalhealth.online/spain/medical-consultation",
+  "expected": {
+   "observed_status": 308,
+   "final_status": 200,
+   "final_url": "https://www.myglobalhealth.online/spain/es/see-a-specialist",
+   "test_status": "pass",
+   "redirect_hops": 1
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/spain/es/see-a-specialist",
+   "hops": [
+    [
+     "https://www.myglobalhealth.online/spain/medical-consultation",
+     308,
+     "/spain/es/see-a-specialist"
+    ]
+   ],
+   "title": "Atenci\u00f3n especializada vinculada a un servicio activo \u00b7 Spain",
+   "canonical": "https://www.myglobalhealth.online/spain/es/see-a-specialist",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "migration",
+  "sheet": "18_Migration",
+  "key": "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-pentru-managementul-dure",
+  "url": "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-pentru-managementul-dure",
+  "expected": {
+   "observed_status": 308,
+   "final_status": 200,
+   "final_url": "https://www.myglobalhealth.online/romania/ro/services/evaluare-durere",
+   "test_status": "pass",
+   "redirect_hops": 1
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/romania/ro/services/evaluare-durere",
+   "hops": [
+    [
+     "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-pentru-managementul-dure",
+     308,
+     "/romania/ro/services/evaluare-durere"
+    ]
+   ],
+   "title": "Evaluare specializat\u0103 a durerii online | Rom\u00e2nia",
+   "canonical": "https://www.myglobalhealth.online/romania/ro/services/evaluare-durere",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "hreflang",
+  "sheet": "07_Hreflang",
+  "key": "U003129->https://www.myglobalhealth.online/portugal/en/services/deixar-de-fumar",
+  "url": "https://www.myglobalhealth.online/portugal/en/services/deixar-de-fumar",
+  "expected": {
+   "alternate_status": 200,
+   "alternate_canonical": "https://www.myglobalhealth.online/portugal/en/services/deixar-de-fumar",
+   "alternate_first_status": 200,
+   "verdict": "pass"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/portugal/en/services/deixar-de-fumar",
+   "hops": [],
+   "title": "Online Smoking Cessation Consultation Portugal | Medical Support",
+   "canonical": "https://www.myglobalhealth.online/portugal/en/services/deixar-de-fumar",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "hreflang",
+  "sheet": "07_Hreflang",
+  "key": "U003903->https://www.myglobalhealth.online/romania/cs/legal/privacy-policy",
+  "url": "https://www.myglobalhealth.online/romania/cs/legal/privacy-policy",
+  "expected": {
+   "alternate_status": 200,
+   "alternate_canonical": "https://www.myglobalhealth.online/romania/cs/legal/privacy-policy",
+   "alternate_first_status": 200,
+   "verdict": "pass"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/romania/cs/legal/privacy-policy",
+   "hops": [],
+   "title": "Z\u00e1sady ochrany osobn\u00edch \u00fadaj\u016f \u00b7 Rumunsko \u00b7 Global Health",
+   "canonical": "https://www.myglobalhealth.online/romania/cs/legal/privacy-policy",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "hreflang",
+  "sheet": "07_Hreflang",
+  "key": "U004298->https://www.myglobalhealth.online/romania/es/tools/osteoporosis-risk-checker",
+  "url": "https://www.myglobalhealth.online/romania/es/tools/osteoporosis-risk-checker",
+  "expected": {
+   "alternate_status": 200,
+   "alternate_canonical": "https://www.myglobalhealth.online/romania/es/tools/osteoporosis-risk-checker",
+   "alternate_first_status": 200,
+   "verdict": "cross_market_by_design"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/romania/es/tools/osteoporosis-risk-checker",
+   "hops": [],
+   "title": "Evaluaci\u00f3n de Riesgo de Osteoporosis Ruman\u00eda | \u00bfNecesito una Densitometr\u00eda \u00d3sea?",
+   "canonical": "https://www.myglobalhealth.online/romania/es/tools/osteoporosis-risk-checker",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "hreflang",
+  "sheet": "07_Hreflang",
+  "key": "U002769->https://www.myglobalhealth.online/ireland/es/tools/ovulation-calculator",
+  "url": "https://www.myglobalhealth.online/ireland/es/tools/ovulation-calculator",
+  "expected": {
+   "alternate_status": 200,
+   "alternate_canonical": "https://www.myglobalhealth.online/ireland/es/tools/ovulation-calculator",
+   "alternate_first_status": 200,
+   "verdict": "cross_market_by_design"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/ireland/es/tools/ovulation-calculator",
+   "hops": [],
+   "title": "Calculadora de Ovulaci\u00f3n Irlanda | D\u00edas F\u00e9rtiles y Ovulaci\u00f3n",
+   "canonical": "https://www.myglobalhealth.online/ireland/es/tools/ovulation-calculator",
+   "ct": "text/html; charset=utf-8"
+  }
+ },
+ {
+  "kind": "hreflang",
+  "sheet": "07_Hreflang",
+  "key": "U003934->https://www.myglobalhealth.online/portugal/pt/tools/osteoporosis-risk-checker",
+  "url": "https://www.myglobalhealth.online/portugal/pt/tools/osteoporosis-risk-checker",
+  "expected": {
+   "alternate_status": 200,
+   "alternate_canonical": "https://www.myglobalhealth.online/portugal/pt/tools/osteoporosis-risk-checker",
+   "alternate_first_status": 200,
+   "verdict": "cross_market_by_design"
+  },
+  "observed": {
+   "status": 200,
+   "final_url": "https://www.myglobalhealth.online/portugal/pt/tools/osteoporosis-risk-checker",
+   "hops": [],
+   "title": "Risco de osteoporose Portugal | Verifica\u00e7\u00e3o orientativa",
+   "canonical": "https://www.myglobalhealth.online/portugal/pt/tools/osteoporosis-risk-checker",
+   "ct": "text/html; charset=utf-8"
+  }
+ }
+]

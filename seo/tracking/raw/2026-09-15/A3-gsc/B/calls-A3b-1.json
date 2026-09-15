@@ -1,0 +1,16 @@
+[
+  {"date":"2026-07-21","startRow":0,"rowCount":240,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-07-22","startRow":0,"rowCount":196,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-07-23","startRow":0,"rowCount":163,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-07-24","startRow":0,"rowCount":184,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-07-25","startRow":0,"rowCount":148,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-07-26","startRow":0,"rowCount":183,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-07-27","startRow":0,"rowCount":197,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-07-28","startRow":0,"rowCount":184,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-07-29","startRow":0,"rowCount":181,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-07-30","startRow":0,"rowCount":157,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-07-31","startRow":0,"rowCount":160,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-08-01","startRow":0,"rowCount":145,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-08-02","startRow":0,"rowCount":173,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"},
+  {"date":"2026-08-03","startRow":0,"rowCount":154,"hasMore":false,"timestamp_utc":"2026-09-15T00:00:00Z"}
+]

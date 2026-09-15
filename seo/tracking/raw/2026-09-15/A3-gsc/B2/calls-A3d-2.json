@@ -1,0 +1,173 @@
+[
+  {
+    "params": {
+      "type": "web",
+      "dimensions": [
+        "page",
+        "date"
+      ],
+      "dataState": "all",
+      "rowLimit": 1000,
+      "startDate": "2026-08-07",
+      "endDate": "2026-08-10",
+      "startRow": 0
+    },
+    "rowCount": 1000,
+    "hasMore": true,
+    "nextStartRow": 1000,
+    "timestamp_utc": "2026-09-15T05:51:56.333389+00:00",
+    "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-07_2026-08-10_r0.jsonl"
+  },
+  {
+    "params": {
+      "type": "web",
+      "dimensions": [
+        "page",
+        "date"
+      ],
+      "dataState": "all",
+      "rowLimit": 1000,
+      "startDate": "2026-08-07",
+      "endDate": "2026-08-10",
+      "startRow": 1000
+    },
+    "rowCount": 780,
+    "hasMore": false,
+    "nextStartRow": null,
+    "timestamp_utc": "2026-09-15T05:52:09.555909+00:00",
+    "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-07_2026-08-10_r1000.jsonl"
+  },
+  {
+    "params": {
+      "type": "web",
+      "dimensions": [
+        "page",
+        "date"
+      ],
+      "dataState": "all",
+      "rowLimit": 1000,
+      "startDate": "2026-08-11",
+      "endDate": "2026-08-14",
+      "startRow": 0
+    },
+    "rowCount": 1000,
+    "hasMore": true,
+    "nextStartRow": 1000,
+    "timestamp_utc": "2026-09-15T05:52:22.736604+00:00",
+    "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-11_2026-08-14_r0.jsonl"
+  },
+  {
+    "params": {
+      "type": "web",
+      "dimensions": [
+        "page",
+        "date"
+      ],
+      "dataState": "all",
+      "rowLimit": 1000,
+      "startDate": "2026-08-11",
+      "endDate": "2026-08-14",
+      "startRow": 1000
+    },
+    "rowCount": 474,
+    "hasMore": false,
+    "nextStartRow": null,
+    "timestamp_utc": "2026-09-15T05:52:37.371032+00:00",
+    "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-11_2026-08-14_r1000.jsonl"
+  },
+  {
+    "params": {
+      "type": "web",
+      "dimensions": [
+        "page",
+        "date"
+      ],
+      "dataState": "all",
+      "rowLimit": 1000,
+      "startDate": "2026-08-15",
+      "endDate": "2026-08-18",
+      "startRow": 0
+    },
+    "rowCount": 1000,
+    "hasMore": true,
+    "nextStartRow": 1000,
+    "timestamp_utc": "2026-09-15T05:52:50.145648+00:00",
+    "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-15_2026-08-18_r0.jsonl"
+  },
+  {
+    "params": {
+      "type": "web",
+      "dimensions": [
+        "page",
+        "date"
+      ],
+      "dataState": "all",
+      "rowLimit": 1000,
+      "startDate": "2026-08-15",
+      "endDate": "2026-08-18",
+      "startRow": 1000
+    },
+    "rowCount": 369,
+    "hasMore": false,
+    "nextStartRow": null,
+    "timestamp_utc": "2026-09-15T05:53:03.160338+00:00",
+    "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-15_2026-08-18_r1000.jsonl"
+  },
+  {
+    "params": {
+      "type": "web",
+      "dimensions": [
+        "page",
+        "date"
+      ],
+      "dataState": "all",
+      "rowLimit": 1000,
+      "startDate": "2026-08-19",
+      "endDate": "2026-08-22",
+      "startRow": 0
+    },
+    "rowCount": 1000,
+    "hasMore": true,
+    "nextStartRow": 1000,
+    "timestamp_utc": "2026-09-15T05:53:16.920779+00:00",
+    "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-19_2026-08-22_r0.jsonl"
+  },
+  {
+    "params": {
+      "type": "web",
+      "dimensions": [
+        "page",
+        "date"
+      ],
+      "dataState": "all",
+      "rowLimit": 1000,
+      "startDate": "2026-08-19",
+      "endDate": "2026-08-22",
+      "startRow": 1000
+    },
+    "rowCount": 420,
+    "hasMore": false,
+    "nextStartRow": null,
+    "timestamp_utc": "2026-09-15T05:53:29.174323+00:00",
+    "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-19_2026-08-22_r1000.jsonl"
+  },
+  {
+    "params": {
+      "type": "web",
+      "dimensions": [
+        "page",
+        "date"
+      ],
+      "dataState": "all",
+      "rowLimit": 1000,
+      "startDate": "2026-08-23",
+      "endDate": "2026-08-23",
+      "startRow": 0
+    },
+    "rowCount": 354,
+    "hasMore": false,
+    "nextStartRow": null,
+    "timestamp_utc": "2026-09-15T05:53:42.516971+00:00",
+    "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-23_2026-08-23_r0.jsonl"
+  }
+]

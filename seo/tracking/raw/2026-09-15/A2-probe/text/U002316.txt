@@ -1,0 +1,474 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.medicalcouncil.ie","https://www.dataprotection.ie","https://www.hse.ie","https://www.hiqa.ie","https://www.hpra.ie","https://www.rcpi.ie","https://www.icgp.ie","https://www.irishpsychiatry.ie","https://www.nai.ie","https://irishheart.ie","https://www.citizensinformation.ie","https://www.gov.ie/en/organisation/department-of-social-protection/","https://www.samaritans.org/ireland","https://www.pieta.ie"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Boala mână-gură-picior: Semne și tratament","description":"Ghid HSE despre boala mână-gură-picior la copiii din Irlanda: simptome, tratament acasă, semne de urgență și prevenirea răspândirii.","url":"https://www.myglobalhealth.online/ireland/ro/blog/boala-mana-gura-picior-semne-si-tratament","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/ireland/ro/blog/boala-mana-gura-picior-semne-si-tratament#webpage","url":"https://www.myglobalhealth.online/ireland/ro/blog/boala-mana-gura-picior-semne-si-tratament","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/ro/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-06-15"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Boala+m%C3%A2n%C4%83-gur%C4%83-picior%3A+Semne+%C8%99i+tratament&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2Fff180d4e-ccef-441a-8dca-8af41f64cc50-150385_0ed6f9dbf2384287827ba85738606351-mv2.avif&v=2026-07-20.1-ms7ro3","width":1200,"height":630},"about":{"@type":"Thing","name":"Telemedicine"},"datePublished":"2026-06-06T05:23:47.372Z","dateModified":"2026-06-15T20:56:33.190Z","publishingPrinciples":"https://www.myglobalhealth.online/ireland/ro/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/ireland/ro/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Acasă","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/ireland/ro/blog"},{"@type":"ListItem","position":3,"name":"Boala mână-gură-picior: Semne și tratament","item":"https://www.myglobalhealth.online/ireland/ro/blog/boala-mana-gura-picior-semne-si-tratament"}]}]Toate articoleleTelemedicineBoala mână-gură-picior: Semne și tratamentGhid aliniat recomandărilor HSE despre boala mână-gură-picior la copiii din Irlanda: simptome, îngrijire acasă, semne de urgență și prevenirea răspândirii.Global Health Medical Team6 iunie 202615 min citireUltima revizuire 15 iunie 2026Revizuit clinic de Dr Tiago Miguel Figueira+Pe această paginăCe este boala mână-gură-picior?Cauze & virologieSemne & simptomeDiagnosticTratament & îngrijireSemne de alarmă — când trebuie solicitat ajutor medical de urgențăPrevenție & profilaxieEpidemiologieÎntrebări frecventeResurse pediatrice de încredere
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    Secțiunea 01
+    Ce este boala mână-gură-picior?
+
+    
+      Boala mână-gură-picior (BMGP) este o infecție virală frecventă și foarte contagioasă, care afectează în principal sugarii și copiii sub zece ani. Se caracterizează prin triada distinctivă formată din febră, ulcerații bucale dureroase și erupție veziculară pe palme, tălpi și uneori pe fese. BMGP este cauzată de enterovirusuri — cel mai frecvent de Coxsackievirus A16 și Enterovirus 71 (EV-A71).
+    
+    
+      Deși boala este de obicei ușoară și autolimitată, cu vindecare în șapte până la zece zile, poate provoca un disconfort important copiilor mici. Complicațiile rare, dar grave — inclusiv meningita virală, encefalita și paralizia flască acută — sunt asociate mai frecvent cu tulpinile EV-A71 și necesită evaluare medicală promptă.
+    
+    
+      Afecțiunea apare în întreaga lume și se răspândește rapid în creșe, grădinițe, școli și familii, mai ales vara și la începutul toamnei în climatele temperate. Înțelegerea BMGP este esențială atât pentru părinți și îngrijitori, cât și pentru profesioniștii din sănătate.
+    
+
+    
+      „BMGP este o infecție enterovirală contagioasă la copii, caracterizată prin febră, ulcerații bucale dureroase și leziuni veziculare pe mâini și picioare. Tratamentul este în principal simptomatic.”
+      — Rezumat clinic Global Health
+    
+  
+
+  
+  
+    Secțiunea 02
+    Cauze & virologie
+
+    
+      BMGP este cauzată de virusuri ARN monocatenar din genul Enterovirus al familiei Picornaviridae . Cei doi agenți cauzali cu cea mai mare importanță clinică sunt:
+    
+
+    
+      
+        🦠
+        Coxsackievirus A16
+        Cauza clasică și cea mai frecventă la nivel mondial. Produce de obicei o formă mai ușoară de boală. Face parte din grupul A al virusurilor Coxsackie.
+      
+      
+        ⚠️
+        Enterovirus 71 (EV-A71)
+        Asociat cu focare mai mari (în special în regiunea Asia-Pacific) și cu un risc mai ridicat de complicații neurologice, inclusiv encefalită de trunchi cerebral.
+      
+      
+        🔬
+        Alte virusuri Coxsackie
+        CA6, CA10, CB5 și alte virusuri pot provoca manifestări atipice sau extinse ale BMGP. CA6 poate determina afectarea mai amplă a pielii.
+      
+      
+        🌍
+        Căi de transmitere
+        Contact direct cu secreții nazale, salivă, lichidul din vezicule sau materii fecale. Se transmite și prin suprafețe și obiecte contaminate. Este foarte contagioasă.
+      
+    
+
+    De ce sunt copiii cei mai afectați
+    
+      Copiii mici nu au imunitate preexistentă față de aceste enterovirusuri. Virusul este eliminat în cantități mari prin materii fecale timp de mai multe săptămâni după vindecare, chiar dacă copilul pare sănătos — ceea ce face controlul răspândirii deosebit de dificil în colectivitățile de copii. Adulții imunocompetenți care nu au fost expuși în copilărie se pot infecta, însă simptomele lor sunt de obicei mai ușoare.
+    
+    
+      Perioada de incubație este de 3–7 zile după expunere. Eliminarea virusului din orofaringe atinge nivelul maxim în prima săptămână de boală.
+    
+  
+
+  
+  
+    Secțiunea 03
+    Semne & simptome
+
+    
+      BMGP urmează de obicei o evoluție clinică previzibilă. Recunoașterea întregului tablou simptomatic permite stabilirea mai rapidă a diagnosticului și îngrijirea adecvată la domiciliu, ajutând totodată clinicienii să identifice situațiile care necesită intensificarea îngrijirii.
+    
+
+    
+      
+        
+          Etapă
+          Simptom / semn
+          Observații clinice
+        
+      
+      
+        
+          ProdromZilele 1–2
+          Febră ușoară (38–39 °C), iritabilitate, stare generală alterată, apetit scăzut, durere în gât
+          În această etapă este confundată adesea cu o răceală obișnuită sau cu o infecție virală nespecifică a căilor respiratorii superioare
+        
+        
+          Leziuni bucaleZilele 1–3
+          Ulcerații dureroase pe limbă, mucoasa obrajilor și palatul moale; vezicule care se erodează rapid
+          Pot provoca salivare abundentă și refuzul alimentelor sau lichidelor — un indiciu diagnostic important
+        
+        
+          Erupție cutanatăZilele 2–4
+          Erupție papuloveziculară pe palme și tălpi; poate afecta dosul mâinilor și picioarelor, fesele și zona din jurul gurii
+          Distribuția clasică este patognomonică; leziunile cutanate nu produc de obicei mâncărime sau durere
+        
+        
+          Simptome asociatePe tot parcursul bolii
+          Apetit scăzut, salivare abundentă, stare generală alterată, risc de deshidratare dacă durerea bucală este severă
+          Deshidratarea este cea mai frecventă complicație care necesită evaluare medicală
+        
+        
+          VindecareZilele 7–10
+          Vindecare spontană; căderea unghiilor (onicomadeză) poate apărea după 4–8 săptămâni
+          Modificările unghiilor sunt benigne și dispar de la sine; liniștiți părinții
+        
+      
+    
+
+    Aspectul leziunilor bucale
+    
+      Ulcerațiile bucale din BMGP încep ca pete roșii mici (enantem), care evoluează rapid în vezicule și apoi în ulcerații superficiale, dureroase, înconjurate de un halou roșu. Acestea apar pe limbă, mucoasa obrajilor, palatul moale și pilierii amigdalieni. Durerea bucală este simptomul principal care determină refuzul alimentației și, în consecință, riscul de deshidratare la sugari.
+    
+
+    Aspectul erupției cutanate
+    
+      Erupția constă în vezicule cenușii, ovale sau alungite, de 3–7 mm, pe fond eritematos — localizate clasic pe palme și tălpi, adesea de-a lungul liniilor dermatoamelor. Leziunile feselor (fără vezicule) și petele din jurul gurii sunt, de asemenea, caracteristice. Spre deosebire de varicelă, leziunile nu se răspândesc centripet și, în general, nu provoacă mâncărime.
+    
+  
+
+  
+  
+    Secțiunea 04
+    Diagnostic
+
+    
+      BMGP este în principal un diagnostic clinic bazat pe triada caracteristică de ulcerații bucale, erupție veziculară acrală și febră la un copil de vârstă corespunzătoare, într-un sezon compatibil sau cu antecedente relevante de expunere. Confirmarea de laborator nu este necesară, în general, în cazurile necomplicate.
+    
+
+    Când trebuie luate în considerare testele de laborator
+    
+      Confirmarea virusologică (prin exsudat nazofaringian, exsudat rectal, lichid vezicular sau test PCR pentru enterovirus din lichidul cefalorahidian) este indicată în cazul:
+    
+    
+      Formelor severe sau atipice
+      Suspiciunii de afectare neurologică (encefalită, meningită, mielită flască acută)
+      Copiilor imunocompromiși
+      Investigației de sănătate publică a unui focar
+      Nou-născuților cu suspiciune de sepsis enteroviral
+    
+
+    Diagnostic diferențial
+    
+      Clinicienii trebuie să ia în considerare herpangina (doar leziuni bucale, limitate la orofaringele posterior), gingivostomatita herpetică primară (afectare gingivală mai severă), varicela (distribuție centripetă, cu prurit) și ulcerațiile aftoase (recurente, fără boală sistemică). La sugari, boala Kawasaki trebuie exclusă atunci când febra este prelungită.
+    
+  
+
+  
+  
+    Secțiunea 05
+    Tratament & îngrijire
+
+    
+      În prezent, nu există tratament antiviral specific pentru BMGP. Îngrijirea este în întregime simptomatică și urmărește ameliorarea simptomelor, menținerea hidratării și monitorizarea complicațiilor.
+    
+
+    
+      
+        💧
+        Hidratare orală
+        Cea mai importantă măsură. Oferiți frecvent lichide reci, neacide. Înghețata pe băț și apa rece pot calma durerea. Evitați citricele și băuturile carbogazoase.
+      
+      
+        🌡️
+        Antipiretice
+        Paracetamol sau ibuprofen în doze adecvate vârstei pentru controlul febrei și al disconfortului general. Respectați recomandările naționale de dozare.
+      
+      
+        🩹
+        Analgezice
+        Gelurile anestezice orale cu aplicare locală (ape de gură pe bază de lidocaină la copiii mai mari) pot reduce durerea bucală și îmbunătăți alimentația. Discutați cu farmacistul sau medicul de familie.
+      
+      
+        🍦
+        Alimente moi și reci
+        Iaurtul, înghețata, piureul rece sau băuturile pe bază de lapte reduc durerea bucală și contribuie la aportul caloric. Evitați alimentele tari, sărate sau picante.
+      
+      
+        🛏️
+        Odihnă & izolare
+        Țineți copilul acasă până când febra a dispărut și toate leziunile au format crustă sau s-au vindecat — de obicei 5–7 zile. Această măsură limitează răspândirea în colectivitățile de copii.
+      
+      
+        🏥
+        Evaluare la spital
+        Este necesară în caz de suspiciune de deshidratare, febră mare persistentă, simptome neurologice sau aport oral insuficient la sugarii sub 12 luni. Poate fi necesară administrarea intravenoasă de lichide.
+      
+    
+
+    O precizare despre antibiotice
+    
+      Antibioticele nu sunt eficiente împotriva infecțiilor virale și nu trebuie prescrise pentru BMGP necomplicată. Suprainfecția bacteriană secundară a leziunilor cutanate este rară, dar trebuie evaluată dacă leziunile devin calde, umflate, dureroase sau purulente.
+    
+  
+
+  
+  
+    Secțiunea 06
+    Semne de alarmă — când trebuie solicitat ajutor medical de urgență
+
+    
+      Deși BMGP se vindecă de la sine în marea majoritate a cazurilor, o mică parte dintre copii — în special cei sub doi ani sau infectați cu EV-A71 — pot dezvolta complicații grave. Părinții și îngrijitorii trebuie să cunoască semnele de avertizare care impun evaluare medicală imediată de urgență.
+    
+
+    
+      🚨 Mergeți imediat la A&E / Unitatea de Primiri Urgențe dacă apar:
+      
+        Semne de deshidratare: gură uscată, lipsa lacrimilor la plâns, fontanelă deprimată la sugari, absența urinării timp de >8 ore, piele pătată/cenușie
+        Febră mare persistentă: temperatură peste 39.5 °C care nu răspunde la antipiretice sau febră care durează mai mult de 5 zile
+        Simptome neurologice: convulsii, rigiditate a cefei, vărsături persistente, alterarea stării de conștiență, ataxie, mioclonii, fotofobie
+        Simptome cardiorespiratorii: respirație rapidă, durere toracică, ritm cardiac accelerat, paloare, extremități reci
+        Durere severă sau refuz complet al lichidelor și alimentelor: în special la sugarii sub 12 luni care nu pot menține o hidratare adecvată
+        Agravare progresivă după ziua 3 de boală, în locul unei ameliorări treptate
+      
+    
+
+    
+      În Europa, complicațiile neurologice ale BMGP — deși rare — necesită internare, monitorizare atentă și, în unele cazuri, tratament într-o secție de terapie intensivă pediatrică. Recunoașterea timpurie salvează vieți.
+    
+  
+
+  
+  
+    Secțiunea 07
+    Prevenție & profilaxie
+
+    
+      Deoarece în Europa sau Statele Unite nu este disponibil în prezent niciun vaccin autorizat împotriva BMGP, prevenția se bazează în întregime pe intervenții nefarmacologice. Acestea sunt foarte eficiente dacă sunt aplicate consecvent, mai ales în colectivitățile de copii.
+    
+
+    
+      
+        
+        
+          Igiena riguroasă a mâinilor
+          Spălați mâinile cu apă și săpun timp de cel puțin 20 de secunde — mai ales după schimbarea scutecului, înainte de masă, după folosirea toaletei și după contactul cu un copil infectat. Gelul pe bază de alcool este mai puțin eficient împotriva enterovirusurilor; sunt preferate apa și săpunul.
+        
+      
+      
+        
+        
+          Dezinfectarea suprafețelor & obiectelor
+          Curățați și dezinfectați periodic suprafețele atinse frecvent — jucării, clanțe, spații pentru schimbarea scutecelor — folosind o soluție diluată de înălbitor (1 lingură la 4 căni de apă) sau un dezinfectant înregistrat de EPA, activ împotriva enterovirusurilor.
+        
+      
+      
+        
+        
+          Evitarea contactului apropiat cu persoanele infectate
+          Evitați îmbrățișările, săruturile și folosirea în comun a tacâmurilor sau cănilor cu un copil infectat. Enterovirusurile sunt eliminate în cantități mari în salivă, secreții nazale și materii fecale în prima săptămână de boală.
+        
+      
+      
+        
+        
+          Țineți copiii bolnavi acasă
+          Copiii trebuie să rămână acasă și să nu meargă la creșă, grădiniță sau școală până când febra a dispărut complet și toate veziculele s-au uscat și au format crustă. De obicei, acest lucru se întâmplă la 5–7 zile de la debutul bolii. Anunțați prompt instituția de învățământ.
+        
+      
+      
+        
+        
+          Igiena respiratorie („Prinde-l, aruncă-l, distruge-l”)
+          Acoperiți gura și nasul cu un șervețel când tușiți sau strănutați. Aruncați imediat șervețelele și spălați-vă pe mâini. Astfel este limitată transmiterea prin picături în spațiile comune.
+        
+      
+      
+        
+        
+          Igiena rufelor & scutecelor
+          Spălați hainele și lenjeria murdare la un ciclu fierbinte (≥60 °C). Folosiți mănuși de unică folosință când manevrați scutecele unui sugar infectat și spălați-vă bine pe mâini după aceea. Virusul supraviețuiește pe suprafețe timp de mai multe zile.
+        
+      
+      
+        
+        
+          Susținerea imunității naturale
+          Deși în Europa nu există un vaccin specific împotriva BMGP, respectarea tuturor schemelor naționale de vaccinare recomandate susține reziliența generală a sistemului imunitar. Somnul suficient, alimentația adecvată și alăptarea în perioada de sugar contribuie, de asemenea, la un răspuns imunitar robust.
+        
+      
+      
+        
+        
+          Protocoale pentru colectivitățile de copii
+          Creșele și grădinițele trebuie să aplice politici scrise de control al infecțiilor pentru BMGP: izolarea promptă a copiilor simptomatici, curățarea intensificată a mediului și informarea în scris a părinților în timpul focarelor. Personalul trebuie să poarte întotdeauna mănuși la schimbarea scutecelor.
+        
+      
+    
+
+    Situația vaccinurilor în 2026
+    
+      Un vaccin inactivat împotriva EV-A71 (vaccin EV71, cu denumiri comerciale precum Inlive de la Sinovac și variante produse în China) a fost autorizat și utilizat în China din 2016, cu eficacitate demonstrată împotriva BMGP asociate EV-A71 și a complicațiilor sale. Până în 2026, niciun vaccin împotriva EV-A71 sau Coxsackievirus A16 nu a primit autorizarea European Medicines Agency (EMA). Studiile clinice internaționale sunt în desfășurare. Părinții și clinicienii din Europa trebuie să urmărească recomandările European Medicines Agency (EMA) și ale European Centre for Disease Prevention and Control (ECDC) pentru informații actualizate.
+    
+  
+
+  
+  
+    Secțiunea 08
+    Epidemiologie
+
+    
+      BMGP este endemică la nivel mondial, cea mai mare incidență fiind raportată în regiunea Asia-Pacific (China, Vietnam, Malaysia, Japonia, Coreea de Sud). În Europa, apare sporadic și în focare mici, mai ales în creșe, grădinițe și școli. Vârful sezonier al transmiterii se înregistrează la sfârșitul primăverii, vara și la începutul toamnei în zonele temperate.
+    
+    
+      În Irlanda, Portugalia, Spania și România, BMGP este boală cu declarare obligatorie sau face obiectul unei supravegheri consolidate, iar rapoartele anuale ale agențiilor naționale de sănătate publică urmăresc focarele din colectivitățile de copii. Profilul ECDC privind boala mână-gură-picior oferă date epidemiologice europene actualizate.
+    
+    
+      Copiii cu vârste între 6 luni și 5 ani suportă cea mai mare povară a bolii. Infecția enterovirală neonatală — deși rară — poate provoca o boală sistemică severă, inclusiv un tablou asemănător sepsisului, miocardită și meningoencefalită, și necesită evaluare imediată de către un specialist.
+    
+  
+
+  
+  
+    Secțiunea 09
+    Întrebări frecvente
+
+    Adulții pot face boala mână-gură-picior?
+    Da. Adulții care nu au fost infectați anterior pot contracta BMGP, deși simptomele sunt adesea mai ușoare sau subclinice. Femeile însărcinate care suspectează o expunere trebuie să ia legătura cu moașa sau medicul obstetrician, deoarece infecția enterovirală la sfârșul sarcinii a fost asociată, în cazuri rare, cu îmbolnăvirea nou-născutului.
+
+    Este BMGP aceeași boală cu febra aftoasă la animale?
+    Nu. BMGP la oameni și febra aftoasă la animale sunt cauzate de virusuri complet diferite. Aceste boli nu se pot transmite între oameni și animale.
+
+    Copilul meu are BMGP — se poate întoarce la școală?
+    Majoritatea ghidurilor europene de pediatrie și sănătate publică recomandă ca cei mici să rămână acasă până când nu mai au febră și toate veziculele s-au vindecat complet, de obicei 5–7 zile. Respectați întotdeauna politica specifică de excludere a școlii, creșei sau grădiniței copilului.
+
+    BMGP poate reapărea?
+    Da. Imunitatea dobândită după BMGP este specifică serotipului. Un copil poate face din nou BMGP dacă se infectează cu o altă tulpină — de exemplu, o infecție anterioară cu Coxsackievirus A16 nu protejează împotriva EV-A71 sau CA6.
+
+    Trebuie să aplic vreo cremă pe veziculele de pe piele?
+    Veziculele cutanate din BMGP se vindecă de la sine și, în general, nu necesită tratament local. Nu spargeți veziculele. Dacă acestea se infectează (roșeață în creștere, căldură locală, puroi), consultați un profesionist din sănătate.
+
+    Ce ar trebui să mănânce copilul când are ulcerații bucale?
+    Alegeți cu prioritate alimente reci, moi și neacide: iaurt, înghețată, smoothie-uri, paste reci, piure de cartofi. Lichidele reci (apă rece, suc diluat și răcit) pot calma durerea și ajută la menținerea hidratării. Evitați chipsurile sărate, sucul de citrice sau băuturile carbogazoase, care irită ulcerațiile.
+  
+
+  
+  
+    Secțiunea 10
+    Resurse pediatrice de încredere
+    
+      Instituțiile de mai jos oferă părinților și profesioniștilor din sănătate informații despre BMGP revizuite clinic. Global Health recomandă aceste surse pentru consultarea recomandărilor naționale actualizate.
+    
+
+    🇮🇪 Irlanda
+    
+      
+        🏥
+        Irlanda · Național
+        Health Service Executive (HSE)
+        Ghid complet pentru pacienți despre BMGP, publicat de autoritatea națională de sănătate din Irlanda, inclusiv informații despre simptome, tratament și recomandări privind absența din colectivitate.
+      
+      
+        👶
+        Irlanda · Dublin
+        Children's Health Ireland (CHI)
+        Grupul spitalicesc național de pediatrie din Irlanda — CHI la Crumlin, Temple Street, Tallaght și Connolly — oferă îngrijire specializată pentru bolile infecțioase pediatrice.
+      
+      
+        🔬
+        Irlanda · Național
+        Health Protection Surveillance Centre (HPSC)
+        HPSC monitorizează bolile transmisibile din Irlanda, inclusiv infecțiile enterovirale și focarele de BMGP din colectivitățile de copii.
+      
+    
+
+    🇵🇹 Portugalia
+    
+      
+        🏥
+        Portugalia · Național
+        Direção-Geral da Saúde (DGS)
+        Direcția Generală a Sănătății din Portugalia oferă ghiduri clinice naționale și comunicări de sănătate publică privind BMGP și bolile infecțioase ale copilăriei.
+      
+      
+        👨‍⚕️
+        Portugalia · Organizație profesională
+        Sociedade Portuguesa de Pediatria (SPP)
+        Societatea Portugheză de Pediatrie publică documente de consens clinic, fișe informative pentru părinți și materiale de educație medicală continuă privind bolile infecțioase pediatrice.
+      
+      
+        🏨
+        Portugalia · Lisabona
+        Hospital Dona Estefânia / HDE
+        Principalul spital dedicat copiilor din Portugalia, parte a Centro Hospitalar Universitário de Lisboa Central, cu o secție specializată în boli infecțioase pediatrice.
+      
+    
+
+    🇪🇸 Spania
+    
+      
+        👶
+        Spania · Național
+        Asociación Española de Pediatría (AEP)
+        Asociația profesională națională de pediatrie din Spania — care publică Anales de Pediatría — oferă ghiduri pentru familii și protocoale clinice bazate pe dovezi privind BMGP și bolile virale frecvente.
+      
+      
+        🔬
+        Spania · Organizație profesională
+        Sociedad Española de Infectología Pediátrica (SEIP)
+        Societatea Spaniolă de Boli Infecțioase Pediatrice oferă recomandări clinice specializate, protocoale de gestionare a focarelor și resurse educaționale pentru clinicieni și familii.
+      
+      
+        🏥
+        Spania · Național
+        Red Nacional de Vigilancia Epidemiológica (RENAVE)
+        Rețeaua națională de supraveghere epidemiologică din Spania monitorizează focarele de boli transmisibile, inclusiv BMGP, din creșe, grădinițe și școli din toate comunitățile autonome.
+      
+    
+
+    🇷🇴 România
+    
+      
+        🔬
+        România · Național
+        Institutul Național de Sănătate Publică (INSP)
+        Institutul Național de Sănătate Publică din România oferă date de supraveghere epidemiologică, rapoarte privind focarele și recomandări clinice despre BMGP și alte boli infecțioase ale copilăriei.
+      
+      
+        🏥
+        România · Național
+        Ministerul Sănătății (MS)
+        Ministerul Sănătății din România publică alerte naționale de sănătate publică, politici privind absența din colectivitățile de copii și recomandări despre calendarul de vaccinare relevante pentru bolile infecțioase pediatrice.
+      
+      
+        👨‍⚕️
+        România · București
+        Spitalul Clinic de Copii „Grigore Alexandrescu”
+        Unul dintre principalele spitale pediatrice din România, cu secții specializate de boli infecțioase și terapie intensivă, cu experiență în tratarea bolilor virale ale copilăriei, inclusiv BMGP.
+      
+    
+
+    🌍 Autorități internaționale & europene
+    
+      
+        🇪🇺
+        UE / Europa
+        ECDC — profilul BMGP
+        European Centre for Disease Prevention and Control menține un profil de referință privind BMGP, care cuprinde epidemiologia, datele despre focare și recomandările de prevenție.
+      
+      
+        🌐
+        Global
+        WHO — fișă informativă despre BMGP
+        Fișa informativă oficială a World Health Organization despre BMGP prezintă epidemiologia globală, agenții cauzali, caracteristicile clinice, prevenția și răspunsul de sănătate publică.
+      
+      
+        🔭
+        SUA (referință)
+        US CDC — boala mână-gură-picior
+        US Centers for Disease Control oferă informații clinice și de sănătate publică detaliate, folosite pe scară largă ca reper de clinicienii pediatri din întreaga lume.
+      
+    
+  
+
+
+
+
+Revizuit clinic de Dr Tiago Miguel Figueira. Ultima revizuire 15 iunie 2026. Acest articol are doar scop informativ și nu înlocuiește sfatul medical.Cum redactăm și revizuim conținutul medicalMerită distribuit?Distribuie acest articolFacebookWhatsAppXLinkedInInstagramCopiază linkulPasul următorSunteți gata să vorbiți cu un medic?Programați o consultație online cu un medic înregistrat local în ț

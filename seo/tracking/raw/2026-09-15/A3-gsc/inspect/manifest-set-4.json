@@ -1,0 +1,26 @@
+{
+  "agent": "A3i-4 (URL Inspection)",
+  "input_file": "seo/tracking/raw/2026-09-15/A3-gsc/inspect/priority-set-4.txt",
+  "urls_requested": 157,
+  "urls_inspected": 157,
+  "urls_failed": 0,
+  "calls_made": 16,
+  "batch_size": 10,
+  "last_batch_size": 7,
+  "collection_window_utc": "2026-09-15T05:10:00Z to 2026-09-15T05:22:30Z (approx; all rows in raw-set-4.jsonl stamped with 05:22:30Z, the time the raw file was written)",
+  "quota_note": "URL Inspection quota (2,000/day, ~7.5s/URL) not exhausted; 157 of 2,000 daily calls used by this set. No indexing requested (read-only inspection only).",
+  "outputs": {
+    "raw_jsonl": "seo/tracking/raw/2026-09-15/A3-gsc/inspect/raw-set-4.jsonl",
+    "parser_script": "seo/tracking/raw/2026-09-15/A3-gsc/inspect/parse_inspect_4.py",
+    "csv": "seo/tracking/raw/2026-09-15/A3-gsc/inspect/inspect-set-4.csv"
+  },
+  "coverage_state_counts": {
+    "Submitted and indexed": 115,
+    "Discovered - currently not indexed": 30,
+    "Crawled - currently not indexed": 5,
+    "URL is unknown to Google": 4,
+    "Duplicate, Google chose different canonical than user": 3
+  },
+  "canonical_mismatches": 3,
+  "last_crawl_before_2026-08-08_count": 1
+}

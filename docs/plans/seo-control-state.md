@@ -1,3 +1,9 @@
+> **FROZEN 2026-09-15 — historical evidence only.** This ledger was superseded by
+> [`docs/plans/seo-control-state-2026-09.md`](seo-control-state-2026-09.md) at the
+> 2026-09-15 master audit (`docs/audits/seo/seo-master-audit-2026-09-15.md`). Nothing
+> below this banner is edited any more; section numbers remain valid as references.
+> Open items were carried into the new ledger's §1.
+
 # SEO control state — canonical
 
 **Last operational update: 2026-09-09** — §50 records the owner's next markets (Spain, Romania, Brazil) and active recrawl monitoring; §49 verifies Google browser access and records fresh aggregate measurements; §48 indexes session recovery; §47 records restored GA4 collection; §46 records performance remediation verified on Development, with production promotion still open. §43 covers clinical-approval enforcement and §42 retains the dated six-market audit. Historical audit files remain snapshots;

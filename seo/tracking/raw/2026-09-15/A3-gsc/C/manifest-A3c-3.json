@@ -1,0 +1,26 @@
+{
+  "agent": "A3c-3",
+  "dataset": "GSC query daily sample",
+  "window": {
+    "start": "2026-09-05",
+    "end": "2026-09-11",
+    "days": 7,
+    "timezone": "America/Los_Angeles"
+  },
+  "calls_total": 10,
+  "rows_per_day": {
+    "2026-09-05": 529,
+    "2026-09-06": 566,
+    "2026-09-07": 772,
+    "2026-09-08": 847,
+    "2026-09-09": 1012,
+    "2026-09-10": 1087,
+    "2026-09-11": 1004
+  },
+  "rows_total": 5817,
+  "truncated_days": [],
+  "truncation_note": "No day hit the 4,000-row/day cap; every day's final page returned hasMore=false.",
+  "deviation_note": "Tool schema caps dimensions at 4 items; requested 5-dim set (query,page,date,country,device) was not callable. Called with dimensions=[query,page,country,device] (date implicit since startDate=endDate=day) and injected date at CSV-build time from the call date.",
+  "extraction_utc": "2026-09-15T05:32:19.049940+00:00",
+  "schema_version": "1.0"
+}

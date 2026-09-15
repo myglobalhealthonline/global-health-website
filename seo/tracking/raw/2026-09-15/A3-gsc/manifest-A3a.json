@@ -1,0 +1,158 @@
+{
+  "schema_version": "1.0",
+  "agent": "A3a",
+  "source": "openseo:get_search_console_performance (connector id mcp__5d8b8083-4ca6-4eb7-901c-dc53cac45319; the sibling 'openseo requires authentication' system-reminder entry seen this run was a duplicate/stale entry per task instructions and was ignored)",
+  "property": "sc-domain:myglobalhealth.online",
+  "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+  "tool": "get_search_console_performance",
+  "extraction_timestamp_utc": "2026-09-15T17:22:00Z",
+  "source_timezone": "America/Los_Angeles",
+  "refresh_id": "R2026-09-15-GSC-A",
+  "completeness_note": "GSC data lags roughly 3 days; the latest ~3 received dates (2026-09-12..2026-09-14) are incomplete/fresh (data_state=incomplete). Dates <= 2026-09-11 are treated as final.",
+  "latest_date_received": "2026-09-14",
+  "latest_complete_date_asserted": "2026-09-11",
+  "first_date_with_any_impressions": "2025-05-15",
+  "first_date_with_any_impressions_note": "This is the first date of the requested pull window (2025-05-15); it already carries nonzero web impressions (164) on day 1, so the true site-history start could be earlier than the window requested by this task -- not determined by this pull.",
+  "calls": [
+    {
+      "dataset": "A - property/day/search-type",
+      "grain": "date",
+      "search_types": ["web", "image", "video", "news", "discover", "googleNews"],
+      "params_template": {
+        "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+        "dimensions": ["date"],
+        "startDate": "2025-05-15",
+        "endDate": "2026-09-14",
+        "dataState": "all",
+        "rowLimit": 1000
+      },
+      "date_range": {"start": "2025-05-15", "end": "2026-09-14"},
+      "pagination": "none required per type (each type returned 488 rows, hasMore=false)",
+      "row_counts": {
+        "web": 488,
+        "image": 488,
+        "video": 488,
+        "news": 488,
+        "discover": 488,
+        "googleNews": 488,
+        "total": 2928
+      },
+      "raw_files": [
+        "A_web_2025-05-15_2026-09-14_r0.json",
+        "A_image_2025-05-15_2026-09-14_r0.json",
+        "A_video_2025-05-15_2026-09-14_r0.json",
+        "A_news_2025-05-15_2026-09-14_r0.json",
+        "A_discover_2025-05-15_2026-09-14_r0.json",
+        "A_googleNews_2025-05-15_2026-09-14_r0.json"
+      ],
+      "output_csv": "seo/tracking/data/gsc_property_daily.csv",
+      "output_csv_rows": 2928,
+      "notes": "position is blank for discover and googleNews rows (API omits it for these types, per tool description). news/discover/googleNews are near-all-zero for this property except a handful of sparse news impressions from 2026-02 onward."
+    },
+    {
+      "dataset": "B - web date+country",
+      "grain": "date,country",
+      "search_type": "web",
+      "params_template": {
+        "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+        "dimensions": ["date", "country"],
+        "startDate": "2026-07-21",
+        "endDate": "2026-09-14",
+        "dataState": "all",
+        "rowLimit": 1000
+      },
+      "date_range": {"start": "2026-07-21", "end": "2026-09-14"},
+      "pagination": "5 pages (startRow 0,1000,2000,3000,4000); page5 hasMore=false",
+      "row_counts_by_page": {"r0": 1000, "r1000": 1000, "r2000": 1000, "r3000": 1000, "r4000": 458, "total": 4458},
+      "raw_files": [
+        "B_web_datecountry_2026-07-21_2026-09-14_r0.json",
+        "B_web_datecountry_2026-07-21_2026-09-14_r1000.json",
+        "B_web_datecountry_2026-07-21_2026-09-14_r2000.json",
+        "B_web_datecountry_2026-07-21_2026-09-14_r3000.json",
+        "B_web_datecountry_2026-07-21_2026-09-14_r4000.json"
+      ],
+      "output_csv": "seo/tracking/data/gsc_date_country.csv",
+      "output_csv_rows": 4458,
+      "notes": "searcher_country is the lowercase alpha-3 country code returned by the API (e.g. usa, gbr, bra)."
+    },
+    {
+      "dataset": "B - web date+device",
+      "grain": "date,device",
+      "search_type": "web",
+      "params_template": {
+        "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+        "dimensions": ["date", "device"],
+        "startDate": "2026-07-21",
+        "endDate": "2026-09-14",
+        "dataState": "all",
+        "rowLimit": 1000
+      },
+      "date_range": {"start": "2026-07-21", "end": "2026-09-14"},
+      "pagination": "none required (168 rows, hasMore=false)",
+      "row_counts": {"total": 168},
+      "raw_files": ["B_web_datedevice_2026-07-21_2026-09-14_r0.json"],
+      "output_csv": "seo/tracking/data/gsc_date_device.csv",
+      "output_csv_rows": 168
+    },
+    {
+      "dataset": "Sizing probe (a) - page+date, 7 days",
+      "grain": "page,date",
+      "search_type": "web",
+      "params_template": {
+        "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+        "dimensions": ["page", "date"],
+        "startDate": "2026-09-08",
+        "endDate": "2026-09-14",
+        "dataState": "all",
+        "rowLimit": 1000
+      },
+      "date_range": {"start": "2026-09-08", "end": "2026-09-14"},
+      "pagination": "3 pages (startRow 0,1000,2000); page3 hasMore=false",
+      "row_counts_by_page": {"r0": 1000, "r1000": 1000, "r2000": 965, "total": 2965},
+      "raw_files": [
+        "probeA_pagedate_2026-09-08_2026-09-14_r0.json",
+        "probeA_pagedate_2026-09-08_2026-09-14_r1000.json",
+        "probeA_pagedate_2026-09-08_2026-09-14_r2000.json"
+      ],
+      "result": "2965 total rows for page+date over the 7-day window 2026-09-08..2026-09-14"
+    },
+    {
+      "dataset": "Sizing probe (b) - query+page+date, 3 days (single call, not paginated per instructions)",
+      "grain": "query,page,date",
+      "search_type": "web",
+      "params": {
+        "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+        "dimensions": ["query", "page", "date"],
+        "startDate": "2026-09-12",
+        "endDate": "2026-09-14",
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startRow": 0
+      },
+      "raw_files": ["probeB_querypagedate_2026-09-12_2026-09-14_r0.json"],
+      "result": {"rowCount": 1000, "hasMore": true}
+    },
+    {
+      "dataset": "Sizing probe (c) - page+date+country+device, single day (not paginated per instructions)",
+      "grain": "page,date,country,device",
+      "search_type": "web",
+      "params": {
+        "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+        "dimensions": ["page", "date", "country", "device"],
+        "startDate": "2026-09-10",
+        "endDate": "2026-09-10",
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startRow": 0
+      },
+      "raw_files": ["probeC_pagedatecountrydevice_2026-09-10_r0.json"],
+      "result": {"rowCount": 361, "hasMore": false}
+    }
+  ],
+  "output_files": {
+    "seo/tracking/data/gsc_property_daily.csv": 2928,
+    "seo/tracking/data/gsc_date_country.csv": 4458,
+    "seo/tracking/data/gsc_date_device.csv": 168
+  },
+  "build_script": "seo/tracking/raw/2026-09-15/A3-gsc/build_A3a.py"
+}

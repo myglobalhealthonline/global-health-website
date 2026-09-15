@@ -1,0 +1,11 @@
+diff --git a/docs/plans/seo-control-state.md b/docs/plans/seo-control-state.md
+index 9cc3d2f9..77274d35 100644
+--- a/docs/plans/seo-control-state.md
++++ b/docs/plans/seo-control-state.md
+@@ -0,0 +1,6 @@
++> **FROZEN 2026-09-15 — historical evidence only.** This ledger was superseded by
++> [`docs/plans/seo-control-state-2026-09.md`](seo-control-state-2026-09.md) at the
++> 2026-09-15 master audit (`docs/audits/seo/seo-master-audit-2026-09-15.md`). Nothing
++> below this banner is edited any more; section numbers remain valid as references.
++> Open items were carried into the new ledger's §1.
++

@@ -1,0 +1,25 @@
+country,feature,expected_route,status,in_sitemap,verdict
+ie,health-tests,https://www.myglobalhealth.online/ireland/en/lab-tests,404,no,PASS
+ie,specialist-consultations,https://www.myglobalhealth.online/ireland/en/see-a-specialist,200,yes,PASS
+ie,online-prescriptions,https://www.myglobalhealth.online/ireland/en/prescriptions,200,no,PASS
+ie,subscriptions,https://www.myglobalhealth.online/ireland/en/pricing,200,yes,PASS
+cz,health-tests,https://www.myglobalhealth.online/czechia/cs/lab-tests,404,no,PASS
+cz,specialist-consultations,https://www.myglobalhealth.online/czechia/cs/see-a-specialist,404,no,PASS
+cz,online-prescriptions,https://www.myglobalhealth.online/czechia/cs/prescriptions,200,no,FAIL: enabledFeatures says off but status=200
+cz,subscriptions,https://www.myglobalhealth.online/czechia/cs/pricing,200,yes,PASS
+pt,health-tests,https://www.myglobalhealth.online/portugal/pt/lab-tests,404,no,PASS
+pt,specialist-consultations,https://www.myglobalhealth.online/portugal/pt/see-a-specialist,200,yes,PASS
+pt,online-prescriptions,https://www.myglobalhealth.online/portugal/pt/prescriptions,200,no,FAIL: enabledFeatures says off but status=200
+pt,subscriptions,https://www.myglobalhealth.online/portugal/pt/pricing,200,yes,PASS
+es,health-tests,https://www.myglobalhealth.online/spain/es/lab-tests,404,no,PASS
+es,specialist-consultations,https://www.myglobalhealth.online/spain/es/see-a-specialist,200,yes,PASS
+es,online-prescriptions,https://www.myglobalhealth.online/spain/es/prescriptions,200,no,FAIL: enabledFeatures says off but status=200
+es,subscriptions,https://www.myglobalhealth.online/spain/es/pricing,200,yes,PASS
+ro,health-tests,https://www.myglobalhealth.online/romania/ro/lab-tests,200,yes,PASS
+ro,specialist-consultations,https://www.myglobalhealth.online/romania/ro/see-a-specialist,200,yes,PASS
+ro,online-prescriptions,https://www.myglobalhealth.online/romania/ro/prescriptions,200,no,FAIL: enabledFeatures says off but status=200
+ro,subscriptions,https://www.myglobalhealth.online/romania/ro/pricing,200,yes,PASS
+br,health-tests,https://www.myglobalhealth.online/brazil/pt/lab-tests,404,no,PASS
+br,specialist-consultations,https://www.myglobalhealth.online/brazil/pt/see-a-specialist,404,no,PASS
+br,online-prescriptions,https://www.myglobalhealth.online/brazil/pt/prescriptions,200,no,FAIL: enabledFeatures says off but status=200
+br,subscriptions,https://www.myglobalhealth.online/brazil/pt/pricing,200,yes,PASS

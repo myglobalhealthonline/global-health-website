@@ -1,0 +1,94 @@
+{
+  "set": 3,
+  "input_file": "priority-set-3.txt",
+  "urls_requested": 157,
+  "urls_inspected": 157,
+  "urls_failed": 0,
+  "calls_made": 16,
+  "batch_size": 10,
+  "first_call_utc": "2026-09-15T05:12:36Z",
+  "last_call_utc": "2026-09-15T05:42:31Z",
+  "quota_note": "URL Inspection quota ~7.5s/URL, 2000/day. This run used 157 of the 2000 daily inspections; no quota exhaustion encountered, all 16 batches completed without errors.",
+  "batches": [
+    {
+      "batch": 1,
+      "timestamp_utc": "2026-09-15T05:12:36Z",
+      "url_count": 10
+    },
+    {
+      "batch": 2,
+      "timestamp_utc": "2026-09-15T05:14:44Z",
+      "url_count": 10
+    },
+    {
+      "batch": 3,
+      "timestamp_utc": "2026-09-15T05:16:47Z",
+      "url_count": 10
+    },
+    {
+      "batch": 4,
+      "timestamp_utc": "2026-09-15T05:18:39Z",
+      "url_count": 10
+    },
+    {
+      "batch": 5,
+      "timestamp_utc": "2026-09-15T05:21:21Z",
+      "url_count": 10
+    },
+    {
+      "batch": 6,
+      "timestamp_utc": "2026-09-15T05:23:12Z",
+      "url_count": 10
+    },
+    {
+      "batch": 7,
+      "timestamp_utc": "2026-09-15T05:25:05Z",
+      "url_count": 10
+    },
+    {
+      "batch": 8,
+      "timestamp_utc": "2026-09-15T05:27:07Z",
+      "url_count": 10
+    },
+    {
+      "batch": 9,
+      "timestamp_utc": "2026-09-15T05:29:07Z",
+      "url_count": 10
+    },
+    {
+      "batch": 10,
+      "timestamp_utc": "2026-09-15T05:31:12Z",
+      "url_count": 10
+    },
+    {
+      "batch": 11,
+      "timestamp_utc": "2026-09-15T05:33:14Z",
+      "url_count": 10
+    },
+    {
+      "batch": 12,
+      "timestamp_utc": "2026-09-15T05:35:13Z",
+      "url_count": 10
+    },
+    {
+      "batch": 13,
+      "timestamp_utc": "2026-09-15T05:37:08Z",
+      "url_count": 10
+    },
+    {
+      "batch": 14,
+      "timestamp_utc": "2026-09-15T05:39:05Z",
+      "url_count": 10
+    },
+    {
+      "batch": 15,
+      "timestamp_utc": "2026-09-15T05:40:57Z",
+      "url_count": 10
+    },
+    {
+      "batch": 16,
+      "timestamp_utc": "2026-09-15T05:42:31Z",
+      "url_count": 7
+    }
+  ]
+}

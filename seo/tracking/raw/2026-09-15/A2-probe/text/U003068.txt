@@ -1,0 +1,384 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.ers.pt","https://www.ordemdosmedicos.pt","https://www.cnpd.pt","https://www.livroreclamacoes.pt","https://www.infarmed.pt","https://www.sns24.gov.pt","https://www.dgs.pt","https://www.insa.min-saude.pt","https://www.spc.pt","https://www.ihmt.unl.pt","https://www.apmgf.pt","https://www.deco.pt","https://www.utente.min-saude.pt","https://www.sosvozamiga.org","https://www.fpcardiologia.pt"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetul, boala tăcută","description":"Ghid complet despre diabet în Portugalia — cauze, semne și simptome, tratamente actuale inclusiv agoniști GLP-1 și inhibitori SGLT2, importanța consultațiilor regulate și evoluțiile viitoare. Scris de Dr. Tiago Miguel Figueira, Ordem dos Médicos n.º 77986.","url":"https://www.myglobalhealth.online/portugal/ro/blog/diabetul-boala-tacuta-2","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/portugal/ro/blog/diabetul-boala-tacuta-2#webpage","url":"https://www.myglobalhealth.online/portugal/ro/blog/diabetul-boala-tacuta-2","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/ro/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-19"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetul%2C+boala+t%C4%83cut%C4%83&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F9ea3bb44-d780-4068-ac33-8f3153a05634-33848.webp&v=2026-07-20.1-45fttl","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologia"},"datePublished":"2026-07-19T05:53:45.279Z","dateModified":"2026-07-19T07:00:32.930Z","publishingPrinciples":"https://www.myglobalhealth.online/portugal/ro/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/portugal/ro/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Acasă","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/portugal/ro/blog"},{"@type":"ListItem","position":3,"name":"Diabetul, boala tăcută","item":"https://www.myglobalhealth.online/portugal/ro/blog/diabetul-boala-tacuta-2"}]}]Toate articoleleEndocrinologiaDiabetul, boala tăcutăDiabetul este una dintre cele mai frecvente și subdiagnosticate boli cronice din Portugalia, afectând peste un milion de persoane potrivit datelor DGS. Cu toate acestea, este o afecțiune care poate fi ținută foarte bine sub control, iar progresele recente, precum agoniștii GLP-1 și inhibitorii SGLT2, au adus cele mai bune opțiuni de tratament disponibile vreodată.Global Health Medical Team19 iulie 202621 min citire+Pe această paginăDiabetul în Portugalia: Înțelegerea Dimensiunii ProblemeiTipuri de DiabetCauze și Factori de RiscSemne și SimptomeTratamente Actuale pentru Diabet în PortugaliaImportanța Consultațiilor RegulateViitorul Tratamentului DiabetuluiInstituții și Resurse de Referință în PortugaliaÎntrebări Frecvente
+
+
+
+  
+  
+    
+      
+      
+      
+      Cauze, Simptome, Tratamente și Viitorul Îngrijirii
+      Se estimează că peste un milion de portughezi trăiesc cu diabet — și mii rămân nediagnosticați. Acest ghid acoperă tot ce trebuie să știți: cauzele, semnele de alarmă, cele mai bune tratamente disponibile astăzi, importanța consultațiilor regulate și terapiile emergente care ar putea transforma îngrijirea diabetului în anii următori.
+      
+        — Bazat pe dovezi
+        — Aliniat cu DGS și APDP
+        — Actualizat în Iunie 2026
+      
+      — Scris de Dr. Tiago Miguel Figueira · Ordinul Medicilor nr. 77986 · Director Clinic, Global Health
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      TF
+      
+        Scris de Dr. Tiago Miguel Figueira
+        Director Clinic · Ordinul Medicilor nr. 77986 · Medicină Generală și de Familie
+      
+      10 MIN DE CITIT
+    
+
+    Diabetul este una dintre cele mai răspândite boli cronice din Portugalia — și una dintre cele mai subdiagnosticate. Este adesea descrisă ca o „boală tăcută” deoarece diabetul de tip 2, responsabil pentru peste 90% din cazuri, se poate dezvolta lent, de-a lungul mai multor ani, fără simptome perceptibile. Când diagnosticul este stabilit, boala există adesea deja de ceva timp.
+
+    Vestea bună este că diabetul este foarte controlabil. Cu diagnosticul corect, tratamentul adecvat și monitorizarea regulată, persoanele cu diabet pot trăi într-un mod plin și sănătos. Iar odată cu progresele remarcabile din ultimul deceniu — în special apariția agoniștilor receptorului GLP-1 și a inhibitorilor SGLT2 — opțiunile clinice disponibile în Portugalia sunt astăzi cele mai bune din toate timpurile.
+
+    
+    
+    Secțiunea 01
+    Diabetul în Portugalia: Înțelegerea Dimensiunii Problemei
+
+    Conform Raportului Programului Național pentru Diabet — Provocări și Strategii 2025, publicat de Direcția Generală a Sănătății (DGS), existau 936.987 persoane cu diabet diagnosticat în asistența medicală primară la sfârșitul anului 2024 — cea mai mare valoare de până acum — reprezentând 8,9% dintre persoanele înscrise în SNS. Același raport a consemnat 80.915 cazuri noi diagnosticate doar în 2024. Diário da República, prin Despacho n.º 3390/2025, estimează că diabetul afectează în total peste un milion de portughezi, incluzând cazurile nediagnosticate, fiind una dintre cele mai ridicate rate de prevalență din Uniunea Europeană.
+
+    
+      
+        937k
+        Persoane diagnosticate în CSP la sfârșitul lui 2024 (DGS)
+      
+      
+        +1M
+        Total estimat în Portugalia, incluzând cazurile nediagnosticate
+      
+      
+        81k
+        Cazuri noi înregistrate doar în 2024
+      
+      
+        8,4%
+        Din sarcinile din SNS în 2023 cu diabet gestațional
+      
+    
+    Sursă: DGS — Programul Național pentru Diabet, Provocări și Strategii 2025; Diário da República, Despacho n.º 3390/2025.
+
+    Raportul DGS evidențiază că, în ciuda creșterii numărului de diagnostice, s-a înregistrat o îmbunătățire a controlului metabolic și o reducere a mortalității totale și premature asociate bolii — semn al impactului pozitiv al programelor de screening și al tratamentelor mai moderne. Chiar și așa, diabetul continuă să fie prezent în aproximativ o treime din episoadele de infarct miocardic acut și accident vascular cerebral (AVC) din Portugalia.
+
+    
+      Sunteți la risc și nu știți?
+      O parte semnificativă a persoanelor cu diabet de tip 2 din Portugalia rămâne nediagnosticată. Dacă aveți factori de risc — istoric familial, exces de greutate, tensiune arterială crescută sau sedentarism — discutați cu medicul dumneavoastră despre efectuarea unei glicemii à jeun sau a unei HbA1c. Diagnosticul precoce este determinant pentru prevenirea complicațiilor.
+    
+
+    
+    
+    Secțiunea 02
+    Tipuri de Diabet
+
+    Nu tot diabetul este la fel. Înțelegerea tipului pe care îl aveți — sau pentru care sunteți la risc — este primul pas către o gestionare eficientă.
+
+    
+      
+        🔵
+        Diabet de Tip 1
+        Autoimun · Insulino-dependent
+        Sistemul imunitar distruge celulele beta producătoare de insulină din pancreas. Organismul produce puțină insulină sau deloc. Necesită insulinoterapie pe toată durata vieții. Se dezvoltă de obicei în copilărie sau la vârsta adultă tânără. DGS estimează că aproximativ 33.000 de portughezi trăiesc cu diabet de tip 1.
+      
+      
+        🟠
+        Diabet de Tip 2
+        Stil de viață & genetică · Progresiv
+        Organismul devine rezistent la insulină sau nu produce suficientă insulină. Puternic asociat cu factori de stil de viață. Cea mai frecventă formă în Portugalia, responsabilă pentru peste 90% din cazuri. Poate fi inițial controlată prin alimentație, exercițiu și medicație orală, deși mulți pacienți ajung să necesite insulină.
+      
+      
+        🟡
+        Diabet Gestațional
+        Legat de sarcină · De obicei tranzitoriu
+        Se dezvoltă în timpul sarcinii atunci când modificările hormonale afectează funcția insulinei. De obicei se rezolvă după naștere, dar crește semnificativ riscul pe tot parcursul vieții de diabet de tip 2 pentru mamă și copil. În 2023, a fost detectat în 8,4% dintre sarcinile al căror travaliu s-a finalizat în SNS, conform DGS.
+      
+      
+        ⚪
+        Prediabet
+        Prevenibil · Adesea reversibil
+        Glicemia este peste normal, dar nu a atins încă nivelurile diabetului. O fereastră critică de intervenție — modificările stilului de viață în această etapă pot preveni sau întârzia semnificativ apariția diabetului de tip 2. Între 2022 și 2024, SNS a evaluat riscul a 3,89 milioane de utilizatori adulți, reprezentând 62% din populația-țintă.
+      
+    
+
+    
+    
+    Secțiunea 03
+    Cauze și Factori de Risc
+
+    Diabet de Tip 1
+    Cauza exactă a diabetului de tip 1 rămâne incomplet înțeleasă. Este o boală autoimună — sistemul imunitar al organismului atacă și distruge în mod greșit celulele beta ale pancreasului, responsabile de producția de insulină. Factorii genetici joacă un rol, precum și, posibil, expunerea la anumite infecții virale. În Portugalia, cercetarea în acest domeniu este desfășurată de centre precum APDP — Associação Protectora dos Diabéticos de Portugal și de grupuri de cercetare de la Faculdade de Medicina da Universidade de Lisboa și de la Faculdade de Medicina da Universidade do Porto.
+
+    Diabet de Tip 2
+    Diabetul de tip 2 are un set de cauze mai complex și mai modificabil, combinând predispoziția genetică cu factori de stil de viață și de mediu. Mecanismul central este rezistența la insulină — în care celulele organismului nu mai răspund eficient la insulină — asociată cu un declin progresiv al capacității pancreasului de a compensa printr-o producție mai mare.
+
+    
+      
+        ⚖️
+        Exces de greutate corporală
+        În special grăsimea abdominală (viscerală). Obezitatea este cel mai important factor de risc modificabil pentru diabetul de tip 2.
+      
+      
+        🛋️
+        Sedentarism
+        Comportamentul sedentar reduce sensibilitatea la insulină. Exercițiul regulat este unul dintre cele mai eficiente instrumente preventive și terapeutice.
+      
+      
+        🍞
+        Dietă bogată în alimente procesate
+        Consumul ridicat de carbohidrați rafinați, zahăr și alimente ultraprocesate este puternic asociat cu rezistența la insulină.
+      
+      
+        👨‍👩‍👧
+        Istoric familial
+        A avea o rudă de gradul întâi cu diabet de tip 2 crește semnificativ riscul personal.
+      
+      
+        🎂
+        Vârsta peste 45 de ani
+        Riscul crește odată cu vârsta. Inquérito Nacional de Saúde și datele SNS evidențiază o prevalență în creștere la grupele de vârstă mai avansate.
+      
+      
+        🩺
+        Hipertensiune arterială sau dislipidemie
+        Factorii de risc metabolic tind să coexiste. Hipertensiunea și dislipidemia apar frecvent concomitent cu rezistența la insulină.
+      
+      
+        🤰
+        Diabet gestațional anterior
+        Femeile care au dezvoltat diabet gestațional au un risc pe tot parcursul vieții substanțial mai mare de a dezvolta diabet de tip 2.
+      
+      
+        🌍
+        Origine etnică
+        Persoanele de origine sud-asiatică, africană subsahariană și din Orientul Mijlociu prezintă rate mai mari de diabet de tip 2 la praguri de IMC mai mici.
+      
+    
+
+    
+    
+    Secțiunea 04
+    Semne și Simptome
+
+    Simptomele variază considerabil între diabetul de tip 1 și cel de tip 2. Tipul 1 debutează adesea acut — cu apariția rapidă a simptomelor care pot indica cetoacidoză diabetică (CAD), o urgență medicală. Tipul 2, dimpotrivă, se dezvoltă de obicei lent și silențios, de-a lungul anilor, cu simptome atât de subtile sau graduale încât multe persoane le atribuie îmbătrânirii, stresului sau oboselii.
+
+    
+      
+        💧
+        
+          Sete excesivă
+          Sete persistentă și incontrolabilă — polidipsie — în timp ce rinichii lucrează pentru a filtra excesul de glucoză.
+        
+      
+      
+        🚽
+        
+          Urinare frecventă
+          Poliurie, mai ales noaptea (nicturie). Adesea cel mai deranjant simptom inițial.
+        
+      
+      
+        😴
+        
+          Oboseală persistentă
+          Oboseală constantă chiar și după odihnă adecvată, cauzată de privarea celulelor de glucoză.
+        
+      
+      
+        ⚖️
+        
+          Pierdere inexplicabilă în greutate
+          Mai ales în tipul 1 — organismul degradează grăsimea și mușchiul pentru a obține energie în absența insulinei.
+        
+      
+      
+        👁️
+        
+          Vedere încețoșată
+          Glicemia crescută provoacă modificări la nivelul cristalinului ochiului, afectând temporar focalizarea vizuală.
+        
+      
+      
+        🩹
+        
+          Vindecare lentă a rănilor
+          Circulația afectată și disfuncția imună încetinesc vindecarea tăieturilor, rănilor și infecțiilor.
+        
+      
+      
+        🤚
+        
+          Furnicături sau amorțeală
+          Neuropatia periferică — care afectează mâinile și picioarele — poate fi un semn precoce, în special în tipul 2.
+        
+      
+      
+        🍽️
+        
+          Foame constantă
+          Polifagie — foame persistentă chiar și după ce mâncați — apare când celulele nu pot absorbi eficient glucoza.
+        
+      
+    
+
+    
+      Când să solicitați îngrijiri urgente:
+      Dacă dumneavoastră sau un membru al familiei prezintă apariția bruscă a setei intense, urinare excesivă, vărsături, dureri abdominale, confuzie sau respirație cu miros de acetonă — mai ales la un copil sau adult tânăr — poate fi cetoacidoză diabetică (CAD), o urgență medicală. Sunați imediat la 112 sau mergeți la cea mai apropiată unitate de urgență spitalicească.
+    
+
+    
+    
+    Secțiunea 05
+    Tratamente Actuale pentru Diabet în Portugalia
+
+    Tratamentul diabetului a trecut printr-o adevărată revoluție în ultimul deceniu. În Portugalia, Programul Național pentru Diabet al DGS stabilește orientările clinice naționale, aliniate la recomandările internaționale ale American Diabetes Association (ADA) și ale European Association for the Study of Diabetes (EASD). În februarie 2025, pompele de insulină au început să fie eliberate în farmaciile comunitare din Portugalia — un reper important în accesul la tratamentul diabetului de tip 1.
+
+    Modificarea Stilului de Viață — Baza Tuturor Tratamentelor
+    Pentru diabetul de tip 1 și de tip 2, stilul de viață este fundamentul gestionării bolii. Pentru tipul 2 în special, schimbarea alimentației și creșterea activității fizice pot reduce semnificativ HbA1c, pot îmbunătăți sensibilitatea la insulină și, în unele cazuri — în special după chirurgie bariatrică sau diete cu aport caloric foarte scăzut — pot duce la remisiune susținută. APDP și consultațiile de nutriție și nursing din centrele de sănătate ale SNS oferă sprijin structurat pentru gestionarea stilului de viață în întreaga țară.
+
+    Tratament Farmacologic
+    Următoarele clase de medicamente sunt disponibile în Portugalia. Deciziile terapeutice sunt individualizate — orientările DGS, ADA 2025 și EASD subliniază o abordare centrată pe pacient, care ia în considerare riscul cardiovascular, funcția renală, greutatea și preferințele individuale.
+
+    
+      
+        Primă linie · Tip 2
+        Metformină
+        Glucophage · Generic (rambursat de SNS)
+        Agentul oral de primă linie consacrat pentru diabetul de tip 2. Reduce glicemia prin scăderea producției hepatice de glucoză. Bine tolerată, accesibilă și larg disponibilă. Rămâne punctul de plecare în majoritatea abordărilor terapeutice pentru tipul 2 în Portugalia.
+      
+      
+        Protecție cardiorenală
+        Agoniști GLP-1
+        Semaglutidă (Ozempic, Wegovy) · Liraglutidă (Victoza)
+        O clasă transformatoare de medicamente injectabile (și acum și orale) care mimează hormonul intestinal GLP-1. Reduc glicemia, promovează pierderea semnificativă în greutate, încetinesc golirea gastrică și reduc riscul cardiovascular. Orientările ADA 2025 îi recomandă ca prioritari la pacienții cu boală cardiovasculară stabilită sau cu risc crescut. Disponibili în Portugalia pe bază de prescripție medicală.
+      
+      
+        Protecție cardiorenală
+        Inhibitori SGLT2
+        Empagliflozină (Jardiance) · Dapagliflozină (Forxiga)
+        Aceste comprimate reduc glicemia prin promovarea eliminării excesului de zahăr prin urină. Protejează independent inima și rinichii — recomandate ca primă linie la pacienții cu insuficiență cardiacă sau boală renală cronică, indiferent de valoarea HbA1c. Bază solidă de dovezi din studiile EMPA-REG OUTCOME și CREDENCE.
+      
+      
+        Control glicemic
+        Inhibitori DPP-4
+        Sitagliptină (Januvia) · Linagliptină (Trajenta)
+        Comprimate orale care potențează secreția de insulină într-un mod dependent de glucoză. Neutre din punctul de vedere al greutății, cu risc scăzut de hipoglicemie. Utilizate frecvent atunci când agoniștii GLP-1 sau inhibitorii SGLT2 nu sunt tolerați sau adecvați. Disponibile cu rambursare SNS în Portugalia.
+      
+      
+        Tip 1 & Tip 2 Avansat
+        Insulinoterapie
+        Insuline bazale, bolus, premixate · Pompe de insulină
+        Esențială pentru toți pacienții cu tip 1 și pentru mulți cu tip 2. Insulinele analog moderne oferă profile de acțiune mai previzibile decât formulele mai vechi. Din februarie 2025, pompele de insulină sunt eliberate în farmaciile comunitare din Portugalia — iar pe parcursul lui 2025 a fost înregistrată o creștere exponențială a accesului.
+      
+      
+        Tip 1 · Noua Normă
+        Monitorizare Continuă a Glucozei (MCG)
+        Libre · Dexcom · Medtronic
+        MCG elimină necesitatea înțepăturilor în deget, oferă tendințe ale glucozei în timp real și alerte și îmbunătățește controlul glicemic. În Portugalia, la sfârșitul lui 2024, aproximativ 40.000 de persoane utilizau dispozitive de monitorizare interstițială a glucozei, cu o cheltuială de 55 milioane de euro raportată de DGS. Accesul a crescut constant.
+      
+    
+
+    
+      Actualizarea orientărilor ADA 2025:
+      Orientările American Diabetes Association din 2025 întăresc faptul că agoniștii GLP-1 și inhibitorii SGLT2 trebuie prioritizați la pacienții cu diabet de tip 2 care au boală cardiovasculară stabilită sau cu risc crescut, insuficiență cardiacă sau boală renală cronică — independent de valoarea HbA1c. Dacă aveți diabet de tip 2 și oricare dintre aceste afecțiuni, discutați cu medicul dumneavoastră dacă aceste clase terapeutice sunt adecvate pentru dumneavoastră.
+    
+
+    
+    
+    Secțiunea 06
+    Importanța Consultațiilor Regulate
+
+    Diabetul este o boală cronică ce evoluează în timp, iar complicațiile sale — dacă nu sunt detectate — pot fi grave și ireversibile. Retinopatia diabetică este una dintre principalele cauze de orbire în populația adultă din Portugalia. Nefropatia diabetică este unul dintre principalii determinanți ai bolii renale cronice terminale. Neuropatia periferică generează complicații ale piciorului care, în cazurile cele mai grave, pot duce la amputație. Rata amputațiilor piciorului diabetic în Portugalia rămâne ridicată, conform raportului DGS din 2025, în ciuda faptului că screeningul piciorului a fost realizat la 83% dintre utilizatorii cu diabet.
+
+    Cercetarea desfășurată de-a lungul deceniilor arată că toate aceste complicații sunt în mare parte prevenibile — sau semnificativ întârziate — printr-un bun control glicemic, gestionarea tensiunii arteriale și monitorizare regulată. Consultația anuală structurată pentru diabet este una dintre intervențiile cu cel mai bun raport cost-eficacitate din întreaga medicină.
+
+    Ce Ar Trebui să Includeți în Consultația Anuală pentru Diabet
+
+    
+      Evaluarea HbA1c (media glicemiei din ultimele 3 luni)
+      Măsurarea tensiunii arteriale și revizuirea tratamentului antihipertensiv
+      Funcția renală — rata estimată de filtrare glomerulară (eTFG) și raportul albumină/creatinină urinară
+      Colesterol și profil lipidic complet
+      Evaluarea greutății și a IMC
+      Examinarea picioarelor — inclusiv evaluarea pulsului și a sensibilității
+      Screening pentru retinopatia diabetică — prin Programul Național de Screening coordonat de DGS
+      Revizuirea și ajustarea medicației, dacă este necesar
+      Evaluarea aderenței la planul de autogestionare a diabetului
+      Evaluarea statutului de fumător și sprijin pentru renunțarea la fumat, dacă este cazul
+      Vaccinarea antigripală (puternic recomandată pentru persoanele cu diabet)
+    
+
+    Screening Pentru Cei Care Încă Nu Au Diagnostic
+    Dacă aveți factori de risc pentru diabetul de tip 2 și nu ați fost niciodată evaluat, medicul de familie poate solicita o glicemie à jeun sau o HbA1c — analize simple efectuate în laboratoarele SNS. Acest lucru este deosebit de important dacă aveți peste 45 de ani, istoric familial de diabet, tensiune arterială crescută sau ați avut exces de greutate în timpul sarcinii. Depistarea precoce a prediabetului oferă o fereastră reală de oportunitate pentru a preveni sau întârzia apariția diabetului de tip 2 prin schimbări ale stilului de viață.
+
+    
+      Screeningul Retinopatiei Diabetice în Portugalia:
+      Programul Național de Screening pentru Retinopatia Diabetică, coordonat de DGS în colaborare cu Unitățile Locale de Sănătate (ULS), oferă screening gratuit persoanelor cu diabet prin unitățile de asistență primară. APDP efectuează screeninguri de proximitate de aproximativ 20 de ani, în colaborare cu ARS Lisboa e Vale do Tejo, acoperind aproximativ 50.000 de persoane cu diabet într-un singur an. În ciuda acestui efort, doar 29% dintre persoanele invitate au efectuat screeningul în 2024 — un număr care trebuie să se îmbunătățească. Asigurați-vă că sunteți înscris.
+    
+
+    
+    
+    Secțiunea 07
+    Viitorul Tratamentului Diabetului
+
+    Ritmul inovației în medicina diabetului este fără precedent. Mai multe domenii de cercetare — unele deja în studii clinice avansate — au potențialul de a transforma fundamental ceea ce înseamnă să trăiești cu diabet în următorul deceniu.
+
+    
+      
+        Studiu Faza 1/2/3 · Depunere reglementară în 2026
+        Terapie cu Celule Stem Derivate din Celule Beta
+        Zimislecel (anterior VX-880) al Vertex Pharmaceuticals constă în perfuzarea de celule de insuli­nă din insulele pancreatice, complet diferențiate din celule stem, în vena portă hepatică — cu scopul de a restabili producția endogenă de insulină în diabetul de tip 1. În iunie 2025, studiul pivotal avea 50 de participanți incluși, iar depunerea reglementară era prevăzută pentru 2026. O revizuire publicată în PMC (2025) descrie această abordare ca fiind potențial „transformatoare”, deoarece acționează simultan asupra regenerării celulelor beta și asupra modulării imune.
+      
+      
+        Dezvoltare Clinică
+        Pancreas Artificial
+        Sistemele automate de administrare a insulinei în buclă închisă — care combină monitorizarea continuă a glucozei cu pompe de insulină automatizate — reprezintă deja un progres major pentru pacienții cu tip 1. În Portugalia, în primul semestru din 2025, 3.546 dintre cei 5.537 de pacienți tratați cu pompe de insulină utilizau deja Sisteme de Administrare Automată a Insulinei (SAAI), conform DGS. Noua generație a acestor sisteme integrează algoritmi de învățare automată pentru a prevedea fluctuațiile glucozei înainte ca acestea să apară.
+      
+      
+        Terapii Emergentе
+        Agoniști Duali și Triplі ai Receptorilor
+        Tirzepatida (Mounjaro), un agonist dual GIP/GLP-1, a demonstrat reduceri superioare ale HbA1c și pierdere în greutate față de agoniștii GLP-1 existenți și este deja disponibilă în Portugalia. Agoniștii tripli (GLP-1/GIP/glucagon) se află în studii clinice avansate și ar putea oferi beneficii metabolice și mai mari.
+      
+      
+        Cercetare în Imunoterapie
+        Modulare Imună în Tipul 1
+        Teplizumab (anticorp monoclonal anti-CD3) a demonstrat în studii clinice că întârzie debutul clinic al diabetului de tip 1 cu aproximativ doi ani la persoanele cu risc crescut. Cercetarea asupra inhibitorilor punctelor de control imunitar și asupra inducției toleranței continuă, cu scopul de a păstra funcția reziduală a celulelor beta în momentul diagnosticului.
+      
+      
+        Medicină de Precizie
+        Genomică și Tratament Ghidat de IA
+        Caracterizarea genomică începe să identifice subtipuri de diabet care răspund diferit la anumite medicamente. Monitorizările continue ale glucozei activate de inteligență artificială, care învață tiparele metabolice individuale și fac recomandări personalizate, sunt în curs de dezvoltare — cu potențialul de a transforma gestionarea zilnică a diabetului.
+      
+      
+        Medicină Regenerativă
+        Encapsularea Celulelor Beta
+        O strategie paralelă transplantului de celule stem implică encapsularea celulelor producătoare de insulină în dispozitive din biomateriale protectoare care le apără de distrugerea imună — eliminând potențial necesitatea imunosupresiei. Diabetes Research Institute al Universității din Miami a demonstrat dovada conceptului în studii clinice, primul pacient atingând independența față de insulină.
+      
+    
+
+    Cercetarea privind terapia cu celule stem pentru diabetul de tip 1 este analizată în detaliu într-o publicație din 2025 în PMC (PMID: PMC12689004), care concluzionează că „terapia cu celule stem oferă o strategie dublă: regenerarea celulelor beta producătoare de insulină și reglarea răspunsurilor imune.” Deși un tratament definitiv rămâne un obiectiv de viitor, direcția cercetării este cea mai promițătoare de până acum.
+
+    
+    
+    Secțiunea 08
+    Instituții și Resurse de Referință în Portugalia
+
+    Dacă trăiți cu diabet în Portugalia sau vă îngrijorează riscul de a-l dezvolta, următoarele organizații și servicii sunt principalele dumneavoastră puncte de referință pentru îngrijire clinică, educație și sprijin.
+
+    
+      🏥 DGS — Programul Național pentru Diabet
+      🩺 APDP
+      📋 Ordinul Medicilor
+      📞 Linia SNS 24 (808 24 24 24)
+      🎓 SPEDM
+      🔬 FMUL
+      🚑 INEM (112)
+    
+
+    DGS — Programul Național pentru Diabet
+    Programul Național pentru Diabet al Direcției Generale a Sănătă

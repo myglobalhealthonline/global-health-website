@@ -1,0 +1,136 @@
+{
+ "_capture": {
+  "tool": "find_serp_competitors",
+  "provider": "DataForSEO via OpenSEO",
+  "observed_at": "2026-09-15",
+  "note": "Field-selected capture of six tool responses (one call per market, limit 25, excludeDomains myglobalhealth.online). Fields retained: domain, avg/median position, etv, keywords_count, visibility and the per-keyword positions. Only keywords the provider had SERP coverage for appear in keywords_positions. competitors.csv itself is built from the verified get_serp_results files, not from this aggregate.",
+  "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b"
+ },
+ "markets": {
+  "ireland": {
+   "locationCode": 2372, "languageCode": "en",
+   "keywords": ["sick cert online", "online gp ireland", "online medical certificate", "gp online", "doctors note online", "online sick cert ireland", "fit to work certificate", "medical certificate ireland", "online sick certificate", "online doctor ireland", "bmi calculator ireland", "blood pressure chart"],
+   "competitors": [
+    {"domain": "gethealthcare.ie", "avg_position": 4.22, "median_position": 2, "etv": 741.449, "keywords_count": 9, "visibility": 6.8, "keywords_positions": {"sick cert online": [1], "online sick certificate": [1], "online sick cert ireland": [1], "online medical certificate": [2], "online gp ireland": [15], "medical certificate ireland": [1], "gp online": [13], "fit to work certificate": [2], "doctors note online": [2]}},
+    {"domain": "smartscripts.ie", "avg_position": 7.8, "median_position": 2, "etv": 591.632, "keywords_count": 10, "visibility": 5.8, "keywords_positions": {"sick cert online": [2], "online sick certificate": [2], "online sick cert ireland": [2], "online medical certificate": [1], "online gp ireland": [17], "medical certificate ireland": [2], "gp online": [20], "fit to work certificate": [11], "doctors note online": [1], "bmi calculator ireland": [20]}},
+    {"domain": "www.medhub.ie", "avg_position": 3.43, "median_position": 3, "etv": 281.816, "keywords_count": 7, "visibility": 5.3, "keywords_positions": {"sick cert online": [6], "online sick certificate": [3], "online sick cert ireland": [4], "online medical certificate": [3], "medical certificate ireland": [3], "fit to work certificate": [1], "doctors note online": [4]}},
+    {"domain": "www.gpsicknote.ie", "avg_position": 5.71, "median_position": 4, "etv": 166.392, "keywords_count": 7, "visibility": 4.15, "keywords_positions": {"sick cert online": [7], "online sick certificate": [4], "online sick cert ireland": [3], "online medical certificate": [4], "medical certificate ireland": [4], "fit to work certificate": [15], "doctors note online": [3]}},
+    {"domain": "www.webdoctor.ie", "avg_position": 11.3, "median_position": 14, "etv": 1346.866, "keywords_count": 10, "visibility": 3.55, "keywords_positions": {"sick cert online": [17], "online sick certificate": [17], "online sick cert ireland": [14], "online medical certificate": [18], "online gp ireland": [1], "medical certificate ireland": [15], "gp online": [1], "fit to work certificate": [21], "doctors note online": [8], "bmi calculator ireland": [1]}},
+    {"domain": "www.healthhero.ie", "avg_position": 18.1, "median_position": 10, "etv": 305.681, "keywords_count": 10, "visibility": 2.7, "keywords_positions": {"online gp ireland": [4], "gp online": [2], "medical certificate ireland": [7], "bmi calculator ireland": [5], "doctors note online": [10]}},
+    {"domain": "www.rossfamilypractice.ie", "avg_position": 5.8, "median_position": 5, "etv": 124.444, "keywords_count": 5, "visibility": 2.6, "keywords_positions": {"sick cert online": [3], "online sick certificate": [5], "online sick cert ireland": [6], "medical certificate ireland": [5], "fit to work certificate": [10]}},
+    {"domain": "doxonline.ie", "avg_position": 10.78, "median_position": 11, "etv": 82.297, "keywords_count": 9, "visibility": 2.15, "keywords_positions": {"fit to work certificate": [3], "online medical certificate": [6], "doctors note online": [7]}},
+    {"domain": "doconcall.ie", "avg_position": 15.4, "median_position": 11, "etv": 65.795, "keywords_count": 10, "visibility": 1.6, "keywords_positions": {"online sick cert ireland": [7], "doctors note online": [5]}},
+    {"domain": "eirdoc.com", "avg_position": 13.33, "median_position": 7, "etv": 143.563, "keywords_count": 6, "visibility": 1.45, "keywords_positions": {"online gp ireland": [7], "gp online": [6], "bmi calculator ireland": [6]}},
+    {"domain": "eclinic.ie", "avg_position": 14.43, "median_position": 9, "etv": 58.929, "keywords_count": 7, "visibility": 1.4, "keywords_positions": {"sick cert online": [8], "online medical certificate": [5]}},
+    {"domain": "dronline.ie", "avg_position": 13.78, "median_position": 13, "etv": 91.331, "keywords_count": 9, "visibility": 1.05, "keywords_positions": {"sick cert online": [4]}},
+    {"domain": "www.reddit.com", "avg_position": 17.5, "median_position": 16, "etv": 11.484, "keywords_count": 6, "visibility": 0.25, "keywords_positions": {"online sick cert ireland": [11], "sick cert online": [16]}}
+   ]
+  },
+  "czechia": {
+   "locationCode": 2203, "languageCode": "cs",
+   "keywords": ["online lekar", "lekar online", "prakticky lekar online", "neschopenka", "e-neschopenka", "lekar online 24/7", "konzultace s lekarem online", "bmi kalkulacka", "tehotenska kalkulacka", "ovulacni kalkulacka", "normalni tlak", "adhd test"],
+   "provider_coverage_note": "The provider returned SERP coverage only for: lekar online 24/7, konzultace s lekarem online, bmi kalkulacka, normalni tlak.",
+   "competitors": [
+    {"domain": "www.zpmvcr.cz", "avg_position": 2.5, "median_position": 2, "etv": 34.361, "keywords_count": 2, "visibility": 1.7, "keywords_positions": {"lekar online 24/7": [3], "konzultace s lekarem online": [2]}},
+    {"domain": "www.meddi.com", "avg_position": 3.5, "median_position": 2, "etv": 32.699, "keywords_count": 2, "visibility": 1.5, "keywords_positions": {"lekar online 24/7": [2], "konzultace s lekarem online": [5]}},
+    {"domain": "www.konzultacelekare.cz", "avg_position": 3.5, "median_position": 1, "etv": 39.186, "keywords_count": 2, "visibility": 1.5, "keywords_positions": {"lekar online 24/7": [6], "konzultace s lekarem online": [1]}},
+    {"domain": "moje.euc.cz", "avg_position": 1, "median_position": 1, "etv": 51.68, "keywords_count": 1, "visibility": 1, "keywords_positions": {"lekar online 24/7": [1]}},
+    {"domain": "www.ketomix.cz", "avg_position": 1, "median_position": 1, "etv": 12312, "keywords_count": 1, "visibility": 1, "keywords_positions": {"bmi kalkulacka": [1]}},
+    {"domain": "hartmanndirect.com", "avg_position": 1, "median_position": 1, "etv": 729.6, "keywords_count": 1, "visibility": 1, "keywords_positions": {"normalni tlak": [1]}},
+    {"domain": "www.bodymassindex.cz", "avg_position": 2, "median_position": 2, "etv": 6561, "keywords_count": 1, "visibility": 0.9, "keywords_positions": {"bmi kalkulacka": [2]}},
+    {"domain": "www.krevni-tlak-omron.cz", "avg_position": 2, "median_position": 2, "etv": 388.8, "keywords_count": 1, "visibility": 0.9, "keywords_positions": {"normalni tlak": [2]}},
+    {"domain": "www.canadian.cz", "avg_position": 6.5, "median_position": 5, "etv": 10.14, "keywords_count": 2, "visibility": 0.9, "keywords_positions": {"lekar online 24/7": [5], "konzultace s lekarem online": [8]}},
+    {"domain": "app.ulekare.cz", "avg_position": 7, "median_position": 7, "etv": 7.168, "keywords_count": 2, "visibility": 0.8, "keywords_positions": {"lekar online 24/7": [7], "konzultace s lekarem online": [7]}},
+    {"domain": "www.znamylekar.cz", "avg_position": 3, "median_position": 3, "etv": 10.703, "keywords_count": 1, "visibility": 0.8, "keywords_positions": {"konzultace s lekarem online": [3]}},
+    {"domain": "www.drmax.cz", "avg_position": 14, "median_position": 10, "etv": 465.256, "keywords_count": 3, "visibility": 0.8, "keywords_positions": {"konzultace s lekarem online": [4], "bmi kalkulacka": [10]}},
+    {"domain": "www.wikiskripta.eu", "avg_position": 18, "median_position": 6, "etv": 166.17, "keywords_count": 2, "visibility": 0.5, "keywords_positions": {"normalni tlak": [6]}},
+    {"domain": "www.vzp.cz", "avg_position": 47.5, "median_position": 7, "etv": 61.797, "keywords_count": 2, "visibility": 0.4, "keywords_positions": {"normalni tlak": [7]}}
+   ]
+  },
+  "portugal": {
+   "locationCode": 2620, "languageCode": "pt",
+   "keywords": ["consulta medica online", "medico online", "atestado medico online", "certificado medico carta de conducao", "consulta online", "telemedicina", "receita medica online", "consulta de cardiologia online", "dermatologia online", "consulta do viajante", "medicina geral e familiar online", "imc"],
+   "competitors": [
+    {"domain": "www.sns24.gov.pt", "avg_position": 13.71, "median_position": 5, "etv": 1933.313, "keywords_count": 7, "visibility": 3.9, "keywords_positions": {"receita medica online": [1], "medico online": [7], "consulta online": [2], "consulta medica online": [5], "consulta do viajante": [1], "telemedicina": [25], "imc": [55]}},
+    {"domain": "dronline.pt", "avg_position": 16, "median_position": 1, "etv": 587.164, "keywords_count": 6, "visibility": 3.05, "keywords_positions": {"medico online": [1], "consulta online": [1], "consulta medica online": [1], "receita medica online": [14], "telemedicina": [42], "imc": [37]}},
+    {"domain": "teleconsultaportugal.com", "avg_position": 7.25, "median_position": 5, "etv": 103.956, "keywords_count": 4, "visibility": 2.15, "keywords_positions": {"medico online": [5], "consulta online": [5], "consulta medica online": [2], "telemedicina": [17]}},
+    {"domain": "www.medis.pt", "avg_position": 11.25, "median_position": 4, "etv": 172.867, "keywords_count": 4, "visibility": 2, "keywords_positions": {"medico online": [2], "consulta online": [7], "consulta medica online": [4], "telemedicina": [32]}},
+    {"domain": "www.mediconanet.pt", "avg_position": 14.6, "median_position": 9, "etv": 124.014, "keywords_count": 5, "visibility": 1.85, "keywords_positions": {"receita medica online": [3], "medico online": [3], "consulta online": [14], "consulta medica online": [9]}},
+    {"domain": "www.cuf.pt", "avg_position": 10.8, "median_position": 10, "etv": 606.959, "keywords_count": 5, "visibility": 1.75, "keywords_positions": {"medico online": [10], "consulta online": [3], "consulta medica online": [15], "consulta do viajante": [3]}},
+    {"domain": "www.lusiadas.pt", "avg_position": 13.5, "median_position": 12, "etv": 3691.347, "keywords_count": 6, "visibility": 1.25, "keywords_positions": {"medico online": [12], "consulta online": [12], "consulta medica online": [12], "consulta do viajante": [9], "imc": [2]}},
+    {"domain": "smpsaude.pt", "avg_position": 23.67, "median_position": 28, "etv": 99.485, "keywords_count": 3, "visibility": 1, "keywords_positions": {"telemedicina": [1]}},
+    {"domain": "www.advancecare.pt", "avg_position": 10, "median_position": 8, "etv": 41.277, "keywords_count": 4, "visibility": 0.9, "keywords_positions": {"medico online": [6], "consulta online": [11], "consulta medica online": [8]}},
+    {"domain": "www.hospitaldaluz.pt", "avg_position": 20.17, "median_position": 14, "etv": 414.616, "keywords_count": 6, "visibility": 0.9, "keywords_positions": {"consulta do viajante": [4], "consulta online": [10]}},
+    {"domain": "www.medicare.pt", "avg_position": 23.8, "median_position": 24, "etv": 2167.185, "keywords_count": 5, "visibility": 0.85, "keywords_positions": {"imc": [3], "consulta online": [13]}},
+    {"domain": "doctornow.pt", "avg_position": 21.67, "median_position": 16, "etv": 19.149, "keywords_count": 3, "visibility": 0.65, "keywords_positions": {"receita medica online": [5], "medico online": [16]}},
+    {"domain": "www.gov.pt", "avg_position": 9.33, "median_position": 9, "etv": 20.531, "keywords_count": 3, "visibility": 0.55, "keywords_positions": {"telemedicina": [9], "consulta online": [8], "consulta medica online": [11]}},
+    {"domain": "clinica-online.pt", "avg_position": 17, "median_position": 14, "etv": 9.249, "keywords_count": 4, "visibility": 0.2, "keywords_positions": {"consulta medica online": [10], "medico online": [14]}},
+    {"domain": "www.medicalport.org", "avg_position": 25, "median_position": 25, "etv": 3.819, "keywords_count": 3, "visibility": 0.05, "keywords_positions": {"medico online": [25], "consulta medica online": [19]}}
+   ]
+  },
+  "spain": {
+   "locationCode": 2724, "languageCode": "es",
+   "keywords": ["medico online", "consulta medica online", "justificante medico online", "baja medica online", "dermatologo online", "psiquiatra online", "consulta medica online privada", "cita medico privado online", "medicina estetica online", "calculadora imc", "medico internista online", "consulta de cardiologia online"],
+   "provider_coverage_note": "The provider returned SERP coverage only for: medico online, justificante medico online, calculadora imc.",
+   "competitors": [
+    {"domain": "virtualclinica.com", "avg_position": 6, "median_position": 4, "etv": 34.39, "keywords_count": 2, "visibility": 1, "keywords_positions": {"medico online": [4], "justificante medico online": [8]}},
+    {"domain": "www.saludonnet.com", "avg_position": 1, "median_position": 1, "etv": 145.92, "keywords_count": 1, "visibility": 1, "keywords_positions": {"medico online": [1]}},
+    {"domain": "www.comunidad.madrid", "avg_position": 1, "median_position": 1, "etv": 42.56, "keywords_count": 1, "visibility": 1, "keywords_positions": {"justificante medico online": [1]}},
+    {"domain": "www.texasheart.org", "avg_position": 1, "median_position": 1, "etv": 15048, "keywords_count": 1, "visibility": 1, "keywords_positions": {"calculadora imc": [1]}},
+    {"domain": "www.sanitas.es", "avg_position": 6.5, "median_position": 6, "etv": 17.02, "keywords_count": 2, "visibility": 0.9, "keywords_positions": {"medico online": [7], "justificante medico online": [6]}},
+    {"domain": "www.san.gva.es", "avg_position": 30, "median_position": 2, "etv": 23.688, "keywords_count": 2, "visibility": 0.9, "keywords_positions": {"justificante medico online": [2]}},
+    {"domain": "www.tumedico.es", "avg_position": 2, "median_position": 2, "etv": 77.76, "keywords_count": 1, "visibility": 0.9, "keywords_positions": {"medico online": [2]}},
+    {"domain": "hablandodeobesidad.com", "avg_position": 2, "median_position": 2, "etv": 8019, "keywords_count": 1, "visibility": 0.9, "keywords_positions": {"calculadora imc": [2]}},
+    {"domain": "www.doctoralia.es", "avg_position": 3, "median_position": 3, "etv": 46.704, "keywords_count": 1, "visibility": 0.8, "keywords_positions": {"medico online": [3]}},
+    {"domain": "www.juntadeandalucia.es", "avg_position": 3, "median_position": 3, "etv": 13.622, "keywords_count": 1, "visibility": 0.8, "keywords_positions": {"justificante medico online": [3]}},
+    {"domain": "fundaciondelcorazon.com", "avg_position": 3, "median_position": 3, "etv": 4816.35, "keywords_count": 1, "visibility": 0.8, "keywords_positions": {"calculadora imc": [3]}},
+    {"domain": "www.cdc.gov", "avg_position": 4, "median_position": 4, "etv": 3262.05, "keywords_count": 1, "visibility": 0.7, "keywords_positions": {"calculadora imc": [4]}},
+    {"domain": "www.quironsalud.com", "avg_position": 5, "median_position": 5, "etv": 2321.55, "keywords_count": 1, "visibility": 0.6, "keywords_positions": {"calculadora imc": [5]}},
+    {"domain": "www.docline.com", "avg_position": 27, "median_position": 16, "etv": 2.358, "keywords_count": 2, "visibility": 0.05, "keywords_positions": {"medico online": [16], "justificante medico online": [38]}},
+    {"domain": "www.mediquo.com", "avg_position": 44, "median_position": 41, "etv": 1.302, "keywords_count": 2, "visibility": 0, "keywords_positions": {"medico online": [41], "justificante medico online": [47]}}
+   ]
+  },
+  "romania": {
+   "locationCode": 2642, "languageCode": "ro",
+   "keywords": ["medic online", "doctor online", "consultatie online", "consultatie online (diacritics)", "medic pediatru online", "medic ginecolog online", "programare doctor", "scrisoare medicala", "calculator imc", "calculator calorii", "telemedicina romania", "concediu medical online"],
+   "provider_coverage_note": "The provider returned SERP coverage only for: medic online, calculator imc, calculator calorii.",
+   "competitors": [
+    {"domain": "www.medlife.ro", "avg_position": 2, "median_position": 2, "etv": 2250.347, "keywords_count": 3, "visibility": 2.7, "keywords_positions": {"medic online": [3], "calculator imc": [2], "calculator calorii": [1]}},
+    {"domain": "www.drmax.ro", "avg_position": 5.5, "median_position": 3, "etv": 534.5, "keywords_count": 2, "visibility": 1.1, "keywords_positions": {"calculator imc": [8], "calculator calorii": [3]}},
+    {"domain": "www.medic.chat", "avg_position": 1, "median_position": 1, "etv": 118.56, "keywords_count": 1, "visibility": 1, "keywords_positions": {"medic online": [1]}},
+    {"domain": "www.medicover.ro", "avg_position": 1, "median_position": 1, "etv": 1641.6, "keywords_count": 1, "visibility": 1, "keywords_positions": {"calculator imc": [1]}},
+    {"domain": "www.reginamaria.ro", "avg_position": 2, "median_position": 2, "etv": 63.18, "keywords_count": 1, "visibility": 0.9, "keywords_positions": {"medic online": [2]}},
+    {"domain": "eatntrack.ro", "avg_position": 2, "median_position": 2, "etv": 712.8, "keywords_count": 1, "visibility": 0.9, "keywords_positions": {"calculator calorii": [2]}},
+    {"domain": "www.adevaruldespregreutateata.ro", "avg_position": 3, "median_position": 3, "etv": 525.42, "keywords_count": 1, "visibility": 0.8, "keywords_positions": {"calculator imc": [3]}},
+    {"domain": "medicentrum.ro", "avg_position": 4, "median_position": 4, "etv": 25.701, "keywords_count": 1, "visibility": 0.7, "keywords_positions": {"medic online": [4]}},
+    {"domain": "reumadiagnostic.ro", "avg_position": 4, "median_position": 4, "etv": 355.86, "keywords_count": 1, "visibility": 0.7, "keywords_positions": {"calculator imc": [4]}},
+    {"domain": "protein4life.ro", "avg_position": 4, "median_position": 4, "etv": 289.96, "keywords_count": 1, "visibility": 0.7, "keywords_positions": {"calculator calorii": [4]}},
+    {"domain": "deamedicine.ro", "avg_position": 5, "median_position": 5, "etv": 18.291, "keywords_count": 1, "visibility": 0.6, "keywords_positions": {"medic online": [5]}},
+    {"domain": "dr-online.net", "avg_position": 6, "median_position": 6, "etv": 13.182, "keywords_count": 1, "visibility": 0.5, "keywords_positions": {"medic online": [6]}},
+    {"domain": "ringdoc.ro", "avg_position": 7, "median_position": 7, "etv": 9.984, "keywords_count": 1, "visibility": 0.4, "keywords_positions": {"medic online": [7]}},
+    {"domain": "www.doc.ro", "avg_position": 17, "median_position": 8, "etv": 98.02, "keywords_count": 2, "visibility": 0.3, "keywords_positions": {"calculator calorii": [8], "calculator imc": [26]}}
+   ]
+  },
+  "brazil": {
+   "locationCode": 2076, "languageCode": "pt",
+   "keywords": ["consulta medica online", "atestado medico online", "clinico geral online", "declaracao de comparecimento", "calculadora gestacional", "renovacao de receita online", "solicitacao de exames", "pedido de exames online", "medicina online brasil", "consulta online pediatra", "tabela de pressao arterial", "calculadora idade gestacional"],
+   "competitors": [
+    {"domain": "www.fetalmed.net", "avg_position": 1, "median_position": 1, "etv": 59432, "keywords_count": 2, "visibility": 2, "keywords_positions": {"calculadora gestacional": [1], "calculadora idade gestacional": [1]}},
+    {"domain": "telemedicinamorsch.com.br", "avg_position": 7, "median_position": 7, "etv": 1065.376, "keywords_count": 4, "visibility": 1.85, "keywords_positions": {"solicitacao de exames": [13], "consulta online pediatra": [7], "consulta medica online": [7], "tabela de pressao arterial": [1]}},
+    {"domain": "www.tuasaude.com", "avg_position": 5, "median_position": 4, "etv": 10636.41, "keywords_count": 3, "visibility": 1.8, "keywords_positions": {"calculadora gestacional": [4], "tabela de pressao arterial": [4], "calculadora idade gestacional": [7]}},
+    {"domain": "www.sogesp.com.br", "avg_position": 2.5, "median_position": 2, "etv": 22936.5, "keywords_count": 2, "visibility": 1.7, "keywords_positions": {"calculadora gestacional": [3], "calculadora idade gestacional": [2]}},
+    {"domain": "medico24hs.com.br", "avg_position": 3, "median_position": 2, "etv": 1083.039, "keywords_count": 2, "visibility": 1.6, "keywords_positions": {"consulta online pediatra": [4], "consulta medica online": [2]}},
+    {"domain": "www.csisaude.com.br", "avg_position": 4.5, "median_position": 3, "etv": 10449.65, "keywords_count": 2, "visibility": 1.3, "keywords_positions": {"calculadora gestacional": [6], "calculadora idade gestacional": [3]}},
+    {"domain": "flo.health", "avg_position": 4.5, "median_position": 4, "etv": 10318.45, "keywords_count": 2, "visibility": 1.3, "keywords_positions": {"calculadora gestacional": [5], "calculadora idade gestacional": [4]}},
+    {"domain": "drconsulta.com", "avg_position": 17, "median_position": 9, "etv": 2012.91, "keywords_count": 3, "visibility": 1.2, "keywords_positions": {"consulta medica online": [1], "consulta online pediatra": [9]}},
+    {"domain": "brasil.babycenter.com", "avg_position": 5, "median_position": 2, "etv": 23061.85, "keywords_count": 2, "visibility": 1.2, "keywords_positions": {"calculadora gestacional": [2], "calculadora idade gestacional": [8]}},
+    {"domain": "www.doctoralia.com.br", "avg_position": 16, "median_position": 22, "etv": 81.72, "keywords_count": 3, "visibility": 1, "keywords_positions": {"consulta online pediatra": [1], "solicitacao de exames": [25], "consulta medica online": [22]}},
+    {"domain": "www.rededorsaoluiz.com.br", "avg_position": 11.5, "median_position": 3, "etv": 24.273, "keywords_count": 2, "visibility": 0.85, "keywords_positions": {"consulta online pediatra": [3], "solicitacao de exames": [20]}},
+    {"domain": "oladoutor.app", "avg_position": 7.5, "median_position": 6, "etv": 106.098, "keywords_count": 2, "visibility": 0.7, "keywords_positions": {"consulta online pediatra": [6], "consulta medica online": [9]}},
+    {"domain": "www.gov.br", "avg_position": 38.75, "median_position": 15, "etv": 203.72, "keywords_count": 4, "visibility": 0.65, "keywords_positions": {"declaracao de comparecimento": [15], "tabela de pressao arterial": [5]}},
+    {"domain": "iclinic.com.br", "avg_position": 15, "median_position": 14, "etv": 1236.48, "keywords_count": 3, "visibility": 0.15, "keywords_positions": {"declaracao de comparecimento": [19], "calculadora gestacional": [14]}},
+    {"domain": "www.instagram.com", "avg_position": 35.8, "median_position": 36, "etv": 98.001, "keywords_count": 5, "visibility": 0.05, "keywords_positions": {"declaracao de comparecimento": [12]}}
+   ]
+  }
+ }
+}

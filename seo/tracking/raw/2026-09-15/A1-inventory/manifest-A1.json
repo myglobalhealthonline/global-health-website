@@ -1,0 +1,29 @@
+{
+  "agent": "A1-inventory",
+  "date": "2026-09-15",
+  "generated_at": "2026-09-15T05:26:43.795374+00:00",
+  "sources": {},
+  "counts": {
+    "markets_locales.csv": 33,
+    "routes.csv": 73,
+    "excluded_routes.csv": 337,
+    "sitemap_urls.csv": 2265,
+    "sitemap_alternates.csv": 21244,
+    "retired.csv": 36,
+    "redirects.csv": 571,
+    "legacy_urls.csv": 1133,
+    "entities.csv": 1119,
+    "api_access.csv": 233,
+    "page_inventory.csv": 4653,
+    "inventory_counts.csv": 785
+  },
+  "exclusions": [],
+  "api_blocked": [],
+  "pagination_limits": "none observed; every list endpoint returned a flat array/object with no cursor/page params in the frontend fetch helpers",
+  "notes": [
+    "markets_locales.csv: 33 rows, matches expectation.",
+    "redirects.csv has 571 fully-resolved rules (next.config.ts:redirects() executed via Next's own loader, next/dist/server/config.js#loadConfig, in dump-redirects.cjs \u2014 captures rules built by JS loops/maps, e.g. localizedSlugRenames, which a source-text regex would under-count). CLAUDE.md's '~276 rules' refers to literal rule blocks in the source file, not the expanded count.",
+    "legacy_urls.csv: scanned myglobalhealth.online-audit/, seo/ (~800MB/2.5k files), docs/, skipping 90 files over 2000000 bytes (large rollout/crawl JSON dumps, not URL-list exports) \u2014 an uncapped first attempt hung for minutes and was killed.",
+    "Post-process: cleared template_file on 1733 page_type=unknown rows in page_inventory.csv \u2014 the route-file fallback join was misleading for the unknown bucket (arbitrary route file, not the actual source)."
+  ]
+}

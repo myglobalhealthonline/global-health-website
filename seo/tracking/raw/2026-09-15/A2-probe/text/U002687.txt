@@ -1,0 +1,178 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.ers.pt","https://www.ordemdosmedicos.pt","https://www.cnpd.pt","https://www.livroreclamacoes.pt","https://www.infarmed.pt","https://www.sns24.gov.pt","https://www.dgs.pt","https://www.insa.min-saude.pt","https://www.spc.pt","https://www.ihmt.unl.pt","https://www.apmgf.pt","https://www.deco.pt","https://www.utente.min-saude.pt","https://www.sosvozamiga.org","https://www.fpcardiologia.pt"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Hypercholesterinämie verstehen","description":"Hohe Cholesterinwerte betreffen etwa 1 von 2 erwachsenen Portugiesen, verursachen jedoch keine Symptome, bis ein Herzinfarkt oder Schlaganfall auftritt. Lernen Sie die Ursachen, Warnzeichen und aktuellen Behandlungen kennen (Statine, PCSK9-Inhibitoren, Inclisiran) — verfasst von einem Arzt, der bei der Ordem dos Médicos registriert ist.","url":"https://www.myglobalhealth.online/portugal/de/blog/hypercholesterinamie-verstehen","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/portugal/de/blog/hypercholesterinamie-verstehen#webpage","url":"https://www.myglobalhealth.online/portugal/de/blog/hypercholesterinamie-verstehen","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/de/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-21"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Hypercholesterin%C3%A4mie+verstehen&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F9235304a-5bd7-4a77-a7b4-5b8fb03f7e83-34306.webp&v=2026-07-20.1-153p1qw","width":1200,"height":630},"about":{"@type":"Thing","name":"Cardiologia"},"datePublished":"2026-07-20T22:08:20.712Z","dateModified":"2026-07-21T13:19:22.551Z","publishingPrinciples":"https://www.myglobalhealth.online/portugal/de/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/portugal/de/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Startseite","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/portugal/de/blog"},{"@type":"ListItem","position":3,"name":"Hypercholesterinämie verstehen","item":"https://www.myglobalhealth.online/portugal/de/blog/hypercholesterinamie-verstehen"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Ist hohes Cholesterin in Portugal verbreitet?","acceptedAnswer":{"@type":"Answer","text":"Ja. Hohes Cholesterin ist einer der am weitesten verbreiteten beeinflussbaren kardiovaskulären Risikofaktoren in Portugal. Daten des INSA und der Nationalen Gesundheitsbefragung zeigen, dass etwa die Hälfte der portugiesischen Erwachsenen ein erhöhtes Gesamtcholesterin hat. Die meisten sind nicht diagnostiziert, weil Hypercholesterinämie keine Symptome verursacht. Die familiäre Hypercholesterinämie — eine erbliche Form, die bereits ab der Geburt zu stark erhöhtem LDL führt — betrifft in Portugal etwa 1 von 250 Personen, wobei schätzungsweise mehr als 90% nicht diagnostiziert sind."}},{"@type":"Question","name":"Welche Anzeichen und Symptome hat hohes Cholesterin?","acceptedAnswer":{"@type":"Answer","text":"Hypercholesterinämie ist im Wesentlichen eine stille Erkrankung — die meisten Menschen zeigen keine Symptome, bis ein schwerwiegendes kardiovaskuläres Ereignis eintritt. Bei schwerer oder familiärer Hypercholesterinämie können körperliche Anzeichen auftreten wie Xanthome (Fettablagerungen unter der Haut, insbesondere an der Achillessehne oder den Fingerknöcheln), Xanthelasmen (gelbliche Plaques an den Augenlidern) und Arcus cornealis (grauer Ring um die Iris — bedeutsam bei Menschen unter 45 Jahren). Die einzige zuverlässige Methode, hohes Cholesterin zu erkennen, ist eine Blutuntersuchung: ein nüchtern bestimmtes Lipidprofil."}},{"@type":"Question","name":"Was verursacht hohes Cholesterin?","acceptedAnswer":{"@type":"Answer","text":"Hohes Cholesterin hat genetische und lebensstilbedingte Ursachen. Die wichtigste genetische Ursache ist die familiäre Hypercholesterinämie (FH), die durch Mutationen im LDL-Rezeptor-Gen verursacht wird. Zu den lebensstilbedingten Ursachen zählen eine Ernährung reich an gesättigten und Transfetten, Bewegungsmangel, Übergewicht, Rauchen und übermäßiger Alkoholkonsum. Sekundäre Ursachen sind unter anderem Schilddrüsenunterfunktion, Typ-2-Diabetes, chronische Nierenerkrankung und bestimmte Medikamente. Bei den meisten Menschen bestimmt eine Kombination aus genetischer Veranlagung und Lebensstilfaktoren den Cholesterinwert."}},{"@type":"Question","name":"Was sind die besten Behandlungen für hohes Cholesterin in Portugal?","acceptedAnswer":{"@type":"Answer","text":"Die Behandlung richtet sich nach dem globalen kardiovaskulären Risiko und dem LDL-Zielwert, und nicht allein nach dem isolierten Cholesterinwert. Lebensstiländerungen — Ernährung, Bewegung, Rauchstopp, Gewichtskontrolle — bilden bei allen Patienten die Grundlage. Statine (insbesondere hochdosiertes Atorvastatin und Rosuvastatin) sind die medikamentöse Erstlinientherapie und in Portugal über den SNS breit verfügbar. Bei Patienten, die die LDL-Zielwerte nicht erreichen, wird Ezetimib ergänzt. Bei Hochrisikopatienten oder familiärer Hypercholesterinämie stehen die PCSK9-Hemmer (Evolocumab, Alirocumab) und Inclisiran — eine halbjährliche RNA-Injektion — über spezialisierte Dienste zur Verfügung. Bempedoinsäure ist inzwischen für statinintolerante Patienten erhältlich."}},{"@type":"Question","name":"Wie oft sollte ich mein Cholesterin in Portugal überprüfen lassen?","acceptedAnswer":{"@type":"Answer","text":"Die DGS empfiehlt, dass alle Erwachsenen über 40 Jahre mindestens alle 5 Jahre eine Cholesterinuntersuchung durchführen lassen, oder häufiger, wenn Risikofaktoren vorliegen (Familienanamnese, Übergewicht, Bluthochdruck, Rauchen oder Diabetes). Wenn Sie Cholesterinmedikamente einnehmen, sollte Ihr Arzt das Nüchtern-Lipidprofil 8 bis 12 Wochen nach Beginn oder jeder Dosisänderung wiederholen, und danach jährlich, sobald die Werte stabil sind. Wer einen Verwandten ersten Grades mit vorzeitiger Herz-Kreislauf-Erkrankung (vor dem 60. Lebensjahr) oder bekannter FH hat, sollte früher untersucht werden, idealerweise bereits mit 20 oder 30 Jahren."}},{"@type":"Question","name":"Kann ich mein Cholesterin ohne Medikamente senken?","acceptedAnswer":{"@type":"Answer","text":"Bei Patienten mit niedrigem bis moderatem kardiovaskulärem Risiko und leicht erhöhtem LDL kann eine alleinige Lebensstiländerung — insbesondere eine mediterrane Ernährung, regelmäßiges Ausdauertraining, ein Rauchstopp und der Abbau von Übergewicht — klinisch relevante LDL-Senkungen von 10 bis 20% erreichen und in manchen Fällen eine medikamentöse Behandlung überflüssig machen. Bei Patienten mit hohem oder sehr hohem kardiovaskulärem Risiko oder familiärer Hypercholesterinämie reicht eine alleinige Lebensstiländerung jedoch in der Regel nicht aus, um die in den Leitlinien festgelegten Zielwerte zu erreichen, und eine medikamentöse Therapie wird ergänzend zu den Lebensstiländerungen empfohlen, nicht als Ersatz dafür. Sprechen Sie mit Ihrem Arzt darüber, was für Ihr individuelles Risikoprofil geeignet ist."}},{"@type":"Question","name":"Kann ich in Portugal online einen Arzt zu hohem Cholesterin konsultieren?","acceptedAnswer":{"@type":"Answer","text":"Ja. Global Health bietet Online-Arztkonsultationen mit bei der Ordem dos Médicos registrierten Ärzten an. Diese umfassen die Bewertung des kardiovaskulären Risikos, die Auswertung von Cholesterinwerten, die Verordnung von Statinen und anderen Medikamenten, sofern klinisch indiziert, sowie die Anforderung von Laboruntersuchungen (Nüchtern-Lipidprofil, Blutzucker, Schilddrüsenfunktion und vollständiges Stoffwechselpanel). Termine sind noch am selben Tag verfügbar, sieben Tage die Woche. Vereinbaren Sie Ihren Termin unter myglobalhealth.online/pt/portugal/family-and-general-medicine."}}]}]Alle ArtikelCardiologiaHypercholesterinämie verstehenEs wird geschätzt, dass 1 von 2 portugiesischen Erwachsenen einen hohen Cholesterinspiegel hat, und die meisten wissen es nicht. Dieser Leitfaden erklärt die Ursachen, die stillen Anzeichen und die neuesten Behandlungen — von Statinen bis zu PCSK9-Inhibitoren —, die die kardiovaskuläre Versorgung in Portugal verändern.Global Health Medical Team20. Juli 202623 Minuten LesezeitZuletzt überprüft 21. Juli 2026+Auf dieser SeiteHohes Cholesterin in Portugal: Das Ausmaß des ProblemsFormen der HypercholesterinämieUrsachen und RisikofaktorenAnzeichen und SymptomeAktuelle Behandlungen der Hypercholesterinämie in PortugalVorbeugung und Lebensstil: Was Sie tun könnenDie Bedeutung regelmäßiger VorsorgeuntersuchungenForschung und zukünftige BehandlungenWichtige portugiesische InstitutionenHäufig gestellte Fragen
+Herz-Kreislauf-Gesundheit in PortugalUrsachen, Anzeichen, aktuelle Behandlungen, Vorbeugung und Vorsorgeuntersuchungen bei Hypercholesterinämie.Herz-Kreislauf-Erkrankungen sind die häufigste Todesursache in Portugal. Einer ihrer wichtigsten Treiber, ein erhöhter Blutcholesterinspiegel, betrifft schätzungsweise die Hälfte der portugiesischen Erwachsenen, wobei die überwiegende Mehrheit nichts davon weiß. Die Hypercholesterinämie kündigt sich ihrem Wesen nach nicht durch Symptome an, sondern durch Ereignisse: einen Herzinfarkt, einen Schlaganfall, einen plötzlichen Herztod.Empfohlene Vorsorge ansehenBehandlungen entdeckenAktualisierter klinischer LeitfadenDie außergewöhnliche Herausforderung von hohem Cholesterin liegt genau in dieser Stille. Anders als Diabetes, die Müdigkeit oder Durst verursachen kann, oder Bluthochdruck, der gelegentlich Kopfschmerzen auslöst, verursacht Hypercholesterinämie keinerlei Empfindung, bis sie über Jahre hinweg die Arterien verengt hat, die Herz und Gehirn versorgen. Wenn sie sich bemerkbar macht, ist der Schaden oft bereits eingetreten.Die gute Nachricht ist ebenso bedeutsam: Hypercholesterinämie gehört zu den am besten behandelbaren Erkrankungen der gesamten Medizin. Die heute verfügbaren lipidsenkenden Therapien, von den seit Langem etablierten Statinen bis zu den neuesten RNA-basierten Wirkstoffen, zählen zu den am besten durch Evidenz belegten Interventionen der modernen Pharmakologie. Und sie wirken am besten, wenn früh damit begonnen wird, bevor sich Schäden ansammeln. Die Erkennung durch eine einfache Blutuntersuchung ist alles, was es braucht.Abschnitt 01Hohes Cholesterin in Portugal: Das Ausmaß des ProblemsCholesterin ist eine wachsartige, fettähnliche Substanz, die vom Körper natürlich in der Leber gebildet und zusätzlich über die Nahrung aufgenommen wird. Sie ist unverzichtbar für den Aufbau von Zellmembranen, die Hormonproduktion und die Synthese von Vitamin D. Zum Problem wird sie, wenn die Werte, insbesondere das LDL-Cholesterin (Low-Density-Lipoprotein), die Schwelle überschreiten, ab der arterielle Schäden entstehen. Dieser Prozess, die Atherosklerose, liegt den meisten Herzinfarkten und Schlaganfällen zugrunde.Daten des Instituto Nacional de Saúde Doutor Ricardo Jorge (INSA) und der vom Nationalen Gesundheitsbefragung (Inquérito Nacional de Saúde, INS), veröffentlicht von der Direcção-Geral da Saúde, zeigen, dass Hypercholesterinämie einer der am häufigsten unkontrollierten kardiovaskulären Risikofaktoren in der erwachsenen portugiesischen Bevölkerung ist. Laut dem Nationalen Programm für zerebro-kardiovaskuläre Erkrankungen der DGS sind Herz-Kreislauf-Erkrankungen die häufigste Todesursache in Portugal, wobei erhöhtes Cholesterin dabei eine entscheidende Rolle spielt.
+
+~50%
+Der portugiesischen Erwachsenen mit erhöhtem Gesamtcholesterin
+
+
+1 von 250
+Menschen in Portugal sind von familiärer Hypercholesterinämie (FH) betroffen
+
+
+1. Ursache
+Herz-Kreislauf-Erkrankungen — häufigste Todesursache in Portugal
+
+
+>90%
+Der FH-Fälle in Portugal schätzungsweise nicht diagnostiziert
+
+Quelle: INSA — Nationale Gesundheitsbefragung; DGS — Nationales Programm für zerebro-kardiovaskuläre Erkrankungen; Fundação Portuguesa de Cardiologia; Associação Portuguesa de Hipercolesterolemia Familiar.Die familiäre Hypercholesterinämie (FH) verdient besondere Aufmerksamkeit. Diese vererbte genetische Erkrankung — von der etwa 1 von 250 Personen beziehungsweise rund 40.000 Menschen in Portugal betroffen sind — führt bereits ab der Geburt zu dramatisch erhöhten LDL-Werten und setzt die Betroffenen einem Herzinfarktrisiko aus, das oft Jahrzehnte früher eintritt als erwartet. Die Associação Portuguesa de Hipercolesterolemia Familiar (APHF) schätzt, dass mehr als 90% der FH-Fälle in Portugal weiterhin unentdeckt bleiben. Unbehandelt haben Männer mit FH ein 50-prozentiges Risiko für ein koronares Ereignis vor dem 50. Lebensjahr; Frauen vor dem 60. Lebensjahr.
+Gibt es in Ihrer Familie Fälle von früher Herzerkrankung?
+      Wenn ein Elternteil, Geschwister oder Großelternteil vor dem 60. Lebensjahr einen Herzinfarkt oder Schlaganfall erlitten hat, kann Ihr Risiko für familiäre Hypercholesterinämie oder ein erblich bedingtes kardiovaskuläres Risiko deutlich erhöht sein. Lassen Sie bei Ihrem Arzt ein nüchtern bestimmtes Lipidprofil erstellen. Die frühzeitige Erkennung einer FH kann kardiovaskuläre Ereignisse verhindern, die sonst im mittleren Lebensalter aufträten.
+    Abschnitt 02Formen der HypercholesterinämieNicht jedes erhöhte Cholesterin hat dieselbe Ursache oder dieselbe klinische Bedeutung. Das Verständnis der Art und des Musters der individuellen Fettstoffwechselstörung leitet die Behandlungsentscheidungen.
+
+
+Familiäre Hypercholesterinämie (FH)
+Genetisch · Autosomal-dominant · Hohes Risiko
+Verursacht durch Mutationen im LDL-Rezeptor-Gen (am häufigsten), in APOB oder PCSK9. Führt bereits ab der Geburt zu stark erhöhtem LDL — typischerweise über 4,9 mmol/L. Unbehandelt führt sie zu früher Atherosklerose und kardiovaskulären Ereignissen. Erfordert eine frühzeitige Diagnose und eine konsequente Behandlung, in der Regel mit hochdosierten Statinen und zusätzlichen Wirkstoffen.
+
+
+
+Primäre Hypercholesterinämie (Lebensstilbedingt)
+Erworben · Beeinflussbar · Häufigste Form
+Die häufigste Form. Sie wird durch eine Ernährung reich an gesättigten und Transfetten, Bewegungsmangel, Übergewicht und Rauchen begünstigt. Der LDL-Anstieg ist in den meisten Fällen moderat und spricht gut auf Lebensstiländerungen an, kombiniert bei Bedarf mit medikamentöser Therapie.
+
+
+
+Sekundäre Hypercholesterinämie
+Zugrunde liegende Erkrankung · Behandelbare Ursache
+Erhöhtes Cholesterin infolge einer zugrunde liegenden Erkrankung — Schilddrüsenunterfunktion, unkontrollierter Typ-2-Diabetes, chronische Nierenerkrankung, nephrotisches Syndrom oder Lebererkrankung — oder infolge von Medikamenten wie Kortikosteroiden, Thiaziddiuretika oder bestimmten Antipsychotika. Die Behandlung der zugrunde liegenden Ursache verbessert die Blutfettwerte häufig deutlich.
+
+
+
+Gemischte Dyslipidämie
+Erhöhtes LDL + Triglyzeride · Komplexes Risiko
+Kombination aus erhöhtem LDL und erhöhten Triglyzeriden, häufig begleitet von niedrigem HDL (vermindertes „gutes Cholesterin"). Häufig verbunden mit metabolischem Syndrom, Insulinresistenz und Übergewicht. Erfordert einen mehrgleisigen Behandlungsansatz, der auf mehrere Lipidfraktionen zugleich wirkt.
+
+Abschnitt 03Ursachen und RisikofaktorenGenetische UrsachenDie familiäre Hypercholesterinämie ist die wichtigste genetische Ursache vorzeitiger Herz-Kreislauf-Erkrankungen. Sie geht überwiegend auf Mutationen im Gen zurück, das den LDL-Rezeptor codiert — den zellulären Mechanismus, über den LDL-Cholesterin aus dem Blutkreislauf entfernt wird. Fehlen LDL-Rezeptoren oder sind sie in zu geringer Zahl vorhanden, reichert sich LDL im Blut an und lagert sich zunehmend in den Arterienwänden ab. Die Erkrankung wird autosomal-dominant vererbt, das heißt, eine einzige Kopie des betroffenen Gens genügt, um sie auszulösen. Kinder eines betroffenen Elternteils haben eine 50-prozentige Wahrscheinlichkeit, sie zu erben.Lebensstil- und umweltbedingte UrsachenBei den meisten Menschen entsteht hohes Cholesterin aus dem Zusammenspiel von genetischer Veranlagung und Lebensstil. Die folgenden Risikofaktoren sind jeweils eigenständig mit erhöhtem LDL oder Gesamtcholesterin verbunden, und ihre Kombination verstärkt das Risiko erheblich.
+
+
+Ernährung reich an gesättigten Fettsäuren
+Rotes Fleisch, fettreiche Milchprodukte, Butter, Kokosöl und Palmöl erhöhen das LDL. Transfette sind am schädlichsten und in der Lebensmittelproduktion der EU inzwischen weitgehend verboten.
+
+
+
+Bewegungsmangel
+Regelmäßiges Ausdauertraining erhöht das HDL („gutes Cholesterin") und senkt die Triglyzeride. Bewegungsmangel wirkt umgekehrt und verschlechtert das Lipidprofil unabhängig von anderen Faktoren.
+
+
+
+Übergewicht
+Übergewicht — insbesondere die zentrale (bauchbetonte) Fettverteilung — ist mit erhöhten Triglyzeriden, niedrigem HDL und häufig erhöhtem LDL verbunden. Eine Gewichtsabnahme verbessert alle Blutfettwerte.
+
+
+
+Rauchen
+Tabakrauch senkt das HDL und beschleunigt die oxidative Veränderung des LDL — wodurch es bei vergleichbaren Gesamtcholesterinwerten stärker atherogen (arterienschädigend) wird.
+
+
+
+Übermäßiger Alkoholkonsum
+Hoher Alkoholkonsum erhöht die Triglyzeride deutlich. Ein moderater Konsum kann das HDL leicht anheben, gleicht aber die umfassenderen kardiovaskulären Schäden übermäßigen Konsums nicht aus.
+
+
+
+Alter
+Die Cholesterinwerte steigen tendenziell mit dem Alter, da die Aktivität der LDL-Rezeptoren nachlässt. Frauen erleben nach den Wechseljahren einen deutlichen LDL-Anstieg, was teilweise erklärt, warum sich das kardiovaskuläre Risiko der Geschlechter nach der Menopause angleicht.
+
+
+
+Familienanamnese
+Ein Verwandter ersten Grades mit früher Herz-Kreislauf-Erkrankung oder bekannter FH erhöht das persönliche Risiko erheblich und sollte zu einer früheren und häufigeren Vorsorge Anlass geben.
+
+
+
+Begleiterkrankungen
+Schilddrüsenunterfunktion, Typ-2-Diabetes, chronische Nierenerkrankung, nephrotisches Syndrom und obstruktive Lebererkrankungen erhöhen das Cholesterin jeweils eigenständig und erfordern eine gezielte Behandlung.
+
+Abschnitt 04Anzeichen und SymptomeDas ist die zentrale klinische Herausforderung der Hypercholesterinämie: Sie verläuft nahezu vollständig ohne Symptome, bis es zu einer bedeutsamen arteriellen Schädigung kommt. Es gibt keine Schmerzen, kein Fieber und keine Atemnot, die direkt durch das Cholesterin verursacht würden. Das erste „Symptom" ist bei vielen Betroffenen ein Herzinfarkt oder Schlaganfall — oft bei jemandem, der sich am Vortag noch völlig gesund gefühlt hat.Bei schwerer oder langanhaltender Erhöhung — insbesondere bei familiärer Hypercholesterinämie — können bestimmte körperliche Anzeichen auftreten. Sie zu erkennen ist wichtig, da sie oft die einzigen sichtbaren Hinweise auf eine bedeutsame Fettstoffwechselstörung sind:
+
+
+
+Xanthome
+Cholesterinablagerungen unter der Haut. Sehnenxanthome (typischerweise an der Achillessehne oder an den Fingerknöcheln) sind stark mit FH assoziiert und praktisch beweisend.
+
+
+
+
+
+Xanthelasmen
+Weiche, gelbliche Plaques an oder in der Nähe der Augenlider. Auch wenn sie oft aus kosmetischen Gründen auffallen, sind sie ein Marker für eine Fettstoffwechselstörung und rechtfertigen ein Lipidprofil.
+
+
+
+
+
+Arcus cornealis
+Ein grauer oder weißer Ring um die Iris des Auges. Bei Menschen unter 45 Jahren kann der Arcus cornealis ein Hinweis auf Hypercholesterinämie sein und eine weitere Abklärung rechtfertigen.
+
+
+
+
+
+Brustschmerzen (Angina pectoris)
+Nicht direkt durch Cholesterin verursacht, sondern eine Folge der dadurch bedingten Atherosklerose. Engegefühl oder Unwohlsein im Brustkorb bei Belastung erfordert eine dringende kardiologische Abklärung.
+
+
+
+
+
+Beinschmerzen beim Gehen
+Die periphere arterielle Verschlusskrankheit — Wadenschmerzen bei Belastung, die sich in Ruhe bessern (Claudicatio) — wird durch Atherosklerose in den Arterien der Beine verursacht.
+
+
+
+
+
+Symptome einer TIA oder eines Schlaganfalls
+Plötzliche Schwäche, Sprachstörungen, ein hängender Mundwinkel oder Sehverlust können auf eine transitorische ischämische Attacke (TIA) oder einen Schlaganfall hinweisen — einen medizinischen Notfall.
+
+
+
+FAST — Erkennen Sie die Anzeichen eines Schlaganfalls:
+      Face (Gesicht) — hängt einseitig herab · Arms (Arme) — Schwäche · Speech (Sprache) — Schwierigkeiten · Time (Zeit) — rufen Sie 112 an. Ein Schlaganfall ist ein medizinischer Notfall. Wenn Sie diese Anzeichen bemerken, rufen Sie sofort die 112 an. Fahren Sie nicht selbst ins Krankenhaus. Jede Minute zählt.
+    Die grundlegende klinische Botschaft ist eindeutig: Warten Sie nicht auf Symptome. Ein nüchtern bestimmtes Lipidprofil ist die einzige zuverlässige Methode, um erhöhtes Cholesterin zu erkennen. Es ist einfach, zugänglich und über Ihren Hausarzt leicht verfügbar. Das Fehlen von Symptomen ist keine Garantie für Gesundheit — es ist genau der Moment, in dem Handeln am wichtigsten ist.Abschnitt 05Aktuelle Behandlungen der Hypercholesterinämie in PortugalDie Behandlung der Hypercholesterinämie in Portugal folgt den Leitlinien der Direcção-Geral da Saúde (DGS), den 2024 aktualisierten Leitlinien der Europäischen Gesellschaft für Kardiologie (ESC) und der Europäischen Atherosklerose-Gesellschaft (EAS) zu Dyslipidämien sowie den Empfehlungen der Sociedade Portuguesa de Cardiologia (SPC). Das Behandlungsziel wird nicht allein durch einen Cholesterinwert bestimmt, sondern durch einen LDL-Zielwert, der sich nach dem individuellen kardiovaskulären Risiko richtet — wobei Patienten mit höherem Risiko eine aggressivere LDL-Senkung benötigen.LDL-Zielwerte nach RisikokategorieDie ESC/EAS-Leitlinien 2024 legen folgende LDL-Ziele fest: sehr hohes Risiko (etablierte Herz-Kreislauf-Erkrankung, schwere Nierenerkrankung, Diabetes mit Organschädigung) — LDL unter 1,4 mmol/L; hohes Risiko — unter 1,8 mmol/L; moderates Risiko — unter 2,6 mmol/L; niedriges Risiko — unter 3,0 mmol/L. Ihr Arzt berechnet Ihr kardiovaskuläres Risiko mit validierten Instrumenten (SCORE2, QRISK3), um zu bestimmen, welches Ziel für Sie gilt.
+
+Erste Wahl · Alle Risikogruppen
+Statine (HMG-CoA-Reduktase-Hemmer)
+Atorvastatin · Rosuvastatin · Simvastatin
+Seit drei Jahrzehnten der Grundpfeiler der Cholesterinbehandlung. Statine hemmen die HMG-CoA-Reduktase, das geschwindigkeitsbestimmende Enzym der Cholesterinsynthese in der Leber, und senken das LDL je nach Wirkstoff und Dosis um 30 bis 55%. Hochdosierte Statine (Atorvastatin 40–80 mg, Rosuvastatin 20–40 mg) werden bei Patienten mit hohem und sehr hohem Risiko bevorzugt. In Portugal über den SNS erhältlich. Die Evidenzbasis — einschließlich der Heart-Protection-Studie und zahlreicher Metaanalysen — gehört zu den solidesten in der gesamten Pharmakologie.
+
+
+Zweite Wahl · Zusatztherapie
+Ezetimib
+Ezetrol · Ezetimib-Generika
+Verringert die Aufnahme von Cholesterin im Darm. Senkt das LDL zusätzlich um 15 bis 22%, wenn es mit einem Statin kombiniert wird. Die IMPROVE-IT-Studie zeigte eine bescheidene, aber reale Verringerung kardiovaskulärer Ereignisse, wenn es bei Hochrisikopatienten zu Simvastatin hinzugefügt wurde. Gut verträglich und über den SNS erhältlich. Standardtherapie der zweiten Wahl in Portugal, wenn eine Statin-Monotherapie den LDL-Zielwert nicht erreicht.
+
+
+Hohes Risiko und FH · Facharztgestützt
+PCSK9-Hemmer
+Evolocumab (Repatha) · Alirocumab (Praluent)
+Monoklonale Antikörper, die PCSK9 blockieren — das Protein, das für den Abbau der LDL-Rezeptoren in den Leberzellen verantwortlich ist. Sie erhöhen die Verfügbarkeit von LDL-Rezeptoren drastisch und senken das LDL zusätzlich zum Statin um 50 bis 65%. Die Studien FOURIER und ODYSSEY OUTCOMES zeigten Reduktionen der wichtigsten kardiovaskulären Ereignisse um 15 bis 20%. Verabreichung per subkutaner Injektion alle 2 oder 4 Wochen. In Portugal auf fachärztliche Verordnung für FH und Patienten mit sehr hohem Risiko erhältlich.
+
+
+Innovativ · Halbjährliche Injektion
+Inclisiran
+Leqvio
+Eine Small-Interfering-RNA-Therapie (siRNA), die die hepatische PCSK9-Produktion auf genetischer Ebene zum Schweigen bringt und das LDL nach einer initialen Aufsättigungsdosis mit nur zwei Injektionen pro Jahr um etwa 50% senkt. Das ORION-Studienprogramm zeigte eine anhaltende LDL-Senkung mit einem hervorragenden Sicherheitsprofil. In Portugal über spezialisierte Lipidologie- und Kardiologiedienste erhältlich.
+
+
+Erhöhte Triglyzeride
+Fibrate und Omega-3-Fettsäuren
+Fenofibrat · Icosapent-Ethyl (Vascepa)
+Fibrate senken vor allem die Triglyzeride und erhöhen das HDL moderat. Gereinigtes Icosapent-Ethyl (Omega-3-EPA) zeigte in der REDUCE-IT-Studie eine 25-prozentige Reduktion kardiovaskulärer Ereignisse bei Hochrisikopatienten mit trotz Statintherapie erhöhten Triglyzeriden — ein wegweisendes Ergebnis, das sich in den aktualisierten internationalen Leitlinien widerspiegelt. In Portugal auf fachärztliche Verordnung erhältlich.
+
+
+Statinunverträglichkeit · Alternative
+Bempedoinsäure
+Nilemdo · Nustendi (mit Ezetimib)
+Ein orales Präparat, das die Cholesterinsynthese über die ATP-Citrat-Lyase noch vor dem Ansatzpunkt der Statine hemmt. Da es nur in der Leber (und nicht im Muskelgewebe) aktiviert wird, verursacht es nicht die Myopathie, die manche Patienten zum Absetzen von Statinen zwingt. Die CLEAR-Outcomes-Studie (2023) bestätigte, dass Bempedoinsäure die wichtigsten kardiovaskulären Ereignisse bei statinintoleranten Patienten reduziert. In Portugal für Patienten erhältlich, die Statine nicht vertragen.
+
+
+Aktualisierung der ESC/EAS-Leitlinien 2024:
+      Die aktualisierten europäischen Leitlinien bekräftigen, dass Patienten mit sehr hohem Risiko — mit etablierter Herz-Kreislauf-Erkrankung oder familiärer Hypercholesterinämie — ein LDL unter 1,4 mmol/L erreichen sollten, und dass eine Kombinationstherapie (Statin + Ezetimib ± PCSK9-Hemmer oder Inclisiran) frühzeitig statt schrittweise begonnen werden sollte, wenn eine Monotherapie die Ziele voraussichtlich nicht erreicht. Wenn bei Ihnen eine Herzerkrankung bekannt ist und Ihr LDL über dem Zielwert bleibt, sprechen Sie mit Ihrem Arzt oder Kardiologen über eine Intensivierung der Behandlung.
+    Abschnitt 06Vorbeugung und Lebensstil: Was Sie tun könnenDie Anpassung des Lebensstils ist die erste und nachhaltigste Maßnahme zur Cholesterinkontrolle und Senkung des kardiovaskulären Risikos. Bei Patienten mit niedrigem bis moderatem kardiovaskulärem Risiko können konsequent beibehaltene Ernährungs- und Lebensstiländerungen klinisch relevante LDL-Senkungen erreichen und in vielen Fällen eine medikamentöse Behandlung überflüssig machen. Auch bei medikamentöser Therapie verstärken Lebensstiländerungen deren Wirksamkeit und senken das kardiovaskuläre Risiko zusätzlich über Mechanismen, die über das Cholesterin hinausgehen.
+
+
+Setzen Sie auf eine herzschützende Ernährung
+Ersetzen 

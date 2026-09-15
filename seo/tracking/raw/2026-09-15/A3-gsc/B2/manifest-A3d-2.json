@@ -1,0 +1,295 @@
+{
+  "agent": "A3d-2",
+  "window": {
+    "start": "2026-08-07",
+    "end": "2026-08-23",
+    "days": 17
+  },
+  "calls": [
+    {
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page",
+          "date"
+        ],
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startDate": "2026-08-07",
+        "endDate": "2026-08-10",
+        "startRow": 0
+      },
+      "rowCount": 1000,
+      "hasMore": true,
+      "nextStartRow": 1000,
+      "timestamp_utc": "2026-09-15T05:51:56.333389+00:00",
+      "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-07_2026-08-10_r0.jsonl"
+    },
+    {
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page",
+          "date"
+        ],
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startDate": "2026-08-07",
+        "endDate": "2026-08-10",
+        "startRow": 1000
+      },
+      "rowCount": 780,
+      "hasMore": false,
+      "nextStartRow": null,
+      "timestamp_utc": "2026-09-15T05:52:09.555909+00:00",
+      "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-07_2026-08-10_r1000.jsonl"
+    },
+    {
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page",
+          "date"
+        ],
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startDate": "2026-08-11",
+        "endDate": "2026-08-14",
+        "startRow": 0
+      },
+      "rowCount": 1000,
+      "hasMore": true,
+      "nextStartRow": 1000,
+      "timestamp_utc": "2026-09-15T05:52:22.736604+00:00",
+      "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-11_2026-08-14_r0.jsonl"
+    },
+    {
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page",
+          "date"
+        ],
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startDate": "2026-08-11",
+        "endDate": "2026-08-14",
+        "startRow": 1000
+      },
+      "rowCount": 474,
+      "hasMore": false,
+      "nextStartRow": null,
+      "timestamp_utc": "2026-09-15T05:52:37.371032+00:00",
+      "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-11_2026-08-14_r1000.jsonl"
+    },
+    {
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page",
+          "date"
+        ],
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startDate": "2026-08-15",
+        "endDate": "2026-08-18",
+        "startRow": 0
+      },
+      "rowCount": 1000,
+      "hasMore": true,
+      "nextStartRow": 1000,
+      "timestamp_utc": "2026-09-15T05:52:50.145648+00:00",
+      "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-15_2026-08-18_r0.jsonl"
+    },
+    {
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page",
+          "date"
+        ],
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startDate": "2026-08-15",
+        "endDate": "2026-08-18",
+        "startRow": 1000
+      },
+      "rowCount": 369,
+      "hasMore": false,
+      "nextStartRow": null,
+      "timestamp_utc": "2026-09-15T05:53:03.160338+00:00",
+      "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-15_2026-08-18_r1000.jsonl"
+    },
+    {
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page",
+          "date"
+        ],
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startDate": "2026-08-19",
+        "endDate": "2026-08-22",
+        "startRow": 0
+      },
+      "rowCount": 1000,
+      "hasMore": true,
+      "nextStartRow": 1000,
+      "timestamp_utc": "2026-09-15T05:53:16.920779+00:00",
+      "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-19_2026-08-22_r0.jsonl"
+    },
+    {
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page",
+          "date"
+        ],
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startDate": "2026-08-19",
+        "endDate": "2026-08-22",
+        "startRow": 1000
+      },
+      "rowCount": 420,
+      "hasMore": false,
+      "nextStartRow": null,
+      "timestamp_utc": "2026-09-15T05:53:29.174323+00:00",
+      "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-19_2026-08-22_r1000.jsonl"
+    },
+    {
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page",
+          "date"
+        ],
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startDate": "2026-08-23",
+        "endDate": "2026-08-23",
+        "startRow": 0
+      },
+      "rowCount": 354,
+      "hasMore": false,
+      "nextStartRow": null,
+      "timestamp_utc": "2026-09-15T05:53:42.516971+00:00",
+      "out_file": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_2026-08-23_2026-08-23_r0.jsonl"
+    }
+  ],
+  "totals": {
+    "calls": 9,
+    "rows_pulled": 6397
+  },
+  "extraction_utc": "2026-09-15T05:56:02.585345+00:00",
+  "schema_version": "1.0",
+  "impression_share_vs_property": {
+    "per_day": [
+      {
+        "date": "2026-08-07",
+        "page_date_impressions": 2056,
+        "property_impressions": 1937,
+        "share": 1.0614
+      },
+      {
+        "date": "2026-08-08",
+        "page_date_impressions": 2169,
+        "property_impressions": 2099,
+        "share": 1.0333
+      },
+      {
+        "date": "2026-08-09",
+        "page_date_impressions": 3917,
+        "property_impressions": 2723,
+        "share": 1.4385
+      },
+      {
+        "date": "2026-08-10",
+        "page_date_impressions": 2771,
+        "property_impressions": 2492,
+        "share": 1.112
+      },
+      {
+        "date": "2026-08-11",
+        "page_date_impressions": 2540,
+        "property_impressions": 2389,
+        "share": 1.0632
+      },
+      {
+        "date": "2026-08-12",
+        "page_date_impressions": 2660,
+        "property_impressions": 2557,
+        "share": 1.0403
+      },
+      {
+        "date": "2026-08-13",
+        "page_date_impressions": 2726,
+        "property_impressions": 2591,
+        "share": 1.0521
+      },
+      {
+        "date": "2026-08-14",
+        "page_date_impressions": 2235,
+        "property_impressions": 2111,
+        "share": 1.0587
+      },
+      {
+        "date": "2026-08-15",
+        "page_date_impressions": 1622,
+        "property_impressions": 1488,
+        "share": 1.0901
+      },
+      {
+        "date": "2026-08-16",
+        "page_date_impressions": 1927,
+        "property_impressions": 1813,
+        "share": 1.0629
+      },
+      {
+        "date": "2026-08-17",
+        "page_date_impressions": 2546,
+        "property_impressions": 2438,
+        "share": 1.0443
+      },
+      {
+        "date": "2026-08-18",
+        "page_date_impressions": 2086,
+        "property_impressions": 1999,
+        "share": 1.0435
+      },
+      {
+        "date": "2026-08-19",
+        "page_date_impressions": 2219,
+        "property_impressions": 2117,
+        "share": 1.0482
+      },
+      {
+        "date": "2026-08-20",
+        "page_date_impressions": 2327,
+        "property_impressions": 2164,
+        "share": 1.0753
+      },
+      {
+        "date": "2026-08-21",
+        "page_date_impressions": 2097,
+        "property_impressions": 2007,
+        "share": 1.0448
+      },
+      {
+        "date": "2026-08-22",
+        "page_date_impressions": 1823,
+        "property_impressions": 1759,
+        "share": 1.0364
+      },
+      {
+        "date": "2026-08-23",
+        "page_date_impressions": 1867,
+        "property_impressions": 1755,
+        "share": 1.0638
+      }
+    ],
+    "min_share": 1.0333,
+    "max_share": 1.4385
+  }
+}

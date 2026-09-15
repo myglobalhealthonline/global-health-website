@@ -1,0 +1,196 @@
+
+ RUN  v4.1.10 C:/Github/global-health-website/frontend
+
+ ✓ tests/unit/seo-live-urls.test.ts > GONE_DOCTORS entries are documented decisions, not oversights > dr-grainne-ahern carries a click cost and a named approver 6ms
+ ✓ tests/unit/seo-live-urls.test.ts > GONE_DOCTORS entries are documented decisions, not oversights > dr-mala-vili-rajan carries a click cost and a named approver 1ms
+ ✓ tests/unit/seo-live-urls.test.ts > GONE_DOCTORS entries are documented decisions, not oversights > /brazil-doctors/dr-renato-sarmento is an exception with a real recorded reason, not a silenced failure 1ms
+ ✓ tests/unit/seo-live-urls.test.ts > GONE_DOCTORS entries are documented decisions, not oversights > no redirect rule points at a slug that is listed as gone 37ms
+stdout | tests/unit/seo-live-urls.test.ts > live URL assertions (SEO_CHECK_BASE) > no redirect terminates in a 404
+[seo] probed 260 literal redirect sources; 311 parameterised rules are covered separately by the slug-expansion pass below.
+
+ × tests/unit/seo-live-urls.test.ts > live URL assertions (SEO_CHECK_BASE) > no redirect terminates in a 404 15821ms
+   → these redirects terminate in an error: expected [ …(40) ] to deeply equal []
+stdout | tests/unit/seo-live-urls.test.ts > live URL assertions (SEO_CHECK_BASE) > no parameterised doctor rule points at a dead slug
+[seo] expanded 26 parameterised doctor rules over 64 live clinicians -> 128 real URLs probed. REMAINING GAP, two parts, both needing a GSC top-pages export: (1) legacy slugs belonging to nobody on the current roster — the cyplinska/hlavaty/lavrov shape; (2) honorific-drift legacy slugs (mudr- vs dr-), which are NOT generated here because a fabricated corpus reports 404s on URLs that never existed.
+
+ ✓ tests/unit/seo-live-urls.test.ts > live URL assertions (SEO_CHECK_BASE) > no parameterised doctor rule points at a dead slug 8925ms
+ ✓ tests/unit/seo-live-urls.test.ts > live URL assertions (SEO_CHECK_BASE) > the three Czech P0 fixtures resolve 200 in one hop 594ms
+stdout | tests/unit/seo-live-urls.test.ts > live URL assertions (SEO_CHECK_BASE) > every sitemap entry returns 200 and is indexable
+[seo] checked 2265 sitemap URLs
+
+ × tests/unit/seo-live-urls.test.ts > live URL assertions (SEO_CHECK_BASE) > every sitemap entry returns 200 and is indexable 125484ms
+   → sitemap entries must be live, canonical URLs — not redirects or errors: expected [ …(84) ] to deeply equal []
+ ✓ tests/unit/seo-live-urls.test.ts > live URL assertions (SEO_CHECK_BASE) > every GONE_DOCTORS URL shape actually answers 410 2291ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/seo-live-urls.test.ts > live URL assertions (SEO_CHECK_BASE) > no redirect terminates in a 404
+AssertionError: these redirects terminate in an error: expected [ …(40) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "https://www.myglobalhealth.online/home-delivery -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests)",
++   "https://www.myglobalhealth.online/home-health-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests)",
++   "https://www.myglobalhealth.online/home-health-tests/psa-test-%28prostatic-specific-antigen%29 -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/psa-prostate-test)",
++   "https://www.myglobalhealth.online/home-health-tests-1/psa-test-%28prostatic-specific-antigen%29 -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/psa-prostate-test)",
++   "https://www.myglobalhealth.online/home-health-tests/amh-test-%28anti-m%C3%BCllerian-hormone%29 -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/amh-fertility-test)",
++   "https://www.myglobalhealth.online/home-health-tests-1/amh-test-%28anti-m%C3%BCllerian-hormone%29 -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/amh-fertility-test)",
++   "https://www.myglobalhealth.online/product-page/genetic-lactose-intolereance-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-lactose-intolerance-test)",
++   "https://www.myglobalhealth.online/product-page/heart-health-home-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/heart-health-cholesterol-test)",
++   "https://www.myglobalhealth.online/product-page/female-hormone-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/female-hormone-test)",
++   "https://www.myglobalhealth.online/product-page/male-hormone-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/male-hormone-test)",
++   "https://www.myglobalhealth.online/product-page/psa-test-prostatic-specific-antigen -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/psa-prostate-test)",
++   "https://www.myglobalhealth.online/product-page/amh-test-anti-m%C3%BCllerian-hormone -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/amh-fertility-test)",
++   "https://www.myglobalhealth.online/product-page/gut-microbiome-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/gut-microbiome-test)",
++   "https://www.myglobalhealth.online/product-page/coeliac-disease-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-coeliac-disease-test)",
++   "https://www.myglobalhealth.online/product-page/osentia-fracture-risk-assessment-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/fracture-risk-assessment-test)",
++   "https://www.myglobalhealth.online/product-page/general-health-blood-hometest -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/general-health-test)",
++   "https://www.myglobalhealth.online/product-page/nutrition-and-lifestyle-home-dna-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/nutrition-lifestyle-dna-test)",
++   "https://www.myglobalhealth.online/product-page/haemochromatosis-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-haemochromatosis-test)",
++   "https://www.myglobalhealth.online/product-page/vitamin-d-blood-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/vitamin-d-test)",
++   "https://www.myglobalhealth.online/product-page/vitamin-b12-blood-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/vitamin-b12-test)",
++   "https://www.myglobalhealth.online/home-health-tests/heart-health-home-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/heart-health-cholesterol-test)",
++   "https://www.myglobalhealth.online/home-health-tests-1/heart-health-home-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/heart-health-cholesterol-test)",
++   "https://www.myglobalhealth.online/home-health-tests/female-hormone-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/female-hormone-test)",
++   "https://www.myglobalhealth.online/home-health-tests-1/female-hormone-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/female-hormone-test)",
++   "https://www.myglobalhealth.online/home-health-tests/male-hormone-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/male-hormone-test)",
++   "https://www.myglobalhealth.online/home-health-tests-1/male-hormone-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/male-hormone-test)",
++   "https://www.myglobalhealth.online/home-health-tests/gut-microbiome-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/gut-microbiome-test)",
++   "https://www.myglobalhealth.online/home-health-tests-1/gut-microbiome-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/gut-microbiome-test)",
++   "https://www.myglobalhealth.online/home-health-tests/nutrition-and-lifestyle-home-dna-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/nutrition-lifestyle-dna-test)",
++   "https://www.myglobalhealth.online/home-health-tests-1/nutrition-and-lifestyle-home-dna-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/nutrition-lifestyle-dna-test)",
++   "https://www.myglobalhealth.online/home-health-tests/osentia-fracture-risk-assessment-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/fracture-risk-assessment-test)",
++   "https://www.myglobalhealth.online/home-health-tests-1/osentia-fracture-risk-assessment-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/fracture-risk-assessment-test)",
++   "https://www.myglobalhealth.online/home-health-tests/haemochromatosis-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-haemochromatosis-test)",
++   "https://www.myglobalhealth.online/home-health-tests-1/haemochromatosis-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-haemochromatosis-test)",
++   "https://www.myglobalhealth.online/home-health-tests/vitamin-d-blood-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/vitamin-d-test)",
++   "https://www.myglobalhealth.online/home-health-tests-1/vitamin-d-blood-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/vitamin-d-test)",
++   "https://www.myglobalhealth.online/home-health-tests/vitamin-b12-blood-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/vitamin-b12-test)",
++   "https://www.myglobalhealth.online/home-health-tests-1/vitamin-b12-blood-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/vitamin-b12-test)",
++   "https://www.myglobalhealth.online/home-health-tests/coeliac-disease-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-coeliac-disease-test)",
++   "https://www.myglobalhealth.online/home-health-tests-1/coeliac-disease-test -> 404 (1 hops, final https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-coeliac-disease-test)",
++ ]
+
+ ❯ tests/unit/seo-live-urls.test.ts:278:9
+    276|         dead.map((r) => `${r.url} -> ${r.status} (${r.hops} hops, fina…
+    277|         "these redirects terminate in an error",
+    278|       ).toEqual([]);
+       |         ^
+    279|     },
+    280|     300_000,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/seo-live-urls.test.ts > live URL assertions (SEO_CHECK_BASE) > every sitemap entry returns 200 and is indexable
+AssertionError: sitemap entries must be live, canonical URLs — not redirects or errors: expected [ …(84) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/general-health-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/general-health-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/general-health-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/general-health-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/general-health-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/general-health-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/heart-health-cholesterol-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/heart-health-cholesterol-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/heart-health-cholesterol-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/heart-health-cholesterol-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/heart-health-cholesterol-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/heart-health-cholesterol-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/female-hormone-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/female-hormone-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/female-hormone-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/female-hormone-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/female-hormone-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/female-hormone-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/male-hormone-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/male-hormone-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/male-hormone-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/male-hormone-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/male-hormone-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/male-hormone-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/psa-prostate-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/psa-prostate-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/psa-prostate-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/psa-prostate-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/psa-prostate-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/psa-prostate-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/amh-fertility-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/amh-fertility-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/amh-fertility-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/amh-fertility-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/amh-fertility-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/amh-fertility-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/vitamin-d-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/vitamin-d-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/vitamin-d-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/vitamin-d-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/vitamin-d-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/vitamin-d-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/vitamin-b12-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/vitamin-b12-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/vitamin-b12-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/vitamin-b12-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/vitamin-b12-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/vitamin-b12-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/gut-microbiome-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/gut-microbiome-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/gut-microbiome-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/gut-microbiome-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/gut-microbiome-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/gut-microbiome-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/nutrition-lifestyle-dna-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/nutrition-lifestyle-dna-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/nutrition-lifestyle-dna-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/nutrition-lifestyle-dna-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/nutrition-lifestyle-dna-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/nutrition-lifestyle-dna-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-haemochromatosis-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/genetic-haemochromatosis-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/genetic-haemochromatosis-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/genetic-haemochromatosis-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/genetic-haemochromatosis-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/genetic-haemochromatosis-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-coeliac-disease-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/genetic-coeliac-disease-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/genetic-coeliac-disease-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/genetic-coeliac-disease-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/genetic-coeliac-disease-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/genetic-coeliac-disease-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-lactose-intolerance-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/genetic-lactose-intolerance-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/genetic-lactose-intolerance-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/genetic-lactose-intolerance-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/genetic-lactose-intolerance-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/genetic-lactose-intolerance-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/en/lab-tests/fracture-risk-assessment-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/pt/lab-tests/fracture-risk-assessment-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/es/lab-tests/fracture-risk-assessment-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/cs/lab-tests/fracture-risk-assessment-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/ro/lab-tests/fracture-risk-assessment-test -> 404 (0 hops)",
++   "https://www.myglobalhealth.online/ireland/de/lab-tests/fracture-risk-assessment-test -> 404 (0 hops)",
++ ]
+
+ ❯ tests/unit/seo-live-urls.test.ts:374:9
+    372|         notOk.map((r) => `${r.url} -> ${r.status} (${r.hops} hops)`),
+    373|         "sitemap entries must be live, canonical URLs — not redirects …
+    374|       ).toEqual([]);
+       |         ^
+    375|       expect(
+    376|         noindexed.map((r) => r.url),
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 7 passed (9)
+   Start at  10:16:18
+   Duration  156.34s (transform 204ms, setup 0ms, import 281ms, tests 153.17s, environment 0ms)
+

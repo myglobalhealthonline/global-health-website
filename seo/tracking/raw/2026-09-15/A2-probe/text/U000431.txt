@@ -1,0 +1,212 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://portal.cfm.org.br","https://portal.cfm.org.br/crms/","https://www.gov.br/anpd/pt-br"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes a Doença Silenciosa","description":"Guia completo sobre diabetes no Brasil: causas, sintomas, tratamentos com GLP-1 e SGLT2, e cuidados essenciais. Escrito por médico especialista.","url":"https://www.myglobalhealth.online/brazil/pt/blog/diabetes-doenca-silenciosa","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/brazil/pt/blog/diabetes-doenca-silenciosa#webpage","url":"https://www.myglobalhealth.online/brazil/pt/blog/diabetes-doenca-silenciosa","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr. Renato Sarmento","jobTitle":"Physician","url":"https://www.myglobalhealth.online/brazil/pt/doctors/dr-renato-sarmento","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"CRM","value":"170837"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"CRM 170837","recognizedBy":{"@type":"Organization","name":"Conselho Federal de Medicina","url":"https://portal.cfm.org.br"}}],"memberOf":{"@type":"Organization","name":"Conselho Federal de Medicina","url":"https://portal.cfm.org.br"}},"lastReviewed":"2026-07-21"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes+a+Doen%C3%A7a+Silenciosa&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F689af434-d0e0-42e1-83e5-16ed1fa8170f-33848.webp&v=2026-07-20.1-pudlzz","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologia"},"datePublished":"2026-07-20T12:01:50.812Z","dateModified":"2026-07-21T13:41:31.588Z","publishingPrinciples":"https://www.myglobalhealth.online/brazil/pt/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/brazil/pt/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/brazil/pt/blog"},{"@type":"ListItem","position":3,"name":"Diabetes a Doença Silenciosa","item":"https://www.myglobalhealth.online/brazil/pt/blog/diabetes-doenca-silenciosa"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Quantas pessoas têm diabetes no Brasil?","acceptedAnswer":{"@type":"Answer","text":"Segundo o Atlas Global do Diabetes 2025 da IDF, o Brasil ocupa o 6º lugar mundial em número de casos, com 16,6 milhões de pessoas vivendo com a doença. A pesquisa Vigitel do Ministério da Saúde mostra que a prevalência em adultos passou de 5,5% em 2006 para 12,9% em 2024. A SBD estima que o total, incluindo casos não diagnosticados, já se aproxime de 20 milhões de brasileiros."}},{"@type":"Question","name":"Quais são os primeiros sinais de diabetes?","acceptedAnswer":{"@type":"Answer","text":"Os sinais mais comuns incluem sede excessiva, urinar com frequência (especialmente à noite), cansaço persistente, visão turva, cicatrização lenta de feridas, fome constante mesmo depois de comer, e formigamento ou dormência nas mãos e pés. A diabetes tipo 2 pode se desenvolver de forma lenta e silenciosa — segundo a IDF, cerca de 1 em cada 3 pessoas com diabetes no Brasil não sabe que tem a doença. Se você tem fatores de risco, converse com seu médico sobre a realização de uma glicemia em jejum ou HbA1c mesmo na ausência de sintomas."}},{"@type":"Question","name":"Qual a diferença entre diabetes tipo 1 e tipo 2?","acceptedAnswer":{"@type":"Answer","text":"A diabetes tipo 1 é uma doença autoimune em que o sistema imunológico destrói as células beta produtoras de insulina no pâncreas, exigindo insulinoterapia para toda a vida e se apresentando geralmente na infância ou na idade adulta jovem. A diabetes tipo 2 ocorre quando o organismo se torna resistente à insulina ou não produz insulina suficiente — está fortemente associada a fatores de estilo de vida como alimentação, sedentarismo e excesso de peso, e representa mais de 90% dos casos no Brasil. As duas condições têm causas, tratamentos e evoluções clínicas diferentes, embora ambas exijam manejo cuidadoso para evitar complicações."}},{"@type":"Question","name":"Quais são os melhores tratamentos para diabetes tipo 2 no Brasil?","acceptedAnswer":{"@type":"Answer","text":"O tratamento de primeira linha inclui normalmente a metformina associada a modificações do estilo de vida. As classes de medicamentos mais recentes — em particular os agonistas GLP-1 (como a semaglutida/Ozempic) e os inibidores SGLT2 (como a empagliflozina/Jardiance) — revolucionaram o tratamento por reduzirem a glicemia e simultaneamente protegerem o coração e os rins e promoverem a perda de peso. O PCDT do Ministério da Saúde e as diretrizes da SBD e da ADA 2025 recomendam essas classes em pacientes com doença cardiovascular estabelecida, insuficiência cardíaca ou doença renal crônica. O tratamento é sempre individualizado — seu médico irá adequá-lo ao seu perfil específico."}},{"@type":"Question","name":"Com que frequência devo ir ao médico se tiver diabetes no Brasil?","acceptedAnswer":{"@type":"Answer","text":"Se você tem diabetes diagnosticada, deve realizar pelo menos uma consulta anual estruturada — que inclui avaliação de HbA1c, pressão arterial, função renal, colesterol, peso, exame dos pés e exame de fundo de olho. Medições mais frequentes de HbA1c (a cada 3 a 6 meses) são recomendadas se o controle glicêmico não estiver adequado ou se a terapia tiver sido alterada recentemente. Diferentemente de outros países, o Brasil ainda não tem um programa nacional unificado de rastreio de retinopatia, então vale a pena agendar seu exame de retina diretamente com um oftalmologista ou pela Atenção Primária do SUS."}},{"@type":"Question","name":"A diabetes pode entrar em remissão?","acceptedAnswer":{"@type":"Answer","text":"A diabetes tipo 2 pode, em alguns casos, entrar em remissão — definida como a obtenção de valores de glicemia próximos do normal sem medicação — por meio de perda de peso significativa, frequentemente com dietas de baixíssimo aporte calórico ou cirurgia bariátrica. O estudo DiRECT demonstrou remissão em cerca de 50% dos participantes após um ano com um programa dietético estruturado. Isso não significa que a tendência subjacente seja eliminada — a remissão exige mudanças sustentadas no estilo de vida para se manter. A diabetes tipo 1 não tem cura atualmente, embora as terapias com células-tronco em ensaios clínicos prometam restaurar a produção de insulina nos próximos anos."}},{"@type":"Question","name":"Posso consultar um médico sobre diabetes online no Brasil?","acceptedAnswer":{"@type":"Answer","text":"Sim. A Global Health oferece consultas de clínica geral online com médicos registrados no CRM — incluindo consultas de revisão da diabetes, avaliação de sintomas, revisão de medicação e pedido de exames (incluindo HbA1c, glicemia em jejum e painel metabólico completo). A prescrição digital é emitida em conformidade com as normas do CFM, aceita diretamente em farmácias de todo o Brasil, quando clinicamente indicado. Agende sua consulta em myglobalhealth.online ou entre em contato pelo e-mail globalhealth@myglobalhealth.online."}}]}]Todos os artigosEndocrinologiaDiabetes a Doença SilenciosaO Brasil já ocupa o 6º lugar mundial em casos de diabetes, com 16,6 milhões de pessoas afetadas — muitas ainda sem diagnóstico. Veja os sinais de alerta, os tratamentos mais eficazes disponíveis hoje e o que esperar do futuro dos cuidados.Global Health Medical Team20 de julho de 202623 min de leituraÚltima revisão 21 de julho de 2026Revisado clinicamente por Dr. Renato Sarmento+Nesta páginaA Diabetes no Brasil: Entendendo a Dimensão do ProblemaTipos de DiabetesCausas e Fatores de RiscoSinais e SintomasTratamentos Atuais para a Diabetes no BrasilA Importância das Consultas RegularesO Futuro do Tratamento da DiabetesInstituições e Recursos de Referência no BrasilPerguntas Frequentes
+Doença Crônica · Brasil · Publicado em Junho de 2026Causas, Sintomas, Tratamentos e o Futuro dos CuidadosO Brasil já ocupa o 6º lugar mundial em número de casos de diabetes, com 16,6 milhões de pessoas vivendo com a doença — e muitas ainda sem diagnóstico. Este guia aborda tudo o que você precisa saber: causas, sinais de alerta, os melhores tratamentos disponíveis hoje, a importância das consultas regulares, e as terapias emergentes que podem transformar os cuidados com a diabetes nos próximos anos.— Baseado em evidências— Alinhado com o Ministério da Saúde e a SBD— Atualizado em Junho de 2026Ver acompanhamento recomendadoExplorar tratamentosGuia clínico atualizado em junho de 2026A diabetes é uma das doenças crônicas mais prevalentes no Brasil — e uma das mais subdiagnosticadas. É frequentemente descrita como uma "doença silenciosa" porque a diabetes tipo 2, responsável por mais de 90% dos casos, pode se desenvolver lentamente ao longo de vários anos sem sintomas perceptíveis. Quando o diagnóstico é feito, a doença muitas vezes já está presente há algum tempo.A boa notícia é que a diabetes é altamente controlável. Com o diagnóstico correto, o tratamento adequado e um acompanhamento regular, as pessoas com diabetes podem viver de forma plena e saudável. E com os avanços notáveis da última década — em especial o surgimento dos agonistas do receptor GLP-1 e dos inibidores SGLT2 — as opções clínicas disponíveis no Brasil são hoje as melhores de sempre.TFEscrito pelo Dr. Tiago Miguel FigueiraOM 77986 · Revisão clínica: Dr. Renato Sarmento, Diretor Clínico · CRM 170837/SP10 MIN LEITURARevisto pela equipa médica da Global Health.Seção 01A Diabetes no Brasil: Entendendo a Dimensão do ProblemaDe acordo com o Ministério da Saúde, a pesquisa Vigitel mostrou que a prevalência de diabetes em adultos brasileiros passou de 5,5% em 2006 para 12,9% em 2024 — um crescimento de 135% em quase duas décadas, motivando o lançamento em 2026 do programa Viva Mais Brasil, com investimento previsto de R$ 1,5 bilhão no enfrentamento conjunto de diabetes e hipertensão. O Atlas Global do Diabetes 2025, publicado pela International Diabetes Federation (IDF), revelou que o Brasil ocupa o 6º lugar mundial em número de casos, com 16,6 milhões de pessoas vivendo com a doença — um aumento de 5,7% em apenas quatro anos. A Sociedade Brasileira de Diabetes (SBD) estima que o total no país, incluindo casos não diagnosticados, já se aproxime de 20 milhões de pessoas.
+
+12,9%
+Prevalência de diabetes em adultos brasileiros em 2024 (Vigitel/Ministério da Saúde)
+
+
+16,6M
+Pessoas com diabetes no Brasil, 6º lugar mundial (Atlas IDF 2025)
+
+
+~20M
+Estimativa total incluindo casos não diagnosticados (SBD)
+
+
+18%
+Prevalência estimada de diabetes gestacional no Brasil (SBD)
+
+Fontes: Ministério da Saúde — Vigitel 2025; International Diabetes Federation — Atlas Global do Diabetes 2025; Sociedade Brasileira de Diabetes (SBD).Segundo a IDF, o diabetes já é responsável por mais de 111 mil mortes por ano no Brasil — cerca de 20 vezes o número de óbitos por dengue no mesmo período — e figura, de acordo com a SBD, como a principal causa de amputação não traumática de membros inferiores no país, com mais de 10 mil amputações registradas anualmente pelo SUS, uma média superior a 28 por dia.
+Está em risco e não sabe?
+      Segundo a IDF, cerca de 1 em cada 3 pessoas com diabetes no Brasil permanece sem diagnóstico. Se você tem fatores de risco — histórico familiar, excesso de peso, pressão alta ou sedentarismo — converse com seu médico sobre a realização de uma glicemia em jejum ou de uma HbA1c. O diagnóstico precoce é determinante para evitar complicações.
+    Seção 02Tipos de DiabetesNem toda diabetes é igual. Entender o tipo que você tem — ou para o qual está em risco — é o primeiro passo para um manejo eficaz.
+
+
+Diabetes Tipo 1
+Autoimune · Insulinodependente
+O sistema imunológico destrói as células beta produtoras de insulina no pâncreas. O organismo produz pouca ou nenhuma insulina. Requer insulinoterapia para toda a vida. Costuma se desenvolver na infância ou na idade adulta jovem. A SBD estima que cerca de 600 mil brasileiros vivam com diabetes tipo 1.
+
+
+
+Diabetes Tipo 2
+Estilo de vida & genética · Progressiva
+O organismo se torna resistente à insulina ou não produz insulina suficiente. Fortemente associada a fatores de estilo de vida. É a forma mais comum no Brasil, responsável por mais de 90% dos casos. Pode ser inicialmente controlada com alimentação, exercício e medicação oral, embora muitos pacientes venham a precisar de insulina.
+
+
+
+Diabetes Gestacional
+Relacionada à gravidez · Geralmente transitória
+Se desenvolve durante a gravidez quando as alterações hormonais comprometem a função da insulina. Geralmente se resolve após o parto, mas aumenta significativamente o risco vitalício de diabetes tipo 2 para a mãe e para a criança. A SBD estima uma prevalência de cerca de 18% das gestações no Brasil, variando conforme a região e os critérios diagnósticos utilizados.
+
+
+
+Pré-diabetes
+Prevenível · Frequentemente reversível
+A glicemia está acima do normal, mas ainda não atingiu os níveis da diabetes. Uma janela de intervenção crítica — mudanças no estilo de vida nesta fase podem prevenir ou adiar significativamente o surgimento da diabetes tipo 2. É uma prioridade crescente na Atenção Primária à Saúde do SUS.
+
+Seção 03Causas e Fatores de RiscoDiabetes Tipo 1A causa exata da diabetes tipo 1 permanece incompletamente compreendida. É uma doença autoimune — o sistema imunológico do organismo ataca e destrói erroneamente as células beta do pâncreas, responsáveis pela produção de insulina. Fatores genéticos desempenham um papel, assim como, possivelmente, a exposição a determinadas infecções virais. No Brasil, a investigação nesta área é desenvolvida por centros como a SBD — Sociedade Brasileira de Diabetes e por grupos de pesquisa da Universidade de São Paulo (USP) e da Universidade Federal de São Paulo (UNIFESP).Diabetes Tipo 2A diabetes tipo 2 tem um conjunto de causas mais complexo e modificável, combinando predisposição genética com fatores de estilo de vida e ambientais. O mecanismo central é a resistência à insulina — em que as células do organismo deixam de responder eficazmente à insulina — associada a um declínio progressivo na capacidade do pâncreas de compensar com maior produção.
+
+
+Excesso de peso corporal
+Em particular a gordura abdominal (visceral). A obesidade é o fator de risco modificável mais importante para a diabetes tipo 2 — e cresceu 118% no Brasil entre 2006 e 2024, segundo o Vigitel.
+
+
+
+Sedentarismo
+O comportamento sedentário reduz a sensibilidade à insulina. O exercício regular é uma das ferramentas preventivas e terapêuticas mais eficazes.
+
+
+
+Dieta rica em alimentos processados
+O consumo elevado de carboidratos refinados, açúcar e alimentos ultraprocessados está fortemente associado à resistência à insulina.
+
+
+
+Histórico familiar
+Ter um parente de primeiro grau com diabetes tipo 2 aumenta significativamente o risco pessoal.
+
+
+
+Idade acima de 45 anos
+O risco aumenta com a idade. Os dados do Vigitel e do Ministério da Saúde mostram prevalência crescente em faixas etárias mais avançadas.
+
+
+
+Pressão alta ou colesterol elevado
+Os fatores de risco metabólico tendem a coexistir. A hipertensão e a dislipidemia ocorrem frequentemente junto com a resistência à insulina.
+
+
+
+Diabetes gestacional prévia
+Mulheres que desenvolveram diabetes gestacional têm um risco vitalício substancialmente mais elevado de desenvolver diabetes tipo 2.
+
+
+
+Ascendência e histórico populacional
+Pessoas de ascendência sul-asiática, africana e indígena apresentam, em diversos estudos, taxas mais elevadas de diabetes tipo 2 para limiares de IMC mais baixos.
+
+Seção 04Sinais e SintomasOs sintomas variam consideravelmente entre a diabetes tipo 1 e a tipo 2. A tipo 1 costuma se apresentar de forma aguda — com surgimento rápido de sintomas que podem indicar cetoacidose diabética (CAD), uma emergência médica. A tipo 2, ao contrário, se desenvolve tipicamente de forma lenta e silenciosa ao longo de anos, com sintomas tão sutis ou graduais que muitas pessoas os atribuem ao envelhecimento, ao estresse ou ao cansaço do dia a dia.
+
+
+
+Sede excessiva
+Sede persistente e incontrolável — polidipsia — enquanto os rins trabalham para filtrar o excesso de glicose.
+
+
+
+
+
+Urinar com frequência
+Poliúria, especialmente à noite (noctúria). Frequentemente o sintoma inicial mais incômodo.
+
+
+
+
+
+Cansaço persistente
+Fadiga constante mesmo após descanso adequado, causada pela privação de glicose nas células.
+
+
+
+
+
+Perda de peso inexplicada
+Sobretudo na tipo 1 — o organismo degrada gordura e músculo para obter energia na ausência de insulina.
+
+
+
+
+
+Visão turva
+A glicemia elevada provoca alterações no cristalino do olho, afetando temporariamente o foco visual.
+
+
+
+
+
+Cicatrização lenta de feridas
+A circulação comprometida e a disfunção imunológica retardam a cicatrização de cortes, feridas e infecções.
+
+
+
+
+
+Formigamento ou dormência
+A neuropatia periférica — que afeta mãos e pés — pode ser um sinal precoce, em particular na tipo 2.
+
+
+
+
+
+Fome constante
+Polifagia — fome persistente mesmo após comer — ocorre quando as células não conseguem absorver glicose de forma eficaz.
+
+
+
+Quando procurar atendimento de urgência:
+      Se você ou um familiar apresentar surgimento súbito de sede intensa, urinar em excesso, vômitos, dor abdominal, confusão ou hálito com cheiro de acetona — especialmente em uma criança ou adulto jovem — pode se tratar de cetoacidose diabética (CAD), uma emergência médica. Ligue imediatamente para o SAMU (192) ou procure a emergência hospitalar mais próxima.
+    Seção 05Tratamentos Atuais para a Diabetes no BrasilO tratamento da diabetes passou por uma verdadeira revolução na última década. No Brasil, o Ministério da Saúde define o Protocolo Clínico e Diretrizes Terapêuticas (PCDT) de Diabetes Mellitus Tipo 2 — atualizado em abril de 2024 e vigente desde 2025, com avaliação da CONITEC — alinhado às recomendações internacionais da American Diabetes Association (ADA) e da European Association for the Study of Diabetes (EASD). O país também investe na produção nacional de insulina: uma parceria público-privada prevê a entrega de 20 milhões de frascos de insulina glargina para o SUS, e está em discussão a ampliação do acesso a insulinas análogas de ação prolongada para pacientes com diabetes tipo 1.Modificação do Estilo de Vida — A Base de Todo TratamentoPara a diabetes tipo 1 e tipo 2, o estilo de vida é o alicerce do manejo da doença. Para a tipo 2 em particular, a mudança alimentar e o aumento da atividade física podem reduzir significativamente a HbA1c, melhorar a sensibilidade à insulina e, em alguns casos — sobretudo após cirurgia bariátrica ou dietas de baixíssimo aporte calórico — levar a uma remissão sustentada. A SBD, a ANAD e as equipes de nutrição e enfermagem das Unidades Básicas de Saúde do SUS oferecem apoio estruturado para o manejo do estilo de vida em todo o país.Tratamento FarmacológicoAs seguintes classes de medicamentos estão disponíveis no Brasil. As decisões terapêuticas são individualizadas — as diretrizes do Ministério da Saúde, da SBD e da ADA 2025 reforçam uma abordagem centrada no paciente, que considera o risco cardiovascular, a função renal, o peso e as preferências individuais.
+
+Primeira Linha · Tipo 2
+Metformina
+Glifage · Genérico (disponível no SUS)
+O agente oral de primeira linha estabelecido para a diabetes tipo 2. Reduz a glicemia diminuindo a produção hepática de glicose. Bem tolerada, acessível e amplamente disponível. Continua sendo o ponto de partida na maioria das abordagens terapêuticas da tipo 2 no Brasil.
+
+
+Proteção Cardiorrenal
+Agonistas GLP-1
+Semaglutida (Ozempic, Wegovy) · Liraglutida (Victoza)
+Uma classe transformadora de medicamentos injetáveis (e agora também orais) que imitam o hormônio intestinal GLP-1. Reduzem a glicemia, promovem perda de peso significativa, diminuem o esvaziamento gástrico e reduzem o risco cardiovascular. As diretrizes ADA 2025 recomendam priorizá-los em pacientes com doença cardiovascular estabelecida ou alto risco. Disponíveis no Brasil mediante prescrição médica.
+
+
+Proteção Cardiorrenal
+Inibidores SGLT2
+Empagliflozina (Jardiance) · Dapagliflozina (Forxiga)
+Esses comprimidos reduzem a glicemia promovendo a eliminação do excesso de açúcar pela urina. Protegem de forma independente o coração e os rins — recomendados como primeira linha em pacientes com insuficiência cardíaca ou doença renal crônica, independentemente do valor de HbA1c. Sólida base de evidência dos estudos EMPA-REG OUTCOME e CREDENCE.
+
+
+Controle Glicêmico
+Inibidores DPP-4
+Sitagliptina (Januvia) · Linagliptina (Trajenta)
+Comprimidos orais que potencializam a secreção de insulina de forma dependente da glicose. Neutros em relação ao peso, com baixo risco de hipoglicemia. Frequentemente utilizados quando os agonistas GLP-1 ou os inibidores SGLT2 não são tolerados ou adequados.
+
+
+Tipo 1 & Tipo 2 Avançada
+Insulinoterapia
+Insulinas basais, bolus, pré-misturadas · Bombas de insulina
+Essencial para todos os pacientes com tipo 1 e para muitos com tipo 2. As insulinas análogas modernas oferecem perfis de ação mais previsíveis do que as formulações mais antigas. O Ministério da Saúde tem ampliado a produção nacional de insulina glargina para o SUS, e discute a inclusão de análogos de ação prolongada no protocolo para pacientes com tipo 1.
+
+
+Tipo 1 · Tecnologia em Expansão
+Monitorização Contínua da Glicose (MCG)
+Libre · Dexcom · Medtronic
+A MCG elimina a necessidade de picadas no dedo, fornece tendências de glicose em tempo real e alertas, e melhora o controle glicêmico. No Brasil, o acesso tem crescido de forma consistente, tanto por incorporação parcial ao SUS quanto pela cobertura de planos de saúde privados, embora o acesso universal ainda seja um desafio, segundo a SBD.
+
+
+Atualização das diretrizes ADA 2025:
+      As diretrizes da American Diabetes Association de 2025 reforçam que os agonistas GLP-1 e os inibidores SGLT2 devem ser priorizados em pacientes com diabetes tipo 2 que apresentem doença cardiovascular estabelecida ou de alto risco, insuficiência cardíaca ou doença renal crônica — de forma independente do valor de HbA1c. Se você tem diabetes tipo 2 e alguma dessas condições, converse com seu médico sobre se essas classes terapêuticas são adequadas para você.
+    Seção 06A Importância das Consultas RegularesA diabetes é uma doença crônica que evolui ao longo do tempo, e suas complicações — se não detectadas — podem ser graves e irreversíveis. A retinopatia diabética é uma das principais causas de cegueira evitável na população adulta brasileira. A nefropatia diabética é um dos maiores determinantes da doença renal crônica terminal. A neuropatia periférica origina complicações no pé que, nos casos mais graves, podem resultar em amputação — segundo a SBD, o diabetes já é a principal causa de amputação não traumática de membros inferiores no Brasil, com mais de 10 mil procedimentos por ano registrados pelo SUS, uma média superior a 28 por dia, e cerca de 13 milhões de pessoas com diabetes convivendo com úlceras nos pés.Décadas de pesquisa demonstram que todas essas complicações são amplamente preveníveis — ou significativamente atrasadas — com bom controle glicêmico, manejo da pressão arterial e acompanhamento regular. A consulta anual estruturada para diabetes é uma das intervenções com melhor relação custo-benefício em toda a medicina.O Que Deve Incluir Sua Consulta Anual de Diabetes
+Avaliação da HbA1c (média de glicemia dos últimos 3 meses)
+Medição da pressão arterial e revisão da terapia anti-hipertensiva
+Função renal — taxa de filtração glomerular estimada (TFGe) e relação albumina/creatinina urinária
+Colesterol e perfil lipídico completo
+Avaliação do peso e do IMC
+Exame dos pés — incluindo avaliação de pulsos e sensibilidade
+Exame de fundo de olho para rastreio de retinopatia diabética
+Revisão e ajuste da medicação, se necessário
+Avaliação da adesão ao plano de autocuidado da diabetes
+Avaliação do tabagismo e apoio à cessação, se aplicável
+Vacinação contra a gripe (fortemente recomendada para pessoas com diabetes)
+Rastreio para Quem Ainda Não Tem DiagnósticoSe você tem fatores de risco para diabetes tipo 2 e nunca foi avaliado, seu médico pode solicitar uma glicemia em jejum ou uma HbA1c — exames simples, disponíveis na rede pública e privada. Isso é especialmente importante se você tem mais de 45 anos, histórico familiar de diabetes, pressão alta ou teve excesso de peso durante a gravidez. A detecção precoce de pré-diabetes oferece uma janela real de oportunidade para prevenir ou adiar o surgimento da diabetes tipo 2 por meio de mudanças no estilo de vida.
+Rastreio da Retinopatia Diabética no Brasil:
+      Diferentemente de outros países, o Brasil ainda não conta com um programa nacional unificado de rastreio da retinopatia diabética — o tema segue em consulta pública e avaliação pela CONITEC para um novo protocolo clínico. Diversas iniciativas regionais, universidades como a UERJ e projetos de telemedicina com apoio de inteligência artificial vêm ampliando o acesso ao exame de fundo de olho na Atenção Primária. Enquanto o rastreio universal não é uma realidade, procure agendar seu exame de retina anualmente, seja pelo SUS, seja com um oftalmologista particular.
+    Seção 07O Futuro do Tratamento da DiabetesO ritmo de inovação na medicina da diabetes é sem precedentes. Diversas áreas de pesquisa — algumas já em ensaios clínicos avançados — têm o potencial de transformar fundamentalmente o que significa viver com diabetes na próxima década.
+
+Ensaio Fase 1/2/3 · Submissão regulatória em 2026
+Terapia com Células-Tronco Derivadas de Células Beta
+O Zimislecel (anteriormente VX-880) da Vertex Pharmaceuticals consiste na infusão de células das ilhotas produtoras de insulina, totalmente diferenciadas a partir de células-tronco, na veia porta hepática — com o objetivo de restaurar a produção endógena de insulina na diabetes tipo 1. Em junho de 2025, o ensaio pivotal contava com 50 participantes, com submissão regulatória prevista para 2026. Uma revisão publicada em PMC (2025) descreve essa abordagem como potencialmente transformadora, por atuar simultaneamente na regeneração das células beta e na modulação imunológica.
+
+
+Desenvolvimento Clínico
+Pâncreas Artificial
+Os sistemas de infusão automática de insulina em malha fechada — que combinam monitorização contínua da glicose com bombas de insulina automatizadas — já representam um avanço importante para pacientes com tipo 1. No Brasil, o acesso a esses Sistemas de Infusão Automática de Insulina (SAI) tem crescido, sobretudo por meio de planos de saúde privados e ações pontuais do SUS. A próxima geração desses sistemas incorpora algoritmos de aprendizado de máquina para prever as flutuações da glicose antes de ocorrerem.

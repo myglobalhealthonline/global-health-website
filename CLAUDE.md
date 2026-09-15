@@ -76,16 +76,18 @@ Traps that have each cost a wasted round already:
   officially JobPosting/BroadcastEvent-only — do not mass-submit.
 
 **SEO entry point: `seo/README.md`. Canonical SEO control file:
-`docs/plans/seo-control-state.md`.** The country folders hold detailed, dated market
+`docs/plans/seo-control-state-2026-09.md`** (started 2026-09-15; the old
+`docs/plans/seo-control-state.md` is frozen — historical evidence only, its section
+numbers stay valid as references). The country folders hold detailed, dated market
 evidence; the control file alone holds current remediation status, the growth roadmap,
 the indexation watchlist, deadlines and next actions. Other SEO status audits are
 historical evidence unless this section identifies them as a current operating
 document.
-The latest full plain-language audit is
-`docs/audits/seo/six-market-seo-audit-2026-09-04.html`; later ledger entries supersede
-its dated status findings. Session recovery and the evidence inventory start at
-`seo/README.md` (ledger §48). The active content-growth
-execution rules are in `docs/plans/editorial-plan-2026-08-19.md` §7.
+The latest full audit is `docs/audits/seo/seo-master-audit-2026-09-15.md` with the
+tracking workbook `seo/tracking/Global_Health_SEO_Tracker.xlsx`, normalized data in
+`seo/tracking/data/`, raw pulls in `seo/tracking/raw/2026-09-15/` and refresh scripts
+in `seo/tracking/scripts/`. The active content-growth execution rules are in
+`docs/plans/editorial-plan-2026-08-19.md` §7.
 
 Two rules that override any older SEO document:
 
@@ -93,7 +95,7 @@ Two rules that override any older SEO document:
   OpenSEO/GSC data and verify live production behaviour. Historical audit counts
   are context, not the current source of truth.
 - After every implemented/deployed SEO batch, update the ledger and roadmap in
-  `seo-control-state.md` before starting the next batch.
+  `seo-control-state-2026-09.md` before starting the next batch.
 
 Do not rerun the full ~1,000-page crawl per batch — it is for global technical
 validation, periodic baselines, or post-sitewide-change only. Everything narrower

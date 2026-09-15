@@ -1,0 +1,364 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.ers.pt","https://www.ordemdosmedicos.pt","https://www.cnpd.pt","https://www.livroreclamacoes.pt","https://www.infarmed.pt","https://www.sns24.gov.pt","https://www.dgs.pt","https://www.insa.min-saude.pt","https://www.spc.pt","https://www.ihmt.unl.pt","https://www.apmgf.pt","https://www.deco.pt","https://www.utente.min-saude.pt","https://www.sosvozamiga.org","https://www.fpcardiologia.pt"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes, la enfermedad silenciosa","description":"Guía completa sobre la diabetes en Portugal: causas, síntomas, tratamientos con agonistas GLP-1 e inhibidores SGLT2, revisiones periódicas y avances futuros. Por el Dr. Tiago Miguel Figueira, Col. Médicos n.º 77986.","url":"https://www.myglobalhealth.online/portugal/es/blog/diabetes-la-enfermedad-silenciosa","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/portugal/es/blog/diabetes-la-enfermedad-silenciosa#webpage","url":"https://www.myglobalhealth.online/portugal/es/blog/diabetes-la-enfermedad-silenciosa","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/es/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-19"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes%2C+la+enfermedad+silenciosa&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F9ea3bb44-d780-4068-ac33-8f3153a05634-33848.webp&v=2026-07-20.1-yy7uzd","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologia"},"datePublished":"2026-07-19T05:53:45.279Z","dateModified":"2026-07-19T07:00:32.930Z","publishingPrinciples":"https://www.myglobalhealth.online/portugal/es/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/portugal/es/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/portugal/es/blog"},{"@type":"ListItem","position":3,"name":"Diabetes, la enfermedad silenciosa","item":"https://www.myglobalhealth.online/portugal/es/blog/diabetes-la-enfermedad-silenciosa"}]}]Todos los artículosEndocrinologiaDiabetes, la enfermedad silenciosaLa diabetes es una de las enfermedades crónicas más prevalentes y menos diagnosticadas en Portugal, y afecta a más de un millón de personas según datos de la DGS. A pesar de ello, es una afección altamente controlable, y los avances recientes —como los agonistas del GLP-1 y los inhibidores del SGLT2— han convertido las opciones de tratamiento actuales en las mejores de la historia.Global Health Medical Team19 de julio de 202624 min de lectura+En esta páginaLa diabetes en Portugal: entender la dimensión del problemaTipos de diabetesCausas y factores de riesgoSeñales y síntomasTratamientos actuales para la diabetes en PortugalLa importancia de las revisiones médicas periódicasEl futuro del tratamiento de la diabetesInstituciones y recursos de referencia en PortugalPreguntas frecuentes
+
+
+
+  
+  
+    
+      
+      
+      
+      Causas, síntomas, tratamientos y el futuro de la atención
+      Se calcula que más de un millón de portugueses viven con diabetes, y miles de ellos siguen sin diagnosticar. Esta guía aborda todo lo que necesita saber: causas, señales de alerta, los mejores tratamientos disponibles hoy en día, la importancia de las revisiones médicas periódicas y las terapias emergentes que podrían transformar la atención de la diabetes en los próximos años.
+      
+        — Basado en evidencia
+        — Alineado con la DGS y la APDP
+        — Actualizado en junio de 2026
+      
+      — Escrito por el Dr. Tiago Miguel Figueira · Colegio de Médicos de Portugal n.º 77986 · Director Clínico, Global Health
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      TF
+      
+        Escrito por el Dr. Tiago Miguel Figueira
+        Director Clínico · Colegio de Médicos de Portugal n.º 77986 · Medicina General y de Familia
+      
+      10 MIN DE LECTURA
+    
+
+    La diabetes es una de las enfermedades crónicas más prevalentes en Portugal, y una de las que menos se diagnostican. Con frecuencia se la describe como una "enfermedad silenciosa" porque la diabetes tipo 2, responsable de más del 90% de los casos, puede desarrollarse lentamente a lo largo de varios años sin síntomas perceptibles. Cuando se llega al diagnóstico, la enfermedad suele llevar ya tiempo presente.
+
+    La buena noticia es que la diabetes es altamente controlable. Con un diagnóstico correcto, el tratamiento adecuado y una vigilancia regular, las personas con diabetes pueden llevar una vida plena y saludable. Y gracias a los notables avances de la última década, en especial la aparición de los agonistas del receptor GLP-1 y de los inhibidores del SGLT2, las opciones clínicas disponibles en Portugal son hoy las mejores de la historia.
+
+    
+    
+    Sección 01
+    La diabetes en Portugal: entender la dimensión del problema
+
+    Según el Informe del Programa Nacional para la Diabetes — Desafíos y Estrategias 2025, publicado por la Dirección General de Salud de Portugal (DGS), había 936.987 personas con diabetes diagnosticada en atención primaria a finales de 2024 —la cifra más alta hasta la fecha—, lo que corresponde al 8,9% de los usuarios inscritos en el Servicio Nacional de Salud (SNS). El mismo informe registró 80.915 nuevos casos diagnosticados solo en 2024. El Diario de la República, a través del Despacho n.º 3390/2025, estima que la diabetes afecta a más de un millón de portugueses en total, incluyendo los casos aún sin diagnosticar, lo que sitúa a Portugal entre las tasas de prevalencia más altas de la Unión Europea.
+
+    
+      
+        937k
+        Personas diagnosticadas en atención primaria a finales de 2024 (DGS)
+      
+      
+        +1M
+        Total estimado en Portugal, incluyendo casos sin diagnosticar
+      
+      
+        81k
+        Nuevos casos registrados solo en 2024
+      
+      
+        8,4%
+        De los embarazos en el SNS en 2023 con diabetes gestacional
+      
+    
+    Fuente: DGS — Programa Nacional para la Diabetes, Desafíos y Estrategias 2025; Diario de la República, Despacho n.º 3390/2025.
+
+    El informe de la DGS destaca que, pese al aumento del número de diagnósticos, se ha observado una mejora en el control metabólico y una reducción de la mortalidad total y prematura asociada a la enfermedad, señal del impacto positivo de los programas de cribado y de los tratamientos más modernos. Aun así, la diabetes sigue estando presente en cerca de un tercio de los episodios de infarto agudo de miocardio y de ictus en Portugal.
+
+    
+      ¿Está en riesgo y no lo sabe?
+      Una parte significativa de las personas con diabetes tipo 2 en Portugal sigue sin diagnosticar. Si tiene factores de riesgo (antecedentes familiares, exceso de peso, presión arterial elevada o sedentarismo), hable con su médico sobre la posibilidad de hacerse una glucemia en ayunas o una HbA1c. El diagnóstico precoz es clave para evitar complicaciones.
+    
+
+    
+    
+    Sección 02
+    Tipos de diabetes
+
+    No toda la diabetes es igual. Entender el tipo que padece —o para el que está en riesgo— es el primer paso hacia un manejo eficaz.
+
+    
+      
+        🔵
+        Diabetes tipo 1
+        Autoinmune · Insulinodependiente
+        El sistema inmunitario destruye las células beta productoras de insulina en el páncreas. El organismo produce poca o ninguna insulina. Requiere insulinoterapia de por vida. Suele aparecer en la infancia o en la edad adulta joven. La DGS calcula que unos 33.000 portugueses viven con diabetes tipo 1.
+      
+      
+        🟠
+        Diabetes tipo 2
+        Estilo de vida y genética · Progresiva
+        El organismo se vuelve resistente a la insulina o no produce suficiente. Está fuertemente asociada a factores del estilo de vida. Es la forma más común en Portugal, responsable de más del 90% de los casos. Puede controlarse inicialmente con alimentación, ejercicio y medicación oral, aunque muchos pacientes acaban necesitando insulina.
+      
+      
+        🟡
+        Diabetes gestacional
+        Relacionada con el embarazo · Generalmente transitoria
+        Se desarrolla durante el embarazo cuando los cambios hormonales alteran la función de la insulina. Por lo general se resuelve tras el parto, pero aumenta de forma significativa el riesgo de por vida de diabetes tipo 2, tanto para la madre como para el hijo. En 2023 se detectó en el 8,4% de los embarazos cuyo parto tuvo lugar en el SNS, según la DGS.
+      
+      
+        ⚪
+        Prediabetes
+        Prevenible · Con frecuencia reversible
+        La glucemia es superior a lo normal, pero aún no alcanza los niveles de la diabetes. Es una ventana de intervención crítica: los cambios en el estilo de vida en esta fase pueden prevenir o retrasar significativamente la aparición de la diabetes tipo 2. Entre 2022 y 2024, el SNS evaluó el riesgo de 3,89 millones de usuarios adultos, un 62% de la población objetivo.
+      
+    
+
+    
+    
+    Sección 03
+    Causas y factores de riesgo
+
+    Diabetes tipo 1
+    La causa exacta de la diabetes tipo 1 sigue sin comprenderse por completo. Es una enfermedad autoinmune: el sistema inmunitario del organismo ataca y destruye por error las células beta del páncreas, encargadas de producir insulina. Los factores genéticos desempeñan un papel, al igual que, posiblemente, la exposición a determinadas infecciones víricas. En Portugal, la investigación en este campo la desarrollan centros como la APDP — Associação Protectora dos Diabéticos de Portugal y grupos de investigación de la Facultad de Medicina de la Universidad de Lisboa y de la Facultad de Medicina de la Universidad de Oporto.
+
+    Diabetes tipo 2
+    La diabetes tipo 2 tiene un conjunto de causas más complejo y modificable, que combina la predisposición genética con factores de estilo de vida y ambientales. El mecanismo central es la resistencia a la insulina —las células del organismo dejan de responder eficazmente a ella— junto con un declive progresivo en la capacidad del páncreas para compensarlo con una mayor producción.
+
+    
+      
+        ⚖️
+        Exceso de peso corporal
+        En particular la grasa abdominal (visceral). La obesidad es el factor de riesgo modificable más importante para la diabetes tipo 2.
+      
+      
+        🛋️
+        Sedentarismo
+        El comportamiento sedentario reduce la sensibilidad a la insulina. El ejercicio regular es una de las herramientas preventivas y terapéuticas más eficaces.
+      
+      
+        🍞
+        Dieta rica en alimentos procesados
+        El consumo elevado de hidratos de carbono refinados, azúcar y alimentos ultraprocesados está fuertemente asociado a la resistencia a la insulina.
+      
+      
+        👨‍👩‍👧
+        Antecedentes familiares
+        Tener un familiar de primer grado con diabetes tipo 2 aumenta significativamente el riesgo personal.
+      
+      
+        🎂
+        Edad superior a 45 años
+        El riesgo aumenta con la edad. La Encuesta Nacional de Salud y los datos del SNS muestran una prevalencia creciente en los grupos de edad más avanzada.
+      
+      
+        🩺
+        Hipertensión arterial o dislipidemia
+        Los factores de riesgo metabólico tienden a coexistir. La hipertensión y la dislipidemia ocurren con frecuencia junto con la resistencia a la insulina.
+      
+      
+        🤰
+        Diabetes gestacional previa
+        Las mujeres que desarrollaron diabetes gestacional tienen un riesgo de por vida sustancialmente más alto de desarrollar diabetes tipo 2.
+      
+      
+        🌍
+        Origen étnico
+        Las personas de origen surasiático, africano subsahariano y de Oriente Medio presentan tasas más altas de diabetes tipo 2 con umbrales de IMC más bajos.
+      
+    
+
+    
+    
+    Sección 04
+    Señales y síntomas
+
+    Los síntomas varían considerablemente entre la diabetes tipo 1 y la tipo 2. La tipo 1 se presenta muchas veces de forma aguda, con una aparición rápida de síntomas que pueden indicar cetoacidosis diabética (CAD), una urgencia médica. La tipo 2, en cambio, se desarrolla típicamente de forma lenta y silenciosa a lo largo de años, con síntomas tan sutiles o graduales que muchas personas los atribuyen al envejecimiento, al estrés o al cansancio.
+
+    
+      
+        💧
+        
+          Sed excesiva
+          Sed persistente e incontrolable —polidipsia— mientras los riñones trabajan para filtrar el exceso de glucosa.
+        
+      
+      
+        🚽
+        
+          Orinar con frecuencia
+          Poliuria, sobre todo por la noche (nicturia). Con frecuencia, el síntoma inicial más molesto.
+        
+      
+      
+        😴
+        
+          Cansancio persistente
+          Fatiga constante incluso tras un descanso adecuado, causada por la falta de glucosa en las células.
+        
+      
+      
+        ⚖️
+        
+          Pérdida de peso inexplicada
+          Sobre todo en la tipo 1: el organismo degrada grasa y músculo para obtener energía en ausencia de insulina.
+        
+      
+      
+        👁️
+        
+          Visión borrosa
+          La glucemia elevada provoca cambios en el cristalino del ojo, lo que afecta temporalmente al enfoque visual.
+        
+      
+      
+        🩹
+        
+          Cicatrización lenta de heridas
+          La circulación comprometida y la disfunción inmunitaria retrasan la cicatrización de cortes, heridas e infecciones.
+        
+      
+      
+        🤚
+        
+          Hormigueo o entumecimiento
+          La neuropatía periférica, que afecta a manos y pies, puede ser un signo precoz, en particular en la tipo 2.
+        
+      
+      
+        🍽️
+        
+          Hambre constante
+          Polifagia: hambre persistente incluso después de comer, que ocurre cuando las células no logran absorber glucosa de forma eficaz.
+        
+      
+    
+
+    
+      Cuándo buscar atención urgente:
+      Si usted o un familiar presenta aparición repentina de sed intensa, orinar en exceso, vómitos, dolor abdominal, confusión o aliento con olor a acetona —especialmente en un niño o adulto joven—, podría tratarse de cetoacidosis diabética (CAD), una urgencia médica. Llame de inmediato al 112 o acuda al servicio de urgencias hospitalario más cercano.
+    
+
+    
+    
+    Sección 05
+    Tratamientos actuales para la diabetes en Portugal
+
+    El tratamiento de la diabetes ha vivido una verdadera revolución en la última década. En Portugal, el Programa Nacional para la Diabetes de la DGS establece las directrices clínicas nacionales, alineadas con las recomendaciones internacionales de la American Diabetes Association (ADA) y de la European Association for the Study of Diabetes (EASD). En febrero de 2025, las bombas de insulina comenzaron a dispensarse en las farmacias comunitarias de Portugal, un hito relevante en el acceso al tratamiento de la diabetes tipo 1.
+
+    Modificación del estilo de vida: la base de todo tratamiento
+    Tanto para la diabetes tipo 1 como para la tipo 2, el estilo de vida es la base del manejo de la enfermedad. Para la tipo 2 en particular, el cambio en la alimentación y el aumento de la actividad física pueden reducir de forma significativa la HbA1c, mejorar la sensibilidad a la insulina y, en algunos casos —sobre todo tras cirugía bariátrica o dietas de muy bajo aporte calórico—, llevar a una remisión sostenida. La APDP y las consultas de nutrición y enfermería en los centros de salud del SNS ofrecen apoyo estructurado para el manejo del estilo de vida en todo el país.
+
+    Tratamiento farmacológico
+    Las siguientes clases de medicamentos están disponibles en Portugal. Las decisiones terapéuticas son individualizadas: las directrices de la DGS, de la ADA 2025 y de la EASD subrayan un enfoque centrado en el paciente que tiene en cuenta el riesgo cardiovascular, la función renal, el peso y las preferencias personales.
+
+    
+      
+        Primera línea · Tipo 2
+        Metformina
+        Glucophage · Genérico (financiado por el SNS)
+        El agente oral de primera línea establecido para la diabetes tipo 2. Reduce la glucemia al disminuir la producción hepática de glucosa. Bien tolerada, accesible y ampliamente disponible. Sigue siendo el punto de partida en la mayoría de los abordajes terapéuticos de la tipo 2 en Portugal.
+      
+      
+        Protección cardiorrenal
+        Agonistas del GLP-1
+        Semaglutida (Ozempic, Wegovy) · Liraglutida (Victoza)
+        Una clase transformadora de medicamentos inyectables (y ahora también orales) que imitan la hormona intestinal GLP-1. Reducen la glucemia, favorecen una pérdida de peso significativa, ralentizan el vaciamiento gástrico y reducen el riesgo cardiovascular. Las directrices de la ADA 2025 los recomiendan de forma prioritaria en pacientes con enfermedad cardiovascular establecida o alto riesgo. Disponibles en Portugal con receta médica.
+      
+      
+        Protección cardiorrenal
+        Inhibidores del SGLT2
+        Empagliflozina (Jardiance) · Dapagliflozina (Forxiga)
+        Estos comprimidos reducen la glucemia favoreciendo la eliminación del exceso de azúcar por la orina. Protegen de forma independiente el corazón y los riñones, y se recomiendan como primera línea en pacientes con insuficiencia cardíaca o enfermedad renal crónica, con independencia del valor de HbA1c. Cuentan con una sólida base de evidencia procedente de los ensayos EMPA-REG OUTCOME y CREDENCE.
+      
+      
+        Control glucémico
+        Inhibidores de la DPP-4
+        Sitagliptina (Januvia) · Linagliptina (Trajenta)
+        Comprimidos orales que potencian la secreción de insulina de forma dependiente de la glucosa. Neutros en cuanto al peso, con bajo riesgo de hipoglucemia. Se usan con frecuencia cuando los agonistas del GLP-1 o los inhibidores del SGLT2 no se toleran o no son adecuados. Disponibles con financiación del SNS en Portugal.
+      
+      
+        Tipo 1 y tipo 2 avanzada
+        Insulinoterapia
+        Insulinas basales, bolo, premezcladas · Bombas de insulina
+        Esencial para todos los pacientes con tipo 1 y para muchos con tipo 2. Las insulinas análogas modernas ofrecen perfiles de acción más predecibles que las formulaciones más antiguas. Desde febrero de 2025, las bombas de insulina se dispensan en las farmacias comunitarias de Portugal, con un crecimiento exponencial del acceso registrado a lo largo de 2025.
+      
+      
+        Tipo 1 · Nuevo estándar
+        Monitorización continua de glucosa (MCG)
+        Libre · Dexcom · Medtronic
+        La MCG elimina la necesidad de pincharse el dedo, ofrece tendencias de glucosa en tiempo real y alertas, y mejora el control glucémico. En Portugal, a finales de 2024, cerca de 40.000 personas usaban dispositivos de monitorización intersticial de glucosa, con un gasto de 55 millones de euros registrado por la DGS. El acceso ha crecido de forma constante.
+      
+    
+
+    
+      Actualización de las directrices de la ADA 2025:
+      Las directrices de la American Diabetes Association de 2025 refuerzan que los agonistas del GLP-1 y los inhibidores del SGLT2 deben priorizarse en pacientes con diabetes tipo 2 que presenten enfermedad cardiovascular establecida o de alto riesgo, insuficiencia cardíaca o enfermedad renal crónica, con independencia del valor de HbA1c. Si tiene diabetes tipo 2 y alguna de estas condiciones, hable con su médico sobre si estas clases terapéuticas son adecuadas para usted.
+    
+
+    
+    
+    Sección 06
+    La importancia de las revisiones médicas periódicas
+
+    La diabetes es una enfermedad crónica que evoluciona con el tiempo, y sus complicaciones, si no se detectan, pueden ser graves e irreversibles. La retinopatía diabética es una de las principales causas de ceguera en la población adulta en Portugal. La nefropatía diabética es uno de los mayores determinantes de la enfermedad renal crónica terminal. La neuropatía periférica da lugar a complicaciones del pie que, en los casos más graves, pueden acabar en amputación. La tasa de amputaciones por pie diabético en Portugal se mantiene elevada, según el informe de la DGS de 2025, a pesar de que el cribado del pie se realizó en el 83% de los pacientes con diabetes.
+
+    Décadas de investigación demuestran que todas estas complicaciones son en gran medida prevenibles, o se retrasan de forma significativa, con un buen control glucémico, el manejo de la presión arterial y una vigilancia regular. La revisión anual estructurada de la diabetes es una de las intervenciones con mejor relación coste-eficacia de toda la medicina.
+
+    Qué debe incluir su revisión anual de diabetes
+
+    
+      Evaluación de la HbA1c (media de glucemia de los últimos 3 meses)
+      Medición de la presión arterial y revisión del tratamiento antihipertensivo
+      Función renal: tasa de filtración glomerular estimada (TFGe) y cociente albúmina/creatinina en orina
+      Colesterol y perfil lipídico completo
+      Evaluación del peso y del IMC
+      Exploración de los pies, incluida la evaluación de pulsos y sensibilidad
+      Cribado de la retinopatía diabética, a través del Programa Nacional de Cribado coordinado por la DGS
+      Revisión y ajuste de la medicación, si es necesario
+      Evaluación de la adherencia al plan de autocontrol de la diabetes
+      Evaluación del estado tabáquico y apoyo a la deshabituación, si procede
+      Vacunación antigripal (fuertemente recomendada para personas con diabetes)
+    
+
+    Cribado para quienes aún no tienen diagnóstico
+    Si tiene factores de riesgo para la diabetes tipo 2 y nunca se ha hecho pruebas, su médico de familia puede solicitar una glucemia en ayunas o una HbA1c, análisis sencillos que se realizan en los laboratorios del SNS. Esto es especialmente importante si tiene más de 45 años, antecedentes familiares de diabetes, presión arterial elevada o tuvo exceso de peso durante el embarazo. La detección precoz de la prediabetes ofrece una auténtica ventana de oportunidad para prevenir o retrasar la aparición de la diabetes tipo 2 mediante cambios en el estilo de vida.
+
+    
+      Cribado de la retinopatía diabética en Portugal:
+      El Programa Nacional de Cribado de la Retinopatía Diabética, coordinado por la DGS junto con las Unidades Locales de Salud (ULS), ofrece cribado gratuito a las personas con diabetes a través de los centros de atención primaria. La APDP realiza cribados de proximidad desde hace unos 20 años, en colaboración con la ARS de Lisboa y Valle del Tajo, y ha llegado a cubrir a cerca de 50.000 personas con diabetes en un solo año. A pesar de este esfuerzo, solo el 29% de las personas invitadas se sometió al cribado en 2024, una cifra que debe mejorar. Asegúrese de estar inscrito.
+    
+
+    
+    
+    Sección 07
+    El futuro del tratamiento de la diabetes
+
+    El ritmo de innovación en la medicina de la diabetes no tiene precedentes. Varias líneas de investigación, algunas ya en ensayos clínicos avanzados, tienen el potencial de transformar de forma fundamental lo que significa vivir con diabetes en la próxima década.
+
+    
+      
+        Ensayo fase 1/2/3 · Solicitud regulatoria en 2026
+        Terapia con células madre derivadas de células beta
+        El zimislecel (antes VX-880), de Vertex Pharmaceuticals, consiste en la infusión de células de los islotes productoras de insulina, totalmente diferenciadas a partir de células madre, en la vena porta hepática, con el objetivo de restaurar la producción endógena de insulina en la diabetes tipo 1. En junio de 2025, el ensayo pivotal había incluido a 50 participantes, con una solicitud regulatoria prevista para 2026. Una revisión publicada en PMC (2025) describe este abordaje como potencialmente "transformador", por actuar simultáneamente en la regeneración de las células beta y en la modulación inmunitaria.
+      
+      
+        Desarrollo clínico
+        Páncreas artificial
+        Los sistemas de administración automática de insulina en asa cerrada, que combinan monitorización continua de glucosa con bombas de insulina automatizadas, representan ya un avance mayor para los pacientes con tipo 1. En Portugal, en el primer semestre de 2025, 3.546 de los 5.537 pacientes en tratamiento con bombas de insulina ya usaban Sistemas de Administración Automática de Insulina (SAAI), según la DGS. La próxima generación de estos sistemas incorpora algoritmos de aprendizaje automático para predecir las fluctuaciones de glucosa antes de que se produzcan.
+      
+      
+        Terapias emergentes
+        Agonistas dobles y triples de receptores
+        La tirzepatida (Mounjaro), un agonista dual GIP/GLP-1, ha demostrado reducciones superiores de HbA1c y de peso frente a los agonistas del GLP-1 existentes y ya está disponible en Portugal. Los agonistas triples (GLP-1/GIP/glucagón) se encuentran en ensayos clínicos avanzados y podrían ofrecer beneficios metabólicos aún mayores.
+      
+      
+        Investigación en inmunoterapia
+        Modulación inmunitaria en la tipo 1
+        El teplizumab (anticuerpo monoclonal anti-CD3) ha demostrado en ensayos clínicos retrasar el inicio clínico de la diabetes tipo 1 en torno a dos años en personas de alto riesgo. La investigación sobre inhibidores de puntos de control inmunitarios e inducción de tolerancia continúa, con el objetivo de preservar la función residual de las células beta en el momento del diagnóstico.
+      
+      
+        Medicina de precisión
+        Genómica y tratamiento guiado por IA
+        La caracterización genómica empieza a identificar subtipos de diabetes que responden de forma distinta a determinados medicamentos. Se están desarrollando monitores continuos de glucosa con inteligencia artificial capaces de aprender los patrones metabólicos individuales y hacer recomendaciones personalizadas, con potencial para transformar el manejo diario de la diabetes.
+      
+      
+        Medicina regenerativa
+        Encapsulación de células beta
+        Una estrategia paralela al trasplante de células madre consiste en encapsular las células productoras de insulina en dispositivos de biomateriales protectores que las resguardan de la destrucción inmunitaria, eliminando potencialmente la necesidad de inmunosupresión. El Diabetes Research Institute de la Universidad de Miami ha demostrado prueba de concepto en ensayos clínicos, con el primer paciente logrando independencia de la insulina.
+      
+    
+
+    La investigación sobre terapia con células madre para la diabetes tipo 1 se analiza en detalle en una publicación de 2025 en PMC (PMID: PMC12689004), que concluye que "la terapia con células madre ofrece una estrategia doble: regeneración

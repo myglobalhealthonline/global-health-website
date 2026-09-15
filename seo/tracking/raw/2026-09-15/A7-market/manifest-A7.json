@@ -1,0 +1,143 @@
+{
+  "agent": "A7 market intelligence (keywords, competitors, backlinks)",
+  "audit": "Global Health SEO master audit 2026-09-15",
+  "observed_at": "2026-09-15",
+  "projectId": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+  "connector": "mcp__5d8b8083-4ca6-4eb7-901c-dc53cac45319 (OpenSEO, hosted; DataForSEO-backed)",
+  "account": "globalhealth@myglobalhealth.online",
+
+  "credits": {
+    "cap_for_this_task": 1800,
+    "balance_before": 10696,
+    "balance_after": 9945,
+    "spent_total": 751,
+    "under_cap_by": 1049,
+    "measurement_method": "whoami is free and was called before, between and after paid batches; per-call costs below are measured deltas where a batch contained one call, otherwise the batch delta is given and the per-call figure is an even split (marked estimated_split)."
+  },
+
+  "paid_calls": [
+    {
+      "seq": 1,
+      "tool": "get_backlinks_overview",
+      "params": {"target": "myglobalhealth.online", "scope": "subdomains", "hideSpam": false},
+      "estimated_credits": 50,
+      "actual_credits": "see batch B1",
+      "batch": "B1",
+      "raw_file": "backlinks-overview-subdomains.json",
+      "note": "Raw capture written from the inline response; field-selected (summary, trends, newLostTrends, all 63 referring-domain rows)."
+    },
+    {
+      "seq": 2,
+      "tool": "get_backlinks_profile",
+      "params": {"target": "myglobalhealth.online", "scope": "subdomains", "mode": "as_is", "pageSize": 200, "page": 1, "hideSpam": false, "sortField": "domainRank", "sortOrder": "desc"},
+      "estimated_credits": 30,
+      "batch": "B1",
+      "returned_rows": 200,
+      "raw_file": "backlinks-profile-as_is-page1.json",
+      "note": "Response exceeded the inline token limit and was spooled to a file by the harness; the spooled file was copied verbatim into the raw folder."
+    },
+    {
+      "seq": 3,
+      "tool": "get_backlinks_profile",
+      "params": {"page": 2, "pageSize": 200, "mode": "as_is", "scope": "subdomains", "hideSpam": false},
+      "estimated_credits": 30,
+      "batch": "B1",
+      "returned_rows": 200,
+      "raw_file": "backlinks-profile-as_is-page2.json",
+      "note": "Spooled verbatim by the harness and copied in."
+    },
+    {
+      "seq": 4,
+      "tool": "get_backlinks_profile",
+      "params": {"page": 3, "pageSize": 200, "mode": "as_is", "scope": "subdomains", "hideSpam": false},
+      "estimated_credits": 30,
+      "batch": "B1",
+      "returned_rows": 10,
+      "hasMore": false,
+      "raw_file": "backlinks-profile-as_is-page3.json",
+      "note": "Page 3 returned fewer than 200 rows, so pagination stopped here as instructed. totalCount 410."
+    },
+
+    {"seq": 5, "tool": "get_ranked_keywords", "params": {"target": "myglobalhealth.online", "scope": "subdomains", "locationCode": 2372, "languageCode": "en", "limit": 100, "sortBy": "search_volume"}, "estimated_credits": 25, "batch": "B2", "totalCount": 203, "returned_rows": 100, "raw_file": "ranked-keywords-ireland-2372-en.json"},
+    {"seq": 6, "tool": "get_ranked_keywords", "params": {"locationCode": 2724, "languageCode": "es", "limit": 100}, "estimated_credits": 25, "batch": "B2", "totalCount": 47, "returned_rows": 47, "raw_file": "ranked-keywords-spain-2724-es.json"},
+    {"seq": 7, "tool": "get_ranked_keywords", "params": {"locationCode": 2203, "languageCode": "cs", "limit": 100}, "estimated_credits": 25, "batch": "B2", "totalCount": 44, "returned_rows": 44, "raw_file": "ranked-keywords-czechia-2203-cs.json"},
+    {"seq": 8, "tool": "get_ranked_keywords", "params": {"locationCode": 2620, "languageCode": "pt", "limit": 100}, "estimated_credits": 25, "batch": "B2", "totalCount": 41, "returned_rows": 41, "raw_file": "ranked-keywords-portugal-2620-pt.json"},
+    {"seq": 9, "tool": "get_ranked_keywords", "params": {"locationCode": 2642, "languageCode": "ro", "limit": 100}, "estimated_credits": 25, "batch": "B2", "totalCount": 16, "returned_rows": 16, "raw_file": "ranked-keywords-romania-2642-ro.json"},
+    {"seq": 10, "tool": "get_ranked_keywords", "params": {"locationCode": 2076, "languageCode": "pt", "limit": 100}, "estimated_credits": 25, "batch": "B2", "totalCount": 11, "returned_rows": 11, "raw_file": "ranked-keywords-brazil-2076-pt.json", "note": "Returned inline; raw file is a field-selected capture of all 11 rows."},
+
+    {
+      "seq": 11,
+      "tool": "get_keyword_metrics",
+      "params": {"locationCode": 2076, "languageCode": "pt", "includeMonthlyTrends": false, "sortBy": "search_volume", "keyword_count": 68},
+      "estimated_credits": 160,
+      "actual_credits": 155,
+      "batch": "B3",
+      "returned_rows": 40,
+      "raw_file": "keyword-metrics-brazil-2076-pt.json"
+    },
+
+    {"seq": 12, "tool": "find_serp_competitors", "params": {"locationCode": 2372, "languageCode": "en", "limit": 25, "excludeDomains": ["myglobalhealth.online"], "keyword_count": 12}, "estimated_credits": 20, "actual_credits": 20, "batch": "B4", "returned_rows": 25, "raw_file": "competitors-find_serp_competitors-all-markets.json#markets.ireland"},
+    {"seq": 13, "tool": "find_serp_competitors", "params": {"locationCode": 2203, "languageCode": "cs", "keyword_count": 12}, "estimated_credits": 20, "batch": "B5", "returned_rows": 25, "raw_file": "competitors-find_serp_competitors-all-markets.json#markets.czechia"},
+    {"seq": 14, "tool": "find_serp_competitors", "params": {"locationCode": 2620, "languageCode": "pt", "keyword_count": 12}, "estimated_credits": 20, "batch": "B5", "returned_rows": 25, "raw_file": "competitors-find_serp_competitors-all-markets.json#markets.portugal"},
+    {"seq": 15, "tool": "find_serp_competitors", "params": {"locationCode": 2724, "languageCode": "es", "keyword_count": 12}, "estimated_credits": 20, "batch": "B5", "returned_rows": 25, "raw_file": "competitors-find_serp_competitors-all-markets.json#markets.spain"},
+    {"seq": 16, "tool": "find_serp_competitors", "params": {"locationCode": 2642, "languageCode": "ro", "keyword_count": 12}, "estimated_credits": 20, "batch": "B5", "returned_rows": 25, "raw_file": "competitors-find_serp_competitors-all-markets.json#markets.romania"},
+    {"seq": 17, "tool": "find_serp_competitors", "params": {"locationCode": 2076, "languageCode": "pt", "keyword_count": 12}, "estimated_credits": 20, "batch": "B5", "returned_rows": 25, "raw_file": "competitors-find_serp_competitors-all-markets.json#markets.brazil"},
+
+    {"seq": 18, "tool": "get_serp_results", "params": {"depth": 20, "queries": "5 Ireland (2372/en) + 5 Czechia (2203/cs)"}, "estimated_credits": 50, "batch": "B5", "returned_rows": "10 SERPs x 20 rows", "raw_file": "serp-ireland-czechia.json", "note": "Spooled verbatim by the harness and copied in."},
+    {"seq": 19, "tool": "get_serp_results", "params": {"depth": 20, "queries": "5 Portugal (2620/pt) + 5 Spain (2724/es)"}, "estimated_credits": 50, "batch": "B5", "raw_file": "serp-portugal-spain.json"},
+    {"seq": 20, "tool": "get_serp_results", "params": {"depth": 20, "queries": "5 Romania (2642/ro) + 5 Brazil (2076/pt)"}, "estimated_credits": 50, "batch": "B5", "raw_file": "serp-romania-brazil.json"},
+
+    {"seq": 21, "tool": "get_keyword_metrics", "params": {"locationCode": 2724, "languageCode": "es", "includeMonthlyTrends": false, "keyword_count": 95}, "estimated_credits": 220, "batch": "B6", "returned_rows": 51, "raw_file": "keyword-metrics-spain-2724-es.json"},
+    {"seq": 22, "tool": "get_keyword_metrics", "params": {"locationCode": 2642, "languageCode": "ro", "includeMonthlyTrends": false, "keyword_count": 89}, "estimated_credits": 210, "batch": "B6", "returned_rows": 68, "raw_file": "keyword-metrics-romania-2642-ro.json"}
+  ],
+
+  "batches": [
+    {"id": "B1", "calls": "1-4 (backlinks overview + profile pages 1-3)", "balance_before": 10696, "balance_after": 10550, "actual_credits": 146},
+    {"id": "B2", "calls": "5-10 (ranked keywords, six markets)", "balance_before": 10550, "balance_after": 10415, "actual_credits": 135, "per_call_estimated_split": 22.5},
+    {"id": "B3", "calls": "11 (Brazil keyword metrics)", "balance_before": 10415, "balance_after": 10260, "actual_credits": 155},
+    {"id": "B4", "calls": "12 (Ireland competitors)", "balance_before": 10260, "balance_after": 10240, "actual_credits": 20},
+    {"id": "B5", "calls": "13-20 (five competitor calls + three SERP calls)", "balance_before": 10240, "balance_after": 9995, "actual_credits": 245, "breakdown_note": "5 competitor calls at the measured 20 each = 100; the three depth-20 SERP calls therefore cost ~145 combined (~48 per call of 10 queries, ~4.8 per keyword)."},
+    {"id": "B6", "calls": "21-22 (Spain + Romania keyword metrics)", "balance_before": 9995, "balance_after": 9945, "actual_credits": 50, "note": "Markedly cheaper per keyword than the Brazil call in B3 (184 keywords for 50 credits vs 68 for 155); the provider appears to serve already-cached keywords at a reduced rate. Estimates for calls 21-22 were therefore far too high."}
+  ],
+
+  "free_calls": [
+    {"tool": "whoami", "count": 6, "credits": 0, "purpose": "balance checkpoints before/between/after paid batches"}
+  ],
+
+  "non_provider_evidence": [
+    {
+      "method": "direct HTTP GET/HEAD against production",
+      "target": "all 237 distinct backlink target URLs",
+      "observed_at": "2026-09-15",
+      "credits": 0,
+      "raw_file": "legacy-target-live-status-2026-09-15.json",
+      "result": "222 resolve 200, 15 resolve 404",
+      "note": "Not a provider estimate. Used to derive target_country for legacy URLs, to confirm the reclaim-broken set, and to detect legacy URLs that resolve to a generic index rather than the matching page."
+    }
+  ],
+
+  "reuse_decisions": [
+    {"market": "ireland", "package_date": "2026-08-25", "age_days": 21, "decision": "reused", "files": ["seo/ireland/03-keyword-master.csv (152 rows)", "seo/ireland/05-url-keyword-map.csv", "seo/ireland/08-backlink-opportunities.csv (13 rows)"], "refresh_bought": "ranked keywords + 5 head-term SERPs + competitor set"},
+    {"market": "czechia", "package_date": "2026-08-31", "age_days": 15, "decision": "reused", "files": ["seo/czechia/03-keyword-master.csv (482 rows)", "seo/czechia/08-backlink-opportunities.csv (210 rows)"], "refresh_bought": "ranked keywords + 5 head-term SERPs + competitor set"},
+    {"market": "portugal", "package_date": "2026-08-31", "age_days": 15, "decision": "reused", "files": ["seo/portugal/03-keyword-master.csv (1647 rows)", "seo/portugal/08-backlink-opportunities.csv (12 rows)"], "refresh_bought": "ranked keywords + 5 head-term SERPs + competitor set", "filter_applied": "competitor-brand navigational terms (sns 24, cuf, lusiadas, hospital da luz, medis...) excluded from keyword_map"},
+    {"market": "spain", "package_date": "2026-09-13", "age_days": 2, "decision": "reused but thin", "files": ["seo/spain/03-keyword-master.csv (10 rows only)", "seo/spain/05-url-keyword-map.csv (434 rows, 76 with observed queries)", "seo/spain/08-backlink-opportunities.csv (1 row)"], "refresh_bought": "ranked keywords + 5 head-term SERPs + competitor set + keyword metrics for 95 candidates, because the package carried almost no measured volume"},
+    {"market": "romania", "package_date": "2026-09-13", "age_days": 2, "decision": "reused but unmetered", "files": ["seo/romania/03-keyword-master.csv (613 rows, GSC queries with no volume/difficulty)", "seo/romania/08-backlink-opportunities.csv (15 rows)"], "refresh_bought": "ranked keywords + 5 head-term SERPs + competitor set + keyword metrics for 89 candidates"},
+    {"market": "brazil", "package_date": "2026-09-13", "age_days": 2, "decision": "reused but thin", "files": ["seo/brazil/03-keyword-master.csv (8 rows only)", "seo/brazil/05-url-keyword-map.csv (153 rows, 36 with observed queries)", "seo/brazil/08-backlink-opportunities.csv (3 rows)"], "refresh_bought": "ranked keywords + 5 head-term SERPs + competitor set + keyword metrics for 68 candidates"}
+  ],
+
+  "outputs": [
+    {"file": "seo/tracking/data/backlinks.csv", "rows": 410, "note": "Whole domain, mode as_is, hideSpam false; 64 distinct referring domains. Enriched with live resolved_target_url and resolved_http_status."},
+    {"file": "seo/tracking/data/backlink_prospects.csv", "rows": 258, "note": "251 deduplicated from the six country 08-backlink-opportunities.csv files (Czech prospects with spam score >= 30 dropped) plus 7 new prospects justified by 2026-09-15 SERP/backlink evidence. No paid links; every angle is earned/editorial or clinician-profile accuracy."},
+    {"file": "seo/tracking/data/keyword_map.csv", "rows": 820, "per_market": {"ireland": 152, "czechia": 150, "portugal": 150, "spain": 150, "romania": 150, "brazil": 68}, "note": "Brazil capped at 68 because that is all the evidence the market has; brand rule version brand-v1; cluster taxonomy normalised across markets with the country package label preserved in cluster_source_label."},
+    {"file": "seo/tracking/data/competitors.csv", "rows": 299, "per_market": {"ireland": 50, "czechia": 50, "portugal": 50, "spain": 50, "romania": 49, "brazil": 50}, "note": "Built from the verified get_serp_results files (top 10 organic per head term) so every row carries a real ranking URL; competitor_type separates business-telemedicine from government/pharmacy/publisher/insurer/hospital-group/directory."},
+    {"file": "seo/tracking/raw/2026-09-15/A7-market/market-intelligence-notes.md", "note": "Per-market demand, current ownership, SERP walls, top 3 achievable opportunities and what not to do."}
+  ],
+
+  "caveats": [
+    "Raw captures marked _capture.note as 'field-selected' were returned inline and rewritten by hand with every field used downstream retained; the four harness-spooled files (backlink profile pages 1-2, three SERP files, five ranked-keyword files) are byte-for-byte copies.",
+    "find_serp_competitors returned SERP coverage for only a subset of supplied keywords in Czechia (4 of 12), Spain (3 of 12) and Romania (3 of 12); the provider had no cached SERP for the rest, which is itself a low-demand signal.",
+    "get_keyword_metrics returned no volume for many long-tail candidates; those rows are kept in keyword_map.csv with blank volume_estimate and source_note recording that the volume is unmeasured.",
+    "current_rank is populated for only 30 of 820 keyword_map rows because the ranked-keyword sets are dominated by long-tail queries that do not appear in the country packages.",
+    "DataForSEO's isBroken flag proved stale for 15 links that resolve 200 live; live HTTP status is the authority in backlinks.csv."
+  ]
+}

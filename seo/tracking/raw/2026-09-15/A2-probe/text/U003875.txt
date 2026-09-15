@@ -1,0 +1,377 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cmr.ro","https://regmed.cmr.ro","https://www.dataprotection.ro"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes: La Enfermedad Silenciosa","description":"Más de 1,3 millones de rumanos viven con diabetes. Guía sobre causas, señales de alerta, tratamientos, controles y futuras terapias.","url":"https://www.myglobalhealth.online/romania/es/blog/diabetes-la-enfermedad-silenciosa-4","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/romania/es/blog/diabetes-la-enfermedad-silenciosa-4#webpage","url":"https://www.myglobalhealth.online/romania/es/blog/diabetes-la-enfermedad-silenciosa-4","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/es/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes%3A+La+Enfermedad+Silenciosa&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F576be3ad-21fc-4d68-bf12-cca2b14a3e52-33852.webp&v=2026-07-20.1-1ac1gck","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologie"},"datePublished":"2026-07-19T06:58:26.082Z","publishingPrinciples":"https://www.myglobalhealth.online/romania/es/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/romania/es/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/romania/es/blog"},{"@type":"ListItem","position":3,"name":"Diabetes: La Enfermedad Silenciosa","item":"https://www.myglobalhealth.online/romania/es/blog/diabetes-la-enfermedad-silenciosa-4"}]}]Todos los artículosEndocrinologieDiabetes: La Enfermedad SilenciosaLa diabetes mellitus es una de las enfermedades crónicas más frecuentes y subestimadas de Rumanía. Con un diagnóstico correcto, seguimiento regular y tratamientos modernos como los agonistas GLP-1 y los inhibidores SGLT2, las personas con diabetes pueden llevar una vida plena y saludable.Global Health Medical Team19 de julio de 202622 min de lectura+En esta páginaLa Diabetes en Rumanía: Comprender la Dimensión del ProblemaTipos de DiabetesCausas y Factores de RiesgoSíntomas y Señales de AlertaTratamientos Actuales para la Diabetes en RumaníaLa Importancia de los Controles RegularesEl Futuro del Tratamiento de la DiabetesInstituciones y Recursos de Referencia en RumaníaPreguntas Frecuentes
+
+
+
+  
+  
+    
+      
+      
+      
+      Causas, Síntomas, Tratamiento y el Futuro de la Atención
+      Se estima que más de 1,3 millones de rumanos viven con diabetes y miles más permanecen sin diagnosticar. Esta guía explica causas, señales de alerta, los tratamientos disponibles hoy, la importancia de los controles regulares y las terapias emergentes que pueden transformar la atención a la diabetes en los próximos años.
+      
+        Basado en evidencia
+        Alineado con la SRDNBM y el Ministerio de Salud
+        Actualizado en junio de 2026
+      
+      Escrito por el Dr. Tiago Miguel Figueira · Ordem dos Médicos n.º 77986 · Director Clínico, Global Health
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      TF
+      
+        Escrito por Dr. Tiago Miguel Figueira
+        Director Clínico · Ordem dos Médicos n.º 77986 · Medicina General y Familiar
+      
+      10 MIN LECTURA
+    
+
+    La diabetes mellitus es una de las enfermedades crónicas más prevalentes en Rumanía y, al mismo tiempo, una de las más infravaloradas. La diabetes tipo 2, que representa más del 90% de los casos, puede desarrollarse lentamente a lo largo de años sin síntomas perceptibles. Cuando se establece el diagnóstico, la enfermedad lleva frecuentemente bastante tiempo presente.
+
+    La diabetes puede controlarse con tratamiento y seguimiento regular. Con el diagnóstico correcto, el tratamiento adecuado y un seguimiento regular, las personas con diabetes pueden llevar una vida plena y saludable. Y con los avances terapéuticos de la última década (en especial la llegada de los agonistas del receptor GLP-1 y los inhibidores SGLT2) las opciones disponibles en Rumanía son hoy más amplias.
+
+    
+    
+    Sección 01
+    La Diabetes en Rumanía: Comprender la Dimensión del Problema
+
+    Según el estudio epidemiológico PREDATORR, realizado por la Sociedad Rumana de Diabetes, Nutrición y Enfermedades Metabólicas (SRDNBM) entre 2012 y 2014 (el único estudio nacional de prevalencia de la diabetes en Rumanía), aproximadamente el 11,6% de la población adulta vive con diabetes mellitus y el 16,5% se encuentra en fase de prediabetes. Según datos del Instituto Nacional de Salud Pública (INSP), en 2024 había 1.485.087 personas registradas en los historiales médicos, 114.904 de ellas diagnosticadas ese mismo año. Las estimaciones de la Federación Internacional de Diabetes (IDF) indican que en 2024 vivían en Rumanía aproximadamente 1,3 millones de adultos de entre 20 y 79 años con diabetes, una prevalencia comparable a la media europea.
+
+    
+      
+        11,6%
+        De la población adulta vive con diabetes mellitus (estudio PREDATORR, SRDNBM)
+      
+      
+        16,5%
+        De la población adulta se encuentra en fase de prediabetes
+      
+      
+        1,48M
+        Personas registradas en los historiales médicos en 2024 (INSP)
+      
+      
+        1,3M
+        Adultos (20–79 años) con diabetes estimados por la IDF para 2024
+      
+    
+    Fuentes: Sociedad Rumana de Diabetes, Nutrición y Enfermedades Metabólicas (estudio PREDATORR; Instituto Nacional de Salud Pública (INSP); Casa Nacional del Seguro de Salud (CNAS); International Diabetes Federation) Diabetes Atlas 2024.
+
+    Según datos de la Casa Nacional del Seguro de Salud (CNAS), solo unos 1,3 millones de pacientes con diabetes reciben tratamiento a través del Programa Nacional de Diabetes Mellitus, poco más de la mitad del total de casos estimados. La diferencia corresponde a personas que no siguen tratamiento farmacológico o a casos aún no diagnosticados, lo que confirma la tendencia observada en todo el mundo. Una particularidad del sistema rumano, destacada por la SRDNBM, es que la atención a las personas con diabetes la prestan exclusivamente médicos especializados en diabetes, nutrición y enfermedades metabólicas, una especialidad independiente presente en pocos países.
+
+    
+      ¿Está en riesgo y no lo sabe?
+      Una parte significativa de las personas con diabetes tipo 2 en Rumanía permanece sin diagnosticar. Si tiene factores de riesgo (antecedentes familiares de diabetes, exceso de peso, hipertensión arterial o sedentarismo) consulte a su médico sobre la realización de una glucemia en ayunas o una HbA1c. El diagnóstico precoz es determinante para evitar complicaciones graves.
+    
+
+    
+    
+    Sección 02
+    Tipos de Diabetes
+
+    No toda la diabetes es igual. Comprender el tipo que padece (o para el que está en riesgo) es el primer paso para un manejo eficaz.
+
+    
+      
+        🔵
+        Diabetes Tipo 1 (DM1)
+        Autoinmune · Insulinodependiente
+        El sistema inmunitario destruye las células beta productoras de insulina del páncreas. El organismo produce poca o ninguna insulina. Requiere insulinoterapia de por vida. Suele aparecer en la infancia o al principio de la edad adulta.
+      
+      
+        🟠
+        Diabetes Tipo 2 (DM2)
+        Estilo de vida & genética · Progresiva
+        El organismo se vuelve resistente a la insulina o no produce suficiente cantidad. Estrechamente asociada al estilo de vida. La forma más frecuente: más del 90% de los casos en Rumanía. Puede controlarse inicialmente con dieta, ejercicio y medicación oral, aunque muchos pacientes acaban necesitando insulina con el tiempo.
+      
+      
+        🟡
+        Diabetes Gestacional
+        Relacionada con el embarazo · Habitualmente transitoria
+        Se desarrolla durante el embarazo, cuando los cambios hormonales afectan a la función de la insulina. Suele resolverse después del parto, pero aumenta considerablemente el riesgo de diabetes tipo 2 a lo largo de la vida tanto para la madre como para el hijo. Investigaciones recientes muestran una incidencia creciente en Rumanía y una reducción de las diferencias entre las zonas urbanas y rurales.
+      
+      
+        ⚪
+        Prediabetes
+        Prevenible · Con frecuencia reversible
+        La glucemia es superior a lo normal, pero no alcanza los niveles diagnósticos de diabetes. Es una ventana crítica para intervenir: los cambios en el estilo de vida pueden prevenir o retrasar notablemente la aparición de diabetes tipo 2. Según la SRDNBM, el 16,5% de la población adulta de Rumanía se encuentra en esta situación, a menudo sin saberlo.
+      
+    
+
+    
+    
+    Sección 03
+    Causas y Factores de Riesgo
+
+    Diabetes Tipo 1
+    La causa exacta de la DM1 no está completamente esclarecida. Es una enfermedad autoinmune: el sistema inmunitario ataca y destruye erróneamente las células beta del páncreas responsables de producir insulina. Los factores genéticos desempeñan un papel, así como probablemente la exposición a determinadas infecciones virales durante el desarrollo. En Rumanía, la investigación en este campo se coordina a través de instituciones como el Instituto Nacional de Diabetes, Nutrición y Enfermedades Metabólicas «N.C. Paulescu» de Bucarest, junto con sociedades especializadas como la SRDNBM.
+
+    Diabetes Tipo 2
+    La DM2 tiene un conjunto de causas más complejo y modificable, combinando predisposición genética con factores de estilo de vida y ambientales. El mecanismo central es la resistencia a la insulina (las células del organismo dejan de responder eficazmente a la insulina) unida a un declive progresivo en la capacidad del páncreas de compensar mediante una mayor producción.
+
+    
+      
+        ⚖️
+        Exceso de peso corporal
+        En particular la grasa abdominal (visceral). La obesidad es el factor de riesgo modificable más importante para la DM2 en Rumanía.
+      
+      
+        🛋️
+        Sedentarismo
+        El comportamiento sedentario reduce la sensibilidad a la insulina. Más del 80% de los adultos de Rumanía declara no realizar ninguna actividad aeróbica recreativa semanal, uno de los porcentajes más altos de la UE.
+      
+      
+        🍞
+        Dieta rica en alimentos ultraprocesados
+        El consumo elevado de carbohidratos refinados, azúcar y alimentos ultraprocesados está fuertemente asociado con la resistencia a la insulina.
+      
+      
+        👨‍👩‍👧
+        Antecedentes familiares
+        Tener un familiar de primer grado con DM2 aumenta significativamente el riesgo personal de desarrollarla.
+      
+      
+        🎂
+        Edad superior a 45 años
+        El riesgo aumenta con la edad. Según los datos del INSP, la prevalencia de la diabetes es considerablemente mayor entre las personas de edad avanzada.
+      
+      
+        🩺
+        Hipertensión o dislipemia
+        Los factores de riesgo metabólico tienden a agruparse. La hipertensión y los trastornos lipídicos coexisten frecuentemente con la resistencia a la insulina.
+      
+      
+        🤰
+        Diabetes gestacional previa
+        Las mujeres que desarrollaron diabetes gestacional tienen un riesgo vitalicio sustancialmente mayor de desarrollar DM2.
+      
+      
+        🚬
+        Tabaquismo
+        Fumar aumenta el riesgo de DM2 y empeora el pronóstico cardiovascular en personas con diabetes. Dejar de fumar se recomienda como parte del tratamiento integral de la enfermedad.
+      
+    
+
+    
+    
+    Sección 04
+    Síntomas y Señales de Alerta
+
+    Los síntomas varían considerablemente entre la DM1 y la DM2. La DM1 suele presentarse de forma aguda, con aparición rápida de síntomas que pueden indicar cetoacidosis diabética (CAD), una emergencia médica grave. La DM2, por el contrario, se desarrolla típicamente de forma lenta y silenciosa a lo largo de años, con síntomas tan leves o graduales que muchas personas los atribuyen al envejecimiento, al estrés o al cansancio.
+
+    
+      
+        💧
+        
+          Sed excesiva
+          Sed persistente e insaciable (polidipsia) mientras los riñones trabajan a pleno rendimiento para filtrar el exceso de glucosa.
+        
+      
+      
+        🚽
+        
+          Orinar con frecuencia
+          Poliuria, especialmente por la noche (nicturia). Suele ser el síntoma inicial más llamativo que lleva al paciente a consultar.
+        
+      
+      
+        😴
+        
+          Cansancio persistente
+          Fatiga constante incluso tras un descanso adecuado, causada por la privación de glucosa como fuente de energía en las células.
+        
+      
+      
+        ⚖️
+        
+          Pérdida de peso inexplicable
+          Especialmente en la DM1: el organismo degrada grasa y músculo como fuente de energía ante la ausencia de insulina.
+        
+      
+      
+        👁️
+        
+          Visión borrosa
+          La glucemia elevada provoca cambios en el cristalino del ojo que afectan temporalmente al enfoque visual.
+        
+      
+      
+        🩹
+        
+          Cicatrización lenta de heridas
+          La circulación comprometida y la disfunción inmunitaria ralentizan la cicatrización de cortes, heridas e infecciones.
+        
+      
+      
+        🤚
+        
+          Hormigueo o entumecimiento
+          La neuropatía periférica (que afecta manos y pies) puede ser una señal temprana, especialmente en la DM2.
+        
+      
+      
+        🍽️
+        
+          Hambre constante
+          Polifagia (hambre persistente incluso después de comer) se produce cuando las células no pueden absorber glucosa de forma eficaz.
+        
+      
+    
+
+    
+      Cuándo buscar atención urgente:
+      Si usted o un familiar presenta aparición súbita de sed intensa, micción excesiva, vómitos, dolor abdominal, confusión o aliento con olor a acetona (especialmente en un niño o adulto joven), puede tratarse de cetoacidosis diabética (CAD), una emergencia médica grave. Llame inmediatamente al 112 o acuda al servicio de urgencias más cercano.
+    
+
+    
+    
+    Sección 05
+    Tratamientos Actuales para la Diabetes en Rumanía
+
+    El tratamiento de la diabetes ha experimentado una auténtica revolución en la última década. En Rumanía, la Sociedad Rumana de Diabetes, Nutrición y Enfermedades Metabólicas (SRDNBM) establece las guías clínicas de referencia, alineadas con las recomendaciones internacionales de la American Diabetes Association (ADA). El acceso a los medicamentos y las condiciones de reembolso están regulados por el Programa Nacional de Diabetes Mellitus, administrado por la Casa Nacional del Seguro de Salud (CNAS).
+
+    Modificación del Estilo de Vida: La Base de Todo Tratamiento
+    Para la DM1 y la DM2, el estilo de vida es el pilar fundamental del tratamiento. En la DM2 en particular, el cambio alimentario y el aumento de la actividad física pueden reducir significativamente la HbA1c, mejorar la sensibilidad a la insulina y, en algunos casos (especialmente tras cirugía bariátrica o dietas muy hipocalóricas) conducir a una remisión sostenida. Los programas de educación estructurada ofrecidos en las consultas de diabetología proporcionan apoyo con respaldo científico para gestionar el estilo de vida.
+
+    Tratamiento Farmacológico
+    A continuación se presentan las principales clases de medicamentos disponibles en Rumanía. Las decisiones terapéuticas son individualizadas: las guías de la SRDNBM y de la ADA 2025 subrayan un enfoque centrado en el paciente que considera el riesgo cardiovascular, la función renal, el peso y las preferencias personales.
+
+    
+      
+        Primera línea · DM2
+        Metformina
+        Glucophage · Genéricos (reembolsados por la CNAS)
+        El agente oral de primera línea consolidado para la DM2. Reduce la glucemia disminuyendo la producción hepática de glucosa. Bien tolerada, accesible y ampliamente disponible. Sigue siendo el punto de partida estándar en la mayoría de los esquemas terapéuticos de la DM2 en Rumanía, aunque las guías 2025 contemplan el inicio con terapia combinada cuando la HbA1c es muy elevada.
+      
+      
+        Protección cardiorrenal
+        Agonistas del receptor GLP-1
+        Semaglutida (Ozempic, Wegovy) · Liraglutida (Victoza)
+        Una clase transformadora de medicamentos inyectables (y ahora también orales) que imitan la hormona intestinal GLP-1. Reducen la glucemia, promueven una pérdida de peso significativa y reducen el riesgo cardiovascular. Los agonistas GLP-1 son recomendados tempranamente en pacientes con alto riesgo cardiovascular, mientras que los inhibidores SGLT-2 se priorizan en aquellos con insuficiencia cardíaca o enfermedad renal crónica. Disponibles en Rumanía con prescripción médica y financiación variable según indicación.
+      
+      
+        Protección cardiorrenal
+        Inhibidores SGLT2
+        Empagliflozina (Jardiance) · Dapagliflozina (Forxiga)
+        Estos comprimidos reducen la glucemia promoviendo la eliminación del exceso de azúcar por la orina. Protegen de forma independiente el corazón y los riñones y se recomiendan como primera línea en pacientes con insuficiencia cardíaca o enfermedad renal crónica, independientemente del valor de HbA1c. Sólida base de evidencia procedente de los ensayos EMPA-REG OUTCOME y CREDENCE.
+      
+      
+        Control glucémico
+        Inhibidores DPP-4 (gliptinas)
+        Sitagliptina (Januvia) · Linagliptina (Trajenta)
+        Comprimidos orales que potencian la secreción de insulina de forma dependiente de la glucosa. Neutros en peso, con bajo riesgo de hipoglucemia. Se utilizan con frecuencia cuando los agonistas GLP-1 o los inhibidores SGLT2 no se toleran o no son adecuados.
+      
+      
+        DM1 y DM2 avanzada
+        Insulinoterapia
+        Insulinas basales, bolus, premezcladas · Bombas de insulina
+        Esencial para todos los pacientes con DM1 y para muchos con DM2. Las insulinas análogas modernas ofrecen perfiles de acción más predecibles que las formulaciones más antiguas. Las bombas de insulina están disponibles para pacientes seleccionados y se reembolsan a través del sistema del seguro de salud.
+      
+      
+        DM1 · Nuevo estándar
+        Monitorización Continua de Glucosa (MCG)
+        FreeStyle Libre · Dexcom · Medtronic
+        La MCG elimina la necesidad de punciones en el dedo, proporciona tendencias de glucosa en tiempo real y alertas, y mejora el control glucémico. El acceso a la MCG se reembolsa a pacientes con diabetes tipo 1 bajo determinadas condiciones establecidas por la CNAS. Los sistemas de «bucle cerrado» están disponibles en centros especializados. Los sistemas de asa cerrada (páncreas artificial) están disponibles en centros especializados.
+      
+    
+
+    
+      Actualización de guías ADA 2025 y SED:
+      Tanto las recomendaciones de la ADA 2025 como los documentos de consenso de la SRDNBM refuerzan que los agonistas GLP-1 y los inhibidores SGLT2 deben priorizarse en pacientes con DM2 que presenten enfermedad cardiovascular establecida o de alto riesgo, insuficiencia cardíaca o enfermedad renal crónica, de forma independiente al valor de HbA1c. El inicio precoz de terapia combinada con metformina más un agonista GLP-1 o un SGLT2i está indicado en presencia de comorbilidades o HbA1c superior al 8%. Si tiene DM2 y alguna de estas condiciones, consulte a su médico o endocrinólogo.
+    
+
+    
+    
+    Sección 06
+    La Importancia de los Controles Regulares
+
+    La diabetes es una enfermedad crónica que evoluciona con el tiempo, y sus complicaciones (si no se detectan) pueden ser graves e irreversibles. La retinopatía diabética es una de las principales causas de ceguera en adultos en edad laboral en Rumanía. La nefropatía diabética es un factor determinante de la enfermedad renal crónica terminal. La neuropatía periférica origina complicaciones del pie diabético que, en los casos más graves, pueden resultar en amputación. 
+
+    La investigación de décadas demuestra que todas estas complicaciones son en gran medida prevenibles (o significativamente retrasadas) con un buen control glucémico, manejo de la tensión arterial y vigilancia periódica. La revisión anual estructurada del paciente con diabetes es una de las intervenciones con mejor relación coste-efectividad en toda la medicina.
+
+    Qué Debe Incluir su Revisión Anual de Diabetes
+
+    
+      Medición de HbA1c (media de glucemia de los últimos 3 meses)
+      Control de tensión arterial y revisión del tratamiento antihipertensivo
+      Función renal: tasa de filtración glomerular estimada (TFGe) y cociente albúmina/creatinina en orina
+      Colesterol y perfil lipídico completo
+      Valoración del peso corporal e índice de masa corporal (IMC)
+      Exploración de pies: pulsos, sensibilidad y trofismo cutáneo
+      Cribado de retinopatía diabética: fondo de ojo o retinografía
+      Revisión y ajuste de la medicación si es necesario
+      Evaluación de la adherencia al plan de autocontrol de la diabetes
+      Valoración del tabaquismo y apoyo al abandono si procede
+      Vacunación antigripal (firmemente recomendada para personas con diabetes)
+    
+
+    Cribado para Quienes Aún No Tienen Diagnóstico
+    Si tiene factores de riesgo para la DM2 y nunca ha sido evaluado, su médico de Atención Primaria puede solicitar una glucemia en ayunas o una HbA1c: análisis sencillos disponibles en laboratorios de todo el país. Esto es especialmente importante si tiene más de 45 años, antecedentes familiares de diabetes, hipertensión arterial o ha tenido sobrepeso durante el embarazo. La detección precoz de prediabetes ofrece una ventana real de oportunidad para prevenir o retrasar el inicio de la DM2 mediante cambios en el estilo de vida.
+
+    
+      Cribado de retinopatía diabética en Rumanía:
+      La Sociedad Rumana de Diabetes, Nutrición y Enfermedades Metabólicas recomienda que todas las personas con diabetes se sometan cada año a un cribado de retinopatía diabética mediante un examen de fondo de ojo o una retinografía. Si tiene diabetes y no se ha sometido recientemente a esta revisión, hable con su diabetólogo o médico de familia.
+    
+
+    
+    
+    Sección 07
+    El Futuro del Tratamiento de la Diabetes
+
+    El ritmo de innovación en diabetología es sin precedentes. Varios ámbitos de investigación (algunos ya en ensayos clínicos avanzados) tienen el potencial de transformar fundamentalmente lo que significa vivir con diabetes en la próxima década.
+
+    
+      
+        Fase 1/2/3 · Presentación regulatoria 2026
+        Terapia con Células Madre (células beta)
+        El Zimislecel (anteriormente VX-880) de Vertex Pharmaceuticals consiste en la infusión de células productoras de insulina totalmente diferenciadas (derivadas de células madre) en la vena porta hepática, con el objetivo de restaurar la producción endógena de insulina en la DM1. A junio de 2025, el ensayo pivotal había incorporado 50 participantes, con presentación regulatoria prevista para 2026. Una revisión en PMC (2025) describe esta terapia como potencialmente «transformadora», al actuar simultáneamente en la regeneración de células beta y en la modulación inmunitaria.
+      
+      
+        Desarrollo clínico
+        Páncreas Artificial (sistemas de asa cerrada)
+        Los sistemas de administración automática de insulina (que combinan MCG con bombas de insulina automatizadas) ya representan un avance mayor para los pacientes con DM1. En Rumanía están disponibles en unidades especializadas de endocrinología. La monitorización continua o intermitente mediante sensor continuo de glucosa se utiliza para ajustar terapias con base en patrones reales de glucemia. La próxima generación incorpora algoritmos de aprendizaje automático para predecir las fluctuaciones de glucosa antes de que ocurran.
+      
+      
+        Terapias emergentes
+        Agonistas Duales y Triples de Receptores
+        Tirzepatida (Mounjaro), un agonista dual GIP/GLP-1, ha demostrado reducciones superiores de la HbA1c y una mayor pérdida de peso en comparación con los agonistas GLP-1 existentes, y ya está disponible en Rumanía. Los agonistas triples (GLP-1/GIP/glucagón) se encuentran en ensayos clínicos avanzados y podrían ofrecer beneficios metabólicos aún mayores.
+      
+      
+        Inmunoterapia
+        Modulación Inmunitaria en DM1
+        El teplizumab (anticuerpo monoclonal anti-CD3) ha demostrado en ensayos clínicos retrasar el inicio clínico de la DM1 una mediana de aproximadamente dos años en individuos de alto riesgo. La investigación sobre inhibidores de puntos de control inmunitario e inducción de tolerancia continúa, con el objetivo de preservar la función residual de las células beta en el momento del diagnóstico.
+      
+      
+        Medicina de precisión
+        Genómica y Tratamiento Guiado por IA
+        La caracterización genómica está comenzando a identificar subtipos de diabetes que responden de forma diferente a medicamentos específicos. Los sistemas de MCG impulsados por inteligencia artificial que aprenden los patrones metabólicos individuales y realizan recomendaciones personalizadas están en desarrollo, con potencial para transformar la gestión diaria de la diabetes.
+      
+      
+        Medicina regenerativa
+        Encapsulación de Células Beta
+        Una estrategia paralela a la terapia con células madre consiste en encapsular células productoras de insulina en dispositivos de biomateriales protectores que las resguardan de la destrucción inmunitaria, eliminando potencialmente la necesidad de inmunosupresión. El Diabetes Research Institute de la Universidad de Miami ha demostrado la prueba de concepto en ensayos clínicos, con el primer paciente alcanzando la independencia de insulina.
+      
+    
+
+    La investigación con células madre para la DM1 se analiza en detalle en una publicación de 2025 en PMC (PMID: PMC12689004), que concluye que «la terapia con células madre ofrece una estrategia dual: regeneración de las células beta productoras de insulina y regulación de las respuestas inmunitarias». Aunque una cura definitiva permanece como objetivo futuro, la dirección de la investigación es la más prometedora de la historia.
+
+    
+    
+    Sección 08
+    Instituciones y Recursos de Referencia en Rumanía
+
+    Si vive con diabetes en Rumanía o le preocupa su riesgo de desarrollarla, las siguientes organizaciones y servicios son sus principales puntos de referencia para la atención clínica, la educación y el apoyo.
+
+    
+      🩺 Sociedad Rumana de Diabetes (SRDNBM)
+      🏥 CNAS: Programa Nacional de Diabetes
+      📊 Instituto Nacional de Salud Pública
+    

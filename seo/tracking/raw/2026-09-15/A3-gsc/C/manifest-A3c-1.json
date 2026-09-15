@@ -1,0 +1,38 @@
+{
+  "agent": "A3c-1",
+  "dataset": "C",
+  "description": "GSC query x page dataset (plus query x country, query x device, search appearance) for window W1",
+  "window": "W1",
+  "window_start": "2026-08-15",
+  "window_end": "2026-09-11",
+  "schema_version": "1.0",
+  "extraction_utc": "2026-09-15T05:35:05Z",
+  "refresh_id": "R2026-09-15-GSC-C",
+  "project_id": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+  "site_url": "sc-domain:myglobalhealth.online",
+  "source_timezone": "America/Los_Angeles",
+  "calls_log": "calls-A3c-1.json",
+  "files": {
+    "gsc_query_page_W1.csv": {"rows": 6474, "truncated": false, "source_jsonl": ["C_W1_querypage_r0.jsonl", "C_W1_querypage_r1000.jsonl", "C_W1_querypage_r2000.jsonl", "C_W1_querypage_r3000.jsonl", "C_W1_querypage_r4000.jsonl", "C_W1_querypage_r5000.jsonl", "C_W1_querypage_r6000.jsonl"]},
+    "gsc_query_country_W1.csv": {"rows": 5000, "truncated": true, "truncation_reason": "hit 5000-row cap for this dataset with hasMore still true at startRow 5000", "source_jsonl": ["C_W1_querycountry_r0.jsonl", "C_W1_querycountry_r1000.jsonl", "C_W1_querycountry_r2000.jsonl", "C_W1_querycountry_r3000.jsonl", "C_W1_querycountry_r4000.jsonl"]},
+    "gsc_query_device_W1.csv": {"rows": 5000, "truncated": true, "truncation_reason": "hit 5000-row cap for this dataset with hasMore still true at startRow 5000", "source_jsonl": ["C_W1_querydevice_r0.jsonl", "C_W1_querydevice_r1000.jsonl", "C_W1_querydevice_r2000.jsonl", "C_W1_querydevice_r3000.jsonl", "C_W1_querydevice_r4000.jsonl"]},
+    "gsc_search_appearance_W1.csv": {"rows": 1, "truncated": false, "source_jsonl": ["C_W1_appearance_r0.jsonl"]}
+  },
+  "blockers": [
+    {
+      "item": "searchAppearance x page",
+      "status": "blocked",
+      "reason": "invalid_request from the GSC MCP tool when dimensions=['searchAppearance','page'] (confirmed on 2 attempts, with and without startRow). No C_W1_appearance_page*.jsonl produced and no corresponding CSV built -- this is a hard API rejection, not a row-count truncation.",
+      "not_a_file": "gsc_search_appearance_page_W1.csv (not produced)"
+    }
+  ],
+  "anonymized_query_share": {
+    "method": "Sum clicks/impressions across all query x page rows (dataset C, 6474 rows, untruncated) vs. property-wide totals for the same W1 window from one extra dimensions=['date'] call (28 daily rows, summed).",
+    "query_page_sum": {"clicks": 196, "impressions": 26800},
+    "property_total": {"clicks": 1008, "impressions": 69925},
+    "gap": {"clicks": 812, "impressions": 43125},
+    "anonymized_share_pct": {"by_clicks": 80.56, "by_impressions": 61.67},
+    "note": "query x page is not itself capped/truncated (6474 < 15000), so this gap is Google's anonymized/low-volume query omission, not our pagination cap."
+  },
+  "row_key_format": "W1|<dim1>|<dim2>... matching the dimensions array order used for that file's GSC call"
+}

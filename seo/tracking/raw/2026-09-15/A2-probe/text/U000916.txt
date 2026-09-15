@@ -1,0 +1,104 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.lkcr.cz","https://www.sukl.cz","https://www.uoou.cz"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}]{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Startseite","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Rechtliche Informationen","item":"https://www.myglobalhealth.online/czechia/de/legal"},{"@type":"ListItem","position":3,"name":"Beschwerdeverfahren","item":"https://www.myglobalhealth.online/czechia/de/legal/complaints-procedure"}]}RechtlichesTschechien · RechtlichesBeschwerdeverfahrenVersion 2 · Zuletzt aktualisiert 18 July 2026Alle RechtsdokumenteGLOBAL HEALTH
+BeschwerdeverfahrenAlle Märkte | www.myglobalhealth.online/complaintsDatum des Inkrafttretens: 1. Juli 2026
+
+Wir nehmen jede Beschwerde ernst. Wenn etwas nicht richtig gelaufen ist, möchten wir davon erfahren und es in Ordnung bringen. Diese Seite erklärt, wie Sie ein Anliegen vorbringen können, was als Nächstes geschieht und an wen Sie sich wenden können, wenn wir das Problem nicht zu Ihrer Zufriedenheit lösen können.
+
+Wie Sie eine Beschwerde einreichen
+Senden Sie uns eine E-Mail an globalhealth@myglobalhealth.online mit dem Betreff „Formal Complaint" und geben Sie Folgendes an:
+
+Ihren vollständigen Namen und die E-Mail-Adresse Ihres Kontos.
+Ihre Buchungsreferenznummer (falls sich die Beschwerde auf eine bestimmte Konsultation oder Bestellung bezieht).
+Das Datum der Konsultation, Buchung oder des Vorfalls.
+Eine klare Beschreibung Ihrer Beschwerde und des von Ihnen gewünschten Ergebnisses.
+Alle relevanten Nachweise oder Screenshots, sofern zutreffend.
+
+Wir nehmen Beschwerden in Englisch, Portugiesisch, Tschechisch, Spanisch, Rumänisch und Arabisch entgegen.
+
+Was als Nächstes geschieht
+
+Empfangsbestätigung — innerhalb von 2 Werktagen. Wir bestätigen den Eingang Ihrer Beschwerde, weisen ihr eine Referenznummer zu und teilen Ihnen mit, ob es sich um eine Plattformangelegenheit (die wir direkt bearbeiten) oder um eine klinische Angelegenheit (die an den Kliniker weitergeleitet wird) handelt.
+Untersuchung — innerhalb von 14 Werktagen. Wir untersuchen Ihre Beschwerde und setzen uns, sofern ein Kliniker betroffen ist, mit diesem in Verbindung, um den Sachverhalt zu klären. Wir können Sie während dieses Zeitraums kontaktieren, um weitere Informationen einzuholen.
+Lösung — schriftliches Ergebnis. Wir senden Ihnen ein schriftliches Ergebnis zu, das unsere Feststellungen sowie etwaige ergriffene Maßnahmen oder angebotene Abhilfen erläutert. Können wir die Angelegenheit nicht innerhalb von 14 Werktagen lösen, informieren wir Sie über einen aktualisierten Zeitrahmen.
+
+
+Bearbeitungsfristen
+
+SchrittZeitrahmenGilt für
+Empfangsbestätigung2 WerktageAlle Beschwerden
+Lösung — Plattformangelegenheit14 WerktageZahlung, Buchung, Technik
+Lösung — klinische Angelegenheit (an Kliniker weitergeleitet)14 Werktage ab WeiterleitungQualität der Konsultation, Verhalten
+Rückerstattung (sofern zutreffend)14 Tage (EU) / 7 Werktage (Brasilien)Nach bestätigter Rückerstattungsentscheidung
+
+
+Arten von Beschwerden
+
+Plattformbeschwerden
+Dazu gehören: Zahlungsfehler; fehlgeschlagene Buchungen; Streitigkeiten über Stornierungen oder Rückerstattungen; technische Probleme; Datenschutzbedenken; oder alles, was mit dem Betrieb der Plattform zusammenhängt. Diese werden direkt von Global Health bearbeitet.
+
+Klinische Beschwerden
+Dazu gehören: Bedenken hinsichtlich der Qualität, des Verhaltens oder des Ergebnisses einer medizinischen Konsultation; Bedenken hinsichtlich des beruflichen Verhaltens eines Klinikers; oder Bedenken hinsichtlich eines über die Plattform ausgestellten Rezepts oder einer Überweisung. Klinische Beschwerden werden im Rahmen unseres formellen Eskalationsverfahrens an den zuständigen Kliniker weitergeleitet. Reagiert der Kliniker nicht angemessen, eskaliert Global Health die Angelegenheit, gegebenenfalls einschließlich einer Sperrung oder Entfernung von der Plattform sowie einer Meldung an die zuständige medizinische Aufsichtsbehörde.
+
+Datenschutzbeschwerden
+Wenn sich Ihre Beschwerde auf die Handhabung Ihrer personenbezogenen Daten bezieht, wenden Sie sich bitte direkt an unseren Datenschutzbeauftragten unter a7med.maklad@outlook.com. Sie haben außerdem das Recht, sich an die für den Datenschutz zuständige Aufsichtsbehörde in Ihrem Land zu wenden — siehe unten.
+
+Wenn wir Ihre Beschwerde nicht lösen können
+Sind Sie mit unserer Antwort nicht zufrieden, haben Sie das Recht, die Angelegenheit an eine unabhängige Stelle zu eskalieren. Die zuständigen Stellen richten sich nach Ihrem Land und der Art Ihrer Beschwerde:
+
+Irland
+
+Irish Medical Council (IMC) — Berufliches Verhalten eines Klinikers. www.medicalcouncil.ie
+Competition and Consumer Protection Commission (CCPC) — Verbraucherrechtsstreitigkeiten. www.ccpc.ie
+Data Protection Commission (DPC) — Datenschutzbeschwerden. www.dataprotection.ie
+Health Information and Quality Authority (HIQA) — Standards für Gesundheitsdienstleistungen. www.hiqa.ie
+
+
+Portugal
+
+Ordem dos Médicos — Berufliches Verhalten eines Klinikers. www.ordemdosmedicos.pt
+Entidade Reguladora da Saúde (ERS) — Qualität der Gesundheitsdienstleistungen. www.ers.pt
+CNPD — Datenschutzbeschwerden. www.cnpd.pt
+Rede de Arbitragem de Conflitos de Consumo — Verbraucherstreitigkeiten. www.consumidor.gov.pt
+
+
+Tschechische Republik
+
+Česká lékařská komora (ČLK) — Berufliches Verhalten eines Klinikers. www.lkcr.cz
+Ministerstvo zdravotnictví ČR (MZČR) — Beschwerden über Gesundheitsdienstleister. www.mzcr.cz
+ÚOÚ — Datenschutzbeschwerden. www.uoou.cz
+Česká obchodní inspekce (ČOI) — Verbraucherstreitigkeiten. www.coi.cz
+
+
+Spanien
+
+Consejo General de Colegios Oficiales de Médicos (CGCOM) — Berufliches Verhalten eines Klinikers. www.cgcom.es
+AEPD — Datenschutzbeschwerden. www.aepd.es
+Dirección General de Consumo / OMIC — Verbraucherstreitigkeiten. www.consumo.gob.es
+
+
+Rumänien
+
+Colegiul Medicilor din România (CMR) — Berufliches Verhalten eines Klinikers. www.cmr.ro
+ANSPDCP — Datenschutzbeschwerden. www.dataprotection.ro
+ANPC — Verbraucherschutzstreitigkeiten. www.anpc.ro
+
+
+Brasilien
+
+Conselho Federal de Medicina (CFM) — Berufliches Verhalten eines medizinischen Leistungserbringers. portal.cfm.org.br
+ANPD — Datenschutzbeschwerden. www.gov.br/anpd
+Procon / consumidor.gov.br — Verbraucherschutzstreitigkeiten. www.consumidor.gov.br
+
+
+EU-Online-Streitbeilegung
+Für Patienten in EU-Mitgliedstaaten stellt die Europäische Kommission eine Plattform zur Online-Streitbeilegung (OS) für die Beilegung von Streitigkeiten mit Online-Händlern bereit. Sie können eine Beschwerde einreichen unter:
+https://ec.europa.eu/consumers/odr
+Die OS-Plattform steht Patienten in Irland, Portugal, der Tschechischen Republik, Spanien und Rumänien zur Verfügung. Sie steht Patienten in Brasilien oder dem Vereinigten Königreich nicht zur Verfügung.
+
+Kontakt
+Global Health — Beschwerden
+E-Mail: globalhealth@myglobalhealth.online
+Betreffzeile: „Formal Complaint"
+Datenschutzbeauftragter: a7med.maklad@outlook.com
+Website: www.myglobalhealth.online/complaints
+
+Dieses Beschwerdeverfahren gilt für alle Märkte, in denen Global Health tätig ist. Es wird jährlich überprüft und aktualisiert, wenn sich unsere Dienstleistungen, gesetzlichen Verpflichtungen oder Tätigkeitsmärkte ändern.

@@ -1,0 +1,349 @@
+{
+  "schema_version": "1.0",
+  "refresh_id": "R2026-09-15-GSC-W",
+  "extraction_utc": "2026-09-15T05:25:58Z",
+  "source_timezone": "America/Los_Angeles",
+  "source": "openseo_mcp:get_search_console_performance",
+  "site_url": "sc-domain:myglobalhealth.online",
+  "project_id": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+  "calls": [
+    {
+      "file": "pages_2025-05-15_2025-05-31_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2025-05-15",
+        "endDate": "2025-05-31"
+      },
+      "month_start": "2025-05-15",
+      "period": "pre_launch",
+      "rows": 36,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2025-06_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2025-06-01",
+        "endDate": "2025-06-30"
+      },
+      "month_start": "2025-06-01",
+      "period": "pre_launch",
+      "rows": 47,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2025-07_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2025-07-01",
+        "endDate": "2025-07-31"
+      },
+      "month_start": "2025-07-01",
+      "period": "pre_launch",
+      "rows": 55,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2025-08_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2025-08-01",
+        "endDate": "2025-08-31"
+      },
+      "month_start": "2025-08-01",
+      "period": "pre_launch",
+      "rows": 87,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2025-09_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2025-09-01",
+        "endDate": "2025-09-30"
+      },
+      "month_start": "2025-09-01",
+      "period": "pre_launch",
+      "rows": 70,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2025-10_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2025-10-01",
+        "endDate": "2025-10-31"
+      },
+      "month_start": "2025-10-01",
+      "period": "pre_launch",
+      "rows": 86,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2025-11_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2025-11-01",
+        "endDate": "2025-11-30"
+      },
+      "month_start": "2025-11-01",
+      "period": "pre_launch",
+      "rows": 119,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2025-12_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2025-12-01",
+        "endDate": "2025-12-31"
+      },
+      "month_start": "2025-12-01",
+      "period": "pre_launch",
+      "rows": 91,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2026-01_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2026-01-01",
+        "endDate": "2026-01-31"
+      },
+      "month_start": "2026-01-01",
+      "period": "pre_launch",
+      "rows": 157,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2026-02_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2026-02-01",
+        "endDate": "2026-02-28"
+      },
+      "month_start": "2026-02-01",
+      "period": "pre_launch",
+      "rows": 269,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2026-03_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2026-03-01",
+        "endDate": "2026-03-31"
+      },
+      "month_start": "2026-03-01",
+      "period": "pre_launch",
+      "rows": 391,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2026-04_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2026-04-01",
+        "endDate": "2026-04-30"
+      },
+      "month_start": "2026-04-01",
+      "period": "pre_launch",
+      "rows": 328,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2026-05_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2026-05-01",
+        "endDate": "2026-05-31"
+      },
+      "month_start": "2026-05-01",
+      "period": "pre_launch",
+      "rows": 367,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2026-06_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2026-06-01",
+        "endDate": "2026-06-30"
+      },
+      "month_start": "2026-06-01",
+      "period": "pre_launch",
+      "rows": 354,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2026-07-01_2026-07-20_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2026-07-01",
+        "endDate": "2026-07-20"
+      },
+      "month_start": "2026-07-01",
+      "period": "pre_launch",
+      "rows": 555,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_2026-07-21_2026-07-31_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2026-07-21",
+        "endDate": "2026-07-31"
+      },
+      "month_start": "2026-07-21",
+      "period": "post_launch",
+      "rows": 992,
+      "hasMore": false,
+      "truncated": false
+    },
+    {
+      "file": "pages_country_2025-05-15_2026-07-20_r1.json",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "page",
+          "country"
+        ],
+        "rowLimit": 1000,
+        "dataState": "all",
+        "startDate": "2025-05-15",
+        "endDate": "2026-07-20"
+      },
+      "rows": 1000,
+      "hasMore": true,
+      "truncated": true,
+      "note": "single call per spec (no pagination); hasMore true means country attribution is incomplete beyond the top 1000 page x country rows (sorted by clicks desc)"
+    }
+  ],
+  "outputs": {
+    "gsc_page_monthly_wix.csv": {
+      "out_path": "C:\\Github\\global-health-website\\seo\\tracking\\data\\gsc_page_monthly_wix.csv",
+      "rows_written": 4004,
+      "distinct_pages": 1689,
+      "non_current_shape": 710,
+      "month_counts": {
+        "2025-05-15": 36,
+        "2025-06-01": 47,
+        "2025-07-01": 55,
+        "2025-08-01": 87,
+        "2025-09-01": 70,
+        "2025-10-01": 86,
+        "2025-11-01": 119,
+        "2025-12-01": 91,
+        "2026-01-01": 157,
+        "2026-02-01": 269,
+        "2026-03-01": 391,
+        "2026-04-01": 328,
+        "2026-05-01": 367,
+        "2026-06-01": 354,
+        "2026-07-01": 555,
+        "2026-07-21": 992
+      }
+    },
+    "gsc_legacy_page_country.csv": {
+      "out_path": "C:\\Github\\global-health-website\\seo\\tracking\\data\\gsc_legacy_page_country.csv",
+      "rows_written": 1000,
+      "row_count_declared": 1000,
+      "hasMore": true
+    }
+  }
+}

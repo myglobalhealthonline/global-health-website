@@ -1,0 +1,23 @@
+{
+  "set": "priority-set-2",
+  "urls_requested": 157,
+  "urls_inspected": 157,
+  "urls_failed": 0,
+  "calls_made": 16,
+  "batch_size": 10,
+  "started_batch_index": 0,
+  "ended_batch_index": 15,
+  "source_list": "seo/tracking/raw/2026-09-15/A3-gsc/inspect/priority-set-2.txt",
+  "raw_output": "seo/tracking/raw/2026-09-15/A3-gsc/inspect/raw-set-2.jsonl",
+  "csv_output": "seo/tracking/raw/2026-09-15/A3-gsc/inspect/inspect-set-2.csv",
+  "quota_note": "No quota exhaustion. 16 inspect_urls calls used out of the ~2000/day URL Inspection quota (well within limit). All 157 URLs from priority-set-2.txt inspected in one pass, no retries needed.",
+  "coverage_state_counts": {
+    "Submitted and indexed": 108,
+    "Discovered - currently not indexed": 26,
+    "Excluded by ‘noindex’ tag": 14,
+    "URL is unknown to Google": 7,
+    "Crawled - currently not indexed": 2
+  },
+  "canonical_mismatch_count": 0,
+  "last_crawled_before_2026-08-08_count": 42
+}

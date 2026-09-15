@@ -1,0 +1,426 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cmr.ro","https://regmed.cmr.ro","https://www.dataprotection.ro"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes: The Silent Disease","description":"More than 1.3 million Romanians live with diabetes, while many cases remain undiagnosed. Learn the causes, warning signs, treatments and future developments.","url":"https://www.myglobalhealth.online/romania/en/blog/diabetes-the-silent-disease-5","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/romania/en/blog/diabetes-the-silent-disease-5#webpage","url":"https://www.myglobalhealth.online/romania/en/blog/diabetes-the-silent-disease-5","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/en/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes%3A+The+Silent+Disease&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F576be3ad-21fc-4d68-bf12-cca2b14a3e52-33852.webp&v=2026-07-20.1-62o4c8","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologie"},"datePublished":"2026-07-19T06:58:26.082Z","publishingPrinciples":"https://www.myglobalhealth.online/romania/en/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/romania/en/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/romania/en/blog"},{"@type":"ListItem","position":3,"name":"Diabetes: The Silent Disease","item":"https://www.myglobalhealth.online/romania/en/blog/diabetes-the-silent-disease-5"}]}]All articlesEndocrinologieDiabetes: The Silent DiseaseDiabetes mellitus is one of the most widespread chronic diseases in Romania and one of the most underestimated. With the correct diagnosis, appropriate treatment and regular monitoring, people with diabetes can live full, healthy lives, especially thanks to recent advances such as GLP-1 receptor agonists and SGLT2 inhibitors.Global Health Medical TeamJuly 19, 202618 min read+On this pageDiabetes in Romania: Understanding the Scale of the ProblemTypes of DiabetesCauses and Risk FactorsSigns and SymptomsCurrent Diabetes Treatments in RomaniaThe Importance of Regular Check-upsThe Future of Diabetes TreatmentReference Institutions and Resources in RomaniaFrequently Asked Questions
+
+
+
+  
+  
+    
+      
+      
+      
+      Causes, Symptoms, Treatments and the Future of Care
+      An estimated 1.3 million Romanians live with diabetes and thousands more cases remain undiagnosed. This guide explains causes, warning signs, current treatments, the importance of regular check-ups, and emerging therapies that could transform diabetes care in the years ahead.
+      
+        Evidence-based
+        Aligned with SRDNBM and CNAS
+        Updated June 2026
+      
+      Written by Dr Tiago Miguel Figueira · Ordem dos Médicos no. 77986 · Clinical Director, Global Health
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      TF
+      
+        Written by Dr. Tiago Miguel Figueira
+        Clinical Director · Ordem dos Médicos no. 77986 · General and Family Medicine
+      
+      10 MIN READ
+    
+
+    Diabetes mellitus is one of the most prevalent chronic diseases in Romania and, at the same time, one of the most underestimated. It is often called the “silent disease” because type 2 diabetes, which accounts for more than 90% of cases, can develop slowly over several years without noticeable symptoms. By the time it is diagnosed, the disease has often already been present for some time.
+
+    Diabetes can be managed with treatment and regular monitoring. With the right diagnosis, appropriate treatment and regular monitoring, people with diabetes can live full and healthy lives. With the therapeutic advances of the past decade (particularly the arrival of GLP-1 receptor agonists and SGLT2 inhibitors) the clinical options available in Romania today have expanded.
+
+    
+    
+    Section 01
+    Diabetes in Romania: Understanding the Scale of the Problem
+
+    According to the PREDATORR epidemiological study conducted by Romanian Society of Diabetes, Nutrition and Metabolic Diseases (SRDNBM) between 2012 and 2014 (Romania's only national diabetes prevalence study) approximately 11.6% of the adult population has diabetes mellitus and 16.5% has prediabetes. According to data from the National Institute of Public Health (INSP), 1,485,087 people were recorded in medical records in 2024, including 114,904 diagnosed that year. Estimates from the International Diabetes Federation (IDF) indicate that approximately 1.3 million adults aged 20 to 79 had diabetes in Romania in 2024, a prevalence comparable with the European average.
+
+    
+      
+        11.6%
+        Of the adult population has diabetes mellitus (PREDATORR study, SRDNBM)
+      
+      
+        16.5%
+        Of the adult population has prediabetes
+      
+      
+        1.48M
+        People recorded in medical records in 2024 (INSP)
+      
+      
+        1.3M
+        Adults aged 20–79 estimated by the IDF to have diabetes in 2024
+      
+    
+    Sources: Romanian Society of Diabetes, Nutrition and Metabolic Diseases (PREDATORR study; National Institute of Public Health (INSP); National Health Insurance House (CNAS); International Diabetes Federation) Diabetes Atlas 2024.
+
+    According to data from the National Health Insurance House (CNAS), only about 1.3 million patients with diabetes receive treatment through the National Diabetes Mellitus Programme: just over half of all estimated cases. The difference represents either people who do not take medication or cases that remain undiagnosed, confirming the global trend. A distinctive feature of the Romanian system, highlighted by SRDNBM, is that diabetes care is provided exclusively by physicians specialising in diabetes, nutrition and metabolic diseases, a standalone specialty found in few countries worldwide.
+
+    
+      Could you be at risk without knowing it?
+      A significant proportion of people with type 2 diabetes in Romania remain undiagnosed. If you have risk factors (a family history of diabetes, excess weight, high blood pressure or physical inactivity), ask your family doctor about a fasting blood glucose test or HbA1c. Early diagnosis is essential for preventing complications.
+    
+
+    
+    
+    Section 02
+    Types of Diabetes
+
+    Not all diabetes is the same. Understanding the type you have (or are at risk of developing) is the first step towards effective management.
+
+    
+      
+        🔵
+        Type 1 Diabetes
+        Autoimmune · Insulin-dependent
+        The immune system destroys the insulin-producing beta cells in the pancreas. The body produces little or no insulin. Lifelong insulin therapy is required. It usually develops in childhood or early adulthood.
+      
+      
+        🟠
+        Type 2 Diabetes
+        Lifestyle & genetics · Progressive
+        The body becomes resistant to insulin or does not produce enough. It is strongly associated with lifestyle factors. It is the most common form in Romania, accounting for more than 90% of cases. It can initially be controlled with diet, exercise and oral medication, although many patients eventually need insulin.
+      
+      
+        🟡
+        Gestational Diabetes
+        Pregnancy-related · Usually temporary
+        It develops during pregnancy when hormonal changes affect how insulin works. It usually resolves after delivery but significantly increases the lifelong risk of type 2 diabetes for both mother and child. Recent research shows an increasing incidence of this form of diabetes in Romania, with narrowing differences between urban and rural areas.
+      
+      
+        ⚪
+        Prediabetes
+        Preventable · Often reversible
+        Blood glucose is higher than normal but does not meet the diagnostic thresholds for diabetes. This is a critical opportunity for intervention: lifestyle changes at this stage can prevent or significantly delay type 2 diabetes. According to SRDNBM, 16.5% of Romania's adult population is in this situation, often without knowing it.
+      
+    
+
+    
+    
+    Section 03
+    Causes and Risk Factors
+
+    Type 1 Diabetes
+    The exact cause of type 1 diabetes remains incompletely understood. It is an autoimmune disease: the immune system mistakenly attacks and destroys the insulin-producing beta cells in the pancreas. Genetic factors play a role, as may exposure to certain viral infections. Research in this field is coordinated in Romania through institutes such as the “N.C. Paulescu” National Institute of Diabetes, Nutrition and Metabolic Diseases in Bucharest, alongside specialist societies such as SRDNBM.
+
+    Type 2 Diabetes
+    Type 2 diabetes has a more complex and modifiable set of causes, combining genetic predisposition with lifestyle and environmental factors. The central mechanism is insulin resistance (the body's cells no longer respond effectively to insulin) together with a progressive decline in the pancreas's ability to compensate by producing more.
+
+    
+      
+        ⚖️
+        Excess body weight
+        Abdominal, or visceral, fat in particular. Obesity is the most important modifiable risk factor for type 2 diabetes.
+      
+      
+        🛋️
+        Physical inactivity
+        Sedentary behaviour reduces insulin sensitivity. More than 80% of adults in Romania report no weekly leisure-time aerobic activity: one of the highest percentages in the EU.
+      
+      
+        🍞
+        Diet high in ultra-processed foods
+        High consumption of refined carbohydrates, sugar and ultra-processed foods is strongly associated with insulin resistance.
+      
+      
+        👨‍👩‍👧
+        Family history
+        Having a first-degree relative with type 2 diabetes significantly increases your personal risk of developing the disease.
+      
+      
+        🎂
+        Age over 45
+        Risk increases with age. According to INSP data, diabetes prevalence is significantly higher among older people.
+      
+      
+        🩺
+        High blood pressure or dyslipidaemia
+        Metabolic risk factors tend to cluster. High blood pressure and lipid disorders often coexist with insulin resistance.
+      
+      
+        🤰
+        Previous gestational diabetes
+        Women who have had gestational diabetes face a considerably higher lifetime risk of developing type 2 diabetes.
+      
+      
+        🚬
+        Smoking
+        Smoking increases the risk of type 2 diabetes and worsens cardiovascular outcomes in people with diabetes. Quitting is recommended as part of comprehensive disease management.
+      
+    
+
+    
+    
+    Section 04
+    Signs and Symptoms
+
+    Symptoms vary considerably between type 1 and type 2 diabetes. Type 1 often presents acutely, with rapidly developing symptoms that may indicate diabetic ketoacidosis (DKA), a medical emergency. Type 2, by contrast, usually develops slowly and silently over several years, with symptoms so mild or gradual that many people attribute them to ageing, stress or tiredness.
+
+    
+      
+        💧
+        
+          Excessive thirst
+          Persistent, difficult-to-quench thirst (polydipsia) as the kidneys work hard to filter excess glucose.
+        
+      
+      
+        🚽
+        
+          Frequent urination
+          Polyuria, especially at night (nocturia). Often the most troublesome initial symptom.
+        
+      
+      
+        😴
+        
+          Persistent fatigue
+          Constant exhaustion even after adequate rest, caused by cells being deprived of glucose as an energy source.
+        
+      
+      
+        ⚖️
+        
+          Unexplained weight loss
+          Especially in type 1: the body breaks down fat and muscle for energy when insulin is absent.
+        
+      
+      
+        👁️
+        
+          Blurred vision
+          High blood glucose causes changes in the eye's lens, temporarily affecting focus.
+        
+      
+      
+        🩹
+        
+          Slow wound healing
+          Impaired circulation and immune function slow the healing of cuts, wounds and infections.
+        
+      
+      
+        🤚
+        
+          Tingling or numbness
+          Peripheral neuropathy (affecting the hands and feet) can be an early sign, particularly in type 2.
+        
+      
+      
+        🍽️
+        
+          Constant hunger
+          Polyphagia (persistent hunger even after eating) occurs when cells cannot absorb glucose effectively.
+        
+      
+    
+
+    
+      When to seek emergency care:
+      If you or a family member develops sudden intense thirst, excessive urination, vomiting, abdominal pain, confusion or acetone-smelling breath (especially in a child or young adult), this may be diabetic ketoacidosis (DKA), a medical emergency. Call 112 or go to the nearest emergency department.
+    
+
+    
+    
+    Section 05
+    Current Diabetes Treatments in Romania
+
+    Diabetes treatment has undergone a genuine revolution over the past decade. In Romania, the Romanian Society of Diabetes, Nutrition and Metabolic Diseases (SRDNBM) sets the reference clinical guidelines, aligned with international American Diabetes Association (ADA) recommendations. Access to medicines and reimbursement conditions are regulated through the National Diabetes Mellitus Programme, administered by the National Health Insurance House (CNAS).
+
+    Lifestyle Changes: The Foundation of Every Treatment
+    For both type 1 and type 2 diabetes, lifestyle is the foundation of disease management. For type 2 in particular, dietary changes and increased physical activity can significantly reduce HbA1c, improve insulin sensitivity and, in some cases (especially after bariatric surgery or a very-low-calorie diet) lead to sustained remission. Structured education programmes delivered in diabetes clinics provide evidence-based support for lifestyle management.
+
+    Medication
+    The main classes of medicines available in Romania are outlined below. Treatment decisions are individualised: the SRDNBM and ADA 2025 guidelines emphasise a patient-centred approach that considers cardiovascular risk, kidney function, weight and personal preferences.
+
+    
+      
+        First line · Type 2
+        Metformin
+        Glucophage · Generics (reimbursed by CNAS)
+        The established first-line oral medicine for type 2 diabetes. It lowers blood glucose by reducing hepatic glucose production. Well tolerated, affordable and widely available, it remains the standard starting point in most type 2 treatment plans in Romania.
+      
+      
+        Cardiorenal protection
+        GLP-1 receptor agonists
+        Semaglutide (Ozempic, Wegovy) · Liraglutide (Victoza)
+        A transformative class of injectable, and now oral, medicines that mimic the gut hormone GLP-1. They lower blood glucose, promote significant weight loss and reduce cardiovascular risk. The ADA 2025 guidelines prioritise them for patients with established cardiovascular disease or high risk. Available by prescription in Romania.
+      
+      
+        Cardiorenal protection
+        SGLT2 inhibitors
+        Empagliflozin (Jardiance) · Dapagliflozin (Forxiga)
+        These tablets lower blood glucose by causing excess sugar to be excreted in urine. They independently protect the heart and kidneys and are recommended as first-line treatment for patients with heart failure or chronic kidney disease, regardless of HbA1c. There is a strong evidence base from the EMPA-REG OUTCOME and CREDENCE trials.
+      
+      
+        Glycaemic control
+        DPP-4 inhibitors
+        Sitagliptin (Januvia) · Linagliptin (Trajenta)
+        Oral tablets that stimulate insulin secretion according to blood glucose levels. They are weight-neutral and have a low risk of hypoglycaemia. They are often used when GLP-1 receptor agonists or SGLT2 inhibitors are not tolerated or suitable.
+      
+      
+        Type 1 and advanced type 2
+        Insulin therapy
+        Basal, bolus and premixed insulins · Insulin pumps
+        Essential for all patients with type 1 and many with type 2. Modern insulin analogues provide more predictable action profiles than older formulations. Insulin pumps are available for selected patients and reimbursed through the health insurance system.
+      
+      
+        Type 1 · New standard
+        Continuous Glucose Monitoring (CGM)
+        FreeStyle Libre · Dexcom · Medtronic
+        CGM removes the need for finger-prick tests, provides real-time glucose trends and alerts, and improves glycaemic control. Access to CGM is reimbursed for patients with type 1 diabetes under certain conditions set by CNAS. Closed-loop systems are available in specialist centres.
+      
+    
+
+    
+      ADA 2025 guideline update:
+      The ADA 2025 guidelines emphasise that GLP-1 receptor agonists and SGLT2 inhibitors should be prioritised for patients with type 2 diabetes who have established cardiovascular disease or high risk, heart failure or chronic kidney disease, regardless of HbA1c. If you have type 2 diabetes and any of these conditions, ask your doctor whether these treatment classes are suitable for you.
+    
+
+    
+    
+    Section 06
+    The Importance of Regular Check-ups
+
+    Diabetes is a chronic disease that progresses over time, and its complications (if not detected) can be serious and irreversible. Diabetic retinopathy is one of the leading causes of blindness among working-age adults in Romania. Diabetic nephropathy is a major cause of end-stage chronic kidney disease. Peripheral neuropathy causes diabetic foot complications that, in severe cases, can lead to amputation.
+
+    Decades of research show that all these complications can largely be prevented (or significantly delayed) through good glycaemic control, blood pressure management and regular monitoring. A structured annual diabetes review is one of the best-supported and most effective interventions in medicine.
+
+    What Your Annual Diabetes Review Should Include
+
+    
+      HbA1c measurement (average blood glucose over the past 3 months)
+      Blood pressure measurement and review of antihypertensive treatment
+      Kidney function: estimated glomerular filtration rate (eGFR) and urinary albumin-to-creatinine ratio
+      Cholesterol and a full lipid profile
+      Weight and body mass index (BMI) assessment
+      Foot examination, including pulse and sensation assessment
+      Diabetic retinopathy screening: fundus examination or retinal photography
+      Medication review and adjustment if needed
+      Assessment of adherence to the diabetes self-management plan
+      Smoking status assessment and cessation support where appropriate
+      Influenza vaccination (strongly recommended for people with diabetes)
+    
+
+    Screening for People Without a Diagnosis
+    If you have risk factors for type 2 diabetes and have never been tested, your family doctor can request fasting blood glucose or HbA1c: simple tests available in laboratories throughout the country. This is especially important if you are over 45, have a family history of diabetes, high blood pressure or were overweight during pregnancy. Early detection of prediabetes provides a genuine opportunity to prevent or delay type 2 diabetes through lifestyle changes.
+
+    
+      Diabetic retinopathy screening in Romania:
+      The Romanian Society of Diabetes, Nutrition and Metabolic Diseases recommends annual diabetic retinopathy screening by fundus examination or retinal photography for every patient with diabetes. If you have diabetes and have not had this check recently, speak to your diabetes specialist or family doctor.
+    
+
+    
+    
+    Section 07
+    The Future of Diabetes Treatment
+
+    The pace of innovation in diabetes medicine is unprecedented. Several research areas (some already in advanced clinical trials) have the potential to fundamentally change what it means to live with diabetes over the next decade.
+
+    
+      
+        Phase 1/2/3 · Regulatory submission in 2026
+        Stem Cell Therapy (beta cells)
+        Zimislecel (formerly VX-880), developed by Vertex Pharmaceuticals, involves infusing fully differentiated insulin-producing islet cells derived from stem cells into the hepatic portal vein, with the aim of restoring endogenous insulin production in type 1 diabetes. By June 2025, the pivotal trial included 50 participants, with regulatory submission expected in 2026. A review published in PMC (2025) describes this approach as potentially “transformative”.
+      
+      
+        Clinical development
+        Artificial Pancreas
+        Automated closed-loop insulin delivery systems (combining continuous glucose monitoring with automated insulin pumps) already represent a major advance for patients with type 1. The next generation incorporates machine-learning algorithms to anticipate glucose fluctuations before they occur.
+      
+      
+        Emerging therapies
+        Dual and Triple Receptor Agonists
+        Tirzepatide (Mounjaro), a dual GIP/GLP-1 agonist, has achieved greater HbA1c reductions and weight loss than existing GLP-1 agonists and is already available in Romania. Triple agonists (GLP-1/GIP/glucagon) are in advanced clinical trials and may offer even greater metabolic benefits.
+      
+      
+        Immunotherapy research
+        Immune Modulation in Type 1
+        Teplizumab, an anti-CD3 monoclonal antibody, has been shown in clinical trials to delay the clinical onset of type 1 diabetes by approximately two years in people at high risk. Research into immune checkpoint inhibitors and tolerance induction continues, with the aim of preserving residual beta-cell function at diagnosis.
+      
+      
+        Precision medicine
+        Genomics and AI-Guided Treatment
+        Genomic profiling is beginning to identify diabetes subtypes that respond differently to specific medicines. Artificial intelligence-based continuous glucose monitoring systems that learn individual metabolic patterns and provide personalised recommendations are in development.
+      
+      
+        Regenerative medicine
+        Beta-Cell Encapsulation
+        A parallel strategy to stem-cell transplantation involves encapsulating insulin-producing cells in protective biomaterial devices that shield them from immune destruction, potentially removing the need for immunosuppression. The University of Miami Diabetes Research Institute has demonstrated proof of concept in clinical trials, with the first patient achieving insulin independence.
+      
+    
+
+    Stem-cell therapy for type 1 diabetes is examined in detail in a 2025 publication in PMC (PMID: PMC12689004), which concludes that “stem cell therapy offers a dual strategy: regeneration of insulin-producing beta cells and regulation of immune responses”. Although a definitive cure remains a future goal, the direction of research is more promising than ever.
+
+    
+    
+    Section 08
+    Reference Institutions and Resources in Romania
+
+    If you live with diabetes in Romania, or are concerned about your risk of developing it, the following organisations and services are your main reference points for clinical care, education and support.
+
+    
+      🩺 Romanian Society of Diabetes (SRDNBM)
+      🏥 CNAS: National Diabetes Programme
+      📊 National Institute of Public Health
+      📋 Ministry of Health
+      🔬 “N.C. Paulescu” Institute
+      📋 Romanian College of Physicians
+      🚑 Emergency services: 112
+    
+
+    Romanian Society of Diabetes, Nutrition and Metabolic Diseases (SRDNBM)
+    SRDNBM is Romania's leading scientific authority on all aspects of diabetes care. It is responsible for the PREDATORR epidemiological study (the largest diabetes prevalence study conducted in Romania) and issues annual statements and awareness materials for World Diabetes Day on 14 November.
+
+    CNAS and the National Diabetes Mellitus Programme
+    The National Health Insurance House administers the National Diabetes Mellitus Programme, which reimburses medicines and medical devices for people with a diagnosis. CNAS data, correlated with National Institute of Statistics data, are used to monitor the disease nationally.
+
+    National Institute of Public Health (INSP)
+    INSP, through the National Centre for Public Health Statistics and Informatics, publishes detailed annual epidemiological data on diabetes prevalence and incidence by county, essential for public-health policy planning.
+
+    “N.C. Paulescu” National Institute of Diabetes, Nutrition and Metabolic Diseases
+    The “N.C. Paulescu” Institute in Bucharest is Romania's main referral centre for diabetes and metabolic disease diagnosis, treatment and research, and also provides therapeutic education programmes for patients.
+
+    
+    
+    Section 09
+    Frequently Asked Questions
+
+    
+
+      
+        How many Romanians have diabetes?
+        
+          According to the PREDATORR study (SRDNBM), approximately 11.6% of Romania's adult population has diabetes mellitus and 16.5% has prediabetes. INSP recorded 1,485,087 people in medical records in 2024, including 114,904 diagnosed that year. The IDF estimates that approximately 1.3 million adults had diabetes in 2024, comparable with the European average.
+        
+      
+
+      
+        What are the early signs of diabetes?
+        
+          The most common signs include excessive thirst, frequent urination (especially at night), persistent fatigue, blurred vision, slow wound healing, constant hunger even after eating, and tingling or numbness in the hands and feet. Type 2 diabetes can develop slowly and silently: many people have no symptoms for years before diagnosis. If you have risk factors, ask your family doctor about fasting blood glucose or HbA1c, even if you have no symptoms.
+        
+      
+
+      
+        What is the difference between type 1 and type 2 diabetes?
+        
+          Type 1 diabetes is an autoimmune disease in which the immune system destroys the insulin-producing beta cells in the pancreas. It requires lifelong insulin therapy and usually begins in childhood or early adulthood. Type 2 diabetes occurs when the body becomes resistant to insulin or does not produce enough: it is strongly associated with lifestyle factors such as diet, physical inactivity and excess weight, and accounts for more than 90% of cases in Romania. The two forms have different causes, treatments and clinical courses, but both require careful management to prevent complications.
+        
+      
+
+      
+        What are the best treatments for type 2 diabetes in Romania?
+        
+          First-line treatment usually includes metformin alongside lifestyle changes. Newer medicine classes (GLP-1 receptor agonists (semaglutide/Ozempic) and SGLT2 inhibitors (empagliflozin/Jardiance, dapagliflozin/Forxiga)) have transformed treatment by lowering blood glucose while protecting the hea

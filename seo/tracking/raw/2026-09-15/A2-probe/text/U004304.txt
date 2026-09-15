@@ -1,0 +1,406 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cgcom.es","https://www.aepd.es"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes: The Silent Disease","description":"More than 5.1 million people in Spain live with diabetes. Learn about symptoms, GLP-1 and SGLT2 treatments, regular check-ups and emerging therapies.","url":"https://www.myglobalhealth.online/spain/en/blog/diabetes-the-silent-disease-4","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/spain/en/blog/diabetes-the-silent-disease-4#webpage","url":"https://www.myglobalhealth.online/spain/en/blog/diabetes-the-silent-disease-4","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/en/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-19"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes%3A+The+Silent+Disease&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F738adbed-41df-4311-980a-e47c06e94281-33851.webp&v=2026-07-20.1-igzh19","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologia"},"datePublished":"2026-07-19T06:24:40.235Z","dateModified":"2026-07-19T06:59:15.525Z","publishingPrinciples":"https://www.myglobalhealth.online/spain/en/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/spain/en/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/spain/en/blog"},{"@type":"ListItem","position":3,"name":"Diabetes: The Silent Disease","item":"https://www.myglobalhealth.online/spain/en/blog/diabetes-the-silent-disease-4"}]}]All articlesEndocrinologiaDiabetes: The Silent DiseaseDiabetes mellitus is one of the most prevalent chronic diseases in Spain, and one of the most underestimated. The good news is that, with the right diagnosis and regular monitoring, people with diabetes can live full, healthy lives thanks to the latest treatment advances.Global Health Medical TeamJuly 19, 202621 min read+On this pageDiabetes in Spain: Understanding the Scale of the ProblemTypes of DiabetesCauses and Risk FactorsSymptoms and Warning SignsCurrent Diabetes Treatments in SpainThe Importance of Regular Check-upsThe Future of Diabetes TreatmentLeading Institutions and Resources in SpainFrequently Asked Questions
+
+
+
+  
+  
+    
+      
+      
+      
+      Causes, Symptoms, Treatment and the Future of Care
+      An estimated 5.1 million people in Spain live with diabetes — and thousands more remain undiagnosed. This guide covers everything you need to know: causes, warning signs, the best treatments available today, the importance of regular check-ups and emerging therapies that could transform diabetes care in the coming years.
+      
+        — Evidence-based
+        — Aligned with the SED and the Ministry of Health
+        — Updated June 2026
+      
+      — Written by Dr Tiago Miguel Figueira · Ordem dos Médicos no. 77986 · Clinical Director, Global Health
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      TF
+      
+        Written by Dr. Tiago Miguel Figueira
+        Clinical Director · Ordem dos Médicos no. 77986 · General and Family Medicine
+      
+      10 MIN READ
+    
+
+    Diabetes mellitus is one of the most prevalent chronic diseases in Spain and, at the same time, one of the most underestimated. Type 2 diabetes, which accounts for more than 90% of cases, can develop slowly over many years without noticeable symptoms. By the time it is diagnosed, the condition has often already been present for quite some time.
+
+    The good news is that diabetes is highly manageable. With the right diagnosis, appropriate treatment and regular follow-up, people with diabetes can live full and healthy lives. And with the therapeutic advances of the past decade — especially the arrival of GLP-1 receptor agonists and SGLT2 inhibitors — the options available in Spain are now better than ever.
+
+    
+    
+    Section 01
+    Diabetes in Spain: Understanding the Scale of the Problem
+
+    During 2024, approximately 5,121,600 cases of type 1 and type 2 diabetes were recorded in Spain among adults aged 20 to 79, placing Spain among the European countries with the highest prevalence of the disease. According to the report Beyond Insulin: A Map of Type 1 Diabetes in Spain published by the Fundación DiabetesCERO in December 2024, type 1 diabetes affects 166,564 people, representing 0.36% of Spain's population, and is more common in men (89,245) than in women (77,317). The study published in Atención Primaria (2025) by Cebrián Cuenca and Escalada confirms that diabetes prevalence in Spain is higher among older people, particularly those aged 65 or over, and notes that projections for 2035 are not optimistic, with an upward trend in both adults and children.
+
+    
+      
+        5,1M
+        Cases of type 1 and type 2 diabetes among adults in Spain in 2024
+      
+      
+        >90%
+        Of cases are type 2 diabetes
+      
+      
+        166k
+        People with type 1 diabetes in Spain (Ministry of Health, 2024)
+      
+      
+        6.000
+        New cases of T1D diagnosed each year in Spain
+      
+    
+    Source: Fundación DiabetesCERO — Beyond Insulin, December 2024; Ministry of Health, BDCAP; Atención Primaria 2025;57:102992 (Cebrián Cuenca & Escalada).
+
+    The Ministry of Health coordinates epidemiological surveillance of diabetes through the Primary Care Clinical Database (BDCAP), which makes it possible to monitor prevalence, treatment and complications throughout the country. The Spanish Diabetes Society (SED) issues the reference clinical guidelines for managing the condition and, in 2025, published multidisciplinary consensus documents on dietary recommendations and the management of diabetes-associated chronic kidney disease, in collaboration with SEEN and the Spanish Society of Nephrology.
+
+    
+      Could you be at risk without knowing it?
+      A significant proportion of people with type 2 diabetes in Spain remain undiagnosed. If you have risk factors — a family history of diabetes, excess weight, high blood pressure or physical inactivity — ask your doctor about a fasting blood glucose test or HbA1c. Early diagnosis is crucial for preventing serious complications.
+    
+
+    
+    
+    Section 02
+    Types of Diabetes
+
+    Not all diabetes is the same. Understanding the type you have — or may be at risk of developing — is the first step towards effective management.
+
+    
+      
+        🔵
+        Type 1 Diabetes (T1D)
+        Autoimmune · Insulin-dependent
+        The immune system destroys the insulin-producing beta cells in the pancreas. The body produces little or no insulin. Lifelong insulin therapy is required. It usually develops in childhood or young adulthood. The incidence of T1D in Spain has reached 12.50 cases per 100,000 people; among children under 14, it rises to 18.80 per 100,000 inhabitants, according to the T1D Index 2024.
+      
+      
+        🟠
+        Type 2 Diabetes (T2D)
+        Lifestyle & genetics · Progressive
+        The body becomes resistant to insulin or does not produce enough of it. It is closely associated with lifestyle and is the most common form — more than 90% of cases in Spain. It can initially be managed with diet, exercise and oral medication, although many patients eventually need insulin over time.
+      
+      
+        🟡
+        Gestational Diabetes
+        Pregnancy-related · Usually temporary
+        It develops during pregnancy when hormonal changes make it harder for insulin to work. It usually resolves after birth, but significantly increases the lifetime risk of T2D for both mother and child. Screening is routinely carried out through Spain's National Health System (SNS) between weeks 24 and 28 of pregnancy.
+      
+      
+        ⚪
+        Prediabetes
+        Preventable · Often reversible
+        Blood glucose is higher than normal, but not high enough to meet the diagnostic threshold for diabetes. This is a critical window for intervention — lifestyle changes at this stage can significantly prevent or delay the development of T2D. Many people in Spain are in this situation without knowing it.
+      
+    
+
+    
+    
+    Section 03
+    Causes and Risk Factors
+
+    Type 1 Diabetes
+    The exact cause of T1D is not fully understood. It is an autoimmune disease — the immune system mistakenly attacks and destroys the pancreatic beta cells responsible for producing insulin. Genetic factors play a role, as does likely exposure to certain viral infections during development. Research in this field is conducted in Spain through groups affiliated with the Instituto de Salud Carlos III (ISCIII), the Spanish Diabetes Society (SED) and referral centres such as Hospital Infantil Universitario Niño Jesús in Madrid and Hospital Sant Joan de Déu in Barcelona.
+
+    Type 2 Diabetes
+    T2D has a more complex and modifiable set of causes, combining genetic predisposition with lifestyle and environmental factors. The central mechanism is insulin resistance — the body's cells stop responding effectively to insulin — together with a progressive decline in the pancreas's ability to compensate by producing more.
+
+    
+      
+        ⚖️
+        Excess body weight
+        Especially abdominal (visceral) fat. Obesity is the most important modifiable risk factor for T2D in Spain.
+      
+      
+        🛋️
+        Physical inactivity
+        Sedentary behaviour reduces insulin sensitivity. Regular exercise is one of the most effective preventive and therapeutic tools.
+      
+      
+        🍞
+        Diet high in ultra-processed foods
+        High consumption of refined carbohydrates, sugar and ultra-processed foods is strongly associated with insulin resistance.
+      
+      
+        👨‍👩‍👧
+        Family history
+        Having a first-degree relative with T2D significantly increases your personal risk of developing it.
+      
+      
+        🎂
+        Age over 45
+        Risk increases with age. Ministry of Health data show a significantly higher prevalence among people aged 65 or over.
+      
+      
+        🩺
+        High blood pressure or dyslipidaemia
+        Metabolic risk factors tend to cluster together. High blood pressure and lipid disorders frequently coexist with insulin resistance.
+      
+      
+        🤰
+        Previous gestational diabetes
+        Women who developed gestational diabetes have a substantially higher lifetime risk of developing T2D.
+      
+      
+        🚬
+        Smoking
+        Smoking increases the risk of T2D and worsens cardiovascular outcomes in people with diabetes. The SED recommends stopping smoking as an integral part of management.
+      
+    
+
+    
+    
+    Section 04
+    Symptoms and Warning Signs
+
+    Symptoms vary considerably between T1D and T2D. T1D usually presents acutely — with a rapid onset of symptoms that may indicate diabetic ketoacidosis (DKA), a serious medical emergency. T2D, by contrast, typically develops slowly and silently over many years, with symptoms so mild or gradual that many people attribute them to ageing, stress or tiredness.
+
+    
+      
+        💧
+        
+          Excessive thirst
+          Persistent, unquenchable thirst — polydipsia — as the kidneys work at full capacity to filter excess glucose.
+        
+      
+      
+        🚽
+        
+          Frequent urination
+          Polyuria, especially at night (nocturia). This is often the most noticeable initial symptom prompting a patient to seek medical advice.
+        
+      
+      
+        😴
+        
+          Persistent tiredness
+          Constant fatigue even after adequate rest, caused by cells being deprived of glucose as an energy source.
+        
+      
+      
+        ⚖️
+        
+          Unexplained weight loss
+          Especially in T1D — the body breaks down fat and muscle for energy when insulin is absent.
+        
+      
+      
+        👁️
+        
+          Blurred vision
+          High blood glucose causes changes in the eye's lens that temporarily affect focus.
+        
+      
+      
+        🩹
+        
+          Slow wound healing
+          Impaired circulation and immune dysfunction slow the healing of cuts, wounds and infections.
+        
+      
+      
+        🤚
+        
+          Tingling or numbness
+          Peripheral neuropathy — affecting the hands and feet — can be an early sign, especially in T2D.
+        
+      
+      
+        🍽️
+        
+          Constant hunger
+          Polyphagia — persistent hunger even after eating — occurs when cells cannot absorb glucose effectively.
+        
+      
+    
+
+    
+      When to seek urgent care:
+      If you or a family member develops sudden intense thirst, excessive urination, vomiting, abdominal pain, confusion or acetone-smelling breath — especially in a child or young adult — this may be diabetic ketoacidosis (DKA), a serious medical emergency. Call 061 or 112, or go to the nearest hospital emergency department immediately.
+    
+
+    
+    
+    Section 05
+    Current Diabetes Treatments in Spain
+
+    Diabetes treatment has undergone a genuine revolution over the past decade. In Spain, the Spanish Diabetes Society (SED) sets the reference clinical practice guidelines, which were updated in 2025 through multidisciplinary consensus documents prepared with SEEN, the Spanish Society of Nephrology and SEMERGEN. The joint guideline from the Spanish Society of Nephrology and the SED provides an updated framework for preventing and managing diabetes-associated chronic kidney disease. Access to medicines and funding conditions are regulated by the Ministry of Health through the Spanish Agency for Medicines and Health Products (AEMPS).
+
+    Lifestyle Changes — The Foundation of All Treatment
+    For both T1D and T2D, lifestyle is a fundamental pillar of treatment. In T2D in particular, dietary changes and increased physical activity can significantly reduce HbA1c, improve insulin sensitivity and, in some cases — especially after bariatric surgery or very-low-calorie diets — lead to sustained remission. The 2025 Guideline emphasises that comprehensive T2D management must go beyond glycaemic control and include core aspects of a healthy lifestyle such as stopping smoking, avoiding alcohol, good sleep hygiene and attention to mental health.
+
+    Medication
+    The main classes of medicines available in Spain are outlined below. Treatment decisions are individualised — the SED and ADA 2025 guidelines emphasise a patient-centred approach that considers cardiovascular risk, kidney function, weight and personal preferences.
+
+    
+      
+        First line · T2D
+        Metformina
+        Glucophage · Generics (funded by the SNS)
+        The established first-line oral medicine for T2D. It lowers blood glucose by reducing glucose production in the liver. It is well tolerated, affordable and widely available. It remains the standard starting point in most T2D treatment plans in Spain, although the 2025 guidelines allow treatment to begin with combination therapy when HbA1c is very high.
+      
+      
+        Cardiorenal protection
+        GLP-1 receptor agonists
+        Semaglutida (Ozempic, Wegovy) · Liraglutida (Victoza)
+        A transformative class of injectable (and now also oral) medicines that mimic the intestinal hormone GLP-1. They lower blood glucose, promote significant weight loss and reduce cardiovascular risk. GLP-1 agonists are recommended early for patients at high cardiovascular risk, while SGLT2 inhibitors are prioritised for those with heart failure or chronic kidney disease. Available in Spain on prescription, with funding varying by indication.
+      
+      
+        Cardiorenal protection
+        SGLT2 inhibitors
+        Empagliflozina (Jardiance) · Dapagliflozina (Forxiga)
+        These tablets lower blood glucose by promoting the removal of excess sugar through the urine. They independently protect the heart and kidneys — and are recommended as first-line treatment for patients with heart failure or chronic kidney disease, regardless of HbA1c. They have a strong evidence base from the EMPA-REG OUTCOME and CREDENCE trials. Available in Spain with SNS funding for indications approved by AEMPS.
+      
+      
+        Glycaemic control
+        DPP-4 inhibitors (gliptins)
+        Sitagliptina (Januvia) · Linagliptina (Trajenta)
+        Oral tablets that enhance glucose-dependent insulin secretion. Weight-neutral, with a low risk of hypoglycaemia. Used when GLP-1 agonists or SGLT2 inhibitors are not tolerated or suitable. Funded by the SNS in Spain under prescribing conditions.
+      
+      
+        T1D and advanced T2D
+        Insulin therapy
+        Basal, bolus and premixed insulins · Insulin pumps
+        Essential for all patients with T1D and for many with T2D. Modern analogue insulins offer more predictable action profiles than older formulations. Insulin pumps (continuous subcutaneous insulin infusion) are available to selected patients and funded by Spain's SNS according to criteria set by the autonomous communities.
+      
+      
+        T1D · New standard
+        Continuous Glucose Monitoring (CGM)
+        FreeStyle Libre · Dexcom · Medtronic
+        CGM removes the need for finger-prick tests, provides real-time glucose trends and alerts, and improves glycaemic control. In Spain, SNS funding for CGM varies by autonomous community and type of diabetes. Use of a continuous glucose sensor is recommended to adjust treatment based on actual glucose patterns. Closed-loop systems (artificial pancreas) are available at specialist centres.
+      
+    
+
+    
+      ADA 2025 and SED guideline update:
+      Both the ADA 2025 recommendations and SED consensus documents reinforce that GLP-1 agonists and SGLT2 inhibitors should be prioritised for patients with T2D who have established or high-risk cardiovascular disease, heart failure or chronic kidney disease — regardless of HbA1c. Early combination treatment with metformin plus a GLP-1 agonist or SGLT2 inhibitor is indicated when comorbidities are present or HbA1c is above 8%. If you have T2D and any of these conditions, consult your doctor or endocrinologist.
+    
+
+    
+    
+    Section 06
+    The Importance of Regular Check-ups
+
+    Diabetes is a chronic condition that changes over time, and its complications — if not detected — can be serious and irreversible. Diabetic retinopathy is one of the leading causes of blindness among working-age adults in Spain. Diabetic nephropathy is a major contributor to end-stage chronic kidney disease. Peripheral neuropathy causes diabetic foot complications which, in the most serious cases, can lead to amputation. Asturias, Aragón and La Rioja have the highest rates of lower-limb amputations among people with diabetes in Spain, while Cantabria, Extremadura and the Balearic Islands record the lowest.
+
+    Decades of research show that all these complications are largely preventable — or can be significantly delayed — through good glycaemic control, blood pressure management and regular monitoring. A structured annual review for a patient with diabetes is one of the most cost-effective interventions in all of medicine.
+
+    What Your Annual Diabetes Review Should Include
+
+    
+      HbA1c measurement (average blood glucose over the past 3 months)
+      Blood pressure check and review of antihypertensive treatment
+      Kidney function — estimated glomerular filtration rate (eGFR) and urine albumin-to-creatinine ratio
+      Cholesterol and full lipid profile
+      Assessment of body weight and body mass index (BMI)
+      Foot examination — pulses, sensation and skin condition
+      Diabetic retinopathy screening — fundoscopy or retinal photography (available through the SNS)
+      Medication review and adjustment if needed
+      Assessment of adherence to the diabetes self-management plan
+      Smoking assessment and support to stop where appropriate
+      Flu vaccination (strongly recommended for people with diabetes)
+    
+
+    Screening for People Who Have Not Yet Been Diagnosed
+    If you have risk factors for T2D and have never been assessed, your primary care doctor can request a fasting blood glucose or HbA1c test — simple tests available at every SNS health centre. This is especially important if you are over 45, have a family history of diabetes, have high blood pressure or were overweight during pregnancy. Early detection of prediabetes offers a genuine opportunity to prevent or delay the onset of T2D through lifestyle changes.
+
+    
+      Diabetic retinopathy screening in Spain:
+      The SED recommends annual diabetic retinopathy screening by fundoscopy or retinal photography for every patient with diabetes. Access to this examination through the SNS varies by autonomous community. In 2025, the SED published an update to its consensus document on preventing the progression of diabetic retinopathy, incorporating the role of fenofibrate. If you have diabetes and have not had this check recently, consult your usual doctor.
+    
+
+    
+    
+    Section 07
+    The Future of Diabetes Treatment
+
+    The pace of innovation in diabetology is unprecedented. Several areas of research — some already in advanced clinical trials — have the potential to fundamentally transform what it means to live with diabetes over the next decade.
+
+    
+      
+        Phase 1/2/3 · Regulatory submission in 2026
+        Stem Cell Therapy (beta cells)
+        Zimislecel (formerly VX-880) from Vertex Pharmaceuticals involves infusing fully differentiated insulin-producing cells — derived from stem cells — into the hepatic portal vein, with the aim of restoring endogenous insulin production in T1D. As of June 2025, the pivotal trial had enrolled 50 participants, with regulatory submission planned for 2026. A review in PMC (2025) describes this therapy as potentially “transformative”, acting simultaneously on beta-cell regeneration and immune modulation.
+      
+      
+        Clinical development
+        Artificial Pancreas (closed-loop systems)
+        Automated insulin delivery systems — combining CGM with automated insulin pumps — already represent a major advance for patients with T1D. In Spain, they are available in specialist endocrinology units. Continuous or intermittent monitoring with a continuous glucose sensor is used to adjust treatment based on actual glucose patterns. The next generation incorporates machine-learning algorithms to predict glucose fluctuations before they occur.
+      
+      
+        Emerging therapies
+        Dual and Triple Receptor Agonists
+        Tirzepatide (Mounjaro) acts on GIP and GLP-1 receptors, achieving greater reductions in HbA1c (–2.4%) and body weight (an average of –11 kg) than traditional GLP-1 agonists, and is available in Spain. Triple agonists (GLP-1/GIP/glucagon) are in advanced clinical trials and could offer even greater metabolic benefits.
+      
+      
+        Immunotherapy
+        Immune Modulation in T1D
+        Teplizumab (an anti-CD3 monoclonal antibody) has been shown in clinical trials to delay the clinical onset of T1D by a median of approximately two years in high-risk individuals. Research into immune checkpoint inhibitors and tolerance induction continues, with the aim of preserving residual beta-cell function at diagnosis.
+      
+      
+        Precision medicine
+        Genomics and AI-Guided Treatment
+        Genomic characterisation is beginning to identify diabetes subtypes that respond differently to specific medicines. AI-powered CGM systems that learn individual metabolic patterns and make personalised recommendations are in development, with the potential to transform day-to-day diabetes management.
+      
+      
+        Regenerative medicine
+        Beta-Cell Encapsulation
+        A parallel strategy to stem cell therapy involves encapsulating insulin-producing cells in protective biomaterial devices that shield them from immune destruction — potentially eliminating the need for immunosuppression. The University of Miami's Diabetes Research Institute has demonstrated proof of concept in clinical trials, with the first patient achieving insulin independence.
+      
+    
+
+    Stem cell research for T1D is examined in detail in a 2025 publication in PMC (PMID: PMC12689004), which concludes that “stem cell therapy offers a dual strategy: regeneration of insulin-producing beta cells and regulation of immune responses”. Although a definitive cure remains a future goal, the direction of research is the most promising in history.
+
+    
+    
+    Section 08
+    Leading Institutions and Resources in Spain
+
+    If you live with diabetes in Spain, or are concerned about your risk of developing it, the following organisations and services are your main points of reference for clinical care, education and support.
+
+    
+      🩺 Spanish Diabetes Society (SED)
+      🏥 Ministry of Health
+      🔬 Instituto de Salud Carlos III
+      💊 AEMPS
+      🤝 Fundación DiabetesCERO
+      👶 Hospital Infantil Niño Jesús
+      👶 Hospital Sant Joan de Déu
+      📋 SEMERGEN
+    
+
+    Spanish Diabetes Society (SED)
+    The SED is the leading scientific authority for every aspect of diabetes care in Spain. In 2025, it published several multidisciplinary consensus documents — on dietary recommendations for people with prediabetes and diabetes (prepared with SEEN and SEEP), and on managing diabetes-associated chronic kidney disease (with the Spanish Society of Nephrology). All guidelines and documents are available on the SED website.
+
+    Ministry of Health
+    The Ministry of Health coordinates epidemiological surveillance of diabetes in Spain through the Primary Care Clinical Database (BDCAP) and sets funding conditions for antidiabetic medicines through AEMPS. It is also responsible for screening programmes and the national diabetes strategy within the SNS.
+
+    Fundación DiabetesCERO
+    The Fundación DiabetesCERO is Spain's main patient organisation focused specifically on type 1 diabetes. Its report Beyond Insulin: A Map of Type 1 Diabetes in Spain (December 2024) is the most comprehensive epidemiological analysis of T1D published in Spain to date and is a key reference for health planning and research.
+
+    Instituto de Salud Carlos III (ISCIII)
+    The Instituto de Salud Carlos III is Spain's main public biomedical research body, funded by the Ministry of Science and Innovation. It coordinates the Biomedical Research Networking Centres (CIBER) — including CIBERDEM (diabetes and metabolic diseases), which brings together the country's most active diabetes research groups.
+
+    
+    
+    Section 09
+    Frequently Asked Questions
+
+    
+
+      
+        How many people have diabetes in Spain?
+        
+          During 2024, approximately 5,121,600 cases of type 1 and ty

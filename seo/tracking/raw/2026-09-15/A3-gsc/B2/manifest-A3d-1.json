@@ -1,0 +1,203 @@
+{
+  "agent": "A3d-1",
+  "schema_version": "1.0",
+  "window": {
+    "start": "2026-07-21",
+    "end": "2026-08-06",
+    "days": 17,
+    "timezone": "America/Los_Angeles (Pacific Time, per GSC)"
+  },
+  "calls": [
+    {
+      "startDate": "2026-07-21",
+      "endDate": "2026-07-24",
+      "startRow": 0,
+      "rowCount": 1000,
+      "hasMore": true
+    },
+    {
+      "startDate": "2026-07-21",
+      "endDate": "2026-07-24",
+      "startRow": 1000,
+      "rowCount": 347,
+      "hasMore": false
+    },
+    {
+      "startDate": "2026-07-25",
+      "endDate": "2026-07-28",
+      "startRow": 0,
+      "rowCount": 939,
+      "hasMore": false
+    },
+    {
+      "startDate": "2026-07-29",
+      "endDate": "2026-08-01",
+      "startRow": 0,
+      "rowCount": 1000,
+      "hasMore": true
+    },
+    {
+      "startDate": "2026-07-29",
+      "endDate": "2026-08-01",
+      "startRow": 1000,
+      "rowCount": 18,
+      "hasMore": false
+    },
+    {
+      "startDate": "2026-08-02",
+      "endDate": "2026-08-05",
+      "startRow": 0,
+      "rowCount": 1000,
+      "hasMore": true
+    },
+    {
+      "startDate": "2026-08-02",
+      "endDate": "2026-08-05",
+      "startRow": 1000,
+      "rowCount": 37,
+      "hasMore": false
+    },
+    {
+      "startDate": "2026-08-06",
+      "endDate": "2026-08-06",
+      "startRow": 0,
+      "rowCount": 330,
+      "hasMore": false
+    }
+  ],
+  "rows_per_call_total": 4671,
+  "totals": {
+    "own_window_calls": 8,
+    "own_window_rows": 4671,
+    "own_window_files": [
+      "B2_web_2026-07-21_2026-07-24_r0.jsonl",
+      "B2_web_2026-07-21_2026-07-24_r1000.jsonl",
+      "B2_web_2026-07-25_2026-07-28_r0.jsonl",
+      "B2_web_2026-07-29_2026-08-01_r0.jsonl",
+      "B2_web_2026-07-29_2026-08-01_r1000.jsonl",
+      "B2_web_2026-08-02_2026-08-05_r0.jsonl",
+      "B2_web_2026-08-02_2026-08-05_r1000.jsonl",
+      "B2_web_2026-08-06_2026-08-06_r0.jsonl"
+    ],
+    "merged_output_rows": 19488,
+    "merged_output_note": "gsc_page_daily.csv is a SHARED build across sibling agents (A3d-1/2/3/...) each pulling a different date window into the same B2 folder; build_B2.py (present on arrival) aggregates ALL B2_web_*.jsonl files present plus the probeA 2026-09-08..09-14 envelopes. merged_output_rows spans every window pulled by all agents so far, not just A3d-1's own 17 days."
+  },
+  "extraction_utc": "2026-09-15T05:56:00Z",
+  "impression_share_vs_property_daily": {
+    "note": "page-daily (page x date, ALL country/device) summed impressions per day vs gsc_property_daily.csv (web) for the same date, own 17-day window only.",
+    "min_share": 1.0718,
+    "max_share": 1.6397,
+    "per_day": [
+      {
+        "date": "2026-07-21",
+        "page_daily_impressions": 2360,
+        "property_impressions": 2187,
+        "share": 1.0791
+      },
+      {
+        "date": "2026-07-22",
+        "page_daily_impressions": 1352,
+        "property_impressions": 1183,
+        "share": 1.1429
+      },
+      {
+        "date": "2026-07-23",
+        "page_daily_impressions": 1438,
+        "property_impressions": 877,
+        "share": 1.6397
+      },
+      {
+        "date": "2026-07-24",
+        "page_daily_impressions": 994,
+        "property_impressions": 885,
+        "share": 1.1232
+      },
+      {
+        "date": "2026-07-25",
+        "page_daily_impressions": 816,
+        "property_impressions": 730,
+        "share": 1.1178
+      },
+      {
+        "date": "2026-07-26",
+        "page_daily_impressions": 857,
+        "property_impressions": 788,
+        "share": 1.0876
+      },
+      {
+        "date": "2026-07-27",
+        "page_daily_impressions": 1577,
+        "property_impressions": 1469,
+        "share": 1.0735
+      },
+      {
+        "date": "2026-07-28",
+        "page_daily_impressions": 1245,
+        "property_impressions": 1141,
+        "share": 1.0911
+      },
+      {
+        "date": "2026-07-29",
+        "page_daily_impressions": 1400,
+        "property_impressions": 1189,
+        "share": 1.1775
+      },
+      {
+        "date": "2026-07-30",
+        "page_daily_impressions": 1316,
+        "property_impressions": 1175,
+        "share": 1.12
+      },
+      {
+        "date": "2026-07-31",
+        "page_daily_impressions": 1142,
+        "property_impressions": 999,
+        "share": 1.1431
+      },
+      {
+        "date": "2026-08-01",
+        "page_daily_impressions": 918,
+        "property_impressions": 827,
+        "share": 1.11
+      },
+      {
+        "date": "2026-08-02",
+        "page_daily_impressions": 905,
+        "property_impressions": 838,
+        "share": 1.08
+      },
+      {
+        "date": "2026-08-03",
+        "page_daily_impressions": 1202,
+        "property_impressions": 1044,
+        "share": 1.1513
+      },
+      {
+        "date": "2026-08-04",
+        "page_daily_impressions": 1121,
+        "property_impressions": 1002,
+        "share": 1.1188
+      },
+      {
+        "date": "2026-08-05",
+        "page_daily_impressions": 1299,
+        "property_impressions": 1212,
+        "share": 1.0718
+      },
+      {
+        "date": "2026-08-06",
+        "page_daily_impressions": 1598,
+        "property_impressions": 1477,
+        "share": 1.0819
+      }
+    ]
+  },
+  "output_files": {
+    "raw_jsonl": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_<start>_<end>_r<startRow>.jsonl (this agent's 8 files)",
+    "calls_log": "seo/tracking/raw/2026-09-15/A3-gsc/B2/calls-A3d-1.json",
+    "build_script": "seo/tracking/raw/2026-09-15/A3-gsc/B2/build_B2.py (shared, run unchanged)",
+    "csv_final": "seo/tracking/data/gsc_page_daily.csv (page x date grain, all agents merged)",
+    "csv_renamed_backup": "seo/tracking/data/gsc_page_daily_country_device.csv (prior country/device-grain file, preserved before overwrite)"
+  },
+  "blockers": "None."
+}

@@ -1,0 +1,474 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.ers.pt","https://www.ordemdosmedicos.pt","https://www.cnpd.pt","https://www.livroreclamacoes.pt","https://www.infarmed.pt","https://www.sns24.gov.pt","https://www.dgs.pt","https://www.insa.min-saude.pt","https://www.spc.pt","https://www.ihmt.unl.pt","https://www.apmgf.pt","https://www.deco.pt","https://www.utente.min-saude.pt","https://www.sosvozamiga.org","https://www.fpcardiologia.pt"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Enfermedad mano-pie-boca: Signos y tratamiento","description":"Guía del HSE para Irlanda sobre la enfermedad mano-pie-boca: síntomas, tratamiento, señales de urgencia y prevención del contagio.","url":"https://www.myglobalhealth.online/portugal/es/blog/enfermedad-mano-pie-boca-signos-y-tratamiento","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/portugal/es/blog/enfermedad-mano-pie-boca-signos-y-tratamiento#webpage","url":"https://www.myglobalhealth.online/portugal/es/blog/enfermedad-mano-pie-boca-signos-y-tratamiento","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/es/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-06-15"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Enfermedad+mano-pie-boca%3A+Signos+y+tratamiento&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2Fff180d4e-ccef-441a-8dca-8af41f64cc50-150385_0ed6f9dbf2384287827ba85738606351-mv2.avif&v=2026-07-20.1-awwtko","width":1200,"height":630},"about":{"@type":"Thing","name":"Telemedicine"},"datePublished":"2026-06-06T05:23:47.372Z","dateModified":"2026-06-15T20:56:33.190Z","publishingPrinciples":"https://www.myglobalhealth.online/portugal/es/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/portugal/es/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/portugal/es/blog"},{"@type":"ListItem","position":3,"name":"Enfermedad mano-pie-boca: Signos y tratamiento","item":"https://www.myglobalhealth.online/portugal/es/blog/enfermedad-mano-pie-boca-signos-y-tratamiento"}]}]Todos los artículosTelemedicineEnfermedad mano-pie-boca: Signos y tratamientoGuía completa basada en las recomendaciones del HSE sobre la enfermedad mano-pie-boca en niños en Irlanda: síntomas, cuidados en casa, cuándo acudir a Urgencias y cómo evitar el contagio.Global Health Medical Team6 de junio de 202616 min de lecturaÚltima revisión 15 de junio de 2026Revisado clínicamente por Dr Tiago Miguel Figueira+En esta página¿Qué es la enfermedad mano-pie-boca?Causas y virologíaSignos y síntomasDiagnosisTratamiento y cuidadosSeñales de alarma: cuándo buscar atención urgentePrevención y profilaxisEpidemiologyPreguntas frecuentesRecursos pediátricos fiables
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    Sección 01
+    ¿Qué es la enfermedad mano-pie-boca?
+
+    
+      Enfermedad mano-pie-boca (EMPB) es una infección vírica frecuente y muy contagiosa que afecta principalmente a bebés y niños menores de diez años. Se caracteriza por una tríada distintiva de fiebre, úlceras bucales dolorosas y una erupción vesicular en las palmas de las manos, las plantas de los pies y, en ocasiones, las nalgas. La EMPB está causada por enterovirus, con mayor frecuencia Coxsackievirus A16 y Enterovirus 71 (EV-A71).
+    
+    
+      Aunque la enfermedad suele ser leve y autolimitada y se resuelve en un plazo de siete a diez días, puede causar un malestar considerable en los niños pequeños. Las complicaciones graves, aunque infrecuentes —entre ellas meningitis vírica, encefalitis y parálisis flácida aguda—, se asocian con mayor frecuencia a las cepas EV-A71 y requieren atención médica inmediata.
+    
+    
+      La enfermedad aparece en todo el mundo y se propaga rápidamente en guarderías, centros infantiles, escuelas y hogares, sobre todo durante el verano y a principios del otoño en climas templados. Comprender la EMPB es esencial tanto para padres y cuidadores como para profesionales sanitarios.
+    
+
+    
+      «La EMPB es una infección enterovírica contagiosa de la infancia que se caracteriza por fiebre, úlceras bucales dolorosas y lesiones vesiculares en manos y pies. El tratamiento es principalmente sintomático».
+      — Resumen clínico de Global Health
+    
+  
+
+  
+  
+    Sección 02
+    Causas y virología
+
+    
+      La EMPB está causada por virus de ARN monocatenario pertenecientes al género Enterovirus de la familia Picornaviridae . Los dos agentes causales de mayor relevancia clínica son:
+    
+
+    
+      
+        🦠
+        Coxsackievirus A16
+        La causa clásica y más frecuente en todo el mundo. Suele producir una enfermedad más leve. Pertenece al grupo A de los coxsackievirus.
+      
+      
+        ⚠️
+        Enterovirus 71 (EV-A71)
+        Se asocia a brotes de mayor tamaño, especialmente en Asia-Pacífico, y a un mayor riesgo de complicaciones neurológicas, como la encefalitis del tronco encefálico.
+      
+      
+        🔬
+        Otros coxsackievirus
+        CA6, CA10, CB5 y otros pueden causar presentaciones atípicas o generalizadas de la EMPB. CA6 puede producir una afectación cutánea más extensa.
+      
+      
+        🌍
+        Vías de transmisión
+        Contacto directo con secreciones nasales, saliva, líquido de las ampollas o heces. También se transmite mediante superficies y objetos contaminados. Es muy contagiosa.
+      
+    
+
+    Por qué afecta más a los niños
+    
+      Los niños pequeños carecen de inmunidad previa frente a estos enterovirus. El virus se elimina en grandes cantidades en las heces durante semanas después de la recuperación, incluso cuando el niño parece encontrarse bien, lo que dificulta especialmente contenerlo en los centros infantiles. Los adultos inmunocompetentes que no estuvieron expuestos durante la infancia pueden contraer la enfermedad, aunque sus síntomas suelen ser más leves.
+    
+    
+      El periodo de incubación es de 3–7 días tras la exposición. La eliminación del virus por la orofaringe alcanza su máximo durante la primera semana de la enfermedad.
+    
+  
+
+  
+  
+    Sección 03
+    Signos y síntomas
+
+    
+      La EMPB suele seguir una evolución clínica predecible. Reconocer el patrón completo de síntomas permite diagnosticarla antes y aplicar cuidados adecuados en casa, además de ayudar a los profesionales a identificar cuándo es necesario intensificar la atención.
+    
+
+    
+      
+        
+          Fase
+          Síntoma o signo
+          Observaciones clínicas
+        
+      
+      
+        
+          PródromoDías 1–2
+          Fiebre leve (38–39 °C), irritabilidad, malestar, disminución del apetito y dolor de garganta
+          En esta fase suele confundirse con un resfriado común o una infección vírica inespecífica de las vías respiratorias altas
+        
+        
+          Lesiones bucalesDías 1–3
+          Úlceras dolorosas en la lengua, la mucosa bucal y el paladar blando; vesículas que se erosionan rápidamente
+          Pueden causar babeo importante y rechazo de alimentos o líquidos, una pista diagnóstica clave
+        
+        
+          Erupción cutáneaDías 2–4
+          Erupción papulovesicular en palmas y plantas; puede afectar al dorso de manos y pies, las nalgas y la zona peribucal
+          La distribución clásica es patognomónica; las lesiones cutáneas no suelen picar ni doler
+        
+        
+          Síntomas asociadosDurante toda la enfermedad
+          Disminución del apetito, babeo, malestar y riesgo de deshidratación si el dolor bucal es intenso
+          La deshidratación es la complicación más frecuente que requiere valoración médica
+        
+        
+          ResoluciónDías 7–10
+          Resolución espontánea; puede producirse desprendimiento de las uñas (onicomadesis) entre 4 y 8 semanas después
+          Los cambios ungueales son benignos y se resuelven por sí solos; conviene tranquilizar a los padres
+        
+      
+    
+
+    Características de las lesiones bucales
+    
+      Las úlceras bucales de la EMPB comienzan como pequeños puntos rojos (enantema) que evolucionan rápidamente a vesículas y después a úlceras superficiales y dolorosas rodeadas por un halo rojo. Se distribuyen por la lengua, la mucosa bucal, el paladar blando y los pilares amigdalinos. El dolor bucal es el principal motivo del rechazo de la alimentación y del consiguiente riesgo de deshidratación en bebés.
+    
+
+    Características de la erupción cutánea
+    
+      La erupción cutánea consiste en vesículas grises ovaladas o alargadas de 3–7 mm sobre una base eritematosa, clásicamente en palmas y plantas y, a menudo, siguiendo las líneas de los dermatomas cutáneos. También son características las lesiones en las nalgas, sin vesiculación, y las máculas peribucales. A diferencia de la varicela, las lesiones no se extienden de forma centrípeta y, por lo general, no producen picor.
+    
+  
+
+  
+  
+    Sección 04
+    Diagnosis
+
+    
+      La EMPB se diagnostica principalmente mediante un diagnóstico clínico basado en la tríada característica de úlceras bucales, erupción vesicular acral y fiebre en un niño de la edad habitual, durante una estación compatible o con antecedentes de exposición. Por lo general, no se necesita confirmación de laboratorio en los casos sin complicaciones.
+    
+
+    Cuándo considerar pruebas de laboratorio
+    
+      La confirmación virológica —mediante exudado nasofaríngeo, exudado rectal, líquido vesicular o PCR de enterovirus en líquido cefalorraquídeo— está indicada en:
+    
+    
+      Presentaciones graves o atípicas
+      Sospecha de afectación neurológica (encefalitis, meningitis o mielitis flácida aguda)
+      Niños inmunodeprimidos
+      Investigación de salud pública de un brote
+      Neonatos con sospecha de sepsis por enterovirus
+    
+
+    Diagnóstico diferencial
+    
+      Los profesionales deben considerar la herpangina (lesiones exclusivamente bucales, limitadas a la orofaringe posterior), la gingivoestomatitis herpética primaria (afectación gingival más intensa), la varicela (distribución centrípeta y pruriginosa) y las aftas (recurrentes, sin enfermedad sistémica). En los bebés, debe descartarse la enfermedad de Kawasaki cuando la fiebre se prolonga.
+    
+  
+
+  
+  
+    Sección 05
+    Tratamiento y cuidados
+
+    
+      Actualmente no existe un tratamiento antiviral específico para la EMPB. El manejo es totalmente sintomático y se centra en aliviar los síntomas, mantener la hidratación y vigilar posibles complicaciones.
+    
+
+    
+      
+        💧
+        Hidratación oral
+        Es la intervención más importante. Ofrezca con frecuencia líquidos frescos y no ácidos. Los polos de hielo y el agua fría pueden aliviar el dolor. Evite los cítricos y las bebidas con gas.
+      
+      
+        🌡️
+        Antitérmicos
+        Paracetamol (acetaminofén) o ibuprofeno en dosis adecuadas para la edad para controlar la fiebre y el malestar general. Siga las pautas nacionales de dosificación.
+      
+      
+        🩹
+        Analgésicos
+        Los geles anestésicos bucales de uso tópico —enjuagues con lidocaína en niños mayores— pueden reducir el dolor bucal y facilitar la alimentación. Consúltelo con el farmacéutico o el médico de cabecera.
+      
+      
+        🍦
+        Alimentos blandos y fríos
+        El yogur, el helado, los purés fríos o los batidos reducen el dolor bucal y ayudan a mantener el aporte calórico. Evite los alimentos duros, salados o picantes.
+      
+      
+        🛏️
+        Reposo y aislamiento
+        Mantenga al niño en casa hasta que haya desaparecido la fiebre y todas las lesiones tengan costra o se hayan curado, normalmente entre 5 y 7 días. Así se limita la propagación en los centros infantiles.
+      
+      
+        🏥
+        Valoración hospitalaria
+        Es necesaria ante sospecha de deshidratación, fiebre alta persistente, síntomas neurológicos o ingesta oral insuficiente en bebés menores de 12 meses. Pueden ser necesarios líquidos por vía intravenosa.
+      
+    
+
+    Una nota sobre los antibióticos
+    
+      Los antibióticos no son eficaces contra las infecciones víricas y no deben recetarse para una EMPB sin complicaciones. La sobreinfección bacteriana secundaria de las lesiones cutáneas es infrecuente, pero debe valorarse si estas se vuelven calientes, hinchadas, dolorosas o purulentas.
+    
+  
+
+  
+  
+    Sección 06
+    Señales de alarma: cuándo buscar atención urgente
+
+    
+      Aunque la EMPB es autolimitada en la inmensa mayoría de los casos, una minoría de niños —en particular los menores de dos años o los infectados por EV-A71— puede desarrollar complicaciones graves. Los padres y cuidadores deben conocer las señales de alarma que requieren una valoración urgente inmediata.
+    
+
+    
+      🚨 Acuda inmediatamente a A&E/Urgencias si:
+      
+        Signos de deshidratación: boca seca, ausencia de lágrimas al llorar, fontanela hundida en bebés, más de 8 horas sin orinar o piel moteada o grisácea
+        Fiebre alta persistente: temperatura superior a 39,5 °C que no responde a los antitérmicos o fiebre que dura más de 5 días
+        Síntomas neurológicos: convulsiones, rigidez de nuca, vómitos persistentes, alteración de la consciencia, ataxia, sacudidas mioclónicas o fotofobia
+        Síntomas cardiorrespiratorios: respiración rápida, dolor torácico, frecuencia cardiaca elevada, palidez o extremidades frías
+        Dolor intenso o rechazo total de líquidos: especialmente en bebés menores de 12 meses que no pueden mantener una hidratación adecuada
+        Empeoramiento progresivo después del tercer día de enfermedad, en lugar de una mejoría gradual
+      
+    
+
+    
+      En Europa, las complicaciones neurológicas de la EMPB, aunque infrecuentes, requieren ingreso hospitalario, vigilancia estrecha y, en algunos casos, tratamiento en una unidad de cuidados intensivos pediátricos. Reconocerlas pronto salva vidas.
+    
+  
+
+  
+  
+    Sección 07
+    Prevención y profilaxis
+
+    
+      Dado que actualmente no existe ninguna vacuna autorizada contra la EMPB en Europa ni en Estados Unidos, la prevención depende por completo de intervenciones no farmacológicas. Son muy eficaces cuando se aplican de forma constante, especialmente en centros infantiles.
+    
+
+    
+      
+        
+        
+          Higiene rigurosa de las manos
+          Lávese las manos con agua y jabón durante al menos 20 segundos, sobre todo después de cambiar pañales, antes de comer, después de ir al baño y tras el contacto con un niño infectado. El gel hidroalcohólico es menos eficaz contra los enterovirus; es preferible usar agua y jabón.
+        
+      
+      
+        
+        
+          Desinfectar superficies y objetos
+          Limpie y desinfecte periódicamente las superficies que se tocan con frecuencia —juguetes, pomos de puertas y cambiadores— con una solución de lejía diluida (1 cucharada de lejía por 4 tazas de agua) o un desinfectante registrado por la EPA que sea activo contra los enterovirus.
+        
+      
+      
+        
+        
+          Evitar el contacto estrecho con personas infectadas
+          Evite abrazar, besar o compartir utensilios o vasos con un niño infectado. Durante la primera semana de la enfermedad se eliminan grandes cantidades de enterovirus en la saliva, las secreciones nasales y las heces.
+        
+      
+      
+        
+        
+          Mantener en casa a los niños enfermos
+          Los niños deben permanecer en casa y no acudir a la guardería, el centro infantil o la escuela hasta que la fiebre haya desaparecido por completo y todas las ampollas estén secas y con costra. Suele ocurrir entre 5 y 7 días después del inicio de la enfermedad. Informe cuanto antes al centro infantil.
+        
+      
+      
+        
+        
+          Higiene respiratoria («cúbrete, tíralo, lávate las manos»)
+          Cúbrase la boca y la nariz con un pañuelo al toser o estornudar. Deseche el pañuelo de inmediato y lávese las manos. Así se limita la transmisión por gotículas en espacios compartidos.
+        
+      
+      
+        
+        
+          Higiene de la ropa y los pañales
+          Lave la ropa y la ropa de cama sucias en un ciclo caliente (≥60 °C). Utilice guantes desechables al manipular pañales de un bebé infectado y lávese bien las manos después. El virus sobrevive varios días en las superficies.
+        
+      
+      
+        
+        
+          Reforzar la inmunidad natural
+          Aunque en Europa no existe una vacuna específica contra la EMPB, mantener al día todas las vacunas recomendadas en el calendario nacional favorece la capacidad general de respuesta inmunitaria. Dormir lo suficiente, una buena alimentación y la lactancia materna durante la infancia también contribuyen a una respuesta inmunitaria sólida.
+        
+      
+      
+        
+        
+          Protocolos de los centros infantiles
+          Las guarderías deben aplicar políticas escritas de control de infecciones para la EMPB: aislamiento rápido de los niños con síntomas, refuerzo de la limpieza ambiental y comunicación escrita a los padres durante los brotes. El personal debe usar siempre guantes para cambiar pañales.
+        
+      
+    
+
+    Situación de las vacunas en 2026
+    
+      Una vacuna inactivada contra EV-A71 (vacuna EV71, con nombres comerciales como Inlive de Sinovac y variantes de fabricación china) está autorizada y se utiliza en China desde 2016, con eficacia demostrada contra la EMPB asociada a EV-A71 y sus complicaciones. A fecha de 2026, ninguna vacuna contra EV-A71 o Coxsackievirus A16 ha recibido la autorización de la Agencia Europea de Medicamentos (EMA). Continúan los ensayos clínicos internacionales. Los padres y profesionales sanitarios en Europa deben consultar las recomendaciones de la Agencia Europea de Medicamentos (EMA) y del Centro Europeo para la Prevención y el Control de las Enfermedades (ECDC) para conocer las novedades.
+    
+  
+
+  
+  
+    Sección 08
+    Epidemiology
+
+    
+      La EMPB es endémica en todo el mundo, y la mayor incidencia se registra en la región de Asia-Pacífico (China, Vietnam, Malasia, Japón y Corea del Sur). En Europa aparece de forma esporádica y en pequeños brotes, principalmente en centros infantiles y escuelas. En las zonas templadas, la transmisión estacional alcanza su máximo a finales de primavera, en verano y a principios de otoño.
+    
+    
+      En Irlanda, Portugal, España y Rumanía, la EMPB es de declaración obligatoria o está sometida a vigilancia reforzada; los organismos nacionales de salud pública publican informes anuales sobre los patrones de los brotes en centros infantiles. El perfil de la EMPB del ECDC ofrece datos epidemiológicos europeos actualizados.
+    
+    
+      Los niños de entre 6 meses y 5 años soportan la mayor carga de enfermedad. La infección neonatal por enterovirus, aunque infrecuente, puede causar enfermedad sistémica grave, como un cuadro similar a la sepsis, miocarditis y meningoencefalitis, y requiere valoración inmediata por un especialista.
+    
+  
+
+  
+  
+    Sección 09
+    Preguntas frecuentes
+
+    ¿Los adultos pueden contraer la enfermedad mano-pie-boca?
+    Sí. Los adultos que no han estado infectados previamente pueden contraer la EMPB, aunque los síntomas suelen ser más leves o subclínicos. Las embarazadas que sospechen haber estado expuestas deben contactar con su matrona u obstetra, ya que, en casos infrecuentes, la infección por enterovirus al final del embarazo se ha asociado a enfermedad neonatal.
+
+    ¿Es la EMPB lo mismo que la fiebre aftosa de los animales?
+    No. La EMPB humana y la fiebre aftosa animal están causadas por virus completamente distintos. Ninguna de las dos enfermedades se transmite entre seres humanos y animales.
+
+    Mi hijo tiene EMPB: ¿puede volver a la escuela?
+    La mayoría de las guías europeas de pediatría y salud pública recomiendan mantener a los niños en casa hasta que ya no tengan fiebre y todas las ampollas se hayan curado por completo, por lo general entre 5 y 7 días. Siga siempre la política específica de exclusión de la escuela o guardería de su hijo.
+
+    ¿Puede reaparecer la EMPB?
+    Sí. La inmunidad después de la EMPB es específica de cada serotipo. Un niño puede volver a desarrollar la enfermedad si se infecta con una cepa diferente; por ejemplo, haber tenido Coxsackievirus A16 no protege frente a EV-A71 o CA6.
+
+    ¿Debo aplicar alguna crema a las ampollas de la piel?
+    Las ampollas cutáneas de la EMPB se curan por sí solas y, por lo general, no necesitan tratamiento tópico. No las reviente. Si se infectan —con aumento del enrojecimiento, calor o pus—, consulte con un profesional sanitario.
+
+    ¿Qué debe comer mi hijo si tiene úlceras bucales?
+    Priorice alimentos frescos, blandos y no ácidos: yogur, helado, batidos, pasta fría y puré de patata. Los líquidos fríos —agua fresca o zumo diluido y refrigerado— pueden aliviar el dolor y ayudar a mantener la hidratación. Evite las patatas fritas saladas, los zumos cítricos y las bebidas con gas, que agravan las úlceras.
+  
+
+  
+  
+    Sección 10
+    Recursos pediátricos fiables
+    
+      Las siguientes instituciones de referencia ofrecen información sobre la EMPB revisada clínicamente para padres y profesionales sanitarios. Global Health recomienda estas fuentes para consultar las directrices nacionales más recientes.
+    
+
+    🇮🇪 Irlanda
+    
+      
+        🏥
+        Irlanda · Nacional
+        Health Service Executive (HSE)
+        Guía integral sobre la EMPB para pacientes de la autoridad sanitaria nacional de Irlanda, con información sobre síntomas, tratamiento y criterios de exclusión.
+      
+      
+        👶
+        Irlanda · Dublín
+        Children's Health Ireland (CHI)
+        El grupo hospitalario pediátrico nacional de Irlanda —CHI en Crumlin, Temple Street, Tallaght y Connolly— ofrece atención especializada en enfermedades infecciosas pediátricas.
+      
+      
+        🔬
+        Irlanda · Nacional
+        Health Protection Surveillance Centre (HPSC)
+        El HPSC vigila las enfermedades transmisibles en Irlanda, incluidas las infecciones por enterovirus y los brotes de EMPB en centros infantiles.
+      
+    
+
+    🇵🇹 Portugal
+    
+      
+        🏥
+        Portugal · Nacional
+        Direção-Geral da Saúde (DGS)
+        La Dirección General de Salud de Portugal publica guías clínicas nacionales y comunicaciones de salud pública sobre la EMPB y las enfermedades infecciosas infantiles.
+      
+      
+        👨‍⚕️
+        Portugal · Profesional
+        Sociedade Portuguesa de Pediatria (SPP)
+        La Sociedad Portuguesa de Pediatría publica documentos de consenso clínico, hojas informativas para padres y formación médica continuada sobre enfermedades infecciosas pediátricas.
+      
+      
+        🏨
+        Portugal · Lisboa
+        Hospital Dona Estefânia / HDE
+        El principal hospital pediátrico especializado de Portugal, integrado en el Centro Hospitalar Universitário de Lisboa Central, cuenta con un servicio especializado en enfermedades infecciosas pediátricas.
+      
+    
+
+    🇪🇸 España
+    
+      
+        👶
+        España · Nacional
+        Asociación Española de Pediatría (AEP)
+        La asociación profesional nacional de pediatría de España, editora de Anales de Pediatría , ofrece guías para familias y protocolos clínicos basados en la evidencia sobre la EMPB y otras enfermedades víricas frecuentes.
+      
+      
+        🔬
+        España · Profesional
+        Sociedad Española de Infectología Pediátrica (SEIP)
+        La Sociedad Española de Infectología Pediátrica ofrece recomendaciones clínicas especializadas, protocolos para la gestión de brotes y recursos educativos para profesionales y familias.
+      
+      
+        🏥
+        España · Nacional
+        Red Nacional de Vigilancia Epidemiológica (RENAVE)
+        La red nacional española de vigilancia epidemiológica supervisa los brotes de enfermedades transmisibles, incluida la EMPB, en centros infantiles y escuelas de todas las comunidades autónomas.
+      
+    
+
+    🇷🇴 Rumanía
+    
+      
+        🔬
+        Rumanía · Nacional
+        Institutul Național de Sănătate Publică (INSP)
+        El Instituto Nacional de Salud Pública de Rumanía proporciona datos de vigilancia epidemiológica, informes de brotes y orientaciones clínicas sobre la EMPB y otras enfermedades infecciosas infantiles.
+      
+      
+        🏥
+        Rumanía · Nacional
+        Ministerul Sănătății (MS)
+        El Ministerio de Sanidad de Rumanía publica alertas nacionales de salud pública, políticas de exclusión para centros infantiles y orientaciones sobre el calendario vacunal relacionadas con las enfermedades infecciosas pediátricas.
+      
+      
+        👨‍⚕️
+        Rumanía · Bucarest
+        Spitalul Clinic de Copii "Grigore Alexandrescu"
+        Uno de los principales hospitales pediátricos de Rumanía, con servicios especializados en enfermedades infecciosas y cuidados intensivos con experiencia en el tratamiento de enfermedades víricas infantiles, incluida la EMPB.
+      
+    
+
+    🌍 Autoridades internacionales y europeas
+    
+      
+        🇪🇺
+        UE / Europa
+        ECDC — Perfil de la EMPB
+        El Centro Europeo para la Prevención y el Control de las Enfermedades mantiene un perfil autorizado de la EMPB que incluye epidemiología, datos de brotes y recomendaciones de prevención.
+      
+      
+        🌐
+        Mundial
+        OMS — Ficha informativa sobre la EMPB
+        La ficha oficial de la Organización Mundial de la Salud sobre la EMPB abarca epidemiología mundial, agentes causales, características clínicas, prevención y respuesta de salud pública.
+      
+      
+        🔭
+        EE. UU. (referencia)
+        CDC de EE. UU. — Enfermedad mano-pie-boca
+        Los Centros para el Control y la Prevención de Enfermedades de Estados Unidos ofrecen información clínica y de salud pública detallada que profesionales de pediatría de todo el mundo utilizan ampliamente como referencia.
+      
+    
+  
+
+
+
+
+Revisado clínicamente por Dr Tiago Miguel Figueira. Última revisión 15 de junio de 2026. Este artículo es únicamente informativo y no sustituye el asesoramiento médico.Cómo redactamos y revisamos el contenido médico¿Merece la pena compartirlo?Comparte este artículoFacebookWhatsAppXLinkedInInstagramCopiar enlaceSigu

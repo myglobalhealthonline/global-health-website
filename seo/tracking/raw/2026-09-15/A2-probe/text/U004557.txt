@@ -1,0 +1,360 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cgcom.es","https://www.aepd.es"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetul, o boală tăcută","description":"Peste 5,1 milioane de spanioli trăiesc cu diabet. Ghid despre cauze, simptome, tratamente actuale, controale regulate și progrese viitoare.","url":"https://www.myglobalhealth.online/spain/ro/blog/diabetul-o-boala-tacuta-2","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/spain/ro/blog/diabetul-o-boala-tacuta-2#webpage","url":"https://www.myglobalhealth.online/spain/ro/blog/diabetul-o-boala-tacuta-2","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/ro/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-19"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetul%2C+o+boal%C4%83+t%C4%83cut%C4%83&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F738adbed-41df-4311-980a-e47c06e94281-33851.webp&v=2026-07-20.1-15jgxxy","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologia"},"datePublished":"2026-07-19T06:24:40.235Z","dateModified":"2026-07-19T06:59:15.525Z","publishingPrinciples":"https://www.myglobalhealth.online/spain/ro/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/spain/ro/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Acasă","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/spain/ro/blog"},{"@type":"ListItem","position":3,"name":"Diabetul, o boală tăcută","item":"https://www.myglobalhealth.online/spain/ro/blog/diabetul-o-boala-tacuta-2"}]}]Toate articoleleEndocrinologiaDiabetul, o boală tăcutăDiabetul zaharat este una dintre cele mai răspândite boli cronice din Spania și, totodată, una dintre cele mai subestimate. Vestea bună este că, printr-un diagnostic corect și monitorizare regulată, persoanele cu diabet pot avea o viață împlinită și sănătoasă datorită celor mai recente progrese terapeutice.Global Health Medical Team19 iulie 202622 min citire+Pe această paginăDiabetul în Spania: înțelegerea dimensiunii problemeiTipuri de DiabetCauze și factori de riscSimptome și semne de alarmăTratamente actuale pentru diabet în SpaniaImportanța controalelor regulateViitorul tratamentului diabetuluiInstituții și resurse de referință în SpaniaÎntrebări frecvente
+
+
+
+  
+  
+    
+      
+      
+      
+      Cauze, Simptome, Tratamente și Viitorul Îngrijirii
+      Se estimează că peste 5,1 milioane de spanioli trăiesc cu diabet — iar mii de alte cazuri rămân nediagnosticate. Acest ghid acoperă tot ce trebuie să știți: cauze, semne de alarmă, cele mai bune tratamente disponibile astăzi, importanța controalelor regulate și terapiile emergente care ar putea transforma îngrijirea diabetului în anii următori.
+      
+        — Bazat pe dovezi
+        — Aliniat cu SED și Ministerul Sănătății
+        — Actualizat în iunie 2026
+      
+      — Scris de Dr. Tiago Miguel Figueira · Ordem dos Médicos nr. 77986 · Director Clinic, Global Health
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      TF
+      
+        Scris de Dr. Tiago Miguel Figueira
+        Director Clinic · Ordem dos Médicos nr. 77986 · Medicină Generală și de Familie
+      
+      10 MIN CITIRE
+    
+
+    Diabetul zaharat este una dintre cele mai răspândite boli cronice din Spania și, în același timp, una dintre cele mai subestimate. Diabetul de tip 2, care reprezintă peste 90% dintre cazuri, se poate dezvolta lent, de-a lungul anilor, fără simptome perceptibile. În momentul stabilirii diagnosticului, boala este adesea prezentă de destul de mult timp.
+
+    Vestea bună este că diabetul poate fi gestionat foarte bine. Cu diagnosticul corect, tratamentul adecvat și monitorizare regulată, persoanele cu diabet pot avea o viață plină și sănătoasă. Iar odată cu progresele terapeutice remarcabile din ultimul deceniu — în special apariția agoniștilor de receptor GLP-1 și a inhibitorilor SGLT2 — opțiunile clinice disponibile astăzi în Spania sunt cele mai bune de până acum.
+
+    
+    
+    Secțiunea 01
+    Diabetul în Spania: înțelegerea dimensiunii problemei
+
+    În anul 2024, în Spania au fost înregistrate aproximativ 5.121.600 de cazuri de diabet de tip 1 și de tip 2 la adulți cu vârste între 20 și 79 de ani, ceea ce situează Spania printre țările europene cu cea mai mare prevalență a bolii. Potrivit raportului Dincolo de insulină: Harta diabetului de tip 1 în Spania publicat de Fundación DiabetesCERO în decembrie 2024, diabetul de tip 1 afectează 166.564 de persoane, reprezentând 0,36% din populația Spaniei, și este mai frecvent la bărbați (89.245) decât la femei (77.317). Studiul publicat în Atención Primaria (2025) de Cebrián Cuenca și Escalada constată că prevalența diabetului în Spania este mai mare la persoanele în vârstă, în special la cele de 65 de ani sau peste, și arată că estimările pentru 2035 nu sunt optimiste, cu o tendință ascendentă atât la adulți, cât și la copii.
+
+    
+      
+        5,1 mil.
+        Cazuri de diabet de tip 1 și 2 la adulți în Spania în 2024
+      
+      
+        >90%
+        Dintre cazuri sunt diabet de tip 2
+      
+      
+        166 mii
+        Persoane cu diabet de tip 1 în Spania (Ministerul Sănătății, 2024)
+      
+      
+        6.000
+        Cazuri noi de diabet de tip 1 diagnosticate anual în Spania
+      
+    
+    Sursă: Fundación DiabetesCERO — Dincolo de insulină, decembrie 2024; Ministerul Sănătății, BDCAP; Atención Primaria 2025;57:102992 (Cebrián Cuenca & Escalada).
+
+    Ministerul Sănătății coordonează supravegherea epidemiologică a diabetului prin Baza de Date Clinice de Asistență Primară (BDCAP), care permite monitorizarea prevalenței, tratamentului și complicațiilor pe întreg teritoriul național. Organizația Sociedad Española de Diabetes (SED) emite ghidurile clinice de referință pentru gestionarea bolii și, în 2025, a publicat documente de consens multidisciplinar privind recomandările alimentare și gestionarea bolii cronice de rinichi asociate diabetului, în colaborare cu SEEN și Sociedad Española de Nefrología.
+
+    
+      Sunteți expus riscului fără să știți?
+      O parte semnificativă dintre persoanele cu diabet de tip 2 din Spania rămâne nediagnosticată. Dacă aveți factori de risc — antecedente familiale de diabet, exces ponderal, hipertensiune arterială sau sedentarism — întrebați medicul despre efectuarea glicemiei à jeun sau a testului HbA1c. Diagnosticul precoce este decisiv pentru evitarea complicațiilor grave.
+    
+
+    
+    
+    Secțiunea 02
+    Tipuri de Diabet
+
+    Nu orice diabet este la fel. Înțelegerea tipului pe care îl aveți — sau pentru care sunteți în risc — este primul pas către un management eficient.
+
+    
+      
+        🔵
+        Diabet de tip 1 (DZ1)
+        Autoimun · Insulinodependent
+        Sistemul imunitar distruge celulele beta producătoare de insulină din pancreas. Organismul produce puțină insulină sau deloc. Necesită insulinoterapie pe tot parcursul vieții. Apare de obicei în copilărie sau la vârsta adultă tânără. Incidența DZ1 în Spania a ajuns la 12,50 cazuri la 100.000 de persoane; la copiii sub 14 ani, aceasta urcă la 18,80 la 100.000 de locuitori, potrivit T1D Index 2024.
+      
+      
+        🟠
+        Diabet de tip 2 (DZ2)
+        Stil de viață & genetică · Progresiv
+        Organismul devine rezistent la insulină sau nu produce suficientă. Este strâns asociat cu stilul de viață. Este cea mai frecventă formă — peste 90% dintre cazurile din Spania. Inițial poate fi controlat prin alimentație, mișcare și medicație orală, deși, în timp, mulți pacienți ajung să aibă nevoie de insulină.
+      
+      
+        🟡
+        Diabet Gestațional
+        Legat de sarcină · De obicei tranzitoriu
+        Se dezvoltă în timpul sarcinii, când modificările hormonale îngreunează acțiunea insulinei. De obicei dispare după naștere, dar crește semnificativ riscul pe parcursul vieții de DZ2 atât pentru mamă, cât și pentru copil. Screeningul se efectuează de rutină în SNS între săptămânile 24 și 28 de sarcină.
+      
+      
+        ⚪
+        Prediabet
+        Prevenibil · Adesea reversibil
+        Glicemia este peste valoarea normală, fără a atinge însă pragurile de diagnostic pentru diabet. Este o perioadă critică pentru intervenție — schimbările stilului de viață în această etapă pot preveni sau întârzia semnificativ apariția DZ2. Multe persoane din Spania se află în această situație fără să știe.
+      
+    
+
+    
+    
+    Secțiunea 03
+    Cauze și factori de risc
+
+    Diabetul de tip 1
+    Cauza exactă a DZ1 nu este pe deplin elucidată. Este o boală autoimună — sistemul imunitar atacă și distruge în mod eronat celulele beta ale pancreasului, responsabile de producerea insulinei. Factorii genetici joacă un rol, la fel cum probabil joacă și expunerea la anumite infecții virale în timpul dezvoltării. Cercetarea în acest domeniu se desfășoară în Spania prin grupuri afiliate la Instituto de Salud Carlos III (ISCIII), la Sociedad Española de Diabetes (SED) și centre de referință precum Hospital Infantil Universitario Niño Jesús din Madrid și Hospital Sant Joan de Déu din Barcelona.
+
+    Diabetul de tip 2
+    Diabetul de tip 2 are un set de cauze mai complex și modificabil, combinând predispoziția genetică cu factori de stil de viață și de mediu. Mecanismul central este rezistența la insulină — celulele organismului nu mai răspund eficient la insulină — asociată cu un declin progresiv al capacității pancreasului de a compensa printr-o producție mai mare.
+
+    
+      
+        ⚖️
+        Excesul de greutate corporală
+        În special grăsimea abdominală (viscerală). Obezitatea este cel mai important factor de risc modificabil pentru DZ2 în Spania.
+      
+      
+        🛋️
+        Sedentarismul
+        Comportamentul sedentar reduce sensibilitatea la insulină. Activitatea fizică regulată este unul dintre cele mai eficiente instrumente de prevenție și tratament.
+      
+      
+        🍞
+        Alimentație bogată în produse ultraprocesate
+        Consumul ridicat de carbohidrați rafinați, zahăr și alimente ultraprocesate este puternic asociat cu rezistența la insulină.
+      
+      
+        👨‍👩‍👧
+        Antecedente familiale
+        Un rudă de gradul întâi cu diabet de tip 2 crește semnificativ riscul personal de a dezvolta boala.
+      
+      
+        🎂
+        Vârsta peste 45 de ani
+        Riscul crește odată cu vârsta. Datele Ministerului Sănătății arată o prevalență semnificativ mai mare la persoanele de 65 de ani sau peste.
+      
+      
+        🩺
+        Hipertensiune arterială sau dislipidemie
+        Factorii de risc metabolic tind să apară împreună. Hipertensiunea și tulburările lipidice coexistă frecvent cu rezistența la insulină.
+      
+      
+        🤰
+        Diabet gestațional în antecedente
+        Femeile care au dezvoltat diabet gestațional au un risc considerabil mai mare, pe tot parcursul vieții, de a dezvolta diabet de tip 2.
+      
+      
+        🚬
+        Fumatul
+        Fumatul crește riscul de DZ2 și agravează prognosticul cardiovascular al persoanelor cu diabet. SED recomandă renunțarea la fumat ca parte integrantă a gestionării bolii.
+      
+    
+
+    
+    
+    Secțiunea 04
+    Simptome și semne de alarmă
+
+    Simptomele diferă considerabil între DZ1 și DZ2. DZ1 se manifestă adesea acut — cu apariția rapidă a unor simptome care pot indica cetoacidoză diabetică (CAD), o urgență medicală gravă. DZ2, în schimb, evoluează de obicei lent și silențios de-a lungul anilor, cu simptome atât de ușoare sau treptate încât multe persoane le atribuie înaintării în vârstă, stresului ori oboselii.
+
+    
+      
+        💧
+        
+          Sete excesivă
+          Sete persistentă și greu de potolit — polidipsie — în timp ce rinichii lucrează intens pentru a filtra excesul de glucoză.
+        
+      
+      
+        🚽
+        
+          Urinare frecventă
+          Poliurie, în special noaptea (nicturie). Este adesea simptomul inițial cel mai evident care îl determină pe pacient să consulte medicul.
+        
+      
+      
+        😴
+        
+          Oboseală persistentă
+          Epuizare constantă chiar și după odihnă adecvată, cauzată de lipsa glucozei ca sursă de energie pentru celule.
+        
+      
+      
+        ⚖️
+        
+          Pierdere inexplicabilă în greutate
+          Mai ales în cazul tipului 1 — organismul descompune grăsimile și mușchii pentru energie în absența insulinei.
+        
+      
+      
+        👁️
+        
+          Vedere încețoșată
+          Glicemia ridicată provoacă modificări la nivelul cristalinului ochiului, afectând temporar focalizarea vizuală.
+        
+      
+      
+        🩹
+        
+          Vindecare lentă a rănilor
+          Circulația compromisă și funcția imunitară afectată încetinesc vindecarea tăieturilor, rănilor și infecțiilor.
+        
+      
+      
+        🤚
+        
+          Furnicături sau amorțeală
+          Neuropatia periferică — la nivelul mâinilor și picioarelor — poate fi un semn timpuriu, în special în tipul 2.
+        
+      
+      
+        🍽️
+        
+          Foame constantă
+          Polifagie — foame persistentă chiar și după masă — apare atunci când celulele nu pot absorbi eficient glucoza.
+        
+      
+    
+
+    
+      Când trebuie să solicitați asistență de urgență:
+      Dacă dumneavoastră sau un membru al familiei prezentați apariția bruscă a setei intense, urinare excesivă, vărsături, dureri abdominale, confuzie sau respirație cu miros de acetonă — în special la un copil sau adult tânăr — poate fi vorba despre cetoacidoză diabetică (CAD), o urgență medicală gravă. Sunați imediat la 061 sau la 112, ori mergeți la cel mai apropiat serviciu de urgență al unui spital.
+    
+
+    
+    
+    Secțiunea 05
+    Tratamente actuale pentru diabet în Spania
+
+    Tratamentul diabetului a cunoscut o adevărată revoluție în ultimul deceniu. În Spania, Sociedad Española de Diabetes (SED) stabilește ghidurile clinice de referință, actualizate în 2025 prin documente de consens multidisciplinar elaborate împreună cu SEEN, Societatea Spaniolă de Nefrologie și SEMERGEN. Ghidul comun elaborat de Sociedad Española de Nefrología și SED oferă un cadru actualizat pentru prevenirea și gestionarea bolii cronice de rinichi asociate diabetului. Accesul la medicamente și condițiile de finanțare sunt reglementate de Ministerul Sănătății prin Agenția Spaniolă pentru Medicamente și Produse Sanitare (AEMPS).
+
+    Modificarea stilului de viață — baza oricărui tratament
+    Atât în DZ1, cât și în DZ2, stilul de viață este pilonul fundamental al tratamentului. În special în DZ2, schimbarea alimentației și creșterea activității fizice pot reduce semnificativ HbA1c, pot îmbunătăți sensibilitatea la insulină și, în unele cazuri — mai ales după chirurgie bariatrică sau diete cu foarte puține calorii — pot duce la o remisie susținută. Ghidul din 2025 subliniază că gestionarea integrală a DZ2 trebuie să depășească controlul glicemiei și să includă aspecte esențiale ale unui stil de viață sănătos, precum renunțarea la fumat, evitarea alcoolului, igiena somnului și îngrijirea sănătății mintale.
+
+    Tratamentul medicamentos
+    Mai jos sunt prezentate principalele clase de medicamente disponibile în Spania. Deciziile terapeutice sunt individualizate — ghidurile SED și ADA 2025 subliniază o abordare centrată pe pacient, care ia în considerare riscul cardiovascular, funcția renală, greutatea și preferințele personale.
+
+    
+      
+        Prima linie · DZ2
+        Metformină
+        Glucophage · Generice (finanțate de SNS)
+        Medicamentul oral consacrat ca primă linie pentru DZ2. Reduce glicemia prin diminuarea producției hepatice de glucoză. Este bine tolerat, accesibil și disponibil pe scară largă. Rămâne punctul de plecare standard în majoritatea schemelor terapeutice pentru DZ2 în Spania, deși ghidurile din 2025 prevăd inițierea terapiei combinate atunci când HbA1c este foarte ridicată.
+      
+      
+        Protecție cardiorenală
+        Agoniști ai receptorului GLP-1
+        Semaglutidă (Ozempic, Wegovy) · Liraglutidă (Victoza)
+        O clasă revoluționară de medicamente injectabile (iar acum și orale) care imită hormonul intestinal GLP-1. Reduc glicemia, favorizează o scădere semnificativă în greutate și reduc riscul cardiovascular. Agoniștii GLP-1 sunt recomandați din timp pacienților cu risc cardiovascular ridicat, iar inhibitorii SGLT2 sunt prioritizați la cei cu insuficiență cardiacă sau boală cronică de rinichi. Sunt disponibili în Spania pe bază de prescripție, cu finanțare variabilă în funcție de indicație.
+      
+      
+        Protecție cardiorenală
+        Inhibitori SGLT2
+        Empagliflozin (Jardiance) · Dapagliflozin (Forxiga)
+        Aceste comprimate reduc glicemia prin eliminarea excesului de zahăr în urină. Protejează independent inima și rinichii — sunt recomandate ca primă linie la pacienții cu insuficiență cardiacă sau boală cronică de rinichi, indiferent de valoarea HbA1c. Există dovezi solide din studiile EMPA-REG OUTCOME și CREDENCE. Sunt disponibile în Spania, cu finanțare din SNS pentru indicațiile aprobate de AEMPS.
+      
+      
+        Control glicemic
+        Inhibitori DPP-4 (gliptine)
+        Sitagliptină (Januvia) · Linagliptină (Trajenta)
+        Comprimate orale care stimulează secreția de insulină în funcție de nivelul glucozei. Nu influențează greutatea și prezintă risc redus de hipoglicemie. Sunt utilizați când agoniștii GLP-1 sau inhibitorii SGLT2 nu sunt tolerați ori adecvați. În Spania sunt finanțați de SNS în condițiile de prescriere stabilite.
+      
+      
+        DZ1 și DZ2 avansat
+        Insulinoterapia
+        Insuline bazale, bolus, premixate · Pompe de insulină
+        Esențială pentru toți pacienții cu DZ1 și pentru mulți dintre cei cu DZ2. Analogii moderni de insulină oferă profiluri de acțiune mai previzibile decât formulele mai vechi. Pompele de insulină (perfuzia subcutanată continuă de insulină) sunt disponibile pentru pacienții selectați și sunt finanțate de SNS în Spania potrivit criteriilor stabilite de comunitățile autonome.
+      
+      
+        DZ1 · Noul standard
+        Monitorizarea continuă a glucozei (MCG)
+        FreeStyle Libre · Dexcom · Medtronic
+        MCG elimină nevoia înțepăturilor în deget, oferă tendințe ale glucozei în timp real și alerte și îmbunătățește controlul glicemic. În Spania, finanțarea MCG de către SNS diferă în funcție de comunitatea autonomă și tipul de diabet. Folosirea unui senzor continuu de glucoză (CGM) este recomandată pentru ajustarea tratamentului pe baza tiparelor reale ale glicemiei. Sistemele în buclă închisă (pancreas artificial) sunt disponibile în centre specializate.
+      
+    
+
+    
+      Actualizarea ghidurilor ADA 2025 și SED:
+      Atât recomandările ADA 2025, cât și documentele de consens SED reafirmă că agoniștii GLP-1 și inhibitorii SGLT2 trebuie prioritizați la pacienții cu DZ2 care au boală cardiovasculară stabilită sau cu risc ridicat, insuficiență cardiacă ori boală cronică de rinichi — indiferent de valoarea HbA1c. Inițierea precoce a terapiei combinate cu metformină plus un agonist GLP-1 sau un inhibitor SGLT2 este indicată în prezența comorbidităților ori a unei HbA1c peste 8%. Dacă aveți DZ2 și oricare dintre aceste afecțiuni, consultați medicul sau endocrinologul.
+    
+
+    
+    
+    Secțiunea 06
+    Importanța controalelor regulate
+
+    Diabetul este o boală cronică ce evoluează în timp, iar complicațiile sale — dacă nu sunt depistate — pot fi grave și ireversibile. Retinopatia diabetică este una dintre principalele cauze de orbire la adulții de vârstă activă din Spania. Nefropatia diabetică este un factor determinant al bolii renale cronice în stadiu terminal. Neuropatia periferică provoacă probleme ale piciorului diabetic care, în cazurile cele mai grave, pot duce la amputare. Asturias, Aragón și La Rioja au cele mai ridicate rate ale amputării membrelor inferioare la persoanele cu diabet din Spania, iar Cantabria, Extremadura și Baleares au cele mai scăzute rate.
+
+    Decenii de cercetare arată că toate aceste complicații pot fi în mare măsură prevenite — sau întârziate semnificativ — printr-un control glicemic bun, gestionarea tensiunii arteriale și monitorizare periodică. Evaluarea anuală structurată a pacientului cu diabet este una dintre intervențiile cu cel mai bun raport cost-eficacitate din întreaga medicină.
+
+    Ce trebuie să includă evaluarea anuală a diabetului
+
+    
+      Măsurarea HbA1c (media glicemiei din ultimele 3 luni)
+      Măsurarea tensiunii arteriale și revizuirea tratamentului antihipertensiv
+      Funcția renală — rata estimată de filtrare glomerulară (eGFR) și raportul albumină/creatinină din urină
+      Colesterol și profil lipidic complet
+      Evaluarea greutății și a indicelui de masă corporală (IMC)
+      Examinarea picioarelor — pulsuri, sensibilitate și troficitatea pielii
+      Screeningul retinopatiei diabetice — examinarea fundului de ochi sau retinografie (disponibilă în SNS)
+      Revizuirea și ajustarea medicației, dacă este necesar
+      Evaluarea respectării planului de autoîngrijire a diabetului
+      Evaluarea statusului de fumător și sprijin pentru renunțare, dacă este cazul
+      Vaccinarea antigripală (recomandată ferm persoanelor cu diabet)
+    
+
+    Screening pentru persoanele încă nediagnosticate
+    Dacă aveți factori de risc pentru DZ2 și nu ați fost evaluat niciodată, medicul dumneavoastră de asistență primară poate solicita glicemia à jeun sau HbA1c — analize simple, disponibile în toate centrele de sănătate ale SNS. Acest lucru este deosebit de important dacă aveți peste 45 de ani, antecedente familiale de diabet, hipertensiune arterială sau ați avut exces ponderal în timpul sarcinii. Depistarea precoce a prediabetului oferă o oportunitate reală de a preveni sau întârzia debutul DZ2 prin schimbarea stilului de viață.
+
+    
+      Screeningul retinopatiei diabetice în Spania:
+      Organizația SED recomandă ca toți pacienții cu diabet să efectueze anual un screening pentru retinopatie diabetică prin examinarea fundului de ochi sau retinografie. Accesul la această investigație prin SNS diferă în funcție de comunitatea autonomă. În 2025, SED a publicat o actualizare a documentului său de consens privind prevenirea progresiei retinopatiei diabetice, care include rolul fenofibratului. Dacă aveți diabet și nu ați făcut recent acest control, consultați medicul curant.
+    
+
+    
+    
+    Secțiunea 07
+    Viitorul tratamentului diabetului
+
+    Ritmul inovației în medicina diabetului este fără precedent. Mai multe direcții de cercetare — unele deja aflate în studii clinice avansate — au potențialul de a transforma fundamental ce înseamnă să trăiești cu diabet în următorul deceniu.
+
+    
+      
+        Fază 1/2/3 · Depunere reglementară în 2026
+        Terapia cu Celule Stem (celule beta)
+        Zimislecel (fost VX-880) de la Vertex Pharmaceuticals constă în perfuzarea în vena portă hepatică a unor celule producătoare de insulină, complet diferențiate — derivate din celule stem — cu scopul de a restabili producția endogenă de insulină în DZ1. Până în iunie 2025, studiul pivot inclusese 50 de participanți, iar depunerea documentației de reglementare era planificată pentru 2026. O analiză din PMC (2025) descrie această terapie drept potențial „transformatoare”, deoarece acționează simultan asupra regenerării celulelor beta și a modulării imunitare.
+      
+      
+        Dezvoltare clinică
+        Pancreas artificial (sisteme în buclă închisă)
+        Sistemele automate de administrare a insulinei — care combină MCG cu pompe automate de insulină — reprezintă deja un progres major pentru pacienții cu DZ1. În Spania, acestea sunt disponibile în unități specializate de endocrinologie. Monitorizarea continuă sau intermitentă cu ajutorul unui senzor continuu de glucoză este folosită pentru ajustarea tratamentului pe baza tiparelor reale ale glicemiei. Generația următoare încorporează algoritmi de învățare automată pentru a anticipa fluctuațiile glucozei înainte ca acestea să se producă.
+      
+      
+        Terapii emergente
+        Agoniști Duali și Tripli de Receptori
+        Tirzepatida (Mounjaro) acționează asupra receptorilor GIP și GLP-1, obținând reduceri mai mari ale HbA1c (–2,4%) și ale greutății corporale (în medie –11 kg) decât agoniștii GLP-1 tradiționali și este disponibilă în Spania. Agoniștii tripli (GLP-1/GIP/glucagon) se află în studii clinice avansate și ar putea oferi beneficii metabolice și mai mari.
+      
+      
+        Imunoterapie
+        Modularea imunitară în DZ1
+        Teplizumab (anticorp monoclonal anti-CD3) a demonstrat, în studii clinice, întârzierea debutului clinic al diabetului de tip 1 cu aproximativ doi ani la persoanele cu risc crescut. Cercetarea privind inhibitorii de punct de control imunitar și inducerea toleranței continuă, cu scopul de a păstra funcția reziduală a celulelor beta la momentul diagnosticului.
+      
+      
+        Medicină de precizie
+        Genomică și Tratament Ghidat de IA
+        Caracterizarea genomică începe să identifice subtipuri de diabet care răspund diferit la anumite medicamente. Sistemele MCG bazate pe inteligență artificială, care învață tiparele metabolice individuale și formulează recomandări personalizate, sunt în curs de dezvoltare și au potențialul de a transforma gestionarea zilnică a diabetului.
+      
+      
+        Medicină regenerativă
+        Încapsularea Celulelor Beta
+        O strategie paralelă terapiei cu celule stem constă în încapsularea celulelor producătoare de insulină în dispozitive din biomateriale protectoare, care le apără de distrugerea imunitară — eliminând potențial necesitatea imunosupresiei. Diabetes Research Institute al University of Miami a demonstrat fezabilitatea conceptului în studii clinice, primul pacient ajungând să nu mai depin

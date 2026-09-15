@@ -1,0 +1,120 @@
+{
+  "agent": "A3c-2",
+  "dataset": "C",
+  "window": "W0",
+  "window_start": "2026-07-18",
+  "window_end": "2026-08-14",
+  "extraction_utc": "2026-09-15T05:32:00Z",
+  "note_prelaunch": "Site launched 2026-07-21; W0 (2026-07-18..2026-08-14) contains 3 pre-launch days (07-18,07-19,07-20). Not trimmed, per instructions.",
+  "calls": [
+    {
+      "call": "1-query-page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 0, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 1000, "timestamp_utc": "2026-09-15T05:28:48Z",
+      "output_file": "C_W0_querypage_r0.jsonl"
+    },
+    {
+      "call": "1-query-page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 1000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 2000, "timestamp_utc": "2026-09-15T05:29:38Z",
+      "output_file": "C_W0_querypage_r1000.jsonl"
+    },
+    {
+      "call": "1-query-page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 2000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 3000, "timestamp_utc": "2026-09-15T05:30:02Z",
+      "output_file": "C_W0_querypage_r2000.jsonl"
+    },
+    {
+      "call": "1-query-page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 3000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 4000, "timestamp_utc": "2026-09-15T05:30:30Z",
+      "output_file": "C_W0_querypage_r3000.jsonl"
+    },
+    {
+      "call": "1-query-page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 4000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 5000, "timestamp_utc": "2026-09-15T05:31:03Z",
+      "output_file": "C_W0_querypage_r4000.jsonl"
+    },
+    {
+      "call": "1-query-page",
+      "params": {"dimensions": ["query", "page"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 5000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 318, "hasMore": false, "nextStartRow": null, "timestamp_utc": "2026-09-15T05:31:34Z",
+      "output_file": "C_W0_querypage_r5000.jsonl"
+    },
+    {
+      "call": "2-query-country",
+      "params": {"dimensions": ["query", "country"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 0, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 1000, "timestamp_utc": "2026-09-15T05:28:50Z",
+      "output_file": "C_W0_querycountry_r0.jsonl"
+    },
+    {
+      "call": "2-query-country",
+      "params": {"dimensions": ["query", "country"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 1000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 2000, "timestamp_utc": "2026-09-15T05:29:40Z",
+      "output_file": "C_W0_querycountry_r1000.jsonl"
+    },
+    {
+      "call": "2-query-country",
+      "params": {"dimensions": ["query", "country"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 2000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 3000, "timestamp_utc": "2026-09-15T05:30:04Z",
+      "output_file": "C_W0_querycountry_r2000.jsonl"
+    },
+    {
+      "call": "2-query-country",
+      "params": {"dimensions": ["query", "country"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 3000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 4000, "timestamp_utc": "2026-09-15T05:30:34Z",
+      "output_file": "C_W0_querycountry_r3000.jsonl"
+    },
+    {
+      "call": "2-query-country",
+      "params": {"dimensions": ["query", "country"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 4000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 5000, "timestamp_utc": "2026-09-15T05:31:06Z",
+      "output_file": "C_W0_querycountry_r4000.jsonl",
+      "note": "Hit dataset cap of 5,000 rows for query x country per instructions; hasMore was still true (Google reported more rows available). Truncated at 5,000 rows."
+    },
+    {
+      "call": "3-query-device",
+      "params": {"dimensions": ["query", "device"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 0, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 1000, "timestamp_utc": "2026-09-15T05:28:53Z",
+      "output_file": "C_W0_querydevice_r0.jsonl"
+    },
+    {
+      "call": "3-query-device",
+      "params": {"dimensions": ["query", "device"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 1000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 2000, "timestamp_utc": "2026-09-15T05:29:43Z",
+      "output_file": "C_W0_querydevice_r1000.jsonl"
+    },
+    {
+      "call": "3-query-device",
+      "params": {"dimensions": ["query", "device"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 2000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 3000, "timestamp_utc": "2026-09-15T05:30:06Z",
+      "output_file": "C_W0_querydevice_r2000.jsonl"
+    },
+    {
+      "call": "3-query-device",
+      "params": {"dimensions": ["query", "device"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 3000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1000, "hasMore": true, "nextStartRow": 4000, "timestamp_utc": "2026-09-15T05:30:37Z",
+      "output_file": "C_W0_querydevice_r3000.jsonl"
+    },
+    {
+      "call": "3-query-device",
+      "params": {"dimensions": ["query", "device"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 4000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 997, "hasMore": false, "nextStartRow": null, "timestamp_utc": "2026-09-15T05:31:08Z",
+      "output_file": "C_W0_querydevice_r4000.jsonl"
+    },
+    {
+      "call": "4-search-appearance",
+      "params": {"dimensions": ["searchAppearance"], "type": "web", "dataState": "all", "rowLimit": 1000, "startRow": 0, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 1, "hasMore": false, "nextStartRow": null, "timestamp_utc": "2026-09-15T05:28:53Z",
+      "output_file": "C_W0_appearance.jsonl"
+    },
+    {
+      "call": "5-date-property-total",
+      "params": {"dimensions": ["date"], "type": "web", "dataState": "all", "rowLimit": 1000, "startDate": "2026-07-18", "endDate": "2026-08-14"},
+      "rowCount": 28, "hasMore": false, "nextStartRow": null, "timestamp_utc": "2026-09-15T05:28:48Z",
+      "output_file": "C_W0_date.jsonl"
+    }
+  ]
+}

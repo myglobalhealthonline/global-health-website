@@ -1,0 +1,280 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cgcom.es","https://www.aepd.es"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}]{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Startseite","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Rechtliche Informationen","item":"https://www.myglobalhealth.online/spain/de/legal"},{"@type":"ListItem","position":3,"name":"Datenschutzerklärung","item":"https://www.myglobalhealth.online/spain/de/legal/privacy-policy"}]}RechtlichesSpanien · RechtlichesDatenschutzerklärungVersion 2 · Zuletzt aktualisiert 18 July 2026Alle RechtsdokumenteDatenschutzerklärung
+Alle Märkte | DSGVO • LGPD • ePrivacy
+Datum des Inkrafttretens: 1. Juli 2026
+
+Datenschutzerklärung — Wichtige Informationen
+
+VerantwortlicherGlobal Guest s.r.o., handelnd unter Global Health
+IČO19071680
+Eingetragener SitzRybná 24, 110 00 Praha 1, Tschechische Republik
+Federführende AufsichtsbehördeÚÔÚ (Tschechische Republik) — DSGVO-One-Stop-Shop
+DPC-Registrierung (Irland)DPC-13-2106-163222
+CNPD-Registrierung (Portugal)DPO-20260621-174447-NBQGPS
+ÚÔÚ-Meldung des DatenschutzbeauftragtenDatová schránka msg ID: 1718793255
+DatenschutzbeauftragterDr. Ahmed Maklad
+E-Mail des Datenschutzbeauftragtendpo@myglobalhealth.online
+Allgemeiner Kontaktglobalhealth@myglobalhealth.online
+Anwendbares RechtDSGVO (EU) • LGPD (Brasilien) • nationale Umsetzungen
+Datum des Inkrafttretens1. Juli 2026
+
+
+1. Wer wir sind
+Global Health ist eine Telemedizin-Plattform, die von Global Guest s.r.o. (IČo: 19071680), einer nach tschechischem Recht gegründeten Gesellschaft mit beschränkter Haftung mit eingetragenem Sitz Rybná 24, 110 00 Praha 1, betrieben wird und unter der Marke Global Health handelt.
+Wir sind in mehreren Märkten in Europa und Brasilien tätig. Die vollständige Liste der Märkte wird unter www.myglobalhealth.online/markets veröffentlicht. In manchen Märkten agieren wir als registrierter Gesundheitsdienstleister (Anbietermodell); in anderen als Technologieplattform, die Patienten mit unabhängigen Klinikern verbindet (Plattformmodell). Das für Ihren Markt geltende Modell ist im jeweiligen Länderanhang unter www.myglobalhealth.online/terms festgelegt.
+Diese Datenschutzerklärung erläutert, wie wir Ihre personenbezogenen Daten erheben, verwenden, speichern, weitergeben und schützen, wenn Sie die Global-Health-Plattform unter www.myglobalhealth.online ("die Plattform") nutzen. Sie gilt für alle Nutzer der Plattform in allen Märkten, in denen wir tätig sind.
+Bezugnahmen auf „wir", „uns" oder „unser" in dieser Erklärung beziehen sich auf Global Guest s.r.o., handelnd unter Global Health. Bezugnahmen auf „Sie" beziehen sich auf jede natürliche Person, die die Plattform aufruft oder nutzt.
+
+2. Verantwortlicher und Datenschutzbeauftragter
+
+2.1 Verantwortlicher
+Global Guest s.r.o., handelnd unter Global Health, ist der Verantwortliche für die über die Plattform erhobenen personenbezogenen Daten, sofern in dieser Erklärung nicht anders angegeben (siehe Abschnitt 3.3 zu klinischen Daten in Märkten mit Plattformmodell).
+
+2.2 Datenschutzbeauftragter
+Wir haben gemäß Artikel 37 DSGVO einen Datenschutzbeauftragten (DSB) bestellt. Unser DSB ist für die Überwachung unserer Einhaltung des Datenschutzes in allen Märkten verantwortlich und ist Ansprechpartner für Datenschutzaufsichtsbehörden sowie für Patienten, die ihre Datenschutzrechte ausüben möchten.
+Datenschutzbeauftragter: Dr. Ahmed Maklad
+E-Mail des Datenschutzbeauftragten: dpo@myglobalhealth.online
+Bei Fragen zu dieser Datenschutzerklärung oder zum Umgang mit Ihren Daten wenden Sie sich bitte an unseren Datenschutzbeauftragten.
+
+2.3 Federführende Aufsichtsbehörde
+Da Global Guest s.r.o. in der Tschechischen Republik eingetragen ist, ist unsere federführende Aufsichtsbehörde im Rahmen des One-Stop-Shop-Mechanismus der DSGVO der Úřad pro ochranu osobních údajů (ÚÔÚ) in der Tschechischen Republik. Wir sind zudem bei den Datenschutzbehörden in Irland (DPC — Ref.: DPC-13-2106-163222) und Portugal (CNPD — Ref.: DPO-20260621-174447-NBQGPS) registriert. Meldungen des Datenschutzbeauftragten bei der AEPD (Spanien) und der ANSPDCP (Rumänien) sind in Bearbeitung. Die brasilianische Datenverarbeitung unterliegt zudem der LGPD und der Aufsicht der ANPD.
+
+3. Welche personenbezogenen Daten wir erheben
+
+3.1 Daten, die Sie uns bereitstellen
+Wenn Sie sich registrieren, eine Konsultation buchen oder die Plattform nutzen, erheben wir:
+
+Identitätsdaten: vollständiger Name, Geburtsdatum, Geschlecht.
+Kontaktdaten: E-Mail-Adresse, Telefonnummer, Postanschrift.
+Kontodaten: Benutzername, Passwort (in gehashter Form gespeichert), Kontoeinstellungen.
+Gesundheitsdaten: Krankengeschichte, Symptome, aktuelle Medikamente, Allergien und sonstige Gesundheitsinformationen, die Sie bei der Registrierung oder Konsultation angeben.
+Konsultationsdaten: Notizen aus Konsultationen, ausgestellte Rezepte, Überweisungsschreiben und klinische Aufzeichnungen, die während Ihrer Nutzung der Plattform erstellt werden.
+Zahlungsdaten: Zahlungsmitteldaten, sicher verarbeitet durch Stripe. Wir speichern keine vollständigen Kartennummern in unseren Systemen.
+Kommunikation: E-Mails, Nachrichten und Aufzeichnungen jeglichen Kontakts mit unserem Team.
+Identitätsprüfungsdaten: soweit für Rezeptdienste oder Altersverifikation erforderlich.
+
+
+3.2 Automatisch erhobene Daten
+Wenn Sie die Plattform nutzen, erheben wir automatisch:
+
+Technische Daten: IP-Adresse, Browsertyp und -version, Gerätetyp, Betriebssystem, Zeitzone.
+Nutzungsdaten: besuchte Seiten, genutzte Funktionen, Buchungshistorie, Sitzungsdauer.
+Cookie-Daten: wie in unserer Cookie-Richtlinie unter www.myglobalhealth.online/cookies beschrieben.
+GHAIA-Interaktionsdaten: Wenn Sie unseren KI-Buchungsassistenten GHAIA per Chat oder Telefon nutzen, verarbeiten wir den Inhalt Ihrer Interaktion ausschließlich zur Erleichterung Ihrer Buchung. GHAIA-Gesprächsprotokolle werden nicht über die Sitzung hinaus aufbewahrt. Wird eine Buchung über GHAIA abgeschlossen, werden die Buchungsdetails (Name, Terminart, Uhrzeit und Kontaktdaten) als Teil Ihres Kontodatensatzes gespeichert und unterliegen der in Abschnitt 11 festgelegten Aufbewahrungsfrist für Kontodaten.
+
+
+3.3 Klinische Daten in Märkten mit Plattformmodell
+In Märkten, in denen Global Health im Rahmen des Plattformmodells tätig ist (Spanien, Rumänien, Brasilien), werden während der Konsultationen erzeugte klinische Daten vom jeweiligen Kliniker oder medizinischen Anbieter kontrolliert, nicht von Global Health. Global Health verarbeitet diese Daten als Auftragsverarbeiter im Namen des Klinikers. Anfragen zu klinischen Daten in Märkten mit Plattformmodell sind zunächst an den behandelnden Kliniker zu richten.
+
+3.4 Daten über Kinder
+Die Plattform ist nicht für die Nutzung durch Personen unter 18 Jahren ohne aktive Beteiligung und schriftliche Einwilligung eines Elternteils oder gesetzlichen Vertreters bestimmt. Wir erheben wissentlich keine personenbezogenen Daten von Kindern unter 18 Jahren ohne elterliche Einwilligung. Sollten Sie der Ansicht sein, dass wir Daten eines Kindes ohne angemessene Einwilligung erhoben haben, kontaktieren Sie uns bitte umgehend unter globalhealth@myglobalhealth.online.
+
+4. Wie wir Ihre personenbezogenen Daten verwenden
+
+4.1 Bereitstellung der Dienste
+Wir verwenden Ihre personenbezogenen Daten, um:
+
+Ihr Konto zu erstellen und zu verwalten.
+Buchungen und Zahlungen zu verarbeiten.
+medizinische Konsultationen über die Plattform zu ermöglichen.
+gegebenenfalls Rezepte, Überweisungen und klinische Dokumentation auszustellen.
+GHAIA, unseren KI-Buchungsassistenten, zur Erleichterung der Terminbuchung zu betreiben.
+Terminbestätigungen, Erinnerungen und Folgemitteilungen zu versenden.
+bestellte Heim-Gesundheitstestkits und Telemedizingeräte zu liefern.
+die Heimzustellung von Rezepten in Irland zu ermöglichen.
+
+
+4.2 Klinische Zwecke
+Gesundheitsdaten werden von Klinikern zum Zweck der Bereitstellung medizinischer Konsultationen, der Ausstellung klinischer Dokumentation und der Führung klinischer Aufzeichnungen verarbeitet. In Märkten mit Anbietermodell erfolgt diese Verarbeitung im Rahmen des klinischen Governance-Rahmens von Global Health. In Märkten mit Plattformmodell ist der Kliniker der Verantwortliche für klinische Daten.
+
+4.3 Einhaltung gesetzlicher und behördlicher Vorgaben
+Wir verarbeiten Ihre Daten, um unseren gesetzlichen Verpflichtungen nachzukommen, einschließlich Anforderungen an die Führung von Gesundheitsakten, steuerlichen und buchhalterischen Pflichten sowie behördlichen Meldepflichten in jedem Markt, in dem wir tätig sind.
+
+4.4 Plattformverbesserung und Analytik
+Mit Ihrer Einwilligung (durch Annahme des Cookies) nutzen wir Google Analytics, um zu verstehen, wie die Plattform genutzt wird, und um ihre Funktionalität und Benutzerfreundlichkeit zu verbessern. Analysedaten werden nach Möglichkeit in anonymisierter oder aggregierter Form verarbeitet.
+
+4.5 Marketingkommunikation
+Mit Ihrer ausdrücklichen Einwilligung können wir Ihnen Marketing-E-Mails über neue Dienstleistungen, Gesundheitsinformationen und Plattform-Updates senden. Sie können der Marketingkommunikation jederzeit widersprechen, indem Sie auf den Abmeldelink in einer Marketing-E-Mail klicken oder uns unter globalhealth@myglobalhealth.online kontaktieren. Die Abmeldung von Marketing berührt nicht die Zustellung dienstbezogener Mitteilungen wie Terminbestätigungen.
+
+4.6 Sicherheit und Betrugsprävention
+Wir verarbeiten bestimmte Daten, um die Sicherheit der Plattform zu schützen, Betrug zu verhindern und die Einhaltung unserer Allgemeinen Geschäftsbedingungen sicherzustellen, einschließlich der Erkennung und Verhinderung der Erstellung mehrerer Konten unter Verstoß gegen unsere Bedingungen.
+
+5. Rechtsgrundlagen der Verarbeitung
+
+5.1 DSGVO — EU-Märkte
+Wir verarbeiten Ihre personenbezogenen Daten auf folgenden Rechtsgrundlagen der DSGVO:
+
+Artikel 6 Abs. 1 lit. b — Vertragserfüllung: Verarbeitung, die zur Erbringung der von Ihnen gebuchten Dienste erforderlich ist.
+Artikel 6 Abs. 1 lit. c — rechtliche Verpflichtung: Verarbeitung, die zur Einhaltung von Gesundheits-, Steuer- und behördlichen Verpflichtungen in jedem Markt erforderlich ist.
+Artikel 6 Abs. 1 lit. a — Einwilligung: Verarbeitung für Analyse-Cookies, Marketingkommunikation und wo die Einwilligung ausdrücklich eingeholt wird.
+Artikel 6 Abs. 1 lit. f — berechtigte Interessen: Verarbeitung zur Plattformsicherheit, Betrugsprävention und Verbesserung der Plattform, soweit Ihre Rechte nicht überwiegen.
+Artikel 9 Abs. 2 lit. a — ausdrückliche Einwilligung für Gesundheitsdaten: eingeholt bei der Registrierung und vor jeder Konsultation erneut bestätigt. Vor jeder Konsultation werden Sie gebeten, Ihre Einwilligung zur Verarbeitung Ihrer Gesundheitsdaten für die Zwecke dieser Konsultation zu bestätigen. Sie können diese Einwilligung jederzeit widerrufen, wobei dies die Durchführung der Konsultation verhindert.
+Artikel 9 Abs. 2 lit. h — medizinische Zwecke: Verarbeitung, die für Zwecke der Gesundheitsvorsorge, der medizinischen Diagnostik und der Bereitstellung von Gesundheitsversorgung erforderlich ist und von Angehörigen der Gesundheitsberufe durchgeführt wird, die dem Berufsgeheimnis unterliegen.
+
+
+5.2 LGPD — Brasilien
+Für brasilianische Patienten verarbeiten wir personenbezogene Daten auf folgenden Rechtsgrundlagen der LGPD:
+
+Artigo 7, V — Erfüllung eines Vertrags, dessen Partei die betroffene Person ist.
+Artigo 7, II — Einhaltung einer gesetzlichen oder behördlichen Verpflichtung.
+Artigo 7, IX — berechtigte Interessen des Verantwortlichen, soweit nicht durch Grundrechte überwogen.
+Artigo 11, I — ausdrückliche Einwilligung zur Verarbeitung sensibler (Gesundheits-)Daten.
+Artigo 11, II(f) — Ausübung von Rechten in gerichtlichen, verwaltungsrechtlichen oder schiedsgerichtlichen Verfahren.
+
+
+6. GHAIA — KI-Buchungsassistent und automatisierte Verarbeitung
+GHAIA ist unser KI-gestützter Buchungsassistent, verfügbar per Textchat und Telefon. GHAIA basiert auf der Conversational-AI-Technologie von ElevenLabs und wird auf der Railway-Infrastruktur gehostet.
+
+6.1 Was GHAIA tut
+GHAIA unterstützt Patienten bei der Buchung von Konsultationen, der Prüfung der Verfügbarkeit und der Navigation auf der Plattform. GHAIA führt keine klinische Triage durch, gibt keinen medizinischen Rat und trifft keine klinischen Entscheidungen. Alle klinischen Entscheidungen werden von menschlichen Klinikern während der Konsultationen getroffen.
+
+6.2 Was GHAIA verarbeitet
+Wenn Sie mit GHAIA interagieren, werden folgende Daten verarbeitet:
+
+Ihre gesprochenen oder eingegebenen Angaben zur Erleichterung der Buchungsanfrage.
+Ihr Name und Ihre Kontaktdaten, soweit zur Fertigstellung der Buchung angegeben.
+Die Art der gewünschten Konsultation.
+Sitzungskennungen zur Aufrechterhaltung des Gesprächskontexts.
+
+GHAIA-Gesprächsdaten werden von ElevenLabs verarbeitet (siehe Auftragsverarbeiter-Register in Abschnitt 10). GHAIA speichert Gesprächsinhalte nicht über die Sitzungsdauer hinaus, es sei denn, eine Buchung wird abgeschlossen.
+
+6.3 Ihre Rechte in Bezug auf GHAIA
+Gemäß Artikel 22 DSGVO und entsprechenden LGPD-Bestimmungen haben Sie das Recht zu erfahren, wann automatisierte Verarbeitung eingesetzt wird. GHAIA ist ein KI-System — bei der Nutzung von GHAIA interagieren Sie nicht mit einem Menschen. Sie haben jederzeit das Recht:
+
+zu verlangen, dass ein Mensch anstelle von GHAIA Ihre Buchung bearbeitet.
+Fragen dazu zu stellen, wie GHAIA Ihre Anfrage verarbeitet hat.
+uns unter globalhealth@myglobalhealth.online zu kontaktieren, um mit einem menschlichen Teammitglied zu sprechen.
+
+Die automatisierte Buchungsverarbeitung von GHAIA erzeugt keine rechtliche Wirkung und beeinträchtigt Sie nicht in ähnlich erheblicher Weise. Das Buchungsergebnis unterliegt stets der Verfügbarkeit des Klinikers und Ihrer eigenen Bestätigung.
+
+7. Cookies und Tracking-Technologien
+Wir verwenden Cookies und ähnliche Tracking-Technologien auf der Plattform. Unbedingt erforderliche Cookies werden ohne Einwilligung verwendet. Analyse- und Funktions-Cookies werden nur mit Ihrer vorherigen Einwilligung über unser Cookie-Consent-Banner gesetzt.
+Vollständige Details zu den von uns verwendeten Cookies, ihren Zwecken, Anbietern und der Verwaltung Ihrer Einstellungen finden Sie in unserer Cookie-Richtlinie unter www.myglobalhealth.online/cookies.
+Google Analytics wird für die Plattformanalytik verwendet. Analyse-Cookies werden erst geladen, nachdem Sie eine ausdrückliche Einwilligung erteilt haben. IP-Adressen werden vor der Übertragung an Google anonymisiert. Google-Analytics-Daten werden auf Grundlage von Standardvertragsklauseln über die Google-Workspace-Auftragsverarbeitungsvereinbarung in die USA übertragen.
+
+8. Mit wem wir Ihre Daten teilen
+
+8.1 Kliniker
+Ihre Gesundheitsdaten und Buchungsinformationen werden mit dem Kliniker geteilt, der Ihre Konsultation durchführt. In Märkten mit Anbietermodell greifen Kliniker im Rahmen unseres klinischen Governance-Rahmens über die Plattform von Global Health auf Daten zu. In Märkten mit Plattformmodell ist der Kliniker ein unabhängiger Verantwortlicher.
+
+8.2 Auftragsverarbeiter
+Wir teilen Daten mit zugelassenen Auftragsverarbeitern, die Dienstleistungen in unserem Auftrag erbringen. Alle Auftragsverarbeiter sind durch Auftragsverarbeitungsvereinbarungen und geeignete Übermittlungsgarantien gebunden. Das vollständige Auftragsverarbeiter-Register, einschließlich Anbieternamen, Zwecken, Datenstandorten und Übermittlungsmechanismen, ist in Abschnitt 10 dieser Erklärung dargestellt.
+
+8.3 Rechtliche und behördliche Offenlegungen
+Wir können Ihre personenbezogenen Daten an Aufsichtsbehörden, Strafverfolgungsbehörden oder Gerichte weitergeben, soweit gesetzlich vorgeschrieben, soweit dies zum Schutz der Sicherheit von Patienten oder Klinikern erforderlich ist, oder soweit dies im Zusammenhang mit Gerichtsverfahren erforderlich ist.
+
+8.4 Unternehmensübertragungen
+Im Falle einer Fusion, Übernahme oder des Verkaufs im Wesentlichen aller unserer Vermögenswerte können Ihre personenbezogenen Daten an das übernehmende Unternehmen übertragen werden. Sie werden über jede derartige Übertragung und jede wesentliche Änderung der Datenverarbeitungspraktiken mit mindestens 30 Tagen Vorlauf benachrichtigt.
+
+8.5 Was wir nicht tun
+Wir verkaufen Ihre personenbezogenen Daten nicht an Dritte. Wir geben Ihre Gesundheitsdaten nicht an Versicherer, Arbeitgeber oder Marketingunternehmen weiter. Wir verwenden Ihre Gesundheitsdaten nicht für andere Zwecke als die in dieser Erklärung genannten.
+
+9. Internationale Datenübermittlungen
+Global Health ist in mehreren Märkten tätig, und einige Ihrer personenbezogenen Daten können international übermittelt werden. Alle internationalen Übermittlungen personenbezogener Daten erfolgen unter Einhaltung geeigneter Garantien.
+
+9.1 Übermittlungen innerhalb der EU/des EWR
+Übermittlungen personenbezogener Daten zwischen EU-/EWR-Ländern sind gemäß DSGVO ohne zusätzliche Garantien zulässig. Global Health ist in mehreren EU-Mitgliedstaaten tätig, und Daten können im Rahmen unserer Geschäftstätigkeit zwischen diesen Ländern fließen.
+
+9.2 Übermittlungen in die USA
+Unsere Auftragsverarbeiter — Google, Stripe, Railway und ElevenLabs — haben ihren Sitz in den USA. Übermittlungen Ihrer personenbezogenen Daten an diese Anbieter erfolgen auf Grundlage von durch die Europäische Kommission genehmigten Standardvertragsklauseln (SCCs), die ein angemessenes Datenschutzniveau gewährleisten. Details zu den für jeden Anbieter geltenden SCCs sind in den jeweiligen Auftragsverarbeitungsvereinbarungen verfügbar.
+
+9.3 Übermittlungen für brasilianische Patienten
+Übermittlungen von Daten brasilianischer Patienten in Länder außerhalb Brasiliens erfolgen im Einklang mit Kapitel V der LGPD unter Verwendung geeigneter Garantien, einschließlich Standardvertragsklauseln oder gleichwertiger, von der ANPD anerkannter Mechanismen.
+
+9.4 Ihre Rechte in Bezug auf Übermittlungen
+Sie haben das Recht, eine Kopie der von uns für internationale Übermittlungen verwendeten Garantien zu erhalten. Bitte kontaktieren Sie unseren Datenschutzbeauftragten unter dpo@myglobalhealth.online für weitere Informationen.
+
+10. Auftragsverarbeiter-Register
+Gemäß Artikel 28 DSGVO führen wir ein Register aller Auftragsverarbeiter, die personenbezogene Daten in unserem Auftrag verarbeiten. Das aktuelle Auftragsverarbeiter-Register lautet wie folgt:
+
+AnbieterZweckStandortÜbermittlungsgarantieDatenschutzerklärung
+Google WorkspaceVideokonsultationen (Meet), geschäftliche E-Mail (Gmail), Website-Analytik (Analytics)USASCCs über Google Workspace DPApolicies.google.com/privacy
+StripeSichere Zahlungsabwicklung und TransaktionsmanagementUSASCCs über Stripe DPAstripe.com/privacy
+Railway (AWS)Plattform-Hosting, Anwendungsinfrastruktur, GHAIA-KI-HostingUSASCCs über Railway DPArailway.app/legal/dpa
+ElevenLabsGHAIA Conversational AI — Sprach- und Antwortgenerierung des BuchungsassistentenUSASCCs über ElevenLabs DPAelevenlabs.io/privacy
+
+Dieses Register wird laufend überprüft und aktualisiert, wenn Auftragsverarbeiter hinzugefügt, entfernt oder geändert werden. Wir informieren Sie über wesentliche Änderungen unserer Auftragsverarbeiter, die die Verarbeitung Ihrer Gesundheitsdaten betreffen, mit mindestens 30 Tagen Vorlauf, soweit nach anwendbarem Recht erforderlich.
+
+11. Wie lange wir Ihre Daten aufbewahren
+Wir bewahren personenbezogene Daten nicht länger auf, als es für die Zwecke, für die sie erhoben wurden, erforderlich ist, vorbehaltlich gesetzlicher Verpflichtungen zu einer längeren Aufbewahrung. Die für jede Datenkategorie geltenden Aufbewahrungsfristen sind:
+
+DatenkategorieAufbewahrungsfristRechtsgrundlage der Aufbewahrung
+Klinische Aufzeichnungen / KonsultationsunterlagenIE: 8 Jahre (26. Geburtstag bei Minderjährigen) PT: 5 Jahre (28. Geburtstag bei Minderjährigen) CZ: 10 Jahre (28. Geburtstag bei Minderjährigen) ES / RO: gemäß den Verpflichtungen des Klinikers BR: 20 Jahre (CFM-Richtlinie)Gesundheitsrechtliche Vorgaben in jedem Markt
+Buchungs- und Transaktionsdaten5 JahreSteuer-, Buchhaltungs- und gesetzliche Vorgaben
+Finanz-/AbrechnungsunterlagenIE: 7 Jahre | PT: 10 Jahre | CZ: 10 Jahre | ES: 5 Jahre | RO: 5 Jahre | BR: 5 JahreSteuerrecht in jedem Markt
+KontodatenDauer des Kontos + 2 Jahre nach SchließungVerjährungsfristen für Rechtsansprüche
+Marketing-EinwilligungsnachweiseDauer der Einwilligung + 3 JahreNachweis der Rechtsgrundlage für Marketing
+Beschwerdeunterlagen5 Jahre ab AbschlussRechtsverteidigung und behördliche Prüfung
+Cookie-Einwilligungsnachweise12 Monate ab EinwilligungePrivacy-Konformität
+GHAIA-GesprächsprotokolleNur Sitzungsdauer (keine dauerhafte Aufbewahrung)Ausschließlich Buchungserleichterung
+
+Nach Ablauf der jeweiligen Aufbewahrungsfrist werden personenbezogene Daten sicher gelöscht oder anonymisiert. Klinische Aufzeichnungen werden gemäß den Anweisungen des behandelnden Klinikers und den geltenden gesundheitsrechtlichen Vorschriften gelöscht.
+
+12. Wie wir Ihre Daten schützen
+Wir setzen geeignete technische und organisatorische Maßnahmen ein, um Ihre personenbezogenen Daten vor zufälliger oder unrechtmäßiger Zerstörung, Verlust, Veränderung, unbefugter Offenlegung oder unbefugtem Zugriff zu schützen. Diese Maßnahmen umfassen:
+
+Verschlüsselung von Daten während der Übertragung mittels TLS (Transport Layer Security).
+Verschlüsselung ruhender Daten auf der Railway-Infrastruktur.
+Zugriffskontrollen, die den Datenzugriff auf autorisiertes Personal beschränken.
+Rollenbasierte Zugriffskontrollen, die sicherstellen, dass Kliniker nur auf die Unterlagen ihrer eigenen Patienten zugreifen können.
+Regelmäßige Sicherheitsbewertungen und Penetrationstests der Plattform.
+Vorfallreaktionsverfahren bei Verletzungen des Schutzes personenbezogener Daten.
+Schulung des Personals zu Datenschutzverpflichtungen.
+
+Im Falle einer Verletzung des Schutzes personenbezogener Daten, die voraussichtlich ein hohes Risiko für Ihre Rechte und Freiheiten zur Folge hat, werden wir Sie unverzüglich gemäß unseren Verpflichtungen nach anwendbarem Datenschutzrecht benachrichtigen.
+
+13. Ihre Datenschutzrechte
+Abhängig von Ihrem Wohnsitzland und dem anwendbaren Datenschutzrecht stehen Ihnen einige oder alle der folgenden Rechte zu:
+
+RechtBedeutungGilt inAusübung
+AuskunftsrechtErhalt einer Kopie der von uns über Sie gespeicherten personenbezogenen DatenAlle Märkteglobalhealth@myglobalhealth.online
+Recht auf BerichtigungKorrektur unrichtiger oder unvollständiger DatenAlle Märkteglobalhealth@myglobalhealth.online
+Recht auf LöschungVerlangen der Löschung Ihrer Daten (vorbehaltlich gesetzlicher Aufbewahrungspflichten)Alle Märkteglobalhealth@myglobalhealth.online
+Recht auf EinschränkungEinschränkung der Verarbeitung Ihrer Daten unter bestimmten UmständenEU-Märkte + Brasilienglobalhealth@myglobalhealth.online
+Recht auf DatenübertragbarkeitErhalt Ihrer Daten in einem strukturierten, maschinenlesbaren FormatEU-Märkte + Brasilienglobalhealth@myglobalhealth.online
+WiderspruchsrechtWiderspruch gegen Verarbeitung auf Grundlage berechtigter Interessen oder für DirektmarketingEU-Märkte + Brasilienglobalhealth@myglobalhealth.online
+Recht bzgl. automatisierter EntscheidungenVerlangen einer menschlichen Überprüfung jeder automatisierten Entscheidung, die Sie betrifftAlle Märkteglobalhealth@myglobalhealth.online
+Recht auf Widerruf der EinwilligungWiderruf der Einwilligung jederzeit, ohne die bisherige Verarbeitung zu berührenAlle Märkteglobalhealth@myglobalhealth.online
+BeschwerderechtEinreichung einer Beschwerde bei Ihrer AufsichtsbehördeAlle MärkteSiehe Abschnitt 14
+
+Zugang zu medizinischen Unterlagen: Zusätzlich zu Ihrem allgemeinen Auskunftsrecht auf personenbezogene Daten haben Sie ein spezifisches Recht auf Zugang zu Ihren medizinischen Unterlagen gemäß dem in Ihrem Land geltenden Gesundheitsrecht. Um eine Kopie Ihrer Konsultationsunterlagen, Rezepte oder Überweisungsschreiben anzufordern, kontaktieren Sie globalhealth@myglobalhealth.online mit dem Betreff „Anfrage medizinischer Unterlagen". Wir antworten innerhalb von 30 Tagen. In Märkten mit Anbietermodell (Irland, Portugal, Tschechische Republik) werden die Unterlagen von Global Health verwahrt. In Märkten mit Plattformmodell (Spanien, Rumänien, Brasilien) sollten Sie sich direkt an den behandelnden Kliniker wenden — wir unterstützen dies auf Anfrage.
+Um eines dieser Rechte auszuüben, kontaktieren Sie uns bitte unter globalhealth@myglobalhealth.online oder unseren Datenschutzbeauftragten unter dpo@myglobalhealth.online. Wir antworten innerhalb der nach anwendbarem Recht vorgeschriebenen Frist — in jedem Fall innerhalb von 30 Tagen für EU-Märkte und innerhalb von 15 Tagen für brasilianische Patienten (gemäß ANPD-Richtlinien). Wir müssen Ihre Identität möglicherweise überprüfen, bevor wir Ihre Anfrage bearbeiten.
+Die Ausübung Ihrer Rechte ist kostenlos. Ist Ihre Anfrage jedoch offenkundig unbegründet oder exzessiv, können wir eine angemessene Gebühr erheben oder die Bearbeitung der Anfrage ablehnen.
+
+14. Aufsichtsbehörden
+Sie haben jederzeit das Recht, eine Beschwerde bei der Datenschutzaufsichtsbehörde Ihres Landes einzureichen. Eine vorherige Kontaktaufnahme mit uns gibt uns die Möglichkeit, Ihr Anliegen direkt zu bearbeiten, ist jedoch keine Voraussetzung für die Kontaktaufnahme mit einer Aufsichtsbehörde.
+
+Tschechische Republik (ÚÔÚ — federführende Behörde): www.uoou.cz
+Irland (DPC): www.dataprotection.ie
+Portugal (CNPD): www.cnpd.pt
+Spanien (AEPD): www.aepd.es
+Rumänien (ANSPDCP): www.dataprotection.ro
+Brasilien (ANPD): www.gov.br/anpd
+
+
+15. Marketingkommunikation
+Wir senden Ihnen nur dann Marketing-E-Mails, wenn Sie sich ausdrücklich zum Erhalt entschieden haben. Sie können dies bei der Registrierung oder jederzeit über Ihre Kontoeinstellungen tun.
+Sie können sich jederzeit von Marketing-E-Mails abmelden, indem Sie:
+
+auf den Abmeldelink in jeder Marketing-E-Mail klicken.
+Ihre Einstellungen in Ihren Kontoeinstellungen aktualisieren.
+uns unter globalhealth@myglobalhealth.online kontaktieren.
+
+Die Abmeldung von Marketing berührt nicht Servicemitteilungen wie Terminbestätigungen, Konsultationszusammenfassungen oder Rezeptbenachrichtigungen.
+Wir geben Ihre Kontaktdaten nicht zu Marketingzwecken an Dritte weiter.
+
+16. Datenschutz für Kinder
+Die Plattform ist nicht für die eigenständige Nutzung durch Personen unter 18 Jahren bestimmt. Patienten unter 18 Jahren dürfen die Plattform nur mit aktiver Beteiligung und schriftlicher Einwilligung eines Elternteils oder gesetzlichen Vertreters nutzen, der unsere Allgemeinen Geschäftsbedingungen in ihrem Namen akzeptiert.
+Klinische Aufzeichnungen betreffend Patienten, die zum Zeitpunkt der Behandlung unter 18 Jahre alt waren, unterliegen den in Abschnitt 11 festgelegten verlängerten Aufbewahrungsfristen.
+Sollten Sie der Ansicht sein, dass wir personenbezogene Daten eines Kindes unter 18 Jahren ohne angemessene elterliche Einwilligung erhoben haben, kontaktieren Sie uns bitte umgehend unter globalhealth@myglobalhealth.online, und wir werden Schritte zur Löschung dieser Daten unternehmen.
+
+17. Änderungen dieser Datenschutzerklärung
+Wir können diese Datenschutzerklärung von Zeit zu Zeit aktualisieren, um Änderungen unserer Datenverarbeitungstätigkeiten, des anwendbaren Rechts oder unserer Dienstleistungen widerzuspiegeln. Wir werden Sie über wesentliche Änderungen wie folgt informieren:
+
+durch Versand einer E-Mail-Benachrichtigung an die mit Ihrem Konto verknüpfte Adresse mindestens 30 Tage vor Inkrafttreten der Änderungen.
+durch Anzeige eines gut sichtbaren Hinweises auf der Plattform.
+durch erneute Einholung der Einwilligung, sofern die Änderungen eine Verarbeitung betreffen, für die wir uns auf die Einwilligung als Rechtsgrundlage stützen.
+
+Das Datum des Inkrafttretens oben in dieser Erklärung gibt an, wann sie zuletzt aktualisiert wurde. Geringfügige Änderungen, die Ihre wesentlichen Rechte nicht berühren, können ohne vorherige Ankündigung vorgenommen werden.
+
+18. Kontakt
+Bei Fragen zu dieser Datenschutzerklärung, zur Ausübung Ihrer Datenschutzrechte oder zur Meldung eines Da

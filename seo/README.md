@@ -13,7 +13,8 @@ it did not take a new live SEO measurement or recover deleted conversations.
 
 | What to recover | Where to start |
 | --- | --- |
-| Current work, results and next measurement dates | [Canonical ledger](../docs/plans/seo-control-state.md): §§5–7, 27, 41–50; Spain/Romania/Brazil next, existing changed pages on recrawl watch |
+| Current work, results and next measurement dates | [Canonical ledger](../docs/plans/seo-control-state-2026-09.md) (from 2026-09-15): §1 carried-forward items, §2 master audit, §3 roadmap, §4 watchlist. The [frozen ledger](../docs/plans/seo-control-state.md) keeps the pre-audit history (§§5–7, 27, 41–59) |
+| Master audit 2026-09-15 and tracking workbook | [Executive report](../docs/audits/seo/seo-master-audit-2026-09-15.md); workbook `seo/tracking/Global_Health_SEO_Tracker.xlsx` (starter template `seo/Global_Health_SEO_Tracker_Starter.xlsx` stays untouched); data `seo/tracking/data/`; raw pulls `seo/tracking/raw/2026-09-15/`; refresh scripts and prompts `seo/tracking/scripts/` |
 | Google login and latest aggregate measurement check | [9 September review](../docs/audits/seo/google-access-review-2026-09-09.md); browser access verified, API reconnection remains separate |
 | Latest full six-market audit | [4 September report](../docs/audits/seo/six-market-seo-audit-2026-09-04.md) and [HTML](../docs/audits/seo/six-market-seo-audit-2026-09-04.html); apply later ledger updates |
 | Global audit history from July onward | [Audit index](../docs/audits/seo/README.md) |
@@ -45,9 +46,13 @@ requires a push. Uncommitted local recovery changes are not yet a remote backup.
 
 ## Source-of-truth contract
 
-- [`docs/plans/seo-control-state.md`](../docs/plans/seo-control-state.md) is the
-  **global operational ledger**. It alone owns current priorities, status,
-  deadlines, completed work and next actions.
+- [`docs/plans/seo-control-state-2026-09.md`](../docs/plans/seo-control-state-2026-09.md)
+  is the **global operational ledger** from 2026-09-15. It alone owns current
+  priorities, status, deadlines, completed work and next actions. The previous
+  ledger [`docs/plans/seo-control-state.md`](../docs/plans/seo-control-state.md) is
+  frozen: historical evidence only, section numbers still valid as references.
+- `seo/tracking/Global_Health_SEO_Tracker.xlsx` is the analytical view and
+  proposed-action queue; it never competes with the ledger for status.
 - `seo/<country>/` owns the detailed, dated evidence for that market: audits,
   keyword data, competitor research, content opportunities, technical analysis,
   briefs and raw exports.

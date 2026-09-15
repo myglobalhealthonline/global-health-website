@@ -1,0 +1,474 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.medicalcouncil.ie","https://www.dataprotection.ie","https://www.hse.ie","https://www.hiqa.ie","https://www.hpra.ie","https://www.rcpi.ie","https://www.icgp.ie","https://www.irishpsychiatry.ie","https://www.nai.ie","https://irishheart.ie","https://www.citizensinformation.ie","https://www.gov.ie/en/organisation/department-of-social-protection/","https://www.samaritans.org/ireland","https://www.pieta.ie"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Hand-fuss-mund-krankheit: Anzeichen und behandlung","description":"HSE-orientierter Leitfaden zur Hand-Fuß-Mund-Krankheit bei Kindern in Irland: Symptome, Behandlung, Warnzeichen und Schutz vor Ansteckung.","url":"https://www.myglobalhealth.online/ireland/de/blog/hand-fuss-mund-krankheit-anzeichen-und-behandlung","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/ireland/de/blog/hand-fuss-mund-krankheit-anzeichen-und-behandlung#webpage","url":"https://www.myglobalhealth.online/ireland/de/blog/hand-fuss-mund-krankheit-anzeichen-und-behandlung","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/de/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-06-15"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Hand-fuss-mund-krankheit%3A+Anzeichen+und+behandlung&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2Fff180d4e-ccef-441a-8dca-8af41f64cc50-150385_0ed6f9dbf2384287827ba85738606351-mv2.avif&v=2026-07-20.1-18ocopt","width":1200,"height":630},"about":{"@type":"Thing","name":"Telemedicine"},"datePublished":"2026-06-06T05:23:47.372Z","dateModified":"2026-06-15T20:56:33.190Z","publishingPrinciples":"https://www.myglobalhealth.online/ireland/de/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/ireland/de/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Startseite","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/ireland/de/blog"},{"@type":"ListItem","position":3,"name":"Hand-fuss-mund-krankheit: Anzeichen und behandlung","item":"https://www.myglobalhealth.online/ireland/de/blog/hand-fuss-mund-krankheit-anzeichen-und-behandlung"}]}]Alle ArtikelTelemedicineHand-fuss-mund-krankheit: Anzeichen und behandlungHSE-orientierter Leitfaden zur Hand-Fuß-Mund-Krankheit bei Kindern in Irland: Symptome, Behandlung zu Hause, Warnzeichen für die Notaufnahme und Vorbeugung.Global Health Medical Team6. Juni 202614 Minuten LesezeitZuletzt überprüft 15. Juni 2026Klinisch überprüft von Dr Tiago Miguel Figueira+Auf dieser SeiteWas ist die Hand-Fuß-Mund-Krankheit?Ursachen & VirologieAnzeichen & SymptomeDiagnoseBehandlung & BetreuungWarnzeichen — wann Sie dringend Hilfe suchen solltenVorbeugung & ProphylaxeEpidemiologieHäufig gestellte FragenVerlässliche pädiatrische Anlaufstellen
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    Abschnitt 01
+    Was ist die Hand-Fuß-Mund-Krankheit?
+
+    
+      Die Hand-Fuß-Mund-Krankheit (HFMK) ist eine häufige, hoch ansteckende Viruserkrankung, die vor allem Säuglinge und Kinder unter zehn Jahren betrifft. Kennzeichnend ist die typische Kombination aus Fieber, schmerzhaften Geschwüren im Mund und einem bläschenförmigen Hautausschlag an Handflächen, Fußsohlen und gelegentlich am Gesäß. Verursacht wird die HFMK durch Enteroviren — am häufigsten durch Coxsackievirus A16 und Enterovirus 71 (EV-A71).
+    
+    
+      Die Erkrankung verläuft meist mild und klingt innerhalb von sieben bis zehn Tagen von selbst ab, kann kleinen Kindern jedoch erhebliche Beschwerden bereiten. Seltene, aber schwere Komplikationen — darunter virale Meningitis, Enzephalitis und akute schlaffe Lähmung — treten häufiger bei EV-A71-Stämmen auf und erfordern umgehend ärztliche Hilfe.
+    
+    
+      Die Erkrankung kommt weltweit vor und breitet sich in Kindertagesstätten, Krippen, Schulen und Familien rasch aus, besonders im Sommer und Frühherbst gemäßigter Klimazonen. Kenntnisse über die HFMK sind für Eltern, Betreuungspersonen und medizinisches Fachpersonal gleichermaßen wichtig.
+    
+
+    
+      „Die HFMK ist eine ansteckende Enterovirus-Erkrankung bei Kindern, die durch Fieber, schmerzhafte Geschwüre im Mund sowie bläschenförmige Veränderungen an Händen und Füßen gekennzeichnet ist. Die Behandlung ist überwiegend unterstützend.“
+      — Klinische Zusammenfassung von Global Health
+    
+  
+
+  
+  
+    Abschnitt 02
+    Ursachen & Virologie
+
+    
+      Die HFMK wird durch einzelsträngige RNA-Viren aus der Gattung Enterovirus innerhalb der Familie Picornaviridae verursacht. Die beiden klinisch bedeutsamsten Erreger sind:
+    
+
+    
+      
+        🦠
+        Coxsackievirus A16
+        Weltweit der klassische und häufigste Erreger. Verursacht in der Regel einen milderen Verlauf und gehört zur Coxsackievirus-Gruppe A.
+      
+      
+        ⚠️
+        Enterovirus 71 (EV-A71)
+        Mit größeren Ausbrüchen — insbesondere im asiatisch-pazifischen Raum — und einem höheren Risiko neurologischer Komplikationen wie Hirnstammenzephalitis verbunden.
+      
+      
+        🔬
+        Andere Coxsackieviren
+        CA6, CA10, CB5 und weitere Viren können atypische oder ausgedehnte HFMK-Verläufe verursachen. CA6 kann zu einem stärkeren Hautbefall führen.
+      
+      
+        🌍
+        Übertragungswege
+        Direkter Kontakt mit Nasensekret, Speichel, Bläschenflüssigkeit oder Stuhl sowie Kontakt mit verunreinigten Oberflächen und Gegenständen. Sehr ansteckend.
+      
+    
+
+    Warum Kinder am häufigsten betroffen sind
+    
+      Kleine Kinder besitzen noch keine vorbestehende Immunität gegen diese Enteroviren. Das Virus wird noch Wochen nach der Genesung in großen Mengen mit dem Stuhl ausgeschieden, selbst wenn das Kind wieder gesund wirkt. Das erschwert die Eindämmung in Betreuungseinrichtungen erheblich. Immunkompetente Erwachsene ohne frühere Exposition können ebenfalls erkranken, haben aber meist mildere Symptome.
+    
+    
+      Die Inkubationszeit beträgt 3–7 Tage nach der Ansteckung. Die Virusausscheidung im Mund-Rachen-Raum ist in der ersten Krankheitswoche am höchsten.
+    
+  
+
+  
+  
+    Abschnitt 03
+    Anzeichen & Symptome
+
+    
+      Die HFMK folgt meist einem vorhersehbaren klinischen Verlauf. Wer das vollständige Symptombild erkennt, kann früher eine Diagnose erhalten und das Kind angemessen zu Hause versorgen. Zugleich lässt sich besser beurteilen, wann eine ärztliche Abklärung dringend nötig ist.
+    
+
+    
+      
+        
+          Phase
+          Symptom / Anzeichen
+          Klinische Hinweise
+        
+      
+      
+        
+          VorstadiumTag 1–2
+          Leichtes Fieber (38–39 °C), Reizbarkeit, Unwohlsein, verminderter Appetit, Halsschmerzen
+          In diesem Stadium häufig mit einer gewöhnlichen Erkältung oder einem unspezifischen viralen Infekt der oberen Atemwege verwechselt
+        
+        
+          Veränderungen im MundTag 1–3
+          Schmerzhafte Geschwüre an Zunge, Wangenschleimhaut und weichem Gaumen; Bläschen, die rasch aufbrechen
+          Können zu starkem Speichelfluss sowie zur Verweigerung von Essen und Trinken führen — ein wichtiger diagnostischer Hinweis
+        
+        
+          HautausschlagTag 2–4
+          Papulovesikulärer Ausschlag an Handflächen und Fußsohlen; möglich auch an Hand- und Fußrücken, Gesäß und rund um den Mund
+          Die typische Verteilung ist wegweisend; die Hautveränderungen jucken gewöhnlich nicht und sind meist nicht schmerzhaft
+        
+        
+          BegleitendWährend des gesamten Verlaufs
+          Verminderter Appetit, Speichelfluss, Unwohlsein und bei starken Mundschmerzen Gefahr der Austrocknung
+          Austrocknung ist die häufigste Komplikation, die eine ärztliche Untersuchung erforderlich macht
+        
+        
+          AbheilungTag 7–10
+          Spontane Abheilung; 4–8 Wochen später kann es vorübergehend zum Ablösen von Nägeln (Onychomadesis) kommen
+          Nagelveränderungen sind harmlos und verschwinden von selbst; Eltern können entsprechend beruhigt werden
+        
+      
+    
+
+    Typische Veränderungen im Mund
+    
+      Die Geschwüre im Mund beginnen als kleine rote Flecken (Enanthem), entwickeln sich rasch zu Bläschen und anschließend zu flachen, schmerzhaften Geschwüren mit rotem Rand. Sie treten an Zunge, Wangenschleimhaut, weichem Gaumen und Gaumenbögen auf. Die Mundschmerzen sind der Hauptgrund dafür, dass Säuglinge Nahrung und Flüssigkeit verweigern und dadurch auszutrocknen drohen.
+    
+
+    Typischer Hautausschlag
+    
+      Der Hautausschlag besteht aus 3–7 mm großen, ovalen oder länglichen grauen Bläschen auf gerötetem Grund — typischerweise an Handflächen und Fußsohlen und häufig entlang der Hautlinien. Veränderungen am Gesäß ohne Bläschenbildung und Flecken rund um den Mund sind ebenfalls charakteristisch. Anders als bei Windpocken breiten sich die Hautveränderungen nicht zum Körperzentrum hin aus und sind im Allgemeinen nicht juckend.
+    
+  
+
+  
+  
+    Abschnitt 04
+    Diagnose
+
+    
+      Die HFMK wird in erster Linie klinisch diagnostiziert Grundlage ist die typische Kombination aus Geschwüren im Mund, bläschenförmigem Ausschlag an Händen und Füßen und Fieber bei einem Kind im passenden Alter sowie eine entsprechende Jahreszeit oder Expositionsgeschichte. Bei unkomplizierten Fällen ist gewöhnlich keine Laborbestätigung erforderlich.
+    
+
+    Wann Labortests erwogen werden sollten
+    
+      Eine virologische Bestätigung — durch PCR auf Enteroviren aus Nasen-Rachen-Abstrich, Rektalabstrich, Bläschenflüssigkeit oder Liquor — ist angezeigt bei:
+    
+    
+      schweren oder atypischen Verläufen
+      Verdacht auf neurologische Beteiligung (Enzephalitis, Meningitis, akute schlaffe Myelitis)
+      immungeschwächten Kindern
+      einer Ausbruchsuntersuchung durch die Gesundheitsbehörden
+      Neugeborenen mit Verdacht auf Enterovirus-Sepsis
+    
+
+    Differenzialdiagnose
+    
+      Ärztinnen und Ärzte sollten an Herpangina denken — dabei treten nur Veränderungen im Mund und im hinteren Rachenraum auf — sowie an eine primäre herpetische Gingivostomatitis mit stärkerer Zahnfleischbeteiligung, Windpocken mit zum Körperzentrum gerichteter Ausbreitung und Juckreiz sowie Aphthen, die wiederkehren und keine Allgemeinerkrankung verursachen. Bei Säuglingen sollte bei länger anhaltendem Fieber ein Kawasaki-Syndrom ausgeschlossen werden.
+    
+  
+
+  
+  
+    Abschnitt 05
+    Behandlung & Betreuung
+
+    
+      Derzeit gibt es keine spezifische antivirale Behandlung für die HFMK. Die Behandlung ist vollständig unterstützend und konzentriert sich auf die Linderung der Beschwerden, ausreichende Flüssigkeitszufuhr und die Beobachtung möglicher Komplikationen.
+    
+
+    
+      
+        💧
+        Flüssigkeitszufuhr
+        Die wichtigste Einzelmaßnahme. Bieten Sie häufig kühle, säurearme Getränke an. Wassereis und gekühltes Wasser können wohltuend sein. Vermeiden Sie Zitrus- und kohlensäurehaltige Getränke.
+      
+      
+        🌡️
+        Fiebersenkende Mittel
+        Paracetamol oder Ibuprofen in altersgerechter Dosierung können Fieber und allgemeines Unwohlsein lindern. Beachten Sie die nationalen Dosierungsempfehlungen.
+      
+      
+        🩹
+        Schmerzmittel
+        Örtlich betäubende Mundgele — bei älteren Kindern auch lidocainhaltige Mundspülungen — können Mundschmerzen lindern und die Nahrungsaufnahme erleichtern. Besprechen Sie die Anwendung mit Ihrer Apotheke oder Ihrer Hausärztin beziehungsweise Ihrem Hausarzt.
+      
+      
+        🍦
+        Weiche, kalte Speisen
+        Joghurt, Eiscreme, gekühltes Püree oder Milchshakes lindern Mundschmerzen und helfen bei der Kalorienzufuhr. Vermeiden Sie harte, salzige oder scharfe Speisen.
+      
+      
+        🛏️
+        Ruhe & zu Hause bleiben
+        Lassen Sie das Kind zu Hause, bis das Fieber abgeklungen und alle Hautveränderungen verkrustet oder abgeheilt sind — gewöhnlich nach 5–7 Tagen. Dadurch wird die Ausbreitung in Betreuungseinrichtungen begrenzt.
+      
+      
+        🏥
+        Untersuchung im Krankenhaus
+        Erforderlich bei Verdacht auf Austrocknung, anhaltend hohem Fieber, neurologischen Symptomen oder unzureichender Flüssigkeitsaufnahme bei Säuglingen unter 12 Monaten. Eine intravenöse Flüssigkeitsgabe kann notwendig sein.
+      
+    
+
+    Hinweis zu Antibiotika
+    
+      Antibiotika sind nicht wirksam gegen Virusinfektionen und sollten bei unkomplizierter HFMK nicht verschrieben werden. Eine zusätzliche bakterielle Infektion der Hautveränderungen ist selten, sollte aber ärztlich beurteilt werden, wenn diese warm, geschwollen, schmerzhaft oder eitrig werden.
+    
+  
+
+  
+  
+    Abschnitt 06
+    Warnzeichen — wann Sie dringend Hilfe suchen sollten
+
+    
+      Bei den allermeisten Erkrankten heilt die HFMK von selbst aus. Bei wenigen Kindern — besonders unter zwei Jahren oder bei Infektion mit EV-A71 — können jedoch schwere Komplikationen auftreten. Eltern und Betreuungspersonen müssen die Warnzeichen kennen, die eine sofortige Untersuchung in der Notaufnahme.
+    
+
+    
+      🚨 Sofort die Notaufnahme aufsuchen bei:
+      
+        Anzeichen einer Austrocknung: trockener Mund, keine Tränen beim Weinen, eingesunkene Fontanelle bei Säuglingen, länger als 8 Stunden kein Urin, marmorierte oder graue Haut
+        Anhaltend hohem Fieber: Temperatur über 39,5 °C, die auf fiebersenkende Mittel nicht anspricht, oder Fieber über mehr als 5 Tage
+        Neurologischen Symptomen: Krampfanfälle, Nackensteife, anhaltendes Erbrechen, Bewusstseinsveränderungen, Ataxie, myoklonische Zuckungen, Lichtscheu
+        Herz-Kreislauf- oder Atemsymptomen: schnelle Atmung, Brustschmerzen, schneller Herzschlag, Blässe, kalte Gliedmaßen
+        Starken Schmerzen oder vollständiger Verweigerung von Flüssigkeit und Nahrung: besonders bei Säuglingen unter 12 Monaten, die nicht ausreichend Flüssigkeit aufnehmen können
+        Fortschreitender Verschlechterung nach dem dritten Krankheitstag statt einer allmählichen Besserung
+      
+    
+
+    
+      Neurologische Komplikationen der HFMK sind in Europa zwar selten, erfordern jedoch eine stationäre Aufnahme, engmaschige Überwachung und in manchen Fällen die Behandlung auf einer pädiatrischen Intensivstation. Frühes Erkennen kann Leben retten.
+    
+  
+
+  
+  
+    Abschnitt 07
+    Vorbeugung & Prophylaxe
+
+    
+      Da in Europa und den Vereinigten Staaten derzeit kein zugelassener Impfstoff gegen die HFMK verfügbar ist, beruht die Vorbeugung vollständig auf nichtmedikamentösen Maßnahmen. Bei konsequenter Anwendung sind diese besonders in Betreuungseinrichtungen sehr wirksam.
+    
+
+    
+      
+        
+        
+          Gründliche Handhygiene
+          Waschen Sie die Hände mindestens 20 Sekunden lang mit Wasser und Seife — besonders nach dem Windelwechseln, vor Mahlzeiten, nach dem Toilettengang und nach Kontakt mit einem infizierten Kind. Alkoholisches Handgel wirkt gegen Enteroviren weniger zuverlässig; Wasser und Seife sind vorzuziehen.
+        
+      
+      
+        
+        
+          Oberflächen & Gegenstände desinfizieren
+          Reinigen und desinfizieren Sie häufig berührte Oberflächen — Spielzeug, Türklinken und Wickelbereiche — regelmäßig mit verdünnter Bleichlösung (1 Esslöffel Bleiche auf 4 Tassen Wasser) oder einem gegen Enteroviren wirksamen, EPA-registrierten Desinfektionsmittel.
+        
+      
+      
+        
+        
+          Engen Kontakt mit Erkrankten vermeiden
+          Vermeiden Sie Umarmen, Küssen und die gemeinsame Nutzung von Besteck oder Bechern mit einem infizierten Kind. Enteroviren werden in der ersten Krankheitswoche in großen Mengen über Speichel, Nasensekret und Stuhl ausgeschieden.
+        
+      
+      
+        
+        
+          Erkrankte Kinder zu Hause lassen
+          Kinder sollten zu Hause bleiben, bis das Fieber vollständig abgeklungen und alle Bläschen eingetrocknet und verkrustet sind. Das ist gewöhnlich 5–7 Tage nach Krankheitsbeginn der Fall. Informieren Sie die Betreuungseinrichtung zeitnah.
+        
+      
+      
+        
+        
+          Husten- und Niesetikette
+          Bedecken Sie beim Husten oder Niesen Mund und Nase mit einem Taschentuch. Entsorgen Sie es sofort und waschen Sie anschließend die Hände. Das begrenzt die Tröpfchenübertragung in gemeinsam genutzten Räumen.
+        
+      
+      
+        
+        
+          Wäsche- & Windelhygiene
+          Waschen Sie verschmutzte Kleidung und Bettwäsche heiß bei mindestens 60 °C. Tragen Sie beim Umgang mit Windeln eines infizierten Säuglings Einweghandschuhe und waschen Sie danach gründlich die Hände. Das Virus kann mehrere Tage auf Oberflächen überleben.
+        
+      
+      
+        
+        
+          Natürliche Abwehr unterstützen
+          Auch wenn es in Europa keinen spezifischen HFMK-Impfstoff gibt, unterstützt ein vollständiger Impfschutz nach nationalem Impfplan die allgemeine Widerstandsfähigkeit des Immunsystems. Ausreichend Schlaf, ausgewogene Ernährung und Stillen im Säuglingsalter tragen ebenfalls zu einer guten Immunantwort bei.
+        
+      
+      
+        
+        
+          Protokolle für Betreuungseinrichtungen
+          Kindertagesstätten sollten schriftliche Infektionsschutzregeln für die HFMK einführen: symptomatische Kinder rasch absondern, die Umgebung intensiver reinigen und Eltern bei Ausbrüchen schriftlich informieren. Beschäftigte sollten beim Windelwechsel stets Handschuhe tragen.
+        
+      
+    
+
+    Stand der Impfstoffentwicklung 2026
+    
+      Ein inaktivierter EV-A71-Impfstoff — EV71-Impfstoff, darunter Inlive von Sinovac und chinesische Präparate — ist in China seit 2016 zugelassen und wird dort eingesetzt. Er schützt nachweislich vor EV-A71-bedingter HFMK und entsprechenden Komplikationen. Bis 2026 hat weder ein EV-A71- noch ein Coxsackievirus-A16-Impfstoff eine Zulassung der Europäischen Arzneimittel-Agentur (EMA) erhalten. Weltweit laufen klinische Studien. Eltern und medizinisches Fachpersonal in Europa sollten die Empfehlungen der Europäischen Arzneimittel-Agentur (EMA) und des Europäischen Zentrums für die Prävention und die Kontrolle von Krankheiten (ECDC) verfolgen.
+    
+  
+
+  
+  
+    Abschnitt 08
+    Epidemiologie
+
+    
+      Die HFMK ist weltweit endemisch; die höchste Inzidenz wird aus der asiatisch-pazifischen Region — China, Vietnam, Malaysia, Japan und Südkorea — gemeldet. In Europa tritt sie sporadisch und in kleineren Ausbrüchen auf, vor allem in Kinderbetreuungs- und Schuleinrichtungen. In gemäßigten Klimazonen erreicht die Übertragung im späten Frühjahr, Sommer und frühen Herbst ihren Höhepunkt.
+    
+    
+      In Irland, Portugal, Spanien und Rumänien ist die HFMK meldepflichtig oder Gegenstand einer verstärkten Überwachung. Nationale Gesundheitsbehörden berichten jährlich über Ausbruchsmuster in Betreuungseinrichtungen. Das HFMK-Krankheitsprofil des ECDC bietet aktuelle europäische epidemiologische Daten.
+    
+    
+      Kinder zwischen 6 Monaten und 5 Jahren tragen die größte Krankheitslast. Eine Enterovirus-Infektion bei Neugeborenen ist zwar selten, kann aber eine schwere systemische Erkrankung mit sepsisähnlichem Verlauf, Myokarditis oder Meningoenzephalitis verursachen und erfordert sofortige fachärztliche Beurteilung.
+    
+  
+
+  
+  
+    Abschnitt 09
+    Häufig gestellte Fragen
+
+    Können Erwachsene an der Hand-Fuß-Mund-Krankheit erkranken?
+    Ja. Erwachsene ohne frühere Infektion können sich mit der HFMK anstecken; die Symptome sind jedoch oft milder oder subklinisch. Schwangere mit vermuteter Exposition sollten ihre Hebamme oder ihre gynäkologische Praxis kontaktieren, da Enterovirus-Infektionen in der späten Schwangerschaft in seltenen Fällen mit Erkrankungen des Neugeborenen verbunden waren.
+
+    Ist die HFMK dasselbe wie die Maul- und Klauenseuche bei Tieren?
+    Nein. Die HFMK beim Menschen und die Maul- und Klauenseuche bei Tieren werden von völlig unterschiedlichen Viren verursacht. Eine Übertragung zwischen Menschen und Tieren findet nicht statt.
+
+    Mein Kind hat HFMK — darf es wieder zur Schule gehen?
+    Die meisten europäischen pädiatrischen und gesundheitsbehördlichen Leitlinien empfehlen, Kinder zu Hause zu lassen, bis sie fieberfrei und alle Bläschen vollständig abgeheilt sind — meist 5–7 Tage. Beachten Sie stets die konkreten Ausschlussregeln der Schule oder Betreuungseinrichtung Ihres Kindes.
+
+    Kann die HFMK erneut auftreten?
+    Ja. Die Immunität nach einer HFMK ist serotypspezifisch. Ein Kind kann nach einer Infektion mit einem anderen Stamm erneut erkranken. Eine durchgemachte Infektion mit Coxsackievirus A16 schützt beispielsweise nicht vor EV-A71 oder CA6.
+
+    Sollte ich die Hautbläschen eincremen?
+    Die Hautbläschen der HFMK heilen von selbst ab und benötigen in der Regel keine örtliche Behandlung. Öffnen Sie die Bläschen nicht. Wenn sie sich infizieren — erkennbar an zunehmender Rötung, Wärme oder Eiter — wenden Sie sich an medizinisches Fachpersonal.
+
+    Was sollte mein Kind bei Geschwüren im Mund essen?
+    Bevorzugen Sie kühle, weiche und säurearme Speisen: Joghurt, Eiscreme, Smoothies, kalte Nudeln oder Kartoffelpüree. Kalte Getränke — kühles Wasser oder gekühlter verdünnter Saft — können beruhigen und helfen, die Flüssigkeitszufuhr aufrechtzuerhalten. Vermeiden Sie salzige Chips, Zitrussaft und kohlensäurehaltige Getränke, da sie die Geschwüre reizen.
+  
+
+  
+  
+    Abschnitt 10
+    Verlässliche pädiatrische Anlaufstellen
+    
+      Die folgenden anerkannten Institutionen stellen klinisch geprüfte Informationen zur HFMK für Eltern und medizinisches Fachpersonal bereit. Global Health empfiehlt diese Quellen für aktuelle nationale Hinweise.
+    
+
+    🇮🇪 Irland
+    
+      
+        🏥
+        Irland · National
+        Health Service Executive (HSE)
+        Umfassender, patientenorientierter HFMK-Leitfaden der irischen Gesundheitsbehörde mit Informationen zu Symptomen, Behandlung und Regeln für den Besuch von Betreuungseinrichtungen.
+      
+      
+        👶
+        Irland · Dublin
+        Children's Health Ireland (CHI)
+        Irlands nationale Kinderkrankenhausgruppe — CHI in Crumlin, Temple Street, Tallaght und Connolly — bietet spezialisierte pädiatrische Versorgung bei Infektionskrankheiten.
+      
+      
+        🔬
+        Irland · National
+        Health Protection Surveillance Centre (HPSC)
+        Das HPSC überwacht übertragbare Krankheiten in Irland, darunter Enterovirus-Erkrankungen und HFMK-Ausbrüche in Betreuungseinrichtungen.
+      
+    
+
+    🇵🇹 Portugal
+    
+      
+        🏥
+        Portugal · National
+        Direção-Geral da Saúde (DGS)
+        Die portugiesische Generaldirektion für Gesundheit stellt nationale klinische Leitlinien und Mitteilungen des öffentlichen Gesundheitswesens zur HFMK und zu Infektionskrankheiten im Kindesalter bereit.
+      
+      
+        👨‍⚕️
+        Portugal · Fachgesellschaft
+        Sociedade Portuguesa de Pediatria (SPP)
+        Die portugiesische Gesellschaft für Pädiatrie veröffentlicht klinische Konsensdokumente, Informationsblätter für Eltern und medizinische Fortbildungen zu pädiatrischen Infektionskrankheiten.
+      
+      
+        🏨
+        Portugal · Lissabon
+        Hospital Dona Estefânia / HDE
+        Portugals führendes spezialisiertes Kinderkrankenhaus gehört zum Centro Hospitalar Universitário de Lisboa Central und verfügt über eine Fachabteilung für pädiatrische Infektionskrankheiten.
+      
+    
+
+    🇪🇸 Spanien
+    
+      
+        👶
+        Spanien · National
+        Asociación Española de Pediatría (AEP)
+        Spaniens nationale pädiatrische Fachgesellschaft — Herausgeberin der Anales de Pediatría — stellt evidenzbasierte Familienratgeber und klinische Protokolle zur HFMK und zu häufigen Viruserkrankungen bereit.
+      
+      
+        🔬
+        Spanien · Fachgesellschaft
+        Sociedad Española de Infectología Pediátrica (SEIP)
+        Die spanische Gesellschaft für pädiatrische Infektionskrankheiten stellt fachärztliche klinische Empfehlungen, Protokolle zum Ausbruchsmanagement und Bildungsressourcen für medizinisches Fachpersonal und Familien bereit.
+      
+      
+        🏥
+        Spanien · National
+        Red Nacional de Vigilancia Epidemiológica (RENAVE)
+        Spaniens nationales epidemiologisches Überwachungsnetz beobachtet Ausbrüche übertragbarer Krankheiten einschließlich der HFMK in Betreuungs- und Schuleinrichtungen aller autonomen Gemeinschaften.
+      
+    
+
+    🇷🇴 Rumänien
+    
+      
+        🔬
+        Rumänien · National
+        Institutul Național de Sănătate Publică (INSP)
+        Rumäniens nationales Institut für öffentliche Gesundheit stellt epidemiologische Überwachungsdaten, Ausbruchsberichte und klinische Hinweise zur HFMK sowie zu anderen Infektionskrankheiten im Kindesalter bereit.
+      
+      
+        🏥
+        Rumänien · National
+        Ministerul Sănătății (MS)
+        Das rumänische Gesundheitsministerium veröffentlicht nationale Warnmeldungen, Ausschlussregeln für Betreuungseinrichtungen und Impfplanhinweise zu pädiatrischen Infektionskrankheiten.
+      
+      
+        👨‍⚕️
+        Rumänien · Bukarest
+        Spitalul Clinic de Copii „Grigore Alexandrescu“
+        Eines der führenden Kinderkrankenhäuser Rumäniens mit Fachabteilungen für Infektionskrankheiten und Intensivmedizin, die Erfahrung in der Behandlung viraler Erkrankungen im Kindesalter einschließlich HFMK besitzen.
+      
+    
+
+    🌍 Internationale & europäische Behörden
+    
+      
+        🇪🇺
+        EU / Europa
+        ECDC — HFMK-Krankheitsprofil
+        Das Europäische Zentrum für die Prävention und die Kontrolle von Krankheiten unterhält ein maßgebliches HFMK-Krankheitsprofil mit Angaben zu Epidemiologie, Ausbruchsdaten und Vorbeugung.
+      
+      
+        🌐
+        Weltweit
+        WHO — HFMK-Merkblatt
+        Das offizielle Merkblatt der Weltgesundheitsorganisation zur HFMK behandelt die globale Epidemiologie, Erreger, klinischen Merkmale, Vorbeugung und Maßnahmen des öffentlichen Gesundheitswesens.
+      
+      
+        🔭
+        USA (Referenz)
+        US CDC — Hand-Fuß-Mund-Krankheit
+        Die US-amerikanische Gesundheitsbehörde CDC bietet ausführliche klinische und gesundheitsbehördliche Informationen, die pädiatrisches Fachpersonal weltweit häufig als Referenzstandard nutzt.
+      
+    
+  
+
+
+
+
+Klinisch überprüft von Dr Tiago Miguel Figueira. Zuletzt überprüft 15. Juni 2026. Dieser Artikel dient nur zur Information und e

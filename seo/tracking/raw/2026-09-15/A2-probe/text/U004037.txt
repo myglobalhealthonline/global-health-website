@@ -1,0 +1,267 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cmr.ro","https://regmed.cmr.ro","https://www.dataprotection.ro"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}]{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Acasă","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Informații legale","item":"https://www.myglobalhealth.online/romania/ro/legal"},{"@type":"ListItem","position":3,"name":"Politica de Confidențialitate","item":"https://www.myglobalhealth.online/romania/ro/legal/privacy-policy"}]}LegalRomânia · Informații legalePolitica de ConfidențialitateVersiunea 2 · Ultima actualizare 18 July 2026Toate documentele legalePolitica de Confidențialitate
+Toate Piețele | RGPD • LGPD • ePrivacy
+Data intrării în vigoare: 1 iulie 2026
+
+Politica de Confidențialitate: Informații Cheie
+
+Operator de dateGlobal Guest s.r.o., care activează sub numele Global Health
+IČO19071680
+Sediu socialRybná 24, 110 00 Praha 1, Republica Cehă
+Autoritatea de supraveghere principalăÚÔÚ (Republica Cehă): mecanism „ghișeu unic” RGPD
+Înregistrare DPC (Irlanda)DPC-13-2106-163222
+Înregistrare CNPD (Portugalia)DPO-20260621-174447-NBQGPS
+Notificare DPO ÚÔÚID mesaj Datová schránka: 1718793255
+Responsabil cu Protecția DatelorDr Ahmed Maklad
+Email DPOdpo@myglobalhealth.online
+Contact generalglobalhealth@myglobalhealth.online
+Legea aplicabilăRGPD (UE) • LGPD (Brazilia) • legislații naționale de implementare
+Data intrării în vigoare1 iulie 2026
+
+
+1. Cine suntem
+Global Health este o platformă de telemedicină operată de Global Guest s.r.o. (IČo: 19071680), o societate cu răspundere limitată înființată în Republica Cehă, cu sediul social la Rybná 24, 110 00 Praha 1, care activează sub numele Global Health.
+Activăm pe mai multe piețe din Europa și Brazilia. Lista completă a piețelor este publicată la www.myglobalhealth.online/markets. În unele piețe activăm ca furnizor de servicii medicale înregistrat (Model de Furnizor); în altele activăm ca platformă tehnologică ce conectează pacienții cu Clinicieni independenți (Model de Platformă). Modelul aplicabil pieței dumneavoastră este prevăzut în Anexa de Țară pentru piața dumneavoastră, la www.myglobalhealth.online/terms.
+Prezenta Politică de Confidențialitate explică modul în care colectăm, utilizăm, stocăm, distribuim și protejăm datele dumneavoastră cu caracter personal atunci când utilizați platforma Global Health la adresa www.myglobalhealth.online („Platforma”). Aceasta se aplică tuturor utilizatorilor Platformei din toate piețele în care activăm.
+Referirile la „noi” sau „al nostru” din prezenta Politică se referă la Global Guest s.r.o., care activează sub numele Global Health. Referirile la „dumneavoastră” se referă la orice persoană fizică ce accesează sau utilizează Platforma.
+
+2. Operatorul de Date și Responsabilul cu Protecția Datelor
+
+2.1 Operatorul de date
+Global Guest s.r.o., care activează sub numele Global Health, este operatorul de date pentru datele cu caracter personal colectate prin intermediul Platformei, cu excepția cazurilor menționate altfel în prezenta Politică (a se vedea Secțiunea 3.3 privind datele clinice în piețele cu Model de Platformă).
+
+2.2 Responsabilul cu Protecția Datelor
+Am desemnat un Responsabil cu Protecția Datelor (DPO) în conformitate cu articolul 37 din RGPD. DPO-ul nostru este responsabil cu supravegherea conformității noastre privind protecția datelor în toate piețele și acționează ca punct de contact pentru autoritățile de supraveghere a protecției datelor și pentru pacienții care doresc să își exercite drepturile privind datele.
+DPO: Dr Ahmed Maklad
+Email DPO: dpo@myglobalhealth.online
+Pentru orice întrebări privind prezenta Politică de Confidențialitate sau modul în care gestionăm datele dumneavoastră, vă rugăm să contactați DPO-ul nostru.
+
+2.3 Autoritatea de supraveghere principală
+Deoarece Global Guest s.r.o. este înființată în Republica Cehă, autoritatea noastră de supraveghere principală, în cadrul mecanismului „ghișeu unic” al RGPD, este Úřad pro ochranu osobních údajů (ÚÔÚ) din Republica Cehă. Suntem, de asemenea, înregistrați la autoritățile de protecție a datelor din Irlanda (DPC, ref: DPC-13-2106-163222) și Portugalia (CNPD, ref: DPO-20260621-174447-NBQGPS). Notificările DPO sunt în curs de desfășurare cu AEPD (Spania) și ANSPDCP (România). Prelucrarea datelor din Brazilia face de asemenea obiectul LGPD și al supravegherii ANPD.
+
+3. Ce date cu caracter personal colectăm
+
+3.1 Date pe care ni le furnizați
+Atunci când vă înregistrați, programați o consultație sau utilizați Platforma, colectăm:
+
+Date de identitate: numele complet, data nașterii, genul.
+Date de contact: adresa de email, numărul de telefon, adresa poștală.
+Date de cont: numele de utilizator, parola (stocată sub formă hash), preferințele contului.
+Date privind Sănătatea: istoricul medical, simptomele, medicația curentă, alergiile și orice alte informații de sănătate furnizate de dumneavoastră la înregistrare sau consultație.
+Date privind consultația: notele consultațiilor, prescripțiile emise, scrisorile de trimitere și dosarele clinice generate în timpul utilizării Platformei.
+Date privind plata: detaliile metodei de plată, procesate în siguranță de Stripe. Nu stocăm numerele complete de card în sistemele noastre.
+Comunicări: emailuri, mesaje și evidențe ale oricărui contact cu echipa noastră.
+Date de verificare a identității: acolo unde este necesar pentru serviciile de prescripție sau pentru verificarea vârstei.
+
+
+3.2 Date colectate automat
+Atunci când utilizați Platforma, colectăm automat:
+
+Date tehnice: adresa IP, tipul și versiunea browserului, tipul dispozitivului, sistemul de operare, fusul orar.
+Date de utilizare: paginile vizitate, funcționalitățile utilizate, istoricul programărilor, durata sesiunii.
+Date privind cookie-urile: conform descrierii din Politica noastră privind Cookie-urile, la www.myglobalhealth.online/cookies.
+Date privind interacțiunea cu GHAIA: atunci când utilizați asistentul nostru de programare bazat pe IA, GHAIA, prin chat sau telefon, prelucrăm conținutul interacțiunii dumneavoastră exclusiv pentru a facilita programarea. Jurnalele conversațiilor GHAIA nu sunt păstrate după încheierea sesiunii. Atunci când o programare este finalizată prin GHAIA, detaliile programării (nume, tipul programării, ora și datele de contact) sunt păstrate ca parte a înregistrării contului dumneavoastră și urmează perioada de păstrare a datelor de cont prevăzută în Secțiunea 11.
+
+
+3.3 Date clinice în piețele cu Model de Platformă
+În piețele în care Global Health activează în cadrul Modelului de Platformă (Spania, România, Brazilia), datele clinice generate în timpul consultațiilor sunt controlate de Clinicianul sau Furnizorul Medical individual, nu de Global Health. Global Health prelucrează aceste date ca persoană împuternicită de operator, în numele Clinicianului. Solicitările privind datele clinice în piețele cu Model de Platformă trebuie adresate în primă instanță Clinicianului curant.
+
+3.4 Date privind copiii
+Platforma nu este destinată utilizării de către persoane sub 18 ani fără participarea activă și consimțământul scris al unui părinte sau tutore legal. Nu colectăm cu bună știință date cu caracter personal de la copii sub 18 ani fără consimțământul părintesc. Dacă considerați că am colectat date de la un copil fără consimțământul adecvat, vă rugăm să ne contactați imediat la globalhealth@myglobalhealth.online.
+
+4. Cum utilizăm datele dumneavoastră cu caracter personal
+
+4.1 Furnizarea Serviciilor
+Utilizăm datele dumneavoastră cu caracter personal pentru a:
+
+Crea și administra contul dumneavoastră.
+Procesa programările și plățile.
+Facilita consultațiile medicale prin intermediul Platformei.
+Emite prescripții, trimiteri și documentație clinică, după caz.
+Opera GHAIA, asistentul nostru de programare bazat pe IA, pentru a facilita programarea consultațiilor.
+Trimite confirmări de programare, memento-uri și comunicări de urmărire.
+Livra Kituri de Testare Medicală la Domiciliu și Dispozitive de Telemedicină, atunci când sunt comandate.
+Facilita Livrarea la Domiciliu a prescripțiilor în Irlanda.
+
+
+4.2 Scopuri clinice
+Datele privind Sănătatea sunt prelucrate de Clinicieni în scopul furnizării consultațiilor medicale, emiterii documentației clinice și menținerii dosarelor clinice. În piețele cu Model de Furnizor, această prelucrare se desfășoară în cadrul cadrului de guvernanță clinică al Global Health. În piețele cu Model de Platformă, Clinicianul este operatorul de date pentru datele clinice.
+
+4.3 Conformitatea legală și reglementară
+Prelucrăm datele dumneavoastră pentru a ne respecta obligațiile legale, inclusiv cerințele de păstrare a dosarelor medicale, obligațiile fiscale și contabile și cerințele de raportare reglementară în fiecare piață în care activăm.
+
+4.4 Îmbunătățirea Platformei și analiza datelor
+Cu consimțământul dumneavoastră (prin acceptarea cookie-urilor), utilizăm Google Analytics pentru a înțelege modul în care este utilizată Platforma și pentru a-i îmbunătăți funcționalitatea și experiența utilizatorului. Datele de analiză sunt prelucrate, acolo unde este posibil, în formă anonimizată sau agregată.
+
+4.5 Comunicări de marketing
+Cu consimțământul dumneavoastră explicit, vă putem trimite emailuri de marketing privind servicii noi, informații privind sănătatea și actualizări ale Platformei. Vă puteți dezabona de la comunicările de marketing în orice moment, făcând clic pe linkul de dezabonare din orice email de marketing sau contactându-ne la globalhealth@myglobalhealth.online. Dezabonarea de la marketing nu afectează livrarea comunicărilor legate de servicii, precum confirmările de programare.
+
+4.6 Siguranță și prevenirea fraudei
+Prelucrăm anumite date pentru a proteja securitatea Platformei, pentru a preveni frauda și pentru a asigura conformitatea cu Termenii și Condițiile noastre, inclusiv detectarea și prevenirea creării de conturi multiple, cu încălcarea termenilor noștri.
+
+5. Temeiuri Legale pentru Prelucrare
+
+5.1 RGPD: piețele din UE
+Prelucrăm datele dumneavoastră cu caracter personal pe următoarele temeiuri legale, conform RGPD:
+
+Articolul 6 alin. (1) lit. (b): executarea unui contract: prelucrare necesară pentru furnizarea Serviciilor pe care le-ați programat.
+Articolul 6 alin. (1) lit. (c): obligație legală: prelucrare necesară pentru conformitatea cu obligațiile medicale, fiscale și reglementare din fiecare piață.
+Articolul 6 alin. (1) lit. (a): consimțământ: prelucrare pentru cookie-urile de analiză, comunicările de marketing și acolo unde consimțământul este solicitat în mod specific.
+Articolul 6 alin. (1) lit. (f): interese legitime: prelucrare pentru securitatea platformei, prevenirea fraudei și îmbunătățirea Platformei, atunci când nu sunt prevalate de drepturile dumneavoastră.
+Articolul 9 alin. (2) lit. (a): consimțământ explicit pentru Datele privind Sănătatea: obținut la înregistrare și reconfirmat înaintea fiecărei consultații. Înaintea fiecărei consultații vi se va cere să confirmați consimțământul pentru prelucrarea Datelor dumneavoastră privind Sănătatea în scopul acelei consultații. Puteți retrage acest consimțământ în orice moment, deși acest lucru va împiedica desfășurarea consultației.
+Articolul 9 alin. (2) lit. (h): scopuri medicale: prelucrare necesară pentru medicina preventivă, diagnosticul medical și furnizarea de asistență medicală, desfășurată de profesioniști din domeniul sănătății supuși obligațiilor de secret profesional.
+
+
+5.2 LGPD: Brazilia
+Pentru pacienții din Brazilia, prelucrăm datele cu caracter personal pe următoarele temeiuri legale, conform LGPD:
+
+Artigo 7, V: executarea unui contract la care persoana vizată este parte.
+Artigo 7, II: conformitatea cu o obligație legală sau reglementară.
+Artigo 7, IX: interesele legitime ale operatorului, atunci când nu sunt prevalate de drepturile fundamentale.
+Artigo 11, I: consimțământ explicit pentru prelucrarea datelor sensibile (privind sănătatea).
+Artigo 11, II(f): exercitarea drepturilor în proceduri judiciare, administrative sau de arbitraj.
+
+
+6. GHAIA: Asistent de Programare bazat pe IA și Prelucrare Automată
+GHAIA este asistentul nostru de programare bazat pe inteligență artificială, disponibil prin chat text și telefon. GHAIA este construit pe tehnologia ElevenLabs Conversational AI și găzduit pe infrastructura Railway.
+
+6.1 Ce face GHAIA
+GHAIA asistă pacienții la programarea consultațiilor, verificarea disponibilității și navigarea pe Platformă. GHAIA nu efectuează triaj clinic, nu oferă sfaturi medicale și nu ia decizii clinice. Toate deciziile clinice sunt luate de Clinicieni umani în timpul consultațiilor.
+
+6.2 Ce prelucrează GHAIA
+Atunci când interacționați cu GHAIA, sunt prelucrate următoarele date:
+
+Datele dumneavoastră vorbite sau scrise, pentru a facilita solicitarea de programare.
+Numele și datele de contact ale dumneavoastră, acolo unde sunt furnizate pentru finalizarea programării.
+Tipul de consultație pe care îl solicitați.
+Identificatorii de sesiune, pentru a menține contextul conversației.
+
+Datele conversației GHAIA sunt prelucrate de ElevenLabs (a se vedea registrul persoanelor împuternicite din Secțiunea 10). GHAIA nu păstrează conținutul conversației după încheierea sesiunii, cu excepția cazului în care o programare este finalizată.
+
+6.3 Drepturile dumneavoastră privind GHAIA
+Conform articolului 22 din RGPD și prevederilor echivalente din LGPD, aveți dreptul de a ști atunci când este utilizată prelucrarea automată. GHAIA este un sistem de IA: nu interacționați cu o persoană fizică atunci când utilizați GHAIA. Aveți dreptul, în orice moment, să:
+
+Solicitați ca o persoană să vă preia programarea, în locul GHAIA.
+Adresați întrebări despre modul în care GHAIA v-a procesat solicitarea.
+Ne contactați la globalhealth@myglobalhealth.online pentru a vorbi cu un membru al echipei.
+
+Prelucrarea automată a programării efectuată de GHAIA nu produce efecte juridice și nu vă afectează în mod similar de semnificativ. Rezultatul programării este întotdeauna condiționat de disponibilitatea Clinicianului și de confirmarea dumneavoastră.
+
+7. Cookie-uri și Tehnologii de Urmărire
+Utilizăm cookie-uri și tehnologii de urmărire similare pe Platformă. Cookie-urile strict necesare sunt utilizate fără consimțământ. Cookie-urile de analiză și funcționale sunt plasate doar cu consimțământul dumneavoastră prealabil, prin bannerul nostru de consimțământ privind cookie-urile.
+Detaliile complete privind cookie-urile pe care le utilizăm, scopurile, furnizorii și modul de gestionare a preferințelor dumneavoastră sunt prevăzute în Politica noastră privind Cookie-urile, la www.myglobalhealth.online/cookies.
+Google Analytics este utilizat pentru analiza platformei. Cookie-urile de analiză sunt încărcate doar după ce furnizați consimțământul explicit. Adresele IP sunt anonimizate înainte de transmiterea către Google. Datele Google Analytics sunt transferate în SUA în baza Clauzelor Contractuale Standard, prin Acordul de Prelucrare a Datelor Google Workspace.
+
+8. Cu cine partajăm datele dumneavoastră
+
+8.1 Clinicieni
+Datele dumneavoastră privind sănătatea și informațiile de programare sunt partajate cu Clinicianul care desfășoară consultația dumneavoastră. În piețele cu Model de Furnizor, Clinicienii accesează datele prin platforma Global Health, în cadrul cadrului nostru de guvernanță clinică. În piețele cu Model de Platformă, Clinicianul este un operator de date independent.
+
+8.2 Persoane împuternicite de operator
+Partajăm date cu persoane împuternicite de operator aprobate, care furnizează servicii în numele nostru. Toate persoanele împuternicite sunt obligate prin acorduri de prelucrare a datelor și prin garanții adecvate de transfer. Registrul complet al persoanelor împuternicite, incluzând numele furnizorilor, scopurile, locațiile datelor și mecanismele de transfer, este prevăzut în Secțiunea 10 a prezentei Politici.
+
+8.3 Divulgări legale și reglementare
+Putem divulga datele dumneavoastră cu caracter personal autorităților de reglementare, organelor de aplicare a legii sau instanțelor, atunci când este impus de lege, atunci când este necesar pentru protejarea siguranței pacienților sau a Clinicienilor, sau atunci când este impus în legătură cu proceduri judiciare.
+
+8.4 Transferuri de afaceri
+În cazul unei fuziuni, achiziții sau vânzări a substanțial totalității activelor noastre, datele dumneavoastră cu caracter personal pot fi transferate entității achizitoare. Veți fi notificat cu privire la orice astfel de transfer și la orice modificare semnificativă a practicilor de gestionare a datelor, cu cel puțin 30 de zile în avans.
+
+8.5 Ce nu facem
+Nu vindem datele dumneavoastră cu caracter personal către terți. Nu partajăm Datele dumneavoastră privind Sănătatea cu asigurători, angajatori sau companii de marketing. Nu utilizăm Datele dumneavoastră privind Sănătatea în alte scopuri decât cele prevăzute în prezenta Politică.
+
+9. Transferuri Internaționale de Date
+Global Health este un operator multi-piață, iar unele dintre datele dumneavoastră cu caracter personal pot fi transferate internațional. Toate transferurile internaționale de date cu caracter personal se efectuează cu garanții adecvate implementate.
+
+9.1 Transferuri în cadrul UE/SEE
+Transferurile de date cu caracter personal între țările UE/SEE sunt permise conform RGPD, fără garanții suplimentare. Global Health activează în mai multe state membre ale UE, iar datele pot circula între aceste țări ca parte a operațiunilor noastre.
+
+9.2 Transferuri către SUA
+Persoanele noastre împuternicite (Google, Stripe, Railway și ElevenLabs) au sediul în SUA. Transferurile datelor dumneavoastră cu caracter personal către acești furnizori se efectuează în baza Clauzelor Contractuale Standard (SCC), aprobate de Comisia Europeană, oferind un nivel adecvat de protecție a datelor. Detaliile SCC aplicabile fiecărui furnizor sunt disponibile în acordurile respective de prelucrare a datelor.
+
+9.3 Transferuri pentru pacienții din Brazilia
+Transferurile datelor pacienților din Brazilia către țări din afara Braziliei se efectuează în conformitate cu Capitolul V al LGPD, utilizând garanții adecvate, inclusiv clauze contractuale standard sau mecanisme echivalente recunoscute de ANPD.
+
+9.4 Drepturile dumneavoastră privind transferurile
+Aveți dreptul de a obține o copie a garanțiilor de transfer pe care le utilizăm pentru transferurile internaționale. Vă rugăm contactați DPO-ul nostru la dpo@myglobalhealth.online pentru mai multe informații.
+
+10. Registrul Persoanelor Împuternicite de Operator
+În conformitate cu articolul 28 din RGPD, menținem un registru al tuturor persoanelor împuternicite de operator care prelucrează date cu caracter personal în numele nostru. Registrul actual al persoanelor împuternicite este următorul:
+
+FurnizorScopLocațieGaranție de transferPolitică de confidențialitate
+Google WorkspaceConsultații video (Meet), email de afaceri (Gmail), analiza website-ului (Analytics)SUASCC prin Google Workspace DPApolicies.google.com/privacy
+StripeProcesarea securizată a plăților și administrarea tranzacțiilorSUASCC prin Stripe DPAstripe.com/privacy
+Railway (AWS)Găzduirea platformei, infrastructura aplicației, găzduirea IA GHAIASUASCC prin Railway DPArailway.app/legal/dpa
+ElevenLabsIA conversațională GHAIA: generarea vocii și a răspunsurilor asistentului de programareSUASCC prin ElevenLabs DPAelevenlabs.io/privacy
+
+Acest registru este menținut sub revizuire și actualizat atunci când persoanele împuternicite sunt adăugate, eliminate sau modificate. Vă vom notifica cu privire la orice modificare semnificativă a persoanelor noastre împuternicite care afectează prelucrarea Datelor dumneavoastră privind Sănătatea, cu cel puțin 30 de zile în avans, atunci când este impus de legea aplicabilă.
+
+11. Cât timp păstrăm datele dumneavoastră
+Păstrăm datele cu caracter personal doar atât timp cât este necesar pentru scopurile pentru care au fost colectate, sub rezerva oricăror obligații legale care impun o perioadă de păstrare mai lungă. Perioadele de păstrare aplicabile fiecărei categorii de date sunt:
+
+Categoria de datePerioada de păstrareTemeiul legal al păstrării
+Dosare clinice / de consultațieIE: 8 ani (împlinirea vârstei de 26 de ani pentru minori) PT: 5 ani (împlinirea vârstei de 28 de ani pentru minori) CZ: 10 ani (împlinirea vârstei de 28 de ani pentru minori) ES / RO: conform obligațiilor Clinicianului BR: 20 de ani (îndrumarea CFM)Cerințe reglementare din sănătate, în fiecare piață
+Date de programare și tranzacționale5 aniConformitate fiscală, contabilă și legală
+Registre financiare / de facturareIE: 7 ani | PT: 10 ani | CZ: 10 ani | ES: 5 ani | RO: 5 ani | BR: 5 aniLegislația fiscală din fiecare piață
+Date de contDurata contului + 2 ani de la închidereTermene de prescripție a pretențiilor legale
+Evidențe de consimțământ pentru marketingDurata consimțământului + 3 aniDovedirea temeiului legal pentru marketing
+Evidențe de plângeri5 ani de la închidereApărare legală și audit reglementar
+Evidențe de consimțământ privind cookie-urile12 luni de la consimțământConformitatea ePrivacy
+Jurnale de conversație GHAIADoar durata sesiunii (fără păstrare permanentă)Doar facilitarea programării
+
+La finalul perioadei de păstrare aplicabile, datele cu caracter personal sunt șterse în siguranță sau anonimizate. Dosarele clinice sunt șterse în conformitate cu instrucțiunile Clinicianului curant și cu reglementările medicale aplicabile.
+
+12. Cum vă protejăm datele
+Implementăm măsuri tehnice și organizatorice adecvate pentru a proteja datele dumneavoastră cu caracter personal împotriva distrugerii accidentale sau ilegale, pierderii, alterării, divulgării neautorizate sau accesului neautorizat. Aceste măsuri includ:
+
+Criptarea datelor în tranzit, folosind TLS (Transport Layer Security).
+Criptarea datelor în repaus, pe infrastructura Railway.
+Controale de acces care limitează accesul la date exclusiv personalului autorizat.
+Controale de acces bazate pe roluri, care asigură că Clinicienii pot accesa doar dosarele propriilor pacienți.
+Evaluări periodice de securitate și teste de penetrare ale Platformei.
+Proceduri de răspuns la incidente pentru încălcările securității datelor cu caracter personal.
+Instruirea personalului privind obligațiile de protecție a datelor.
+
+În cazul unei încălcări a securității datelor cu caracter personal susceptibile să genereze un risc ridicat pentru drepturile și libertățile dumneavoastră, vă vom notifica fără întârzieri nejustificate, în conformitate cu obligațiile noastre conform legii aplicabile privind protecția datelor.
+
+13. Drepturile dumneavoastră privind protecția datelor
+În funcție de țara dumneavoastră de reședință și de legea aplicabilă privind protecția datelor, este posibil să aveți unele sau toate dintre următoarele drepturi:
+
+DreptCe înseamnăSe aplică înCum se exercită
+Dreptul de accesObținerea unei copii a datelor cu caracter personal pe care le deținem despre dumneavoastrăToate piețeleglobalhealth@myglobalhealth.online
+Dreptul la rectificareCorectarea datelor inexacte sau incompleteToate piețeleglobalhealth@myglobalhealth.online
+Dreptul la ștergereSolicitarea ștergerii datelor dumneavoastră (sub rezerva obligațiilor legale de păstrare)Toate piețeleglobalhealth@myglobalhealth.online
+Dreptul la restricționareRestricționarea modului în care prelucrăm datele dumneavoastră în anumite circumstanțePiețele din UE + Braziliaglobalhealth@myglobalhealth.online
+Dreptul la portabilitatePrimirea datelor dumneavoastră într-un format structurat, care poate fi citit automatPiețele din UE + Braziliaglobalhealth@myglobalhealth.online
+Dreptul la opozițieOpoziția față de prelucrarea bazată pe interese legitime sau pentru marketing directPiețele din UE + Braziliaglobalhealth@myglobalhealth.online
+Dreptul privind deciziile automateSolicitarea unei revizuiri umane a oricărei decizii automate care vă afecteazăToate piețeleglobalhealth@myglobalhealth.online
+Dreptul de a retrage consimțământulRetragerea consimțământului în orice moment, fără a afecta prelucrarea anterioarăToate piețeleglobalhealth@myglobalhealth.online
+Dreptul de a depune o plângereDepunerea unei plângeri la autoritatea dumneavoastră de supraveghereToate piețeleA se vedea Secțiunea 14
+
+Accesul la dosarele medicale: Pe lângă dreptul general de acces la datele cu caracter personal, aveți un drept specific de a accesa dosarele dumneavoastră medicale, conform legislației din domeniul sănătății aplicabile în țara dumneavoastră. Pentru a solicita o copie a dosarelor de consultație, a prescripțiilor sau a scrisorilor de trimitere, contactați globalhealth@myglobalhealth.online cu subiectul „Solicitare Dosare Medicale”. Vom răspunde în termen de 30 de zile. În piețele cu Model de Furnizor (Irlanda, Portugalia, Republica Cehă), dosarele sunt deținute de Global Health. În piețele cu Model de Platformă (Spania, România, Brazilia), ar trebui să contactați direct Clinicianul curant: vom facilita acest lucru la cerere.
+Pentru a vă exercita oricare dintre aceste drepturi, vă rugăm să ne contactați la globalhealth@myglobalhealth.online sau să contactați DPO-ul nostru la dpo@myglobalhealth.online. Vom răspunde în termenul impus de legea aplicabilă: în orice caz, în termen de 30 de zile pentru piețele din UE și în termen de 15 zile pentru pacienții din Brazilia (conform îndrumărilor ANPD). Este posibil să fie nevoie să vă verificăm identitatea înainte de a procesa solicitarea dumneavoastră.
+Exercitarea drepturilor dumneavoastră este gratuită. Cu toate acestea, dacă solicitarea dumneavoastră este vădit nefondată sau excesivă, putem percepe o taxă rezonabilă sau putem refuza să dăm curs solicitării.
+
+14. Autorități de Supraveghere
+Aveți dreptul de a depune o plângere la autoritatea de supraveghere a protecției datelor din țara dumneavoastră în orice moment. Contactarea noastră în prealabil ne oferă posibilitatea de a soluționa direct preocuparea dumneavoastră, dar aceasta nu este o cerință prealabilă contactării unei autorități de supraveghere.
+
+Republica Cehă (ÚÔÚ: autoritate principală): www.uoou.cz
+Irlanda (DPC): www.dataprotection.ie
+Portugalia (CNPD): www.cnpd.pt
+Spania (AEPD): www.aepd.es
+România (ANSPDCP): www.dataprotection.ro
+Brazilia (ANPD): www.gov.br/anpd
+
+
+15. Comunicări de Marketing
+Vă vom trimite emailuri de marketing doar dacă v-ați dat acordul explicit pentru a le primi. Vă puteți exprima acordul la înregistrare sau în orice moment prin setările contului.
+Vă puteți dezabona de la emailurile de marketing în orice moment:
+
+Făcând clic pe linkul de dezabonare din orice email de marketing.
+Actualizându-vă preferințele în setările contului.
+Contactându-ne la globalhealth@myglobalhealth.online.
+
+Dezabonarea de la marketing nu afectează comunicările legate de servicii, precum confirmările de programare, rezumatele consultațiilor sau notificările privind prescripțiile.
+Nu partajăm datele dumneavoastră de contact cu terți în scopuri de marketing.
+
+16. Confidențialitatea Copiilor
+Platforma nu este destinată utilizării independente de către persoane sub 18 ani. Pacienții sub 18 ani pot utiliza Platforma doar cu participarea activă și consimțământul scris al unui părinte sau tutore legal, care acceptă Termenii și Condițiile noastre în numele lor.
+Dosarele clinice referitoare la pacienții care aveau sub 18 ani la momentul tratamentului fac obiectul unor perioade extinse de păstrare, confo

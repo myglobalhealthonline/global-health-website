@@ -1,0 +1,47 @@
+{
+  "input_file": "seo/tracking/raw/2026-09-15/A3-gsc/inspect/priority-set-1.txt",
+  "urls_requested": 157,
+  "urls_inspected": 157,
+  "urls_failed": 0,
+  "calls_made": 17,
+  "batches": [
+    {"batch": 1, "url_range": "1-10", "urls": 10},
+    {"batch": 2, "url_range": "11-20", "urls": 10},
+    {"batch": 3, "url_range": "22-31", "urls": 10},
+    {"batch": 4, "url_range": "32-41", "urls": 10, "note": "connector returned a transient error on first attempt for this batch; retried successfully, same URLs, no data lost"},
+    {"batch": 5, "url_range": "42-51", "urls": 10},
+    {"batch": 6, "url_range": "52-61", "urls": 10},
+    {"batch": 7, "url_range": "62-71", "urls": 10},
+    {"batch": 8, "url_range": "72-81", "urls": 10},
+    {"batch": 9, "url_range": "82-91", "urls": 10},
+    {"batch": 10, "url_range": "92-101", "urls": 10},
+    {"batch": 11, "url_range": "102-111", "urls": 10},
+    {"batch": 12, "url_range": "112-121", "urls": 10},
+    {"batch": 13, "url_range": "122-131", "urls": 10},
+    {"batch": 14, "url_range": "132-141", "urls": 10},
+    {"batch": 15, "url_range": "142-151", "urls": 10},
+    {"batch": 16, "url_range": "152-157", "urls": 6},
+    {"batch": 17, "url_range": "21 (catch-up)", "urls": 1, "note": "line 21 (physiotherapy-specialist-consultation) was skipped when batch 3 started at line 22 instead of 21; inspected separately here to reach full 157/157 coverage"}
+  ],
+  "timestamps": {
+    "started_utc": "2026-09-15T05:12:08Z",
+    "finished_utc": "2026-09-15T05:45:25Z"
+  },
+  "quota_note": "inspect_urls is free/uncredited per tool description; no quota exhaustion encountered. One transient connector error (batch covering lines 32-41) resolved on immediate retry.",
+  "outputs": {
+    "raw_jsonl": "seo/tracking/raw/2026-09-15/A3-gsc/inspect/raw-set-1.jsonl",
+    "csv": "seo/tracking/raw/2026-09-15/A3-gsc/inspect/inspect-set-1.csv",
+    "parser_script": "seo/tracking/raw/2026-09-15/A3-gsc/inspect/parse_inspect.py"
+  },
+  "summary": {
+    "coverage_state_counts": {
+      "Submitted and indexed": 130,
+      "Discovered - currently not indexed": 20,
+      "URL is unknown to Google": 6,
+      "Crawled - currently not indexed": 1
+    },
+    "canonical_mismatches": 0,
+    "last_crawl_before_2026-08-08": 48,
+    "never_crawled_no_last_crawl_time": 26
+  }
+}

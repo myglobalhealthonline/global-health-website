@@ -1,0 +1,474 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.ers.pt","https://www.ordemdosmedicos.pt","https://www.cnpd.pt","https://www.livroreclamacoes.pt","https://www.infarmed.pt","https://www.sns24.gov.pt","https://www.dgs.pt","https://www.insa.min-saude.pt","https://www.spc.pt","https://www.ihmt.unl.pt","https://www.apmgf.pt","https://www.deco.pt","https://www.utente.min-saude.pt","https://www.sosvozamiga.org","https://www.fpcardiologia.pt"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Doença mão-pé-boca: Sinais e tratamento","description":"Guia sobre doença mão-pé-boca em crianças: sintomas, tratamento, sinais de urgência e prevenção do contágio.","url":"https://www.myglobalhealth.online/portugal/pt/blog/doenca-mao-pe-boca-sinais-e-tratamento","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/portugal/pt/blog/doenca-mao-pe-boca-sinais-e-tratamento#webpage","url":"https://www.myglobalhealth.online/portugal/pt/blog/doenca-mao-pe-boca-sinais-e-tratamento","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/pt/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-06-15"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Doen%C3%A7a+m%C3%A3o-p%C3%A9-boca%3A+Sinais+e+tratamento&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2Fff180d4e-ccef-441a-8dca-8af41f64cc50-150385_0ed6f9dbf2384287827ba85738606351-mv2.avif&v=2026-07-20.1-134y5r","width":1200,"height":630},"about":{"@type":"Thing","name":"Telemedicine"},"datePublished":"2026-06-06T05:23:47.372Z","dateModified":"2026-06-15T20:56:33.190Z","publishingPrinciples":"https://www.myglobalhealth.online/portugal/pt/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/portugal/pt/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/portugal/pt/blog"},{"@type":"ListItem","position":3,"name":"Doença mão-pé-boca: Sinais e tratamento","item":"https://www.myglobalhealth.online/portugal/pt/blog/doenca-mao-pe-boca-sinais-e-tratamento"}]}]Todos os artigosTelemedicineDoença mão-pé-boca: Sinais e tratamentoGuia alinhado com o HSE sobre a doença mão-pé-boca em crianças na Irlanda: sintomas, cuidados em casa, sinais de urgência e prevenção do contágio.Global Health Medical Team6 de junho de 202615 min de leituraÚltima revisão 15 de junho de 2026Revisado clinicamente por Dr Tiago Miguel Figueira+Nesta páginaO que é a doença mão-pé-boca?Causas & virologiaSinais & sintomasDiagnósticoTratamento & cuidadosSinais de alarme — quando procurar cuidados urgentesPrevenção & profilaxiaEpidemiologiaPerguntas frequentesRecursos pediátricos de confiança
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    Secção 01
+    O que é a doença mão-pé-boca?
+
+    
+      A doença mão-pé-boca (DMPB) é uma doença viral comum e altamente contagiosa que afeta sobretudo bebés e crianças com menos de dez anos. Caracteriza-se pela tríade típica de febre, úlceras orais dolorosas e uma erupção vesicular nas palmas das mãos, plantas dos pés e, por vezes, nas nádegas. A DMPB é causada por enterovírus — mais frequentemente Coxsackievirus A16 e Enterovirus 71 (EV-A71).
+    
+    
+      Embora seja habitualmente ligeira e autolimitada, desaparecendo em sete a dez dias, a doença pode causar desconforto considerável nas crianças pequenas. Complicações raras mas graves — incluindo meningite viral, encefalite e paralisia flácida aguda — estão mais frequentemente associadas a estirpes de EV-A71 e exigem assistência médica rápida.
+    
+    
+      A doença ocorre em todo o mundo e propaga-se rapidamente em creches, infantários, escolas e no ambiente familiar, sobretudo no verão e no início do outono em climas temperados. Conhecer a DMPB é importante para pais, cuidadores e profissionais de saúde.
+    
+
+    
+      «A DMPB é uma doença enteroviral contagiosa nas crianças, caracterizada por febre, úlceras orais dolorosas e lesões vesiculares nas mãos e nos pés. O tratamento é sobretudo de suporte.»
+      — Resumo clínico da Global Health
+    
+  
+
+  
+  
+    Secção 02
+    Causas & virologia
+
+    
+      A DMPB é causada por vírus de RNA de cadeia simples pertencentes ao género Enterovirus da família Picornaviridae . Os dois agentes causadores com maior relevância clínica são:
+    
+
+    
+      
+        🦠
+        Coxsackievirus A16
+        A causa clássica e mais frequente em todo o mundo. Produz geralmente uma doença mais ligeira. Integra o grupo A dos Coxsackievirus.
+      
+      
+        ⚠️
+        Enterovirus 71 (EV-A71)
+        Associado a surtos de maior dimensão, sobretudo na região Ásia-Pacífico, e a um risco superior de complicações neurológicas, incluindo encefalite do tronco cerebral.
+      
+      
+        🔬
+        Outros Coxsackievirus
+        CA6, CA10, CB5 e outros podem causar apresentações atípicas ou disseminadas da DMPB. O CA6 pode provocar lesões cutâneas mais extensas.
+      
+      
+        🌍
+        Vias de transmissão
+        Contacto direto com secreções nasais, saliva, líquido das vesículas ou fezes. Também através de superfícies e objetos contaminados. É altamente contagiosa.
+      
+    
+
+    Porque são as crianças as mais afetadas
+    
+      As crianças pequenas não têm imunidade prévia a estes enterovírus. O vírus continua a ser eliminado em grande quantidade nas fezes durante semanas após a recuperação, mesmo quando a criança parece estar bem — o que torna o controlo nas creches particularmente difícil. Adultos imunocompetentes que não tenham sido expostos na infância podem contrair a doença, embora os sintomas sejam geralmente mais ligeiros.
+    
+    
+      O período de incubação é de 3–7 dias após a exposição. A eliminação viral pela orofaringe atinge o pico durante a primeira semana de doença.
+    
+  
+
+  
+  
+    Secção 03
+    Sinais & sintomas
+
+    
+      A DMPB segue habitualmente uma evolução clínica previsível. Reconhecer o padrão completo de sintomas permite um diagnóstico mais precoce e cuidados adequados em casa, ajudando também os profissionais a identificar quando é necessário escalar os cuidados.
+    
+
+    
+      
+        
+          Fase
+          Sintoma / sinal
+          Notas clínicas
+        
+      
+      
+        
+          PródromoDias 1–2
+          Febre ligeira (38–39 °C), irritabilidade, mal-estar, diminuição do apetite, dor de garganta
+          Nesta fase, é muitas vezes confundida com uma constipação comum ou uma infeção viral inespecífica das vias respiratórias superiores
+        
+        
+          Lesões oraisDias 1–3
+          Úlceras dolorosas na língua, mucosa das bochechas e palato mole; vesículas que sofrem erosão rapidamente
+          Podem causar salivação intensa e recusa de alimentos ou líquidos — um indício diagnóstico importante
+        
+        
+          Erupção cutâneaDias 2–4
+          Erupção papulovesicular nas palmas e plantas; pode atingir o dorso das mãos e dos pés, nádegas e zona perioral
+          A distribuição clássica é patognomónica; as lesões cutâneas não costumam causar comichão nem dor
+        
+        
+          Sintomas associadosAo longo da doença
+          Diminuição do apetite, salivação, mal-estar e risco de desidratação quando a dor oral é intensa
+          A desidratação é a complicação mais frequente que exige avaliação médica
+        
+        
+          ResoluçãoDias 7–10
+          Resolução espontânea; pode ocorrer queda das unhas (onicomadese) 4–8 semanas mais tarde
+          As alterações das unhas são benignas e desaparecem espontaneamente; tranquilize os pais
+        
+      
+    
+
+    Características das lesões orais
+    
+      As úlceras orais da DMPB começam como pequenas manchas vermelhas (enantema), que evoluem rapidamente para vesículas e depois para úlceras superficiais dolorosas rodeadas por um halo vermelho. Surgem na língua, mucosa das bochechas, palato mole e pilares amigdalinos. A dor oral é o principal motivo da recusa alimentar e do consequente risco de desidratação nos bebés.
+    
+
+    Características da erupção cutânea
+    
+      A erupção é constituída por vesículas cinzentas ovais ou alongadas, com 3–7 mm, sobre uma base eritematosa — tipicamente nas palmas e plantas, muitas vezes acompanhando as linhas dos dermátomos cutâneos. Também são características as lesões nas nádegas, sem vesículas, e as máculas periorais. Ao contrário da varicela, as lesões não se disseminam de forma centrípeta e são geralmente não pruriginosas.
+    
+  
+
+  
+  
+    Secção 04
+    Diagnóstico
+
+    
+      A DMPB é sobretudo um diagnóstico clínico baseado na tríade característica de úlceras orais, erupção vesicular acral e febre numa criança da faixa etária típica, durante uma estação compatível ou perante história de exposição. Em casos simples, a confirmação laboratorial não costuma ser necessária.
+    
+
+    Quando considerar análises laboratoriais
+    
+      A confirmação virológica — por zaragatoa nasofaríngea, zaragatoa retal, líquido das vesículas ou PCR do líquido cefalorraquidiano para enterovírus — está indicada em:
+    
+    
+      Apresentações graves ou atípicas
+      Suspeita de envolvimento neurológico (encefalite, meningite, mielite flácida aguda)
+      Crianças imunocomprometidas
+      Investigação de um surto pelas autoridades de saúde pública
+      Recém-nascidos com suspeita de sépsis por enterovírus
+    
+
+    Diagnóstico diferencial
+    
+      Os profissionais devem considerar herpangina (apenas lesões orais, limitadas à parte posterior da orofaringe), gengivoestomatite herpética primária (envolvimento gengival mais grave), varicela (distribuição centrípeta e pruriginosa) e ulceração aftosa (recorrente, sem doença sistémica). Nos bebés, a doença de Kawasaki deve ser excluída quando a febre é prolongada.
+    
+  
+
+  
+  
+    Secção 05
+    Tratamento & cuidados
+
+    
+      Atualmente, não existe tratamento antiviral específico para a DMPB. Os cuidados são inteiramente de suporte e centram-se no alívio dos sintomas, na manutenção da hidratação e na vigilância de complicações.
+    
+
+    
+      
+        💧
+        Hidratação oral
+        A intervenção mais importante. Ofereça frequentemente líquidos frescos e não ácidos. Gelados de água e água fresca podem aliviar a dor. Evite bebidas cítricas e gaseificadas.
+      
+      
+        🌡️
+        Antipiréticos
+        Paracetamol ou ibuprofeno em doses adequadas à idade para controlar a febre e o mal-estar geral. Siga as orientações nacionais de dosagem.
+      
+      
+        🩹
+        Analgésicos
+        Géis anestésicos orais de aplicação tópica, ou elixires à base de lidocaína em crianças mais velhas, podem reduzir a dor e facilitar a alimentação. Fale com o farmacêutico ou médico de família.
+      
+      
+        🍦
+        Alimentos frios e macios
+        Iogurte, gelado, puré frio ou batidos reduzem a dor oral e ajudam a manter a ingestão calórica. Evite alimentos duros, salgados ou picantes.
+      
+      
+        🛏️
+        Repouso & isolamento
+        Mantenha a criança em casa até a febre desaparecer e todas as lesões formarem crosta ou cicatrizarem — geralmente 5–7 dias. Isto limita a propagação em creches e infantários.
+      
+      
+        🏥
+        Avaliação hospitalar
+        É necessária perante suspeita de desidratação, febre alta persistente, sintomas neurológicos ou ingestão oral insuficiente em bebés com menos de 12 meses. Podem ser necessários líquidos intravenosos.
+      
+    
+
+    Nota sobre os antibióticos
+    
+      Os antibióticos não são eficazes contra infeções virais e não devem ser prescritos na DMPB sem complicações. A sobreinfeção bacteriana secundária das lesões cutâneas é rara, mas deve ser avaliada se estas ficarem quentes, inchadas, dolorosas ou com pus.
+    
+  
+
+  
+  
+    Secção 06
+    Sinais de alarme — quando procurar cuidados urgentes
+
+    
+      Embora a DMPB seja autolimitada na grande maioria dos casos, uma minoria de crianças — sobretudo com menos de dois anos ou infetadas por EV-A71 — pode desenvolver complicações graves. Pais e cuidadores devem conhecer os sinais de alerta que exigem avaliação imediata numa urgência.
+    
+
+    
+      🚨 Dirija-se imediatamente ao serviço de urgência se:
+      
+        Sinais de desidratação: boca seca, ausência de lágrimas ao chorar, fontanela encovada nos bebés, ausência de urina durante >8 horas, pele marmoreada ou acinzentada
+        Febre alta persistente: temperatura acima de 39.5 °C que não responde aos antipiréticos ou febre com duração superior a 5 dias
+        Sintomas neurológicos: convulsões, rigidez do pescoço, vómitos persistentes, alteração do estado de consciência, ataxia, mioclonias, fotofobia
+        Sintomas cardiorrespiratórios: respiração rápida, dor no peito, batimento cardíaco acelerado, palidez, extremidades frias
+        Dor intensa ou recusa total de ingestão oral: sobretudo em bebés com menos de 12 meses que não conseguem manter uma hidratação adequada
+        Agravamento progressivo após o 3.º dia de doença, em vez de melhoria gradual
+      
+    
+
+    
+      Na Europa, as complicações neurológicas da DMPB — embora raras — exigem internamento, vigilância apertada e, nalguns casos, tratamento numa unidade de cuidados intensivos pediátricos. O reconhecimento precoce salva vidas.
+    
+  
+
+  
+  
+    Secção 07
+    Prevenção & profilaxia
+
+    
+      Uma vez que não existe atualmente na Europa ou nos Estados Unidos uma vacina licenciada contra a DMPB, a prevenção depende inteiramente de intervenções não farmacológicas. Estas medidas são muito eficazes quando aplicadas de forma consistente, sobretudo em creches e infantários.
+    
+
+    
+      
+        
+        
+          Higiene rigorosa das mãos
+          Lave as mãos com água e sabão durante pelo menos 20 segundos — sobretudo depois de mudar fraldas, antes das refeições, após usar a casa de banho e após contacto com uma criança infetada. O gel de álcool é menos eficaz contra enterovírus; deve preferir-se água e sabão.
+        
+      
+      
+        
+        
+          Desinfetar superfícies & objetos
+          Limpe e desinfete regularmente as superfícies tocadas com frequência — brinquedos, puxadores das portas e zonas de muda de fraldas — utilizando uma solução diluída de lixívia (1 colher de sopa de lixívia para 4 chávenas de água) ou um desinfetante registado na EPA ativo contra enterovírus.
+        
+      
+      
+        
+        
+          Evitar contacto próximo com pessoas infetadas
+          Evite abraçar, beijar ou partilhar utensílios e copos com uma criança infetada. Durante a primeira semana de doença, os enterovírus são eliminados em grande quantidade na saliva, secreções nasais e fezes.
+        
+      
+      
+        
+        
+          Manter as crianças doentes em casa
+          As crianças devem ficar em casa, sem frequentar a creche, infantário ou escola, até a febre desaparecer por completo e todas as vesículas secarem e formarem crosta. Isto acontece geralmente 5–7 dias após o início da doença. Informe rapidamente a instituição.
+        
+      
+      
+        
+        
+          Higiene respiratória («Apanhe, deite fora, elimine»)
+          Cubra a boca e o nariz com um lenço ao tossir ou espirrar. Deite o lenço fora de imediato e lave as mãos. Isto reduz a transmissão por gotículas em ambientes partilhados.
+        
+      
+      
+        
+        
+          Higiene da roupa & das fraldas
+          Lave a roupa e a roupa de cama sujas num ciclo quente (≥60 °C). Use luvas descartáveis ao manusear fraldas de um bebé infetado e lave bem as mãos depois. O vírus sobrevive nas superfícies durante vários dias.
+        
+      
+      
+        
+        
+          Reforçar a imunidade natural
+          Embora não exista uma vacina específica contra a DMPB na Europa, manter as crianças em dia com todos os programas nacionais de vacinação recomendados contribui para a resiliência geral do sistema imunitário. Sono adequado, boa alimentação e amamentação na infância também favorecem uma resposta imunitária robusta.
+        
+      
+      
+        
+        
+          Protocolos em creches e infantários
+          As instituições devem aplicar políticas escritas de controlo da DMPB: isolamento rápido das crianças sintomáticas, reforço da limpeza ambiental e comunicação escrita aos pais durante surtos. Os profissionais devem usar sempre luvas nas mudanças de fralda.
+        
+      
+    
+
+    Panorama das vacinas em 2026
+    
+      Uma vacina inativada contra o EV-A71 — vacina EV71, incluindo a Inlive da Sinovac e variantes produzidas na China — está aprovada e é utilizada na China desde 2016, com eficácia demonstrada contra a DMPB associada ao EV-A71 e as suas complicações. Em 2026, nenhuma vacina contra EV-A71 ou Coxsackievirus A16 recebeu aprovação da European Medicines Agency (EMA). Decorrem ensaios clínicos em vários países. Pais e profissionais de saúde na Europa devem acompanhar as orientações da European Medicines Agency (EMA) e do European Centre for Disease Prevention and Control (ECDC) para obter atualizações.
+    
+  
+
+  
+  
+    Secção 08
+    Epidemiologia
+
+    
+      A DMPB é endémica em todo o mundo, com maior incidência registada na região Ásia-Pacífico (China, Vietname, Malásia, Japão, Coreia do Sul). Na Europa, ocorre de forma esporádica e em pequenos surtos, sobretudo em creches, infantários e escolas. Nas zonas temperadas, a transmissão sazonal atinge o pico no final da primavera, no verão e no início do outono.
+    
+    
+      Na Irlanda, em Portugal, Espanha e Roménia, a DMPB é de notificação obrigatória ou está sujeita a vigilância reforçada, com relatórios anuais das autoridades nacionais de saúde pública sobre os padrões dos surtos em creches. O perfil da DMPB do ECDC disponibiliza dados epidemiológicos europeus atualizados.
+    
+    
+      As crianças dos 6 meses aos 5 anos suportam a maior carga da doença. A infeção neonatal por enterovírus — embora rara — pode causar doença sistémica grave, incluindo um quadro semelhante a sépsis, miocardite e meningoencefalite, e exige avaliação imediata por um especialista.
+    
+  
+
+  
+  
+    Secção 09
+    Perguntas frequentes
+
+    Os adultos podem contrair doença mão-pé-boca?
+    Sim. Os adultos que nunca tenham sido infetados podem contrair DMPB, embora os sintomas sejam muitas vezes mais ligeiros ou subclínicos. As grávidas que suspeitem de exposição devem contactar a parteira ou o obstetra, pois a infeção por enterovírus no final da gravidez foi raramente associada a doença neonatal.
+
+    A DMPB é igual à febre aftosa dos animais?
+    Não. A DMPB humana e a febre aftosa dos animais são causadas por vírus completamente distintos. Estas doenças não se transmitem entre pessoas e animais.
+
+    O meu filho tem DMPB — pode voltar à escola?
+    A maioria das orientações europeias de pediatria e saúde pública recomenda que as crianças fiquem em casa até estarem sem febre e todas as vesículas cicatrizarem por completo, normalmente durante 5–7 dias. Siga sempre a política específica de afastamento da escola, creche ou infantário da criança.
+
+    A DMPB pode repetir-se?
+    Sim. A imunidade após DMPB é específica para cada serótipo. Uma criança pode voltar a ter a doença se for infetada por uma estirpe diferente — por exemplo, ter tido Coxsackievirus A16 não protege contra EV-A71 ou CA6.
+
+    Devo aplicar algum creme nas vesículas da pele?
+    As vesículas cutâneas da DMPB cicatrizam espontaneamente e, em geral, não precisam de tratamento tópico. Não rebente as vesículas. Se houver sinais de infeção — aumento da vermelhidão, calor ou pus — consulte um profissional de saúde.
+
+    O que deve a criança comer quando tem úlceras na boca?
+    Dê prioridade a alimentos frescos, macios e não ácidos: iogurte, gelado, batidos, massa fria e puré de batata. Líquidos frescos, como água ou sumo diluído e refrigerado, podem aliviar a dor e ajudar a manter a hidratação. Evite batatas fritas salgadas, sumos de citrinos e bebidas gaseificadas, que agravam as úlceras.
+  
+
+  
+  
+    Secção 10
+    Recursos pediátricos de confiança
+    
+      As instituições abaixo disponibilizam informação clinicamente revista sobre DMPB para pais e profissionais de saúde. A Global Health recomenda estas fontes para consultar orientações nacionais atualizadas.
+    
+
+    🇮🇪 Irlanda
+    
+      
+        🏥
+        Irlanda · Nacional
+        Health Service Executive (HSE)
+        Guia completo do HSE para doentes e famílias sobre DMPB, com informação sobre sintomas, tratamento e orientações de afastamento.
+      
+      
+        👶
+        Irlanda · Dublin
+        Children's Health Ireland (CHI)
+        O grupo nacional de hospitais pediátricos da Irlanda — CHI em Crumlin, Temple Street, Tallaght e Connolly — presta cuidados especializados em doenças infeciosas pediátricas.
+      
+      
+        🔬
+        Irlanda · Nacional
+        Health Protection Surveillance Centre (HPSC)
+        O HPSC monitoriza doenças transmissíveis na Irlanda, incluindo infeções por enterovírus e surtos de DMPB em creches e infantários.
+      
+    
+
+    🇵🇹 Portugal
+    
+      
+        🏥
+        Portugal · Nacional
+        Direção-Geral da Saúde (DGS)
+        A Direção-Geral da Saúde disponibiliza orientações clínicas nacionais e comunicações de saúde pública sobre DMPB e doenças infeciosas da infância.
+      
+      
+        👨‍⚕️
+        Portugal · Profissional
+        Sociedade Portuguesa de Pediatria (SPP)
+        A Sociedade Portuguesa de Pediatria publica documentos de consenso clínico, folhetos informativos para pais e formação médica contínua sobre doenças infeciosas pediátricas.
+      
+      
+        🏨
+        Portugal · Lisboa
+        Hospital Dona Estefânia / HDE
+        O principal hospital pediátrico especializado de Portugal, integrado no Centro Hospitalar Universitário de Lisboa Central, dispõe de uma unidade especializada em doenças infeciosas pediátricas.
+      
+    
+
+    🇪🇸 Espanha
+    
+      
+        👶
+        Espanha · Nacional
+        Asociación Española de Pediatría (AEP)
+        A associação profissional nacional de pediatria de Espanha — editora da Anales de Pediatría — disponibiliza guias para famílias e protocolos clínicos baseados na evidência sobre DMPB e doenças virais comuns.
+      
+      
+        🔬
+        Espanha · Profissional
+        Sociedad Española de Infectología Pediátrica (SEIP)
+        A Sociedade Espanhola de Infeciologia Pediátrica disponibiliza orientações clínicas especializadas, protocolos de gestão de surtos e recursos educativos para profissionais e famílias.
+      
+      
+        🏥
+        Espanha · Nacional
+        Red Nacional de Vigilancia Epidemiológica (RENAVE)
+        A rede nacional espanhola de vigilância epidemiológica monitoriza surtos de doenças transmissíveis, incluindo DMPB, em creches e escolas de todas as comunidades autónomas.
+      
+    
+
+    🇷🇴 Roménia
+    
+      
+        🔬
+        Roménia · Nacional
+        Institutul Național de Sănătate Publică (INSP)
+        O Instituto Nacional de Saúde Pública da Roménia disponibiliza dados de vigilância epidemiológica, relatórios de surtos e orientações clínicas sobre DMPB e outras doenças infeciosas da infância.
+      
+      
+        🏥
+        Roménia · Nacional
+        Ministerul Sănătății (MS)
+        O Ministério da Saúde da Roménia publica alertas nacionais de saúde pública, políticas de afastamento em creches e orientações do programa de vacinação relevantes para doenças infeciosas pediátricas.
+      
+      
+        👨‍⚕️
+        Roménia · Bucareste
+        Spitalul Clinic de Copii «Grigore Alexandrescu»
+        Um dos principais hospitais pediátricos da Roménia, com unidades especializadas em doenças infeciosas e cuidados intensivos com experiência no tratamento de doenças virais infantis, incluindo DMPB.
+      
+    
+
+    🌍 Autoridades internacionais & europeias
+    
+      
+        🇪🇺
+        UE / Europa
+        ECDC — perfil da DMPB
+        O European Centre for Disease Prevention and Control mantém um perfil de referência da DMPB com informação sobre epidemiologia, dados de surtos e prevenção.
+      
+      
+        🌐
+        Global
+        WHO — ficha informativa sobre DMPB
+        A ficha informativa oficial da World Health Organization sobre DMPB aborda a epidemiologia mundial, os agentes causadores, as características clínicas, a prevenção e a resposta de saúde pública.
+      
+      
+        🔭
+        EUA (referência)
+        US CDC — doença mão-pé-boca
+        Os US Centers for Disease Control disponibilizam informação clínica e de saúde pública pormenorizada, amplamente utilizada como referência por profissionais de pediatria em todo o mundo.
+      
+    
+  
+
+
+
+
+Revisado clinicamente por Dr Tiago Miguel Figueira. Última revisão 15 de junho de 2026. Este artigo é apenas informativo e não substitui aconselhamento médico.Como escrevemos e revemos conteúdos médicosVale a pena partilhar?Partilhe este artigoFacebookWhatsAppXLinkedInInstagramCopiar ligaçãoPróximo passoPronto para falar com um médico?Agende uma consulta online com um médico registado localmente no seu país. As nomeações disponíveis são mostradas durante a reserva.Agendar consultaMais artigosSaúde MentalBaixa psicológica: quem a passa, quanto se recebe e porque não é paga a 100%A baixa psicológica é uma baixa médica normal com um diagnóstico de saúde mental. Quem a pode emitir, os 55%, 60% e 70% que a Segurança Social paga, e o que muda no burnout.Ler artigo →Baixa médicaBaixa médica: quanto se recebe e como é calculadaAs taxas do subsídio de doença em 2026, a remuneração de referência, os dias de espera e um exemplo de cálculo.Ler artigo →Medicina Geral e FamiliarAtestado médico para carta de condução: Grupo 1, Grupo 2 e envio ao IMTSaiba que categorias pertencem aos Grupos 1 e 2, quando são pedidos atestado e avaliação psicológica e como o médico envia o documento ao IMT.Ler artigo →

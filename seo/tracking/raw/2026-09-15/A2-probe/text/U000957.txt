@@ -1,0 +1,406 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.lkcr.cz","https://www.sukl.cz","https://www.uoou.cz"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes: The Silent Disease","description":"Diabetes in Czechia: causes, symptoms, GLP-1 and SGLT2 treatments, regular checkups, and when to seek medical care.","url":"https://www.myglobalhealth.online/czechia/en/blog/diabetes-the-silent-disease-3","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/czechia/en/blog/diabetes-the-silent-disease-3#webpage","url":"https://www.myglobalhealth.online/czechia/en/blog/diabetes-the-silent-disease-3","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/en/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-19"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes%3A+The+Silent+Disease&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F58c09201-812d-4a9f-b12b-a5bade2ba3a8-33850.webp&v=2026-07-20.1-11cb6tn","width":1200,"height":630},"about":{"@type":"Thing","name":"Endokrinologie"},"datePublished":"2026-07-19T06:14:43.687Z","dateModified":"2026-07-19T06:15:25.832Z","publishingPrinciples":"https://www.myglobalhealth.online/czechia/en/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/czechia/en/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/czechia/en/blog"},{"@type":"ListItem","position":3,"name":"Diabetes: The Silent Disease","item":"https://www.myglobalhealth.online/czechia/en/blog/diabetes-the-silent-disease-3"}]}]All articlesEndokrinologieDiabetes: The Silent DiseaseDiabetes mellitus, commonly known as diabetes, is one of the most widespread and most underestimated chronic conditions in the Czech Republic — affecting an estimated 10% of the population. The good news is that thanks to modern treatments, including GLP-1 receptor agonists and SGLT2 inhibitors, diabetes is more manageable today than ever before.Global Health Medical TeamJuly 19, 202620 min read+On this pageDiabetes in the Czech Republic: the scale of the problemTypes of diabetesCauses and risk factorsSigns and symptoms of diabetesCurrent treatment options for diabetes in the Czech RepublicWhy regular medical checkups matterThe future of diabetes treatmentKey institutions and resources in the Czech RepublicFrequently asked questions
+
+
+
+  
+  
+    
+      
+      
+      
+      Causes, symptoms, treatment and the future of care
+      An estimated 10% of people in the Czech Republic live with diabetes, and thousands more don't yet know they have it. This guide covers everything you need to know: causes, warning signs, the best available treatment approaches, why regular checkups matter, and the emerging therapies that could transform diabetes care in the years ahead.
+      
+        — Evidence-based
+        — Aligned with ČDS and ÚZIS ČR guidance
+        — Updated June 2026
+      
+      — Written by Dr. Tiago Miguel Figueira · Clinical Director, Global Health— Adapted and medically reviewed for the Czech market by: MUDr. Ahmed Maklad · Czech Medical Chamber (ČLK) No. 117 668 619 8
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      AM
+      
+        Written by Dr. Tiago Miguel Figueira
+        Clinical Director · Global Health · Adapted and medically reviewed for the Czech Republic by: MUDr. Ahmed Maklad · Czech Medical Chamber (ČLK) No. 117 668 619 8
+      
+      10 MIN READ
+    
+
+    Diabetes mellitus — commonly known as diabetes — is one of the most widespread chronic conditions in the Czech Republic, and one of the most underestimated. Type 2 diabetes, which accounts for around 92% of all cases, can develop quietly over many years without causing obvious symptoms. By the time many patients are diagnosed, the disease has already been present for some time.
+
+    The good news is that diabetes is highly manageable with the right treatment and regular monitoring. People with diabetes can lead full, healthy lives. The last decade in particular has brought breakthrough advances in treatment, most notably the arrival of GLP-1 receptor agonists and SGLT2 inhibitors, and treatment options today are stronger than ever.
+
+    
+    
+    Section 01
+    Diabetes in the Czech Republic: the scale of the problem
+
+    According to data from the Czech Statistical Office (ČSÚ), approximately 884,500 people were being treated for diabetes with medication in 2024. The Institute of Health Information and Statistics of the Czech Republic (ÚZIS ČR), which maintains the National Diabetes Registry (NDR), estimates that diabetes mellitus affects approximately 10% of the Czech population. The Czech Republic consistently ranks among the countries with the highest diabetes prevalence in the European Union, a trend also documented by the Czech Diabetes Association.
+
+    
+      
+        884k
+        People treated for diabetes with medication in the Czech Republic in 2024 (ČSÚ)
+      
+      
+        ~10%
+        Estimated share of the Czech population with diabetes (ÚZIS ČR)
+      
+      
+        92%
+        Of cases are type 2 diabetes
+      
+      
+        TopEU
+        The Czech Republic repeatedly ranks among the EU countries with the highest diabetes prevalence
+      
+    
+    Source: Czech Statistical Office (ČSÚ) 2024; ÚZIS ČR — National Diabetes Registry; Czech Diabetes Association; NZIP.
+
+    Projections from ÚZIS ČR, based on data from the National Registry of Reimbursed Health Services (NRHZS), show that the number of people with diabetes in the Czech Republic is on an upward trend and, without significant lifestyle changes across the population, will continue to rise in the coming years. A research article from FN Motol (Vnitřní lékařství 2025;71(3):144–151) highlights the need for an individualized approach to treatment, with an emphasis on cardiovascular and renal protection.
+
+    
+      Could you be at risk without knowing it?
+      A significant share of people with type 2 diabetes in the Czech Republic are estimated to remain undiagnosed. If you have risk factors — a family history of diabetes, excess weight, high blood pressure, or a sedentary lifestyle — talk to your GP about getting a fasting glucose or HbA1c test. Early diagnosis is key to preventing complications.
+    
+
+    
+    
+    Section 02
+    Types of diabetes
+
+    Diabetes isn't a single disease. Understanding which type you have — or which type you're at risk for — is the first step toward effective treatment.
+
+    
+      
+        🔵
+        Type 1 diabetes (T1D)
+        Autoimmune · Insulin-dependent
+        The immune system destroys the beta cells in the pancreas that produce insulin. The body produces little or no insulin. Requires lifelong insulin therapy. Most often develops in childhood or early adulthood. Accounts for roughly 6–8% of all diabetes cases in the Czech Republic; NRHZS data recorded over 58,900 people with T1D in the Czech Republic in 2013.
+      
+      
+        🟠
+        Type 2 diabetes (T2D)
+        Lifestyle & genetics · Progressive
+        The body becomes resistant to insulin or doesn't produce enough of it. Strongly associated with lifestyle. The most common form, accounting for roughly 92% of cases in the Czech Republic. Can initially be managed with diet, exercise and oral medication, though many patients eventually need insulin. Typically affects middle-aged and older adults.
+      
+      
+        🟡
+        Gestational diabetes
+        Pregnancy-related · Usually temporary
+        Develops during pregnancy when hormonal changes interfere with insulin function. Usually resolves after delivery, but significantly raises the lifelong risk of T2D for both mother and child. Screening is standard practice at Czech maternity units and gynecology clinics between weeks 24 and 28 of pregnancy.
+      
+      
+        ⚪
+        Prediabetes
+        Preventable · Often reversible
+        Blood sugar is higher than normal but not yet in the diabetic range. A critical intervention window — lifestyle changes at this stage can prevent or substantially delay the onset of type 2 diabetes. Many people in the Czech Republic are at this stage without realizing it.
+      
+    
+
+    
+    
+    Section 03
+    Causes and risk factors
+
+    Type 1 diabetes
+    The exact cause of T1D isn't fully understood. It's an autoimmune condition in which the immune system mistakenly attacks and destroys the insulin-producing beta cells of the pancreas. Genetic factors play a role, and exposure to certain viral infections is also thought to contribute. Research in this area in the Czech Republic is coordinated through the Czech Diabetes Society ČLS JEP (ČDS) and institutions such as Motol University Hospital and Brno University Hospital.
+
+    Type 2 diabetes
+    T2D has more complex, and largely modifiable, causes: a combination of genetic predisposition with lifestyle and environmental factors. The key mechanism is insulin resistance (the body's cells stop responding effectively to insulin), paired with a gradual decline in the pancreas's ability to compensate with higher output.
+
+    
+      
+        ⚖️
+        Excess weight and obesity
+        Abdominal (visceral) fat in particular. Obesity is the single most significant modifiable risk factor for T2D.
+      
+      
+        🛋️
+        Sedentary lifestyle
+        Lack of physical activity reduces insulin sensitivity. Regular exercise is one of the most effective tools for both prevention and treatment.
+      
+      
+        🍞
+        A diet high in processed foods
+        High intake of refined carbohydrates, sugar and ultra-processed foods is closely linked to insulin resistance.
+      
+      
+        👨‍👩‍👧
+        Family history
+        Having a first-degree relative with T2D significantly raises your personal risk of developing the disease.
+      
+      
+        🎂
+        Age over 45
+        Risk increases with age. ÚZIS ČR data shows a markedly higher prevalence of diabetes in older age groups.
+      
+      
+        🩺
+        High blood pressure or dyslipidemia
+        Metabolic risk factors often cluster together. Hypertension and lipid disorders regularly occur alongside insulin resistance.
+      
+      
+        🤰
+        History of gestational diabetes
+        Women who developed gestational diabetes during pregnancy face a significantly higher lifelong risk of T2D.
+      
+      
+        🚬
+        Smoking
+        Smoking increases the risk of developing T2D and worsens cardiovascular outcomes in people with diabetes. ČDS recommends smoking cessation as part of comprehensive care.
+      
+    
+
+    
+    
+    Section 04
+    Signs and symptoms of diabetes
+
+    Symptoms differ significantly between T1D and T2D. T1D often presents acutely, with a rapid onset of symptoms that can signal diabetic ketoacidosis (DKA), a life-threatening condition. T2D, by contrast, typically develops slowly and quietly over years, with symptoms mild or gradual enough that many people attribute them to aging, stress, or fatigue.
+
+    
+      
+        💧
+        
+          Excessive thirst
+          Persistent, hard-to-quench thirst — polydipsia — as the kidneys work overtime to filter excess glucose.
+        
+      
+      
+        🚽
+        
+          Frequent urination
+          Polyuria, especially at night (nocturia). Often the most noticeable early symptom that brings patients to a doctor.
+        
+      
+      
+        😴
+        
+          Persistent fatigue
+          Exhaustion even after adequate sleep, as cells are deprived of glucose as an energy source.
+        
+      
+      
+        ⚖️
+        
+          Unexplained weight loss
+          Especially in T1D, as the body burns fat and muscle for energy when insulin is lacking.
+        
+      
+      
+        👁️
+        
+          Blurred vision
+          High blood sugar causes fluid shifts in the eye's lens, temporarily affecting focus.
+        
+      
+      
+        🩹
+        
+          Slow-healing wounds
+          Impaired circulation and reduced immunity slow the healing of cuts, scrapes and infections.
+        
+      
+      
+        🤚
+        
+          Tingling or numbness
+          Peripheral neuropathy affecting the hands and feet can be an early symptom, especially in T2D.
+        
+      
+      
+        🍽️
+        
+          Increased appetite
+          Polyphagia — persistent hunger even after eating — occurs when cells can't efficiently absorb glucose.
+        
+      
+    
+
+    
+      When to seek immediate help:
+      If you or a family member experience a sudden onset of intense thirst, excessive urination, vomiting, abdominal pain, confusion, or a fruity smell on the breath — especially in a child or young adult — this may be diabetic ketoacidosis (DKA), a serious medical emergency. Call 155 (emergency medical services) or 112 immediately, or go to the nearest emergency department.
+    
+
+    
+    
+    Section 05
+    Current treatment options for diabetes in the Czech Republic
+
+    Diabetes treatment has undergone a genuine revolution over the past decade. In the Czech Republic, clinical guidelines are issued by the Czech Diabetes Society ČLS JEP (ČDS), whose Recommended Standard of Care for Type 2 Diabetes Mellitus (updated 2020, with subsequent standards from 2021–2025) is the binding standard for diabetes clinics and GPs across the country. Drug availability is governed by the reimbursement conditions set by the State Institute for Drug Control (SÚKL).
+
+    Lifestyle changes — the foundation of all treatment
+    For both T1D and T2D, lifestyle is the cornerstone of treatment. In T2D, changes to diet and increased physical activity can significantly lower HbA1c, improve insulin sensitivity, and in some cases — particularly after bariatric surgery or on a very low-calorie diet — lead to lasting remission. Structured patient education is part of standard care at diabetes clinics and is also recommended in ČDS guidelines.
+
+    Pharmacological treatment
+    Below are the main drug classes available in the Czech Republic. Treatment decisions are individualized — both ČDS and ADA 2025 guidelines emphasize a patient-centered approach that takes into account cardiovascular risk, kidney function, body weight, and patient preference. A research article published in Vnitřní lékařství (2025;71(3):144–151), from the 2nd Faculty of Medicine, Charles University, and Motol University Hospital's Department of Internal Medicine, notes that in patients with cardiovascular disease, heart failure, or diabetic kidney disease, starting GLP-1 agonist or SGLT2 inhibitor therapy should not depend on HbA1c levels.
+
+    
+      
+        First line · T2D
+        Metformin
+        Glucophage · Generic metformin (covered by health insurance)
+        The established first-choice drug for T2D. Lowers blood sugar by reducing glucose production in the liver. Well tolerated, affordable, and fully covered by Czech health insurers. Remains the standard starting point for treatment in most T2D patients.
+      
+      
+        Cardiorenal protection
+        GLP-1 receptor agonists
+        Semaglutide (Ozempic, Wegovy) · Liraglutide (Victoza)
+        A breakthrough class of injectable (and now oral) drugs that mimic the gut hormone GLP-1. Lower blood sugar, support significant weight loss, and reduce cardiovascular risk. Under ADA 2025 and ČDS guidelines, they're preferred for patients with cardiovascular disease or high cardiovascular risk. Available by prescription in the Czech Republic; reimbursement conditions are set by SÚKL.
+      
+      
+        Cardiorenal protection
+        SGLT2 inhibitors (gliflozins)
+        Empagliflozin (Jardiance) · Dapagliflozin (Forxiga)
+        Tablets that lower blood sugar by causing the kidneys to excrete excess sugar in the urine. Independently protect the heart and kidneys, and are recommended as first-line therapy for patients with heart failure or chronic kidney disease regardless of HbA1c. Backed by strong evidence from the EMPA-REG OUTCOME and CREDENCE clinical trials. Available in the Czech Republic from specialists (diabetology, endocrinology, internal medicine) subject to SÚKL indication criteria.
+      
+      
+        Glycemic control
+        DPP-4 inhibitors (gliptins)
+        Sitagliptin (Januvia) · Linagliptin (Trajenta)
+        Oral tablets that increase insulin secretion in a glucose-dependent manner. Weight-neutral, with a low risk of hypoglycemia. Used when GLP-1 agonists or SGLT2 inhibitors aren't tolerated or indicated. Covered by Czech health insurers when indication criteria are met.
+      
+      
+        T1D & advanced T2D
+        Insulin therapy
+        Basal, bolus and premixed insulins · Insulin pumps
+        Essential for all T1D patients and many with T2D. Modern insulin analogs offer a more predictable action profile than older formulations. Insulin pumps (continuous subcutaneous insulin infusion) are available in the Czech Republic for select patients and are covered by health insurers under current conditions.
+      
+      
+        T1D · New standard
+        Continuous glucose monitoring (CGM)
+        FreeStyle Libre · Dexcom · Medtronic
+        CGM eliminates the need for repeated finger-stick testing, provides real-time blood sugar readings with trends and alerts, and improves glycemic control. In the Czech Republic, CGM is covered by health insurers for T1D patients and select groups of T2D patients who meet the required criteria. Automated insulin delivery (closed-loop) systems are available at specialized centers.
+      
+    
+
+    
+      ADA 2025 and ČDS guideline update:
+      Both the ADA 2025 international guidelines and the recommendations of the Czech Diabetes Society emphasize that GLP-1 agonists and SGLT2 inhibitors should be prioritized for T2D patients with established cardiovascular disease, heart failure, or chronic kidney disease, independent of HbA1c levels. If you have T2D and any of these conditions, ask your diabetes specialist or GP whether these medications are right for you.
+    
+
+    
+    
+    Section 06
+    Why regular medical checkups matter
+
+    Diabetes is a progressive chronic condition, and if poorly controlled, its complications can be serious and irreversible. Diabetic retinopathy is a leading cause of blindness among working-age adults in the Czech Republic. Diabetic nephropathy is a major cause of kidney failure requiring dialysis. Peripheral neuropathy contributes to diabetic foot complications, which in severe cases can lead to amputation. Cardiovascular risk is significantly elevated in people with diabetes, as noted in ČDS's 2025 Recommended Standard of Care for Diabetic Foot Syndrome.
+
+    A key finding from a decade of clinical research is that most of these complications can be largely prevented, or substantially delayed, through good blood sugar control, blood pressure management, and regular checkups. An annual, structured diabetes checkup is one of the best-evidenced and most cost-effective interventions in all of medicine.
+
+    What your annual diabetes checkup should include
+
+    
+      HbA1c test (average blood sugar over the past 3 months)
+      Blood pressure measurement and review of antihypertensive therapy
+      Kidney function — eGFR and urine albumin-to-creatinine ratio (ACR)
+      Cholesterol and a full lipid profile
+      Body weight and BMI assessment
+      Foot exam — pulses, sensation, skin condition
+      Diabetic retinopathy screening — eye exam or retinal photography
+      Medication review and adjustment as needed
+      Assessment of self-monitoring education
+      Smoking status review and cessation support, if relevant
+      Flu vaccination (strongly recommended for people with diabetes)
+    
+
+    Screening for people not yet diagnosed
+    If you have risk factors for T2D and have never been tested, your GP can arrange a simple fasting glucose or HbA1c test. This is especially important if you're over 45, have a family history of diabetes, have high blood pressure, or were overweight during pregnancy. Early detection of prediabetes is a genuine opportunity to prevent or delay the onset of T2D through lifestyle changes.
+
+    
+      Diabetic retinopathy screening in the Czech Republic:
+      Under the guidance of the Czech Diabetes Society, all patients with diabetes should be referred each year for an eye exam focused on diabetic retinopathy. In 2023, ČDS issued an updated Position Statement on Diabetic Retinopathy Screening in Diabetes Clinics, introducing the option of retinal photography directly at diabetes clinics as an alternative to an ophthalmology exam. Diabetic retinopathy screening is covered by health insurers.
+    
+
+    
+    
+    Section 07
+    The future of diabetes treatment
+
+    The pace of innovation in diabetes care is unprecedented. Several areas of research, some already in advanced clinical trials, have the potential to fundamentally transform life with diabetes over the next decade.
+
+    
+      
+        Phase 1/2/3 · Regulatory filing 2026
+        Stem cell therapy (beta cells)
+        Zimislecel (formerly VX-880) from Vertex Pharmaceuticals involves infusing fully differentiated, stem-cell-derived insulin-producing cells into the portal vein. The goal is to restore the body's own insulin production in T1D. As of June 2025, 50 participants had been enrolled in the pivotal trial, with regulatory filing expected in 2026. A 2025 review in PMC describes the therapy as potentially "transformative," combining beta-cell regeneration with modulation of the immune response.
+      
+      
+        Clinical development
+        Artificial pancreas (closed-loop systems)
+        Automated insulin delivery (AID) systems, which combine CGM with an automated insulin pump, already represent a major advance for people with T1D. They're available at specialized centers in the Czech Republic (Motol University Hospital, Brno University Hospital and others). A new generation of these systems uses machine-learning algorithms to predict blood sugar swings before they happen.
+      
+      
+        New therapies
+        Dual and triple receptor agonists
+        Tirzepatide (Mounjaro), a dual GIP/GLP-1 agonist, has shown greater HbA1c reduction and more pronounced weight loss than existing GLP-1 agonists and is available in the Czech Republic. Triple agonists (GLP-1/GIP/glucagon) are in advanced clinical trials and may offer even greater metabolic benefits.
+      
+      
+        Immunotherapy
+        Immunomodulation in T1D
+        Teplizumab (an anti-CD3 monoclonal antibody) has been shown in clinical trials to delay the clinical onset of T1D by roughly two years in high-risk individuals. Research into immunotherapy and tolerance induction continues, with the goal of preserving residual beta-cell function at the time of diagnosis.
+      
+      
+        Precision medicine
+        Genomics and AI-guided treatment
+        Genomic profiling is beginning to identify diabetes subtypes that respond differently to specific medications. AI-powered CGM systems that learn individual metabolic patterns and offer personalized recommendations are in development, with the potential to transform day-to-day diabetes management.
+      
+      
+        Regenerative medicine
+        Beta-cell encapsulation
+        A parallel strategy to stem cell transplantation: encapsulating insulin-producing cells within protective biomaterial devices that shield them from immune destruction, potentially eliminating the need for immunosuppression. The Diabetes Research Institute at the University of Miami has demonstrated proof of concept in clinical trials, with the first patient achieving insulin independence.
+      
+    
+
+    Stem cell research for T1D is explored in detail in a 2025 publication in PMC (PMID: PMC12689004), which states that "stem cell therapy offers a dual strategy: regenerating insulin-producing beta cells and regulating the immune response." While a definitive cure remains a goal for the future, the direction of research has never been clearer.
+
+    
+    
+    Section 08
+    Key institutions and resources in the Czech Republic
+
+    If you're living with diabetes in the Czech Republic, or you're concerned you may be at risk, the following organizations and services are your main reference points for clinical care, education, and support.
+
+    
+      🩺 ČDS ČLS JEP
+      📊 ÚZIS ČR
+      🤝 Czech Diabetes Association
+      💊 SÚKL
+      📋 Czech Medical Chamber
+      🏥 Motol University Hospital
+      🏥 Brno University Hospital
+      🔬 NZIP
+    
+
+    Czech Diabetes Society ČLS JEP (ČDS)
+    The Czech Diabetes Society ČLS JEP is the leading professional authority on all aspects of diabetes care in the Czech Republic. It issues recommended clinical guidelines, including standards for T1D (2022), T2D (2020, with updates), diabetic kidney disease (2021), diabetic foot syndrome (2025), and preventing the progression of diabetic retinopathy with fenofibrate (2025). All documents are freely available on the ČDS website.
+
+    ÚZIS ČR and the National Diabetes Registry (NDR)
+    The Institute of Health Information and Statistics of the Czech Republic maintains the National Diabetes Registry and publishes open epidemiological data on diabetes through the National Health Information Portal (NZIP). This data, covering incidence, prevalence, mortality and treatment patterns since 2010, underpins diabetes health policy planning in the Czech Republic.
+
+    Czech Diabetes Association
+    The Czech Diabetes Association is a patient organization representing people with diabetes and their families. It provides education, advocacy, counseling, and up-to-date statistical data on diabetes in the Czech Republic, and serves as the patient voice in discussions over drug and device reimbursement.
+
+    SÚKL — State Institute for Drug Control
+    The State Institute for Drug Control decides on drug registration and health insurance reimbursement conditions in the Czech Republic. Its website lets you check current reimbursement conditions for specific diabetes medications, including gliflozins and GLP-1 agonists, and access summaries of product characteristics (SPCs).
+
+    
+    
+    Section 09
+    Frequently asked questions
+
+    
+
+      
+        How many people have diabetes in the Czech Republic?
+        
+          According to data from the Czech Statistical Office (ČSÚ), approximately 884,500 people were being treated for diabetes with medication in 2024. ÚZIS ČR estimates that diabetes mellitus affects approximately 10% of the entire Czech population. The Czech Republic ranks among the countries with the highest diabetes prevalence in the EU. The number of people with diabetes is on an upward trend, driven by an ag

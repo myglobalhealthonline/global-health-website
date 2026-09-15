@@ -1,0 +1,338 @@
+file,reason
+frontend/app/(portal)/(admin)/admin/appointments/[id]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/appointments/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/appointments/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/assets/[id]/edit/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/assets/[id]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/assets/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/assets/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/audit-log/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/automation/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/blog/[id]/edit/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/blog/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/blog/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/calendar/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/careers/[id]/edit/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/careers/applications/[id]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/careers/applications/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/careers/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/careers/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/corporate/[id]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/corporate/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/corporate/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/countries/[id]/edit/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/countries/[id]/insurance-companies/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/countries/[id]/landing-pages/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/countries/[id]/legal/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/countries/[id]/legal-documents/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/countries/[id]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/countries/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/countries/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/country-content/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/country-features/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/country-home/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/coupons/[id]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/coupons/birthday/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/coupons/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/coupons/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/doctors/[id]/availability/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/doctors/[id]/edit/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/doctors/[id]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/doctors/[id]/profile-requests/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/doctors/[id]/services/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/doctors/create/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/doctors/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/footer/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/general-consultations/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/general-consultations/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/health-tests/[id]/edit/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/health-tests/[id]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/health-tests/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/health-tests/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/insurance/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/integrations/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/integrations/sukl/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/invoices/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/lab-requisitions/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/memberships/[planId]/import/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/memberships/[planId]/levels/[levelId]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/memberships/[planId]/members/[enrollmentId]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/memberships/[planId]/members/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/memberships/[planId]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/memberships/[planId]/usage/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/memberships/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/memberships/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/messages/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/newsletter/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/online-prescriptions/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/online-prescriptions/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/orders/[id]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/orders/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/page-content/[countryId]/[pageKey]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/page-content/[countryId]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/page-content/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/pages/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/patients/[email]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/patients/duplicates/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/patients/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/patients/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/plans/[id]/edit/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/plans/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/plans/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/reports/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/services/[id]/edit/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/services/[id]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/services/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/services/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/settings/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/settings/reviews/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/specialist-consultations/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/specialist-consultations/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/specialties/[id]/edit/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/specialties/new/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/specialties/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/subscriptions/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/support/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/test-centers/[id]/locations/[locationId]/availability/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/test-centers/[id]/locations/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/test-centers/book/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/test-centers/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/users/[id]/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(admin)/admin/users/page.tsx,portal-only tree (admin)
+frontend/app/(portal)/(auth)/account/access-history/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/bookings/[id]/reschedule/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/bookings/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/calendar/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/corporate/book/[id]/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/corporate/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/family/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/medical-files/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/membership/[enrollmentId]/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/membership/claim/confirm/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/membership/claim/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/membership/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/messages/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/notifications/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/orders/[id]/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/orders/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/payments/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/plans/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/prescriptions/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/profile/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/rewards/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/security/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(auth)/account/subscribe/page.tsx,portal-only tree (auth)/account
+frontend/app/(portal)/(corporate)/corporate/employees/[id]/page.tsx,portal-only tree (corporate)
+frontend/app/(portal)/(corporate)/corporate/employees/page.tsx,portal-only tree (corporate)
+frontend/app/(portal)/(corporate)/corporate/page.tsx,portal-only tree (corporate)
+frontend/app/(portal)/(corporate)/corporate/requests/page.tsx,portal-only tree (corporate)
+frontend/app/(portal)/(corporate)/corporate/settings/page.tsx,portal-only tree (corporate)
+frontend/app/(portal)/(doctor)/doctor/appointments/[id]/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/appointments/new/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/appointments/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/availability/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/calendar/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/confidentiality/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/cross-border-rx/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/forms/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/invoices/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/messages/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/notifications/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/patients/[email]/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/patients/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/profile/[country]/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/profile/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/reports/country/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/reports/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/security/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/services/page.tsx,portal-only tree (doctor)
+frontend/app/(portal)/(doctor)/doctor/support/page.tsx,portal-only tree (doctor)
+frontend/app/api/account/access-log/route.ts,api route
+frontend/app/api/account/appointments/[id]/cancel/route.ts,api route
+frontend/app/api/account/appointments/[id]/chat/download/[messageId]/route.ts,api route
+frontend/app/api/account/appointments/[id]/chat/route.ts,api route
+frontend/app/api/account/appointments/[id]/chat/upload/route.ts,api route
+frontend/app/api/account/appointments/[id]/messages/route.ts,api route
+frontend/app/api/account/appointments/[id]/payment-url/route.ts,api route
+frontend/app/api/account/appointments/[id]/reschedule/route.ts,api route
+frontend/app/api/account/consents/route.ts,api route
+frontend/app/api/account/data-deletion/route.ts,api route
+frontend/app/api/account/family/[id]/route.ts,api route
+frontend/app/api/account/family/route.ts,api route
+frontend/app/api/account/medical-documents/[[...path]]/route.ts,api route
+frontend/app/api/account/orders/[id]/payment-url/route.ts,api route
+frontend/app/api/account/payments/[id]/receipt-url/route.ts,api route
+frontend/app/api/account/profile/[...path]/route.ts,api route
+frontend/app/api/account/profile/route.ts,api route
+frontend/app/api/account/security/sign-out-all/route.ts,api route
+frontend/app/api/account/subscription-invoices/[id]/pdf/route.ts,api route
+frontend/app/api/account/trustpilot-reminder/route.ts,api route
+frontend/app/api/admin/appointments/[id]/documents/route.ts,api route
+frontend/app/api/admin/appointments/[id]/internal-messages/route.ts,api route
+frontend/app/api/admin/appointments/[id]/lab-reference/route.ts,api route
+frontend/app/api/admin/appointments/[id]/messages/route.ts,api route
+frontend/app/api/admin/appointments/[id]/send-confirmation/route.ts,api route
+frontend/app/api/admin/appointments/[id]/update/route.ts,api route
+frontend/app/api/admin/appointments/[id]/upload-link/route.ts,api route
+frontend/app/api/admin/careers/applications/[id]/cv/route.ts,api route
+frontend/app/api/admin/confidentiality-signed/download/route.ts,api route
+frontend/app/api/admin/countries/[id]/delete-impact/route.ts,api route
+frontend/app/api/admin/coupons/validate/route.ts,api route
+frontend/app/api/admin/doctors/[id]/availability/[availabilityId]/route.ts,api route
+frontend/app/api/admin/doctors/[id]/availability/route.ts,api route
+frontend/app/api/admin/doctors/[id]/delete-impact/route.ts,api route
+frontend/app/api/admin/doctors/[id]/services/[serviceDoctorId]/route.ts,api route
+frontend/app/api/admin/doctors/[id]/services/route.ts,api route
+frontend/app/api/admin/doctors/[id]/time-slots/[slotId]/route.ts,api route
+frontend/app/api/admin/doctors/[id]/time-slots/bulk/route.ts,api route
+frontend/app/api/admin/doctors/[id]/time-slots/route.ts,api route
+frontend/app/api/admin/health-tests/[id]/faqs/[faqId]/route.ts,api route
+frontend/app/api/admin/health-tests/[id]/faqs/reorder/route.ts,api route
+frontend/app/api/admin/health-tests/[id]/faqs/route.ts,api route
+frontend/app/api/admin/invoices/[invoiceId]/view-link/route.ts,api route
+frontend/app/api/admin/lab-requisitions/[[...path]]/route.ts,api route
+frontend/app/api/admin/media/upload/route.ts,api route
+frontend/app/api/admin/membership-benefit-options/route.ts,api route
+frontend/app/api/admin/membership-reports/[planId]/usage/route.ts,api route
+frontend/app/api/admin/newsletter.csv/route.ts,api route
+frontend/app/api/admin/notifications/appointment/[appointmentId]/read/route.ts,api route
+frontend/app/api/admin/orders/[id]/insurance-verification/route.ts,api route
+frontend/app/api/admin/orders/[id]/refund/route.ts,api route
+frontend/app/api/admin/orders/[id]/route.ts,api route
+frontend/app/api/admin/orders/[id]/tracking-notify/route.ts,api route
+frontend/app/api/admin/orders/bulk/route.ts,api route
+frontend/app/api/admin/patient-merge/route.ts,api route
+frontend/app/api/admin/patients/[email]/alert-log/route.ts,api route
+frontend/app/api/admin/patients/[email]/alerts/[type]/remove/route.ts,api route
+frontend/app/api/admin/patients/[email]/country-tax-ids/[countryCode]/route.ts,api route
+frontend/app/api/admin/patients/[email]/profile/route.ts,api route
+frontend/app/api/admin/patients/by-email/route.ts,api route
+frontend/app/api/admin/payout-invoices/download/route.ts,api route
+frontend/app/api/admin/payout-invoices/route.ts,api route
+frontend/app/api/admin/phi-reason/route.ts,api route
+frontend/app/api/admin/reports/export/route.ts,api route
+frontend/app/api/admin/services/[id]/faqs/[faqId]/route.ts,api route
+frontend/app/api/admin/services/[id]/faqs/reorder/route.ts,api route
+frontend/app/api/admin/services/[id]/faqs/route.ts,api route
+frontend/app/api/admin/sukl/[[...path]]/route.ts,api route
+frontend/app/api/admin/support/threads/[threadId]/messages/[messageId]/download/route.ts,api route
+frontend/app/api/admin/support/threads/[threadId]/messages/route.ts,api route
+frontend/app/api/admin/support/threads/[threadId]/messages/upload/route.ts,api route
+frontend/app/api/admin/support/threads/[threadId]/notifications/read/route.ts,api route
+frontend/app/api/admin/support/threads/[threadId]/route.ts,api route
+frontend/app/api/admin/support/threads/route.ts,api route
+frontend/app/api/admin/test-centers/[id]/locations/[locationId]/availability/[availabilityId]/route.ts,api route
+frontend/app/api/admin/test-centers/[id]/locations/[locationId]/availability/route.ts,api route
+frontend/app/api/admin/test-centers/[id]/locations/[locationId]/time-slots/[slotId]/route.ts,api route
+frontend/app/api/admin/test-centers/[id]/locations/[locationId]/time-slots/bulk/route.ts,api route
+frontend/app/api/admin/test-centers/[id]/locations/[locationId]/time-slots/route.ts,api route
+frontend/app/api/appointments/route.ts,api route
+frontend/app/api/auth/[...path]/route.ts,api route
+frontend/app/api/cart/checkout/route.ts,api route
+frontend/app/api/cart/items/[itemId]/route.ts,api route
+frontend/app/api/cart/items/route.ts,api route
+frontend/app/api/cart/route.ts,api route
+frontend/app/api/contact/route.ts,api route
+frontend/app/api/corporate/invites/[...path]/route.ts,api route
+frontend/app/api/coupons/check/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/brazil-consent/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/chat/download/[messageId]/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/chat/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/chat/upload/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/consultation/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/consultation/sign/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/cross-border-rx/more-info/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/cross-border-rx/options/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/cross-border-rx/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/documents/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/documents-context/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/documents-generate/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/documents-generated/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/documents-send/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/documents-send-to-patient/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/exams/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/finalize/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/follow-up/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/form-submissions/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/internal-messages/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/medical-notes/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/memed-document/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/memed-session/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/notify-ready/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/prescriptions/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/route.ts,api route
+frontend/app/api/doctor/appointments/[id]/upload-link/route.ts,api route
+frontend/app/api/doctor/appointments/route.ts,api route
+frontend/app/api/doctor/availability/[availabilityId]/route.ts,api route
+frontend/app/api/doctor/availability/route.ts,api route
+frontend/app/api/doctor/booking-options/route.ts,api route
+frontend/app/api/doctor/confidentiality-agreement/pdf/route.ts,api route
+frontend/app/api/doctor/confidentiality-agreement/route.ts,api route
+frontend/app/api/doctor/confidentiality-agreement/signed/download/route.ts,api route
+frontend/app/api/doctor/confidentiality-agreement/signed/route.ts,api route
+frontend/app/api/doctor/consultation-services/[lineId]/route.ts,api route
+frontend/app/api/doctor/consultations/[consultationId]/services/route.ts,api route
+frontend/app/api/doctor/consultations/[consultationId]/share-link/route.ts,api route
+frontend/app/api/doctor/cross-border-rx/[requestId]/decision/route.ts,api route
+frontend/app/api/doctor/cross-border-rx/route.ts,api route
+frontend/app/api/doctor/documents/[documentId]/download/route.ts,api route
+frontend/app/api/doctor/documents/[documentId]/route.ts,api route
+frontend/app/api/doctor/documents/generated/[id]/finalize/route.ts,api route
+frontend/app/api/doctor/documents/generated/[id]/pdf/route.ts,api route
+frontend/app/api/doctor/documents/generated/[id]/route.ts,api route
+frontend/app/api/doctor/documents/generated/[id]/send-upload-link/route.ts,api route
+frontend/app/api/doctor/exam-types/route.ts,api route
+frontend/app/api/doctor/exams/[examId]/route.ts,api route
+frontend/app/api/doctor/form-templates/[templateId]/route.ts,api route
+frontend/app/api/doctor/form-templates/route.ts,api route
+frontend/app/api/doctor/notifications/[id]/read/route.ts,api route
+frontend/app/api/doctor/notifications/read-all/route.ts,api route
+frontend/app/api/doctor/notifications/route.ts,api route
+frontend/app/api/doctor/patients/[email]/alert-log/route.ts,api route
+frontend/app/api/doctor/patients/[email]/alerts/[type]/remove/route.ts,api route
+frontend/app/api/doctor/patients/[email]/consultation-history/route.ts,api route
+frontend/app/api/doctor/patients/[email]/country-tax-ids/[countryCode]/route.ts,api route
+frontend/app/api/doctor/patients/[email]/country-tax-ids/route.ts,api route
+frontend/app/api/doctor/patients/[email]/identity-verification/image/route.ts,api route
+frontend/app/api/doctor/patients/[email]/identity-verification/request/route.ts,api route
+frontend/app/api/doctor/patients/[email]/identity-verification/review/route.ts,api route
+frontend/app/api/doctor/patients/[email]/identity-verification/route.ts,api route
+frontend/app/api/doctor/patients/[email]/profile/route.ts,api route
+frontend/app/api/doctor/patients/[email]/upload-link/route.ts,api route
+frontend/app/api/doctor/payout-invoices/download/route.ts,api route
+frontend/app/api/doctor/payout-invoices/route.ts,api route
+frontend/app/api/doctor/prescriptions/[prescriptionId]/route.ts,api route
+frontend/app/api/doctor/profile/change-requests/[requestId]/route.ts,api route
+frontend/app/api/doctor/profile/change-requests/route.ts,api route
+frontend/app/api/doctor/profile/markets/[countryId]/route.ts,api route
+frontend/app/api/doctor/profile/photo/position/route.ts,api route
+frontend/app/api/doctor/profile/photo/route.ts,api route
+frontend/app/api/doctor/profile/route.ts,api route
+frontend/app/api/doctor/reports/export/route.ts,api route
+frontend/app/api/doctor/services/route.ts,api route
+frontend/app/api/doctor/share-links/[id]/route.ts,api route
+frontend/app/api/doctor/support/messages/[messageId]/download/route.ts,api route
+frontend/app/api/doctor/support/messages/route.ts,api route
+frontend/app/api/doctor/support/messages/upload/route.ts,api route
+frontend/app/api/doctor/support/thread/route.ts,api route
+frontend/app/api/doctor/support/unread/route.ts,api route
+frontend/app/api/doctor/time-slots/[slotId]/route.ts,api route
+frontend/app/api/doctor/time-slots/bulk/route.ts,api route
+frontend/app/api/doctor/time-slots/bulk-block/route.ts,api route
+frontend/app/api/doctor/time-slots/route.ts,api route
+frontend/app/api/health/route.ts,api route
+frontend/app/api/me/[...path]/route.ts,api route
+frontend/app/api/media/[...key]/route.ts,api route
+frontend/app/api/payments/checkout-session/route.ts,api route
+frontend/app/api/payments/sync-order/route.ts,api route
+frontend/app/api/public/[...path]/route.ts,api route
+frontend/app/api/public/booking-availability/route.ts,api route
+frontend/app/api/public/certificates/[id]/route.ts,api route
+frontend/app/api/public/gp-assign/route.ts,api route
+frontend/app/api/public/gp-availability/route.ts,api route
+frontend/app/api/public/invoices/[invoiceId]/pdf/route.ts,api route
+frontend/app/api/public/jobs/[id]/applications/route.ts,api route
+frontend/app/api/public/test-availability/route.ts,api route

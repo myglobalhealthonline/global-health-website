@@ -1,0 +1,474 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.medicalcouncil.ie","https://www.dataprotection.ie","https://www.hse.ie","https://www.hiqa.ie","https://www.hpra.ie","https://www.rcpi.ie","https://www.icgp.ie","https://www.irishpsychiatry.ie","https://www.nai.ie","https://irishheart.ie","https://www.citizensinformation.ie","https://www.gov.ie/en/organisation/department-of-social-protection/","https://www.samaritans.org/ireland","https://www.pieta.ie"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Nemoc rukou, nohou a úst: příznaky a léčba","description":"Jak poznat a léčit nemoc rukou, nohou a úst u dětí v Irsku. Příznaky, domácí péče, kdy na pohotovost a jak zabránit šíření.","url":"https://www.myglobalhealth.online/ireland/cs/blog/nemoc-rukou-nohou-a-ust-priznaky-a-lecba","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/ireland/cs/blog/nemoc-rukou-nohou-a-ust-priznaky-a-lecba#webpage","url":"https://www.myglobalhealth.online/ireland/cs/blog/nemoc-rukou-nohou-a-ust-priznaky-a-lecba","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/cs/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-06-15"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Nemoc+rukou%2C+nohou+a+%C3%BAst%3A+p%C5%99%C3%ADznaky+a+l%C3%A9%C4%8Dba&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2Fff180d4e-ccef-441a-8dca-8af41f64cc50-150385_0ed6f9dbf2384287827ba85738606351-mv2.avif&v=2026-07-20.1-jninex","width":1200,"height":630},"about":{"@type":"Thing","name":"Telemedicine"},"datePublished":"2026-06-06T05:23:47.372Z","dateModified":"2026-06-15T20:56:33.190Z","publishingPrinciples":"https://www.myglobalhealth.online/ireland/cs/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/ireland/cs/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Domů","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/ireland/cs/blog"},{"@type":"ListItem","position":3,"name":"Nemoc rukou, nohou a úst: příznaky a léčba","item":"https://www.myglobalhealth.online/ireland/cs/blog/nemoc-rukou-nohou-a-ust-priznaky-a-lecba"}]}]Všechny článkyTelemedicineNemoc rukou, nohou a úst: příznaky a léčbaPrůvodce podle doporučení HSE: příznaky nemoci rukou, nohou a úst u dětí v Irsku, domácí léčba, varovné příznaky a prevence šíření.Global Health Medical Team6. června 202613 min čteníPoslední kontrola 15. června 2026Klinicky přezkoumáno Dr Tiago Miguel Figueira+Na této stránceCo je nemoc rukou, nohou a úst?Příčiny a virologieZnámky a příznakyDiagnostikaLéčba a péčeVarovné příznaky — kdy vyhledat naléhavou pomocPrevence a profylaxeEpidemiologieČasté otázkyDůvěryhodné pediatrické zdroje
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    Část 01
+    Co je nemoc rukou, nohou a úst?
+
+    
+      Nemoc rukou, nohou a úst (HFMD) je běžné, vysoce nakažlivé virové onemocnění, které postihuje především kojence a děti do deseti let. Vyznačuje se typickou trojicí příznaků: horečkou, bolestivými vřídky v ústech a puchýřkovitou vyrážkou na dlaních, chodidlech a někdy i hýždích. HFMD způsobují enteroviry — nejčastěji Coxsackievirus A16 a Enterovirus 71 (EV-A71).
+    
+    
+      Onemocnění má obvykle mírný průběh a do sedmi až deseti dnů samo odezní, malým dětem však může způsobit výrazné obtíže. Vzácné, ale závažné komplikace — včetně virové meningitidy, encefalitidy a akutní chabé obrny — jsou častěji spojeny s kmeny EV-A71 a vyžadují rychlou lékařskou pomoc.
+    
+    
+      Onemocnění se vyskytuje po celém světě a rychle se šíří v jeslích, školkách, školách i domácnostech, zejména v létě a na začátku podzimu v mírném podnebném pásu. Znalost HFMD je důležitá pro rodiče, pečující osoby i zdravotníky.
+    
+
+    
+      „HFMD je nakažlivé enterovirové onemocnění dětí, pro které jsou typické horečka, bolestivé vřídky v ústech a puchýřkovité léze na rukou a nohou. Léčba je především podpůrná.“
+      — Klinické shrnutí Global Health
+    
+  
+
+  
+  
+    Část 02
+    Příčiny a virologie
+
+    
+      HFMD způsobují jednovláknové RNA viry rodu Enterovirus z čeledi Picornaviridae . Dvěma klinicky nejvýznamnějšími původci jsou:
+    
+
+    
+      
+        🦠
+        Coxsackievirus A16
+        Klasická a celosvětově nejčastější příčina. Obvykle vyvolává mírnější onemocnění. Patří do skupiny A virů Coxsackie.
+      
+      
+        ⚠️
+        Enterovirus 71 (EV-A71)
+        Je spojován s rozsáhlejšími epidemiemi, zejména v asijsko-pacifické oblasti, a s vyšším rizikem neurologických komplikací včetně encefalitidy mozkového kmene.
+      
+      
+        🔬
+        Další viry Coxsackie
+        CA6, CA10, CB5 a další mohou vyvolat atypický nebo rozsáhlý průběh HFMD. CA6 může způsobit výraznější postižení kůže.
+      
+      
+        🌍
+        Cesty přenosu
+        Přímý kontakt s nosním sekretem, slinami, tekutinou z puchýřků nebo stolicí. Přenos je možný také přes kontaminované povrchy a předměty. Onemocnění je vysoce nakažlivé.
+      
+    
+
+    Proč jsou nejčastěji postiženy děti
+    
+      Malé děti nemají vůči těmto enterovirům vytvořenou imunitu. Virus se ve velkém množství vylučuje stolicí ještě několik týdnů po zotavení, i když dítě vypadá zdravě — proto je omezení šíření v zařízeních péče o děti obzvlášť obtížné. Nakazit se mohou i imunokompetentní dospělí, kteří se s virem v dětství nesetkali, jejich příznaky však bývají mírnější.
+    
+    
+      Inkubační doba je 3–7 dnů od expozice. Vylučování viru z orofaryngu vrcholí během prvního týdne onemocnění.
+    
+  
+
+  
+  
+    Část 03
+    Známky a příznaky
+
+    
+      HFMD obvykle probíhá v předvídatelných klinických fázích. Rozpoznání celého souboru příznaků umožňuje dřívější diagnózu a vhodnou domácí péči a pomáhá zdravotníkům určit, kdy je nutné léčbu eskalovat.
+    
+
+    
+      
+        
+          Fáze
+          Příznak / známka
+          Klinické poznámky
+        
+      
+      
+        
+          Prodromální fáze1.–2. den
+          Mírná horečka (38–39 °C), podrážděnost, malátnost, nechutenství, bolest v krku
+          V této fázi se často zamění za běžné nachlazení nebo nespecifickou virovou infekci horních cest dýchacích
+        
+        
+          Léze v ústech1.–3. den
+          Bolestivé vřídky na jazyku, bukální sliznici a měkkém patře; puchýřky, které rychle praskají
+          Mohou způsobit výrazné slinění a odmítání jídla či pití — důležitý diagnostický znak
+        
+        
+          Kožní vyrážka2.–4. den
+          Papulovezikulární vyrážka na dlaních a chodidlech; může zasáhnout hřbety rukou a nohou, hýždě a okolí úst
+          Typické rozložení je patognomické; kožní léze obvykle nesvědí ani nebolí
+        
+        
+          Doprovodné příznakyPo celou dobu
+          Nechutenství, slinění, malátnost a při silné bolesti v ústech riziko dehydratace
+          Dehydratace je nejčastější komplikací vyžadující lékařské vyšetření
+        
+        
+          Ústup příznaků7.–10. den
+          Spontánní ústup; za 4–8 týdnů se může objevit odlupování nehtů (onychomadéza)
+          Změny nehtů jsou neškodné a samy odezní; rodiče je vhodné uklidnit
+        
+      
+    
+
+    Charakteristika lézí v ústech
+    
+      Vřídky v ústech při HFMD začínají jako malé červené skvrny (enantém), které se rychle mění v puchýřky a poté v mělké bolestivé vřídky obklopené červeným lemem. Vyskytují se na jazyku, bukální sliznici, měkkém patře a patrových obloucích. Bolest v ústech je hlavní příčinou odmítání jídla a následného rizika dehydratace u kojenců.
+    
+
+    Charakteristika kožní vyrážky
+    
+      Kožní vyrážku tvoří oválné nebo protáhlé šedavé puchýřky o velikosti 3–7 mm na zarudlém podkladu — typicky na dlaních a chodidlech, často podél kožních linií. Charakteristické jsou také léze na hýždích bez puchýřků a skvrny kolem úst. Na rozdíl od planých neštovic se léze nešíří centripetálně a obecně nesvědí.
+    
+  
+
+  
+  
+    Část 04
+    Diagnostika
+
+    
+      HFMD je především klinická diagnóza založená na typické trojici vřídků v ústech, puchýřkovité vyrážky na koncových částech končetin a horečky u dítěte odpovídajícího věku, v příslušném ročním období nebo po známém kontaktu. U nekomplikovaných případů obvykle není laboratorní potvrzení nutné.
+    
+
+    Kdy zvážit laboratorní vyšetření
+    
+      Virologické potvrzení pomocí výtěru z nosohltanu, rektálního výtěru, tekutiny z puchýřku nebo PCR mozkomíšního moku na enteroviry je indikováno při:
+    
+    
+      závažném nebo atypickém průběhu
+      podezření na neurologické postižení (encefalitida, meningitida, akutní chabá myelitida)
+      imunokompromitovaných dětech
+      epidemiologickém vyšetřování ohniska nákazy
+      novorozencích s podezřením na enterovirovou sepsi
+    
+
+    Diferenciální diagnostika
+    
+      Zdravotníci by měli zvažovat herpangínu (pouze léze v ústech omezené na zadní část orofaryngu), primární herpetickou gingivostomatitidu (výraznější postižení dásní), plané neštovice (centripetální rozložení, svědění) a aftózní ulcerace (opakované, bez celkových příznaků). U kojenců je při déle trvající horečce nutné vyloučit Kawasakiho nemoc .
+    
+  
+
+  
+  
+    Část 05
+    Léčba a péče
+
+    
+      V současnosti neexistuje žádná specifická antivirová léčba HFMD. Péče je výhradně podpůrná a zaměřuje se na zmírnění příznaků, udržení hydratace a sledování komplikací.
+    
+
+    
+      
+        💧
+        Dostatek tekutin
+        Nejdůležitější opatření. Často nabízejte chladné, nekyselé tekutiny. Zklidnit mohou nanuky a vychlazená voda. Vyhněte se citrusovým a syceným nápojům.
+      
+      
+        🌡️
+        Léky na horečku
+        Paracetamol nebo ibuprofen v dávkách odpovídajících věku ke snížení horečky a celkových obtíží. Dodržujte národní doporučení pro dávkování.
+      
+      
+        🩹
+        Léky proti bolesti
+        Lokální anestetické gely do úst, u starších dětí ústní vody s lidokainem, mohou zmírnit bolest a usnadnit příjem potravy. Poraďte se s lékárníkem nebo praktickým lékařem.
+      
+      
+        🍦
+        Měkká studená jídla
+        Jogurt, zmrzlina, vychlazené pyré nebo mléčné koktejly zmírňují bolest v ústech a pomáhají zajistit příjem energie. Vyhněte se tvrdým, slaným a kořeněným jídlům.
+      
+      
+        🛏️
+        Klid a omezení kontaktu
+        Dítě ponechte doma, dokud horečka neustoupí a všechny léze se nezhojí nebo nevytvoří strupy — obvykle 5–7 dnů. Tím se omezuje šíření v zařízeních péče o děti.
+      
+      
+        🏥
+        Vyšetření v nemocnici
+        Je nutné při podezření na dehydrataci, přetrvávající vysoké horečce, neurologických příznacích nebo nedostatečném příjmu tekutin u kojenců do 12 měsíců. Může být potřeba nitrožilní podání tekutin.
+      
+    
+
+    Poznámka k antibiotikům
+    
+      Antibiotika nejsou účinná proti virovým infekcím a u nekomplikované HFMD se nemají předepisovat. Sekundární bakteriální infekce kožních lézí je vzácná, ale je nutné ji posoudit, pokud léze zteplají, otékají, bolí nebo hnisají.
+    
+  
+
+  
+  
+    Část 06
+    Varovné příznaky — kdy vyhledat naléhavou pomoc
+
+    
+      Přestože HFMD ve velké většině případů sama odezní, u malé části dětí — zejména mladších dvou let nebo nakažených EV-A71 — se mohou rozvinout závažné komplikace. Rodiče a pečující osoby musí znát varovné příznaky, které vyžadují okamžité vyšetření na pohotovosti.
+    
+
+    
+      🚨 Okamžitě jeďte na pohotovost (A&E / Emergency Department), pokud se objeví:
+      
+        Známky dehydratace: sucho v ústech, žádné slzy při pláči, vpadlá fontanela u kojence, žádné močení déle než 8 hodin, skvrnitá nebo našedlá kůže
+        Přetrvávající vysoká horečka: teplota nad 39,5 °C, která nereaguje na léky proti horečce, nebo horečka trvající déle než 5 dnů
+        Neurologické příznaky: křeče, ztuhlý krk, přetrvávající zvracení, porucha vědomí, ataxie, myoklonické záškuby, světloplachost
+        Kardiorespirační příznaky: zrychlené dýchání, bolest na hrudi, rychlý tep, bledost, studené končetiny
+        Silná bolest nebo úplné odmítání tekutin a jídla: zejména u kojenců do 12 měsíců, kteří nedokážou udržet dostatečnou hydrataci
+        Postupné zhoršování po 3. dni nemoci namísto pozvolného zlepšování
+      
+    
+
+    
+      Neurologické komplikace HFMD v Evropě — ačkoli jsou vzácné — vyžadují přijetí do nemocnice, pečlivé sledování a někdy léčbu na dětské jednotce intenzivní péče. Včasné rozpoznání zachraňuje životy.
+    
+  
+
+  
+  
+    Část 07
+    Prevence a profylaxe
+
+    
+      Protože v Evropě ani ve Spojených státech zatím není dostupná schválená vakcína proti HFMD, prevence závisí výhradně na nefarmakologických opatřeních. Při důsledném dodržování jsou velmi účinná, zejména v zařízeních péče o děti.
+    
+
+    
+      
+        
+        
+          Důkladná hygiena rukou
+          Myjte ruce mýdlem a vodou alespoň 20 sekund — zejména po přebalování, před jídlem, po použití toalety a po kontaktu s nakaženým dítětem. Alkoholový dezinfekční gel je proti enterovirům méně účinný; přednost má mýdlo a voda.
+        
+      
+      
+        
+        
+          Dezinfekce povrchů a předmětů
+          Pravidelně čistěte a dezinfikujte často dotýkané povrchy — hračky, kliky dveří a přebalovací plochy — zředěným roztokem bělidla (1 polévková lžíce bělidla na přibližně 950 ml vody) nebo dezinfekčním prostředkem účinným proti enterovirům registrovaným u EPA.
+        
+      
+      
+        
+        
+          Vyhýbání se blízkému kontaktu s nakaženými
+          Nakažené dítě neobjímejte ani nelíbejte a nesdílejte s ním příbory či hrnky. Během prvního týdne nemoci se enteroviry ve velkém množství vylučují slinami, nosním sekretem a stolicí.
+        
+      
+      
+        
+        
+          Ponechání nemocných dětí doma
+          Děti by měly zůstat doma a nechodit do jeslí, školky ani školy, dokud horečka zcela neustoupí a všechny puchýřky nezaschnou a nevytvoří strupy. Obvykle je to 5–7 dnů od začátku onemocnění. Zařízení péče o děti neprodleně informujte.
+        
+      
+      
+        
+        
+          Respirační hygiena
+          Při kašli nebo kýchání zakryjte ústa a nos kapesníkem. Kapesník ihned vyhoďte a umyjte si ruce. Tím se omezuje kapénkový přenos ve sdíleném prostředí.
+        
+      
+      
+        
+        
+          Hygiena prádla a přebalování
+          Znečištěné oblečení a ložní prádlo perte při vysoké teplotě (alespoň 60 °C). Při manipulaci s plenami nakaženého kojence používejte jednorázové rukavice a poté si důkladně umyjte ruce. Virus přežívá na površích několik dnů.
+        
+      
+      
+        
+        
+          Podpora přirozené imunity
+          Ačkoli v Evropě není k dispozici specifická vakcína proti HFMD, dodržování všech doporučených národních očkovacích programů podporuje celkovou odolnost imunitního systému. K silné imunitní odpovědi přispívá také dostatek spánku, vhodná výživa a kojení v kojeneckém věku.
+        
+      
+      
+        
+        
+          Pravidla pro zařízení péče o děti
+          Jesle a školky by měly mít písemná pravidla prevence HFMD: rychlé oddělení dětí s příznaky, důkladnější úklid prostředí a písemné informování rodičů během epidemie. Personál by měl při každém přebalování používat rukavice.
+        
+      
+    
+
+    Situace v oblasti vakcín v roce 2026
+    
+      V Číně je od roku 2016 schválena a používána inaktivovaná vakcína proti EV-A71 (vakcína EV71, včetně přípravku Inlive společnosti Sinovac a dalších čínských variant), u níž byla prokázána účinnost proti HFMD a komplikacím spojeným s EV-A71. K roku 2026 nezískala žádná vakcína proti EV-A71 ani Coxsackievirus A16 schválení Evropské agentury pro léčivé přípravky (EMA). Celosvětově pokračují klinické studie. Rodiče a zdravotníci v Evropě by měli sledovat doporučení Evropské agentury pro léčivé přípravky (EMA) a Evropského střediska pro prevenci a kontrolu nemocí (ECDC) .
+    
+  
+
+  
+  
+    Část 08
+    Epidemiologie
+
+    
+      HFMD se endemicky vyskytuje po celém světě, přičemž nejvyšší výskyt je hlášen v asijsko-pacifické oblasti (Čína, Vietnam, Malajsie, Japonsko, Jižní Korea). V Evropě se objevuje sporadicky a v menších ohniscích, především v zařízeních péče o děti a ve školách. V mírném podnebném pásu přenos vrcholí na konci jara, v létě a na začátku podzimu.
+    
+    
+      V Irsku, Portugalsku, Španělsku a Rumunsku podléhá HFMD hlášení nebo posílenému dohledu; národní orgány veřejného zdraví každoročně sledují ohniska v zařízeních péče o děti. Aktuální evropské epidemiologické údaje poskytuje profil onemocnění HFMD organizace ECDC .
+    
+    
+      Nejvyšší zátěž nesou děti ve věku od 6 měsíců do 5 let. Enterovirová infekce novorozenců — ačkoli vzácná — může způsobit závažné systémové onemocnění včetně stavu podobného sepsi, myokarditidy a meningoencefalitidy a vyžaduje okamžité odborné vyšetření.
+    
+  
+
+  
+  
+    Část 09
+    Časté otázky
+
+    Mohou nemoc rukou, nohou a úst dostat i dospělí?
+    Ano. Dospělí, kteří infekci dříve neprodělali, se mohou nakazit HFMD, jejich příznaky však často bývají mírnější nebo subklinické. Těhotné ženy s podezřením na kontakt s infekcí by měly zavolat porodní asistentce nebo porodníkovi, protože enterovirová infekce v závěru těhotenství byla ve vzácných případech spojena s onemocněním novorozence.
+
+    Je HFMD totéž jako slintavka a kulhavka u zvířat?
+    Ne. Lidskou HFMD a zvířecí slintavku a kulhavku způsobují zcela odlišné viry. Tato onemocnění se mezi lidmi a zvířaty nepřenášejí.
+
+    Moje dítě má HFMD — může se vrátit do školy?
+    Většina evropských pediatrických doporučení a pokynů veřejného zdraví radí ponechat dítě doma, dokud nemá horečku a všechny puchýřky se zcela nezhojí, obvykle 5–7 dnů. Vždy dodržujte konkrétní pravidla školy, školky nebo jeslí.
+
+    Může se HFMD opakovat?
+    Ano. Imunita po HFMD je specifická pro daný sérotyp. Dítě může HFMD dostat znovu, pokud se nakazí jiným kmenem — prodělaná infekce Coxsackievirus A16 například nechrání před EV-A71 ani CA6.
+
+    Mám na kožní puchýřky nanášet krém?
+    Kožní puchýřky při HFMD se samy hojí a obvykle nevyžadují místní léčbu. Puchýřky nepropichujte. Pokud se infikují a okolí více červená, je teplé, vytéká hnis nebo se zvyšuje bolest, poraďte se se zdravotníkem.
+
+    Co má dítě jíst, když má vřídky v ústech?
+    Dávejte přednost chladným, měkkým a nekyselým jídlům: jogurtu, zmrzlině, smoothie, studeným těstovinám nebo bramborové kaši. Chladné tekutiny, například voda nebo vychlazený zředěný džus, mohou ulevit a pomoci udržet hydrataci. Vyhněte se slaným lupínkům, citrusovým šťávám a syceným nápojům, které vřídky dráždí.
+  
+
+  
+  
+    Část 10
+    Důvěryhodné pediatrické zdroje
+    
+      Následující autoritativní instituce poskytují klinicky ověřené informace o HFMD pro rodiče a zdravotníky. Global Health tyto zdroje doporučuje pro aktuální národní pokyny.
+    
+
+    🇮🇪 Irsko
+    
+      
+        🏥
+        Irsko · Celostátní
+        Health Service Executive (HSE)
+        Komplexní průvodce HFMD pro pacienty od irského národního zdravotnického úřadu včetně příznaků, léčby a pravidel pro pobyt mimo kolektiv.
+      
+      
+        👶
+        Irsko · Dublin
+        Children's Health Ireland (CHI)
+        Irská národní síť dětských nemocnic — CHI v Crumlinu, Temple Street, Tallaghtu a Connolly — poskytuje specializovanou péči o dětská infekční onemocnění.
+      
+      
+        🔬
+        Irsko · Celostátní
+        Health Protection Surveillance Centre (HPSC)
+        HPSC sleduje přenosná onemocnění v Irsku, včetně enterovirových infekcí a ohnisek HFMD v zařízeních péče o děti.
+      
+    
+
+    🇵🇹 Portugalsko
+    
+      
+        🏥
+        Portugalsko · Celostátní
+        Direção-Geral da Saúde (DGS)
+        Portugalské generální ředitelství pro zdraví vydává národní klinické pokyny a informace veřejného zdraví k HFMD a dětským infekčním onemocněním.
+      
+      
+        👨‍⚕️
+        Portugalsko · Odborná organizace
+        Sociedade Portuguesa de Pediatria (SPP)
+        Portugalská pediatrická společnost zveřejňuje klinická konsenzuální stanoviska, informační materiály pro rodiče a průběžné vzdělávání o dětských infekčních onemocněních.
+      
+      
+        🏨
+        Portugalsko · Lisabon
+        Hospital Dona Estefânia / HDE
+        Přední portugalská specializovaná dětská nemocnice, součást Centro Hospitalar Universitário de Lisboa Central, s oddělením dětských infekčních nemocí.
+      
+    
+
+    🇪🇸 Španělsko
+    
+      
+        👶
+        Španělsko · Celostátní
+        Asociación Española de Pediatría (AEP)
+        Španělská celostátní odborná pediatrická společnost — vydavatel časopisu Anales de Pediatría — poskytuje rodinám průvodce založené na důkazech a klinické protokoly k HFMD a běžným virovým onemocněním.
+      
+      
+        🔬
+        Španělsko · Odborná organizace
+        Sociedad Española de Infectología Pediátrica (SEIP)
+        Španělská společnost dětské infektologie poskytuje odborné klinické pokyny, protokoly pro zvládání epidemií a vzdělávací zdroje pro zdravotníky a rodiny.
+      
+      
+        🏥
+        Španělsko · Celostátní
+        Red Nacional de Vigilancia Epidemiológica (RENAVE)
+        Španělská národní síť epidemiologického dohledu sleduje ohniska přenosných nemocí včetně HFMD v zařízeních péče o děti a školách ve všech autonomních společenstvích.
+      
+    
+
+    🇷🇴 Rumunsko
+    
+      
+        🔬
+        Rumunsko · Celostátní
+        Institutul Național de Sănătate Publică (INSP)
+        Rumunský národní institut veřejného zdraví poskytuje údaje z epidemiologického dohledu, zprávy o ohniscích a klinická doporučení k HFMD a dalším dětským infekčním onemocněním.
+      
+      
+        🏥
+        Rumunsko · Celostátní
+        Ministerul Sănătății (MS)
+        Rumunské ministerstvo zdravotnictví zveřejňuje celostátní upozornění veřejného zdraví, pravidla pro vyloučení z dětského kolektivu a pokyny k očkovacímu kalendáři související s dětskými infekčními nemocemi.
+      
+      
+        👨‍⚕️
+        Rumunsko · Bukurešť
+        Spitalul Clinic de Copii „Grigore Alexandrescu“
+        Jedna z předních rumunských dětských nemocnic se specializovanými odděleními infekčních nemocí a intenzivní péče, která mají zkušenosti s léčbou dětských virových onemocnění včetně HFMD.
+      
+    
+
+    🌍 Mezinárodní a evropské instituce
+    
+      
+        🇪🇺
+        EU / Evropa
+        ECDC — profil onemocnění HFMD
+        Evropské středisko pro prevenci a kontrolu nemocí spravuje autoritativní profil HFMD včetně epidemiologie, údajů o ohniscích a doporučení k prevenci.
+      
+      
+        🌐
+        Celosvětově
+        WHO — informační přehled HFMD
+        Oficiální informační přehled Světové zdravotnické organizace o HFMD popisuje celosvětovou epidemiologii, původce, klinické projevy, prevenci a opatření veřejného zdraví.
+      
+      
+        🔭
+        USA (referenční zdroj)
+        US CDC — nemoc rukou, nohou a úst
+        Americké Centrum pro kontrolu a prevenci nemocí poskytuje podrobné klinické informace a doporučení veřejného zdraví, které jako referenční standard běžně využívají pediatři po celém světě.
+      
+    
+  
+
+
+
+
+Klinicky přezkoumáno Dr Tiago Miguel Figueira. Poslední kontrola 15. června 2026. Tento článek slouží pouze pro informační účely a nenahrazuje lékařské poradenství.Jak píšeme a revidujeme lékařský obsahStojí za sdílení?Sdílet tento článekFacebookWhatsAppXLinkedInInstagramKopírovat odkazDalší krokJste připraveni mluvit s lékařem?Zarezervujte si online konzultaci s místně registrovaným lékařem ve vaší zemi. Otevřené termíny jsou zobrazeny během rezervace.Zarezervovat konzultaciDalší článkyMental HealthVyšetření ADHD u dospělých v Irsku: veřejná cesta, soukromá cesta a co se skutečně děje na vyšetřeníJak probíhá vyšetření ADHD u dospělého v Irsku, proč cesta přes HSE vede nejprve přes místní tým duševního zdraví, kolik stojí soukromé vyšetření a co obnáší řádné vyšetření.Přečíst článek →General PracticeIllness Benefit v Irsku: výše dávky a termín výplaty v roce 2026Aktuální sazby Illness Benefit, čekací dny, týdenní výplata, zdanění a rozdíl oproti nemocenské od zaměstnavatele.Přečíst článek →General PracticeIllness Benefit v Irsku: jak o dávku zažádat a jak získat lékařské potvrzeníIllness Benefit je dávka, kterou vyplácí irský Department of Social Protection lidem, kteří nemohou pracovat kvůli nemoci nebo úrazu. Vysvětlujeme, co žádost vyžaduje, kdo smí vystavit Certificate of Incapacity for Work a čím se dávka liší od nemocenské placené zaměstnavatelem.Přečíst článek →

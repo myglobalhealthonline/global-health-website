@@ -1,0 +1,127 @@
+{
+  "agent": "A4-GA4",
+  "audit": "Global Health SEO master audit 2026-09-15",
+  "property": {
+    "propertyId": "properties/547083375",
+    "propertyDisplayName": "myglobalhealth.online",
+    "webStream": {
+      "streamId": "15322239584",
+      "measurementId": "G-SP48D9LJJ5",
+      "defaultUri": "https://myglobalhealth.online",
+      "createTime": "2026-07-25T10:06:01.099Z"
+    },
+    "timezone": "Europe/Dublin",
+    "currency": "EUR"
+  },
+  "keyEvents": [
+    {"eventName": "purchase", "createTime": "2026-07-25T10:06:01.099912Z", "countingMethod": "ONCE_PER_EVENT", "custom": false},
+    {"eventName": "begin_booking", "createTime": "2026-08-24T19:26:27.202184Z", "countingMethod": "ONCE_PER_SESSION", "custom": true},
+    {"eventName": "booking_confirmed", "createTime": "2026-09-09T18:37:47.312643Z", "countingMethod": "ONCE_PER_EVENT", "custom": true, "defaultValue": {"numericValue": 1, "currencyCode": "USD"}}
+  ],
+  "keyEventRegistrationFinding": "begin_checkout is fired client-side (frontend/app/[country]/[lang]/cart/_components/CartPageClient.tsx) but is NOT a registered GA4 key event - confirmed against measurement_health's 3-item keyEvents list. See track-code-review.md section 1.",
+  "customDefinitions": {
+    "dimensions": [
+      {"parameterName": "market", "description": "Booking market; not patient location."},
+      {"parameterName": "service_category", "description": "Broad booking category only: gp, specialist_care, healthcare."}
+    ],
+    "metrics": []
+  },
+  "toolsUsed": [
+    "mcp__5d8b8083-4ca6-4eb7-901c-dc53cac45319__get_google_analytics_measurement_health",
+    "mcp__5d8b8083-4ca6-4eb7-901c-dc53cac45319__get_google_analytics_organic_overview",
+    "mcp__5d8b8083-4ca6-4eb7-901c-dc53cac45319__get_google_analytics_organic_landing_pages",
+    "mcp__5d8b8083-4ca6-4eb7-901c-dc53cac45319__get_google_analytics_key_events",
+    "mcp__5d8b8083-4ca6-4eb7-901c-dc53cac45319__get_google_analytics_traffic_acquisition",
+    "mcp__5d8b8083-4ca6-4eb7-901c-dc53cac45319__get_google_analytics_audience_breakdown",
+    "mcp__5d8b8083-4ca6-4eb7-901c-dc53cac45319__get_google_analytics_ecommerce_performance",
+    "mcp__5d8b8083-4ca6-4eb7-901c-dc53cac45319__get_google_analytics_page_performance",
+    "mcp__5d8b8083-4ca6-4eb7-901c-dc53cac45319__get_google_analytics_site_search"
+  ],
+  "windows": {
+    "fullRequestedRange": {"startDate": "2026-07-25", "endDate": "2026-09-14"},
+    "window1_valid": {"startDate": "2026-07-25", "endDate": "2026-08-01"},
+    "window2_valid": {"startDate": "2026-09-09", "endDate": "2026-09-14"},
+    "outage_excluded": {"startDate": "2026-08-02", "endDate": "2026-09-08"}
+  },
+  "calls": [
+    {"tool": "get_google_analytics_measurement_health", "params": {}, "file": "ga4_measurement_health.json"},
+    {"tool": "get_google_analytics_organic_overview", "params": {"startDate": "2026-07-25", "endDate": "2026-09-14", "trend": "daily"}, "file": "ga4_organic_overview_full_20260725_20260914.json", "note": "requested full range to document the gap; trend array omits every zero-session day, so it silently skips 2026-07-29..2026-08-01 and the whole outage window rather than listing zeros"},
+    {"tool": "get_google_analytics_organic_overview", "params": {"startDate": "2026-07-25", "endDate": "2026-08-01", "trend": "daily"}, "file": "ga4_organic_overview_window1_20260725_20260801.json"},
+    {"tool": "get_google_analytics_organic_overview", "params": {"startDate": "2026-09-09", "endDate": "2026-09-14", "trend": "daily"}, "file": "ga4_organic_overview_window2_20260909_20260914.json"},
+    {"tool": "get_google_analytics_organic_landing_pages", "params": {"startDate": "2026-07-25..2026-08-01 (8 calls, one per day)", "limit": 1000}, "files": ["ga4_landing_pages_20260725.json", "ga4_landing_pages_20260726.json", "ga4_landing_pages_20260727.json", "ga4_landing_pages_20260728.json", "ga4_landing_pages_20260729.json", "ga4_landing_pages_20260730.json", "ga4_landing_pages_20260731.json", "ga4_landing_pages_20260801.json"]},
+    {"tool": "get_google_analytics_organic_landing_pages", "params": {"startDate": "2026-09-09..2026-09-14 (6 calls, one per day)", "limit": 1000}, "files": ["ga4_landing_pages_20260909.json", "ga4_landing_pages_20260910.json", "ga4_landing_pages_20260911.json", "ga4_landing_pages_20260912.json", "ga4_landing_pages_20260913.json", "ga4_landing_pages_20260914.json"]},
+    {"tool": "get_google_analytics_organic_landing_pages", "params": {"startDate": "2026-07-25", "endDate": "2026-08-01", "limit": 1000}, "file": "ga4_landing_pages_window1_20260725_20260801.json", "note": "whole-window aggregate call"},
+    {"tool": "get_google_analytics_organic_landing_pages", "params": {"startDate": "2026-09-09", "endDate": "2026-09-14", "limit": 1000}, "file": "ga4_landing_pages_window2_20260909_20260914.json", "note": "whole-window aggregate call; row totals match the sum of the 6 per-day calls"},
+    {"tool": "get_google_analytics_key_events", "params": {"breakdown": "event", "channel": "organic_search", "startDate": "2026-07-25", "endDate": "2026-08-01"}, "file": "ga4_key_events_event_window1_organic.json"},
+    {"tool": "get_google_analytics_key_events", "params": {"breakdown": "event", "channel": "organic_search", "startDate": "2026-09-09", "endDate": "2026-09-14"}, "file": "ga4_key_events_event_window2_organic.json"},
+    {"tool": "get_google_analytics_key_events", "params": {"breakdown": "event_and_landing_page", "channel": "organic_search", "startDate": "2026-07-25", "endDate": "2026-08-01"}, "file": "ga4_key_events_event_and_landing_page_window1_organic.json"},
+    {"tool": "get_google_analytics_key_events", "params": {"breakdown": "event_and_landing_page", "channel": "organic_search", "startDate": "2026-09-09", "endDate": "2026-09-14"}, "file": "ga4_key_events_event_and_landing_page_window2_organic.json"},
+    {"tool": "get_google_analytics_key_events", "params": {"breakdown": "event", "channel": "all", "startDate": "2026-09-09", "endDate": "2026-09-14"}, "file": "ga4_key_events_event_window2_all.json"},
+    {"tool": "get_google_analytics_traffic_acquisition", "params": {"breakdown": "channel_group", "startDate": "2026-07-25", "endDate": "2026-08-01"}, "file": "ga4_acquisition_channel_group_window1.json"},
+    {"tool": "get_google_analytics_traffic_acquisition", "params": {"breakdown": "channel_group", "startDate": "2026-09-09", "endDate": "2026-09-14"}, "file": "ga4_acquisition_channel_group_window2.json"},
+    {"tool": "get_google_analytics_traffic_acquisition", "params": {"breakdown": "source_medium", "startDate": "2026-07-25", "endDate": "2026-08-01"}, "file": "ga4_acquisition_source_medium_window1.json"},
+    {"tool": "get_google_analytics_traffic_acquisition", "params": {"breakdown": "source_medium", "startDate": "2026-09-09", "endDate": "2026-09-14"}, "file": "ga4_acquisition_source_medium_window2.json", "note": "diagnostics flagged attribution_not_set_share_high: 64/568 sessions (11.3%) unattributed, above the 5% threshold"},
+    {"tool": "get_google_analytics_audience_breakdown", "params": {"breakdown": "device", "channel": "organic_search", "startDate": "2026-07-25", "endDate": "2026-08-01"}, "file": "ga4_audience_device_window1_organic.json"},
+    {"tool": "get_google_analytics_audience_breakdown", "params": {"breakdown": "device", "channel": "organic_search", "startDate": "2026-09-09", "endDate": "2026-09-14"}, "file": "ga4_audience_device_window2_organic.json"},
+    {"tool": "get_google_analytics_audience_breakdown", "params": {"breakdown": "country", "channel": "organic_search", "startDate": "2026-07-25", "endDate": "2026-08-01"}, "file": "ga4_audience_country_window1_organic.json"},
+    {"tool": "get_google_analytics_audience_breakdown", "params": {"breakdown": "country", "channel": "organic_search", "startDate": "2026-09-09", "endDate": "2026-09-14"}, "file": "ga4_audience_country_window2_organic.json", "note": "Pakistan: 3 activeUsers but 33 sessions / 6 keyEvents - anomalous ratio, flagged in ga4_audience.csv"},
+    {"tool": "get_google_analytics_ecommerce_performance", "params": {"breakdown": "landing_page", "channel": "organic_search", "startDate": "2026-07-25", "endDate": "2026-08-01"}, "file": "ga4_ecommerce_landing_page_window1_organic.json"},
+    {"tool": "get_google_analytics_ecommerce_performance", "params": {"breakdown": "landing_page", "channel": "organic_search", "startDate": "2026-09-09", "endDate": "2026-09-14"}, "file": "ga4_ecommerce_landing_page_window2_organic.json"},
+    {"tool": "get_google_analytics_ecommerce_performance", "params": {"breakdown": "landing_page", "channel": "all", "startDate": "2026-07-25", "endDate": "2026-08-01"}, "file": "ga4_ecommerce_landing_page_window1_all.json"},
+    {"tool": "get_google_analytics_ecommerce_performance", "params": {"breakdown": "landing_page", "channel": "all", "startDate": "2026-09-09", "endDate": "2026-09-14"}, "file": "ga4_ecommerce_landing_page_window2_all.json", "note": "non-production hostNames observed: localhost, myglobalhealth.up.railway.app"},
+    {"tool": "get_google_analytics_ecommerce_performance", "params": {"breakdown": "item", "channel": "organic_search", "startDate": "2026-07-25", "endDate": "2026-08-01"}, "file": "ga4_ecommerce_item_window1_organic.json"},
+    {"tool": "get_google_analytics_ecommerce_performance", "params": {"breakdown": "item", "channel": "organic_search", "startDate": "2026-09-09", "endDate": "2026-09-14"}, "file": "ga4_ecommerce_item_window2_organic.json"},
+    {"tool": "get_google_analytics_ecommerce_performance", "params": {"breakdown": "item", "channel": "all", "startDate": "2026-07-25", "endDate": "2026-08-01"}, "file": "ga4_ecommerce_item_window1_all.json"},
+    {"tool": "get_google_analytics_ecommerce_performance", "params": {"breakdown": "item", "channel": "all", "startDate": "2026-09-09", "endDate": "2026-09-14"}, "file": "ga4_ecommerce_item_window2_all.json"},
+    {"tool": "get_google_analytics_page_performance", "params": {"channel": "all", "startDate": "2026-09-09", "endDate": "2026-09-14", "limit": 1000}, "file": "ga4_page_performance_window2_all.json", "note": "406 rows; tool result exceeded the MCP token cap and was auto-saved by the harness, then copied verbatim into this folder"},
+    {"tool": "get_google_analytics_site_search", "params": {"startDate": "2026-09-09", "endDate": "2026-09-14", "limit": 1000}, "file": "ga4_site_search_window2_all.json", "note": "0 rows - no measured site-search activity this window"}
+  ],
+  "extractionTimeUtc": "2026-09-15T00:00:00Z",
+  "extractionTimeNote": "Wall-clock UTC timestamp not directly observable from these MCP tools (no server-time field returned); this is the session date per the environment's 'today' context, not a captured API timestamp.",
+  "completeness": {
+    "measurement_health": "complete",
+    "organic_overview": "complete (3 calls: full range + both valid windows)",
+    "organic_landing_pages": "complete (14 daily calls + 2 whole-window calls)",
+    "key_events": "complete (5 calls per task spec)",
+    "traffic_acquisition": "complete (4 calls: channel_group + source_medium x 2 windows)",
+    "audience_breakdown": "complete (4 calls: device + country x 2 windows, organic only per spec)",
+    "ecommerce_performance": "complete (8 calls: landing_page + item x channel all/organic x 2 windows)",
+    "page_performance": "complete (1 call, channel=all, window2 only per spec)",
+    "site_search": "complete (1 call, window2 only per spec)",
+    "code_review": "complete (track-code-review.md)",
+    "gsc_ga4_product_link": "unknown via API; owner to confirm in GA4 Admin > Product links"
+  },
+  "schema_version": "1.0",
+  "rowCounts": {
+    "ga4_landing_daily.csv": 204,
+    "ga4_outage_windows.csv": 1,
+    "ga4_key_events.csv": 24,
+    "ga4_acquisition.csv": 44,
+    "ga4_audience.csv": 45,
+    "ga4_ecommerce.csv": 234,
+    "ga4_pii_scan.csv": 10
+  },
+  "reportMetadataFlagsObserved": {
+    "dataLossFromOtherRow": false,
+    "subjectToThresholding": false,
+    "sampling": "[] in every call",
+    "hasLimitedData": false,
+    "diagnostics": [
+      "attribution_not_set_share_high (source_medium, window2, all channels): 64/568 sessions (11.27%) unattributed, threshold 5%",
+      "no_ecommerce_activity (info-level, every ecommerce_performance call): status=none, transactions=0, purchaseRevenue=0 in both windows, both channels",
+      "no_site_search_activity (info-level, site_search call): 0 measured search terms"
+    ]
+  },
+  "latestCompleteDateAsserted": {
+    "date": "2026-09-12",
+    "reason": "Task brief instructs treating 2026-09-13 and 2026-09-14 as possibly incomplete (latest received days). 2026-09-12 is therefore the latest day in window2 treated as a complete 24h GA4 collection day for any day-level analysis; all 6 days of window2 are still included in ga4_landing_daily.csv with data_state=latest_received_possibly_incomplete on the two most recent dates so no data is silently dropped."
+  },
+  "knownFactsVerifiedLive": {
+    "ga4Property": "547083375 - confirmed via measurement_health.propertyId",
+    "timezone": "Europe/Dublin - confirmed in every call's propertyTimeZone",
+    "currency": "EUR - confirmed in every call's currencyCode",
+    "webStream": "G-SP48D9LJJ5, created 2026-07-25T10:06:01.099Z - confirmed via measurement_health",
+    "outageWindow": "2026-08-02..2026-09-08 confirmed empty (0 rows) in every landing-page pull that spans it, not fabricated zero-traffic rows",
+    "gsc_ga4_link": "not checkable via these MCP tools - recorded as unknown per task instruction, not guessed"
+  }
+}

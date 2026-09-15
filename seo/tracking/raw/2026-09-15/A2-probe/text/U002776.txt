@@ -1,0 +1,474 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.ers.pt","https://www.ordemdosmedicos.pt","https://www.cnpd.pt","https://www.livroreclamacoes.pt","https://www.infarmed.pt","https://www.sns24.gov.pt","https://www.dgs.pt","https://www.insa.min-saude.pt","https://www.spc.pt","https://www.ihmt.unl.pt","https://www.apmgf.pt","https://www.deco.pt","https://www.utente.min-saude.pt","https://www.sosvozamiga.org","https://www.fpcardiologia.pt"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Hand, foot and mouth disease: Signs and treatment","description":"Your complete HSE-aligned guide to hand, foot and mouth disease in Irish children. Covers symptoms, treatment at home, when to go to A&E, and how to stop…","url":"https://www.myglobalhealth.online/portugal/en/blog/hand-foot-and-mouth-disease-signs-and-treatment","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/portugal/en/blog/hand-foot-and-mouth-disease-signs-and-treatment#webpage","url":"https://www.myglobalhealth.online/portugal/en/blog/hand-foot-and-mouth-disease-signs-and-treatment","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/en/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-06-15"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Hand%2C+foot+and+mouth+disease%3A+Signs+and+treatment&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2Fff180d4e-ccef-441a-8dca-8af41f64cc50-150385_0ed6f9dbf2384287827ba85738606351-mv2.avif&v=2026-07-20.1-sp6byz","width":1200,"height":630},"about":{"@type":"Thing","name":"Telemedicine"},"datePublished":"2026-06-06T05:23:47.372Z","dateModified":"2026-06-15T20:56:33.190Z","publishingPrinciples":"https://www.myglobalhealth.online/portugal/en/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/portugal/en/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/portugal/en/blog"},{"@type":"ListItem","position":3,"name":"Hand, foot and mouth disease: Signs and treatment","item":"https://www.myglobalhealth.online/portugal/en/blog/hand-foot-and-mouth-disease-signs-and-treatment"}]}]All articlesTelemedicineHand, foot and mouth disease: Signs and treatmentYour complete HSE-aligned guide to hand, foot and mouth disease in Irish children. Covers symptoms, treatment at home, when to go to A&E, and how to stop it spreading inGlobal Health Medical TeamJune 6, 202613 min readLast reviewed June 15, 2026Clinically reviewed by Dr Tiago Miguel Figueira+On this pageWhat is Hand, Foot and Mouth Disease?Causes & VirologySigns & SymptomsDiagnosisTreatment & ManagementRed Flags — When to Seek Urgent CarePrevention & ProphylaxisEpidemiologyFrequently Asked QuestionsTrusted Paediatric Resources
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    Section 01
+    What is Hand, Foot and Mouth Disease?
+
+    
+      Hand, Foot and Mouth Disease (HFMD) is a common, highly contagious viral illness that predominantly affects infants and children under ten years of age. Characterised by a distinctive triad of fever, painful oral ulcers, and a vesicular rash on the palms, soles and occasionally the buttocks, HFMD is caused by enteroviruses — most frequently Coxsackievirus A16 and Enterovirus 71 (EV-A71).
+    
+    
+      Although the disease is usually mild and self-limiting, resolving within seven to ten days, it can cause significant discomfort in young children. Rare but serious complications — including viral meningitis, encephalitis and acute flaccid paralysis — are more commonly associated with EV-A71 strains and require prompt medical attention.
+    
+    
+      The condition occurs worldwide and spreads rapidly in nurseries, crèches, schools and family settings, particularly during summer and early autumn in temperate climates. Understanding HFMD is essential for parents, carers and healthcare professionals alike.
+    
+
+    
+      "HFMD is a contagious enteroviral illness in children characterised by fever, painful oral ulcers and vesicular lesions on the hands and feet. Treatment is mainly supportive."
+      — Global Health Clinical Summary
+    
+  
+
+  
+  
+    Section 02
+    Causes & Virology
+
+    
+      HFMD is caused by single-stranded RNA viruses belonging to the Enterovirus genus within the Picornaviridae family. The two most clinically significant causative agents are:
+    
+
+    
+      
+        🦠
+        Coxsackievirus A16
+        The classic, most frequent cause globally. Typically produces a milder illness. Part of the Group A Coxsackievirus cluster.
+      
+      
+        ⚠️
+        Enterovirus 71 (EV-A71)
+        Associated with larger outbreaks (especially in Asia-Pacific) and a higher risk of neurological complications including brainstem encephalitis.
+      
+      
+        🔬
+        Other Coxsackieviruses
+        CA6, CA10, CB5 and others may cause atypical or widespread HFMD presentations. CA6 can produce more extensive skin involvement.
+      
+      
+        🌍
+        Transmission Routes
+        Direct contact with nasal secretions, saliva, blister fluid or faeces. Also via contaminated surfaces and objects. Highly contagious.
+      
+    
+
+    Why Children Are Most Affected
+    
+      Young children lack pre-existing immunity to these enteroviruses. The virus is shed in large quantities in faecal matter for weeks after recovery, even when the child appears well — making containment in childcare settings particularly challenging. Immunocompetent adults who were not exposed in childhood can contract the illness, though their symptoms are typically milder.
+    
+    
+      The incubation period is 3–7 days following exposure. Viral shedding from the oropharynx peaks during the first week of illness.
+    
+  
+
+  
+  
+    Section 03
+    Signs & Symptoms
+
+    
+      HFMD typically follows a predictable clinical progression. Recognition of the full symptom pattern allows for earlier diagnosis and appropriate home management, while also helping clinicians identify when escalation is necessary.
+    
+
+    
+      
+        
+          Phase
+          Symptom / Sign
+          Clinical Notes
+        
+      
+      
+        
+          ProdromeDays 1–2
+          Mild fever (38–39 °C), irritability, malaise, reduced appetite, sore throat
+          Often mistaken for a common cold or non-specific viral URTI at this stage
+        
+        
+          Oral LesionsDays 1–3
+          Painful ulcers on tongue, buccal mucosa and soft palate; vesicles that erode rapidly
+          Can cause significant drooling and refusal to eat/drink — key diagnostic clue
+        
+        
+          Skin RashDays 2–4
+          Papulovesicular rash on palms and soles; may involve dorsal hands/feet, buttocks and perioral area
+          Classic distribution is pathognomonic; lesions are typically non-pruritic and non-painful on skin
+        
+        
+          AssociatedThroughout
+          Reduced appetite, drooling, malaise, dehydration risk if oral pain severe
+          Dehydration is the most common complication requiring medical review
+        
+        
+          ResolutionDays 7–10
+          Spontaneous resolution; nail shedding (onychomadesis) may occur 4–8 weeks later
+          Nail changes are benign and self-resolving; reassure parents
+        
+      
+    
+
+    Oral Lesion Profile
+    
+      The oral ulcers of HFMD begin as small red spots (enanthema) that rapidly evolve into vesicles and then shallow, painful ulcers surrounded by a red halo. They are distributed on the tongue, buccal mucosa, soft palate and tonsillar pillars. Oral pain is the dominant symptom driving feeding refusal and consequent dehydration risk in infants.
+    
+
+    Skin Rash Profile
+    
+      The skin rash consists of 3–7 mm oval or elongated grey vesicles on an erythematous base — classically on the palms and soles, often following skin dermatome lines. Buttock lesions (without vesiculation) and perioral macules are also characteristic. Unlike chickenpox, lesions do not spread centripetally and are generally non-pruritic.
+    
+  
+
+  
+  
+    Section 04
+    Diagnosis
+
+    
+      HFMD is primarily a clinical diagnosis based on the characteristic triad of oral ulcers, acral vesicular rash and fever in a child of the appropriate age during a compatible season or exposure history. Laboratory confirmation is generally not required in straightforward cases.
+    
+
+    When to Consider Laboratory Testing
+    
+      Virological confirmation (via nasopharyngeal swab, rectal swab, vesicle fluid or CSF PCR for enterovirus) is indicated in:
+    
+    
+      Severe or atypical presentations
+      Suspected neurological involvement (encephalitis, meningitis, acute flaccid myelitis)
+      Immunocompromised children
+      Public health investigation of an outbreak
+      Neonates with suspected enteroviral sepsis
+    
+
+    Differential Diagnosis
+    
+      Clinicians should consider herpangina (oral lesions only, confined to posterior oropharynx), primary herpes gingivostomatitis (more severe gingival involvement), chickenpox (centripetal distribution, pruritic), and aphthous ulceration (recurrent, no systemic illness). In infants, Kawasaki disease should be excluded when fever is prolonged.
+    
+  
+
+  
+  
+    Section 05
+    Treatment & Management
+
+    
+      There is currently no specific antiviral therapy for HFMD. Management is entirely supportive and focuses on symptom relief, maintaining hydration and monitoring for complications.
+    
+
+    
+      
+        💧
+        Oral Hydration
+        The single most important intervention. Offer cool, non-acidic fluids frequently. Ice-lollies and chilled water may be soothing. Avoid citrus and carbonated drinks.
+      
+      
+        🌡️
+        Antipyretics
+        Paracetamol (acetaminophen) or ibuprofen at age-appropriate doses to control fever and systemic discomfort. Follow national dosing guidelines.
+      
+      
+        🩹
+        Analgesics
+        Topical oral anaesthetic gels (lidocaine-based mouthwashes in older children) can reduce oral pain and improve feeding. Discuss with your pharmacist or GP.
+      
+      
+        🍦
+        Soft Cold Foods
+        Yoghurt, ice cream, chilled purée or milkshakes reduce oral pain and support caloric intake. Avoid hard, salty or spicy foods.
+      
+      
+        🛏️
+        Rest & Isolation
+        Keep the child at home until the fever has resolved and all lesions are crusted or healed — typically 5–7 days. This limits spread in childcare settings.
+      
+      
+        🏥
+        Hospital Assessment
+        Required for suspected dehydration, persistent high fever, neurological symptoms or poor oral intake in infants under 12 months. IV fluids may be necessary.
+      
+    
+
+    A Note on Antibiotics
+    
+      Antibiotics are not effective against viral infections and should not be prescribed for uncomplicated HFMD. Secondary bacterial superinfection of skin lesions is rare but should be assessed if lesions become warm, swollen, painful or purulent.
+    
+  
+
+  
+  
+    Section 06
+    Red Flags — When to Seek Urgent Care
+
+    
+      While HFMD is self-limiting in the vast majority of cases, a minority of children — particularly those under two years or infected with EV-A71 — may develop serious complications. Parents and carers must know the warning signs that require immediate emergency assessment.
+    
+
+    
+      🚨 Go to A&E / Emergency Department Immediately If:
+      
+        Signs of dehydration: dry mouth, no tears when crying, sunken fontanelle in infants, no urine output for >8 hours, mottled/grey skin
+        Persistent high fever: temperature above 39.5 °C unresponsive to antipyretics, or fever lasting more than 5 days
+        Neurological symptoms: seizures, stiff neck, persistent vomiting, altered consciousness, ataxia, myoclonic jerks, photophobia
+        Cardiorespiratory symptoms: rapid breathing, chest pain, fast heart rate, pallor, cold extremities
+        Severe pain or complete oral refusal: especially in infants under 12 months who cannot maintain adequate hydration
+        Progressive worsening after day 3 of illness, rather than gradual improvement
+      
+    
+
+    
+      In Europe, neurological complications from HFMD — though rare — require hospital admission, close monitoring, and in some cases treatment in a paediatric intensive care setting. Early recognition saves lives.
+    
+  
+
+  
+  
+    Section 07
+    Prevention & Prophylaxis
+
+    
+      Because no licensed vaccine against HFMD is currently available in Europe or the United States, prevention relies entirely on non-pharmaceutical interventions. These are highly effective when consistently applied, particularly in childcare settings.
+    
+
+    
+      
+        
+        
+          Rigorous Hand Hygiene
+          Wash hands with soap and water for at least 20 seconds — especially after nappy changes, before meals, after toilet use and after contact with an infected child. Alcohol gel is less effective against enteroviruses; soap and water is preferred.
+        
+      
+      
+        
+        
+          Disinfect Surfaces & Objects
+          Regularly clean and disinfect frequently touched surfaces — toys, door handles, nappy-change areas — using a diluted bleach solution (1 tablespoon bleach per 4 cups water) or an EPA-registered disinfectant active against enteroviruses.
+        
+      
+      
+        
+        
+          Avoid Close Contact with Infected Individuals
+          Avoid hugging, kissing, sharing utensils or cups with an infected child. Enteroviruses are shed in large amounts in saliva, nasal secretions and faeces during the first week of illness.
+        
+      
+      
+        
+        
+          Keep Sick Children at Home
+          Children should remain home from nursery, crèche or school until the fever has fully resolved and all blisters have dried and crusted. This is usually 5–7 days after the onset of illness. Notify the childcare setting promptly.
+        
+      
+      
+        
+        
+          Respiratory Hygiene ("Catch It, Bin It, Kill It")
+          Cover the mouth and nose with a tissue when coughing or sneezing. Dispose of tissues immediately and wash hands. This limits droplet transmission in shared environments.
+        
+      
+      
+        
+        
+          Laundry & Nappy Hygiene
+          Wash soiled clothing and bedding on a hot cycle (≥60 °C). Use disposable gloves when handling nappies from an infected infant and wash hands thoroughly afterwards. The virus survives on surfaces for several days.
+        
+      
+      
+        
+        
+          Strengthen Natural Immunity
+          While no specific HFMD vaccine exists in Europe, ensuring children are up to date with all recommended national immunisation schedules supports general immune resilience. Adequate sleep, nutrition and breastfeeding in infancy also contribute to a robust immune response.
+        
+      
+      
+        
+        
+          Childcare Setting Protocols
+          Nurseries should implement written infection control policies for HFMD: prompt isolation of symptomatic children, enhanced environmental cleaning, and written communication to parents during outbreaks. Staff should wear gloves for nappy changes at all times.
+        
+      
+    
+
+    Vaccine Landscape in 2026
+    
+      An EV-A71 inactivated vaccine (EV71 vaccine, brand names including Sinovac's Inlive and Chinese-produced variants) has been approved and deployed in China since 2016 with demonstrated efficacy against EV-A71-associated HFMD and complications. As of 2026, no EV-A71 or Coxsackievirus A16 vaccine has received European Medicines Agency (EMA) approval. Global clinical trials are ongoing. Parents and clinicians in Europe should monitor guidance from the European Medicines Agency (EMA) and the European Centre for Disease Prevention and Control (ECDC) for updates.
+    
+  
+
+  
+  
+    Section 08
+    Epidemiology
+
+    
+      HFMD is endemic worldwide, with the highest incidence reported across the Asia-Pacific region (China, Vietnam, Malaysia, Japan, South Korea). In Europe, it occurs sporadically and in small outbreaks, predominantly in childcare and school settings. Peak seasonal transmission occurs in late spring, summer and early autumn in temperate zones.
+    
+    
+      In Ireland, Portugal, Spain and Romania, HFMD is notifiable or subject to enhanced surveillance, with annual reports from national public health agencies tracking outbreak patterns in childcare settings. The ECDC's HFMD disease profile provides up-to-date European epidemiological data.
+    
+    
+      Children aged 6 months to 5 years carry the highest disease burden. Neonatal enteroviral infection — though rare — can cause severe systemic disease including sepsis-like illness, myocarditis and meningoencephalitis, and warrants immediate specialist review.
+    
+  
+
+  
+  
+    Section 09
+    Frequently Asked Questions
+
+    Can adults get Hand, Foot and Mouth Disease?
+    Yes. Adults who have not previously been infected can contract HFMD, though symptoms are often milder or subclinical. Pregnant women who suspect exposure should contact their midwife or obstetrician, as enteroviral infection in late pregnancy has rarely been associated with neonatal illness.
+
+    Is HFMD the same as foot-and-mouth disease in animals?
+    No. Human HFMD and animal foot-and-mouth disease (FMD) are caused by completely unrelated viruses. The conditions cannot be transmitted between humans and animals.
+
+    My child has HFMD — can they go back to school?
+    Most European paediatric and public health guidelines advise keeping children home until fever-free and all blisters are fully healed, typically 5–7 days. Always follow the specific exclusion policy of your child's school or nursery.
+
+    Can HFMD recur?
+    Yes. Immunity following HFMD is serotype-specific. A child may develop HFMD again if infected with a different strain — for example, having had Coxsackievirus A16 does not protect against EV-A71 or CA6.
+
+    Should I apply any cream to the skin blisters?
+    The skin blisters of HFMD are self-healing and generally require no topical treatment. Do not burst blisters. If blisters become infected (increasing redness, warmth, pus), consult a healthcare professional.
+
+    What should my child eat when they have mouth ulcers?
+    Prioritise cool, soft, non-acidic foods: yoghurt, ice cream, smoothies, cold pasta, mashed potato. Cold fluids (cool water, chilled diluted juice) can be soothing and help maintain hydration. Avoid salty crisps, citrus juice or carbonated drinks which aggravate ulcers.
+  
+
+  
+  
+    Section 10
+    Trusted Paediatric Resources
+    
+      The following authoritative institutions provide clinically reviewed information on HFMD for parents and healthcare professionals. Global Health recommends these sources for up-to-date national guidance.
+    
+
+    🇮🇪 Ireland
+    
+      
+        🏥
+        Ireland · National
+        Health Service Executive (HSE)
+        Comprehensive patient-facing HFMD guide from Ireland's national health authority, including symptoms, treatment and exclusion guidance.
+      
+      
+        👶
+        Ireland · Dublin
+        Children's Health Ireland (CHI)
+        Ireland's national paediatric hospital group — CHI at Crumlin, Temple Street, Tallaght and Connolly — provides specialist paediatric infectious disease care.
+      
+      
+        🔬
+        Ireland · National
+        Health Protection Surveillance Centre (HPSC)
+        HPSC monitors communicable disease in Ireland, including enteroviral illness and HFMD outbreaks in childcare settings.
+      
+    
+
+    🇵🇹 Portugal
+    
+      
+        🏥
+        Portugal · National
+        Direção-Geral da Saúde (DGS)
+        Portugal's Directorate-General of Health provides national clinical guidelines and public health communications on HFMD and childhood infectious diseases.
+      
+      
+        👨‍⚕️
+        Portugal · Professional
+        Sociedade Portuguesa de Pediatria (SPP)
+        The Portuguese Society of Paediatrics publishes clinical consensus documents, parent information sheets and continuing medical education on paediatric infectious diseases.
+      
+      
+        🏨
+        Portugal · Lisbon
+        Hospital Dona Estefânia / HDE
+        Portugal's leading dedicated children's hospital, part of the Centro Hospitalar Universitário de Lisboa Central, with a specialist paediatric infectious disease department.
+      
+    
+
+    🇪🇸 Spain
+    
+      
+        👶
+        Spain · National
+        Asociación Española de Pediatría (AEP)
+        Spain's national professional paediatric association — publisher of Anales de Pediatría — provides evidence-based family guides and clinical protocols on HFMD and common viral illnesses.
+      
+      
+        🔬
+        Spain · Professional
+        Sociedad Española de Infectología Pediátrica (SEIP)
+        The Spanish Society of Paediatric Infectious Diseases provides specialist clinical guidance, outbreak management protocols and educational resources for clinicians and families.
+      
+      
+        🏥
+        Spain · National
+        Red Nacional de Vigilancia Epidemiológica (RENAVE)
+        Spain's national epidemiological surveillance network monitors communicable disease outbreaks including HFMD in childcare and school settings across all autonomous communities.
+      
+    
+
+    🇷🇴 Romania
+    
+      
+        🔬
+        Romania · National
+        Institutul Național de Sănătate Publică (INSP)
+        Romania's National Institute of Public Health provides epidemiological surveillance data, outbreak reports and clinical guidance on HFMD and other infectious diseases of childhood.
+      
+      
+        🏥
+        Romania · National
+        Ministerul Sănătății (MS)
+        Romania's Ministry of Health publishes national public health alerts, exclusion policies for childcare settings and immunisation schedule guidance relevant to paediatric infectious diseases.
+      
+      
+        👨‍⚕️
+        Romania · Bucharest
+        Spitalul Clinic de Copii "Grigore Alexandrescu"
+        One of Romania's leading paediatric hospitals, with specialist infectious disease and intensive care departments experienced in managing childhood viral illnesses including HFMD.
+      
+    
+
+    🌍 International & European Authorities
+    
+      
+        🇪🇺
+        EU / Europe
+        ECDC — HFMD Disease Profile
+        The European Centre for Disease Prevention and Control maintains an authoritative HFMD disease profile including epidemiology, outbreak data and prevention guidance.
+      
+      
+        🌐
+        Global
+        WHO — HFMD Fact Sheet
+        The World Health Organization's official fact sheet on HFMD covers global epidemiology, causative agents, clinical features, prevention and public health response.
+      
+      
+        🔭
+        USA (reference)
+        US CDC — Hand, Foot & Mouth Disease
+        The US Centers for Disease Control offers detailed clinical and public health information widely used as a reference standard by paediatric clinicians worldwide.
+      
+    
+  
+
+
+
+
+Clinically reviewed by Dr Tiago Miguel Figueira. Last reviewed June 15, 2026. This article is for information only and is not a substitute for medical advice.How we write and review medical contentWorth sharing?Share this articleFacebookWhatsAppXLinkedInInstagramCopy linkNext stepReady to speak with a doctor?Book an online consultation with a locally-registered doctor in your country. Open appointments are shown during booking.Book consultationMore articlesSaúde MentalPsychological sick leave: who can issue it, how much you get paid, and why it isn't paid at 100%Psychological sick leave is an ordinary medical leave with a mental health diagnosis. Who can issue it, the 55%, 60% and 70% Social Security pays, and what changes with burnout.Read article →Baixa médicaPortugal sick pay: how much you receive and how it is calculatedThe 2026 sickness benefit rates, reference earnings, waiting days and a worked example for Portugal.Read article →Medicina Geral e FamiliarDriving licence medical certificate in Portugal: Group 1, Group 2 and IMT submissionSee which licence categories fall under Groups 1 and 2, when medical and psychological certificates are required and how the doctor submits the certificate to IMT.Read article →

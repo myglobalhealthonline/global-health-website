@@ -1,0 +1,171 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.lkcr.cz","https://www.sukl.cz","https://www.uoou.cz"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}]{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Información legal","item":"https://www.myglobalhealth.online/czechia/es/legal"},{"@type":"ListItem","position":3,"name":"Términos y Condiciones","item":"https://www.myglobalhealth.online/czechia/es/legal/terms-of-service"}]}LegalChequia · Aspectos legalesTérminos y CondicionesVersión 2 · Última actualización 18 July 2026Todos los documentos legalesTérminos y Condiciones Generales de Global Health
+Fecha de entrada en vigor: 1 de julio de 2026
+
+
+OperadorGlobal Guest s.r.o. que opera bajo el nombre comercial Global Health
+Número de sociedad checaIČO: 19071680
+Domicilio socialRybna 24, 110 00 Prague 1
+Sitio webwww.myglobalhealth.online
+Contactoglobalhealth@myglobalhealth.online
+Fecha de entrada en vigor1 de julio de 2026
+Mercados de operaciónVéase www.myglobalhealth.online/markets
+
+
+Los presentes Términos Generales rigen el uso de la plataforma Global Health en todos los mercados en los que Global Health opera. Deben leerse conjuntamente con el Anexo de País correspondiente al mercado específico desde el que usted accede a los Servicios. En caso de conflicto entre estos Términos Generales y un Anexo de País, prevalecerá el Anexo de País.
+La lista completa de mercados en los que Global Health opera puede consultarse en www.myglobalhealth.online.
+
+1. Quiénes Somos
+Global Health es una plataforma de telemedicina operada por Global Guest s.r.o., una sociedad de responsabilidad limitada constituida en la República Checa (IČO: 19071680; domicilio social: Rybna 24, 110-00 Prague 1). Global Health opera en diversos mercados, cuyos detalles pueden consultarse en www.myglobalhealth.online.
+Dependiendo del mercado desde el que usted acceda a los Servicios, Global Health actúa bien como proveedor de servicios sanitarios registrado, bien como plataforma tecnológica que conecta a los pacientes con Facultativos registrados de forma independiente. El modelo operativo aplicable a su mercado se establece en el Anexo de País.
+Las referencias en estos Términos a "nosotros" o "nuestro/a" se entienden hechas a Global Guest s.r.o., que opera bajo el nombre comercial Global Health. Las referencias a "usted" o el "Paciente" se entienden hechas a cualquier persona física que acceda o utilice la Plataforma o los Servicios.
+Nuestros datos de contacto principales son:
+
+Correo electrónico: globalhealth@myglobalhealth.online
+Sitio web: www.myglobalhealth.online
+
+Los datos de contacto específicos de cada país, direcciones y números de registro regulatorio se establecen en el Anexo de País correspondiente.
+
+2. Definiciones
+En estos Términos Generales y en cualquier Anexo de País, los siguientes términos tienen los significados que se indican a continuación:
+
+"Plataforma" significa el sitio web de Global Health en www.myglobalhealth.online, cualquier aplicación móvil asociada, y cualquier sistema de reserva, consulta o gestión de pacientes operado por o en nombre de Global Health.
+"Servicios" significa las consultas médicas en línea, derivaciones a especialistas, servicios de prescripción, pruebas médicas domiciliarias, entrega de recetas, Planes de Créditos, y cualquier otro servicio relacionado con la salud disponible a través de la Plataforma.
+"Paciente" o "usted" significa cualquier persona física que se registre, reserve o utilice los Servicios.
+"Facultativo" significa un médico, especialista, enfermero u otro profesional sanitario regulado que preste consultas o servicios clínicos a través de la Plataforma, registrado ante la autoridad reguladora médica correspondiente en el país en el que ejerce.
+"Consulta" significa una consulta médica a distancia realizada mediante videollamada, teléfono o mensajería segura a través de la Plataforma.
+"Modelo de Proveedor" significa el modelo operativo aplicable en los mercados en los que Global Health cuenta con un registro como proveedor de servicios sanitarios y presta los Servicios como proveedor sanitario regulado. En los mercados con Modelo de Proveedor, los Facultativos ejercen bajo el registro de proveedor de Global Health.
+"Modelo de Plataforma" significa el modelo operativo aplicable en los mercados en los que Global Health actúa como intermediario tecnológico que conecta a los pacientes con Facultativos registrados de forma independiente. En los mercados con Modelo de Plataforma, cada Facultativo posee su propio registro regulatorio y presta los Servicios en nombre propio.
+"Plan de Créditos" significa una suscripción mensual recurrente mediante la cual un Paciente recibe un número determinado de Créditos en cada ciclo de facturación para su uso en los Servicios, según se describe con más detalle en la Cláusula 7.
+"Crédito" o "Créditos" significa la unidad de valor emitida a un Paciente en virtud de un Plan de Créditos o adquirida de forma puntual, canjeable por los Servicios elegibles en la Plataforma.
+"Anexo de País" significa el suplemento específico de cada país a estos Términos Generales, aplicable al mercado desde el que usted accede a los Servicios, que especifica, entre otras cuestiones, el modelo operativo aplicable, la ley aplicable, los datos de registro regulatorio y los derechos del consumidor.
+"Legislación de Protección de Datos Aplicable" significa la normativa de protección de datos y privacidad vigente en su jurisdicción, incluyendo, cuando proceda: el RGPD (Reglamento (UE) 2016/679); el UK GDPR y la Data Protection Act 2018; y la normativa equivalente en los mercados no pertenecientes a la UE según se especifique en el Anexo de País correspondiente.
+"Datos de Salud" significa cualquier dato personal relativo a la salud física o mental de una persona física, incluidos los datos relativos a la prestación de servicios sanitarios a dicha persona, clasificados como datos sensibles o categoría especial en virtud de la Legislación de Protección de Datos Aplicable.
+"Legislación de Protección al Consumidor" significa la normativa imperativa de protección al consumidor aplicable en su país de residencia, que no puede ser excluida ni limitada por estos Términos, con independencia de cualquier cláusula de elección de ley.
+
+
+3. Aceptación de los Términos
+Al acceder o utilizar la Plataforma o los Servicios, usted confirma que ha leído, comprendido y aceptado quedar vinculado por estos Términos Generales, el Anexo de País aplicable, nuestra Política de Privacidad y nuestra Política de Cookies.
+Si no está de acuerdo con estos Términos, no debe acceder ni utilizar la Plataforma ni los Servicios.
+Estos Términos están disponibles en todo momento en www.myglobalhealth.online/terms. Le recomendamos que guarde o imprima una copia para sus registros.
+
+4. Elegibilidad y Registro
+4.1 Requisito de edad
+Debe tener al menos 18 años de edad para registrarse o utilizar los Servicios de forma independiente. La edad mínima puede ser superior en determinadas jurisdicciones; consulte su Anexo de País. Los pacientes menores de la edad mínima aplicable únicamente podrán acceder a los Servicios con la participación activa y el consentimiento por escrito de un progenitor o tutor legal, quien aceptará estos Términos en su nombre y asumirá la responsabilidad de la exactitud de toda la información facilitada.
+En cualquier consulta que involucre a un menor, el progenitor o tutor deberá estar presente o disponible de inmediato durante la consulta, salvo que el Facultativo determine lo contrario en interés clínico del paciente.
+4.2 Exactitud de la información
+Usted debe proporcionar información exacta, completa y actualizada durante el registro y a lo largo de su uso de los Servicios. Proporcionar información médica falsa o engañosa a un Facultativo puede comprometer la calidad de la atención que recibe y puede constituir un delito conforme a la ley aplicable.
+4.3 Seguridad de la cuenta
+Usted es responsable de mantener la confidencialidad de las credenciales de acceso a su cuenta. Debe notificarnos de inmediato en globalhealth@myglobalhealth.online si tiene conocimiento o sospecha de cualquier acceso no autorizado a su cuenta.
+4.4 Una cuenta por paciente
+Cada paciente podrá disponer de una única cuenta activa. Queda prohibida la creación de múltiples cuentas para eludir cualquier restricción, suspensión o prohibición, lo que podrá dar lugar a la resolución de todas las cuentas asociadas.
+
+5. Naturaleza de los Servicios y Limitaciones Clínicas
+5.1 Modelos operativos
+La forma en que Global Health presta los Servicios varía según el mercado. En algunos mercados, Global Health opera como proveedor de servicios sanitarios registrado. En otros, opera como plataforma tecnológica que conecta a los pacientes con Facultativos registrados de forma independiente. El modelo aplicable a su mercado, y sus implicaciones en materia de supervisión regulatoria, reclamaciones y responsabilidad, se establece en el Anexo de País correspondiente. Estos Términos Generales se aplican en su totalidad con independencia del modelo operativo.
+5.2 Limitaciones de la telemedicina
+Nuestros Servicios prestan consultas médicas a distancia y no sustituyen a la atención presencial cuando esta resulte clínicamente adecuada. Un Facultativo que realice una consulta a distancia tiene una capacidad limitada para llevar a cabo exploraciones físicas. El diagnóstico y el asesoramiento clínico se basan en la información que usted facilite, su historial médico registrado en la Plataforma, y las técnicas de evaluación a distancia clínicamente adecuadas.
+Usted reconoce que la calidad y precisión del asesoramiento clínico puede verse afectada por la exhaustividad y exactitud de la información que proporcione.
+5.3 Situaciones de emergencia
+IMPORTANTE: Nuestros Servicios no son adecuados para emergencias médicas. Si usted u otra persona está sufriendo una emergencia médica, llame de inmediato a los servicios de emergencia y acuda al servicio de urgencias más cercano. No utilice esta Plataforma en caso de emergencia médica.
+Los números de contacto de emergencia para cada mercado figuran en el Anexo de País correspondiente y en la página del país correspondiente de la Plataforma.
+5.4 Recetas
+Las recetas únicamente se emiten cuando resulte clínicamente adecuado y cuando lo permita la legislación del país en el que se encuentre el paciente en el momento de la consulta. Las recetas son emitidas por Facultativos que cuentan con registro vigente ante la autoridad reguladora médica correspondiente en su país de ejercicio. El nombre, número de registro y organismo regulador del Facultativo prescriptor están disponibles previa solicitud y se recogen en su historial de consulta.
+A través de la Plataforma no se emiten recetas de sustancias controladas o restringidas. Las normas específicas de cada país en materia de recetas —incluidos los marcos regulatorios aplicables a las recetas digitales, los formularios aplicables y la validez transfronteriza— se establecen en el Anexo de País correspondiente.
+5.5 Validez transfronteriza de las recetas
+Una receta emitida por un Facultativo en un país puede no ser válida ni aceptada por las farmacias de otro país. Es responsabilidad del paciente verificar la validez de cualquier receta en el país en el que pretenda utilizarla. Global Health no garantiza que las recetas emitidas a través de la Plataforma sean aceptadas fuera del país de emisión.
+5.6 Derivaciones
+Cuando esté clínicamente indicado, un Facultativo podrá recomendar la derivación a un especialista presencial o a un centro de urgencias. Global Health no garantiza la disponibilidad, el coste, el tiempo de espera ni el resultado clínico de ninguna derivación o servicio presencial de terceros.
+5.7 Ausencia de resultados garantizados
+No podemos garantizar, ni garantizamos, resultados clínicos específicos. Los Servicios se prestan sobre la base del juicio clínico profesional aplicado a la información disponible en cada momento. Los resultados individuales variarán.
+5.8 Disponibilidad del Servicio
+Procuramos mantener la disponibilidad de la plataforma en todo momento, si bien no garantizamos un acceso ininterrumpido. El mantenimiento programado, los problemas técnicos o circunstancias ajenas a nuestro control pueden dar lugar a indisponibilidad temporal. Cuando una consulta no pueda llevarse a cabo debido a la indisponibilidad de la plataforma, los Créditos utilizados para reservar dicha consulta se reintegrarán a su cuenta y se le ofrecerá una cita reprogramada.
+5.9 Gobernanza clínica
+Con independencia del modelo operativo aplicable en su mercado, Global Health mantiene un marco de gobernanza clínica que abarca la calidad y seguridad de los Servicios prestados a través de la Plataforma. Todos los Facultativos que operan a través de la Plataforma deben contar con registro vigente ante la autoridad reguladora médica correspondiente en su país de ejercicio y mantener un seguro de responsabilidad civil profesional adecuado.
+El alcance de las responsabilidades de gobernanza de Global Health y la supervisión regulatoria aplicable en su mercado se establecen en el Anexo de País.
+5.10 Restricciones geográficas
+Los Servicios únicamente están disponibles en los mercados en los que Global Health opera. La lista actual de mercados puede consultarse en www.myglobalhealth.online. El acceso a la Plataforma desde un país en el que Global Health no opera no le otorga derecho a recibir Servicios en dicho país.
+5.11 Tecnología de terceros
+La Plataforma utiliza proveedores tecnológicos de terceros para la reserva, el procesamiento de pagos, las consultas por videollamada y el almacenamiento de datos. Si bien adoptamos medidas razonables para seleccionar proveedores fiables, no somos responsables de las interrupciones o fallos causados por sistemas de terceros ajenos a nuestro control razonable.
+
+6. Reservas, Pago y Precios
+6.1 Reservas
+Las consultas pueden reservarse a través de la Plataforma mediante Créditos o mediante pago directo, cuando proceda. Una reserva queda confirmada cuando usted recibe un correo electrónico de confirmación de nuestra parte. La confirmación de la reserva no garantiza un Facultativo determinado, salvo que se indique expresamente en el momento de la reserva.
+6.2 Precios y divisa
+Todos los precios y valores de los Créditos se muestran en la divisa aplicable a su mercado, incluyendo los impuestos o gravámenes aplicables. Los precios vigentes de todos los Servicios y Planes de Créditos se publican en la página de Precios de la Plataforma y en cada página individual de servicio. El precio aplicable a su reserva o compra de Créditos es el confirmado en el momento en que usted completa la transacción.
+Cuando usted acceda a los Servicios en una divisa distinta de la de su tarjeta de pago, su banco o proveedor de la tarjeta podrá aplicar comisiones por tipo de cambio. Global Health no es responsable de dichas comisiones.
+Nos reservamos el derecho de modificar los precios en cualquier momento, con notificación razonable. Los cambios de precio no afectarán a los Planes de Créditos ya activos en el momento del cambio hasta el siguiente ciclo de facturación, ni afectarán a las reservas individuales ya confirmadas.
+6.3 Pago
+El pago se exige en su totalidad en el momento de la reserva o de la compra de Créditos. Aceptamos los métodos de pago que se muestran en la Plataforma en el momento de la transacción. Todos los pagos se procesan de forma segura por nuestro proveedor de pagos. No almacenamos los datos completos de las tarjetas de pago en nuestros sistemas.
+6.4 Impuestos
+Los precios mostrados incluyen los impuestos locales aplicables cuando estemos obligados a repercutirlos. En determinadas jurisdicciones, los impuestos o gravámenes locales aplicables a los servicios de salud digital pueden variar. Consulte su Anexo de País para más información.
+
+7. Créditos y Planes de Créditos
+7.1 Funcionamiento de los Créditos
+Los Créditos son la unidad de valor utilizada para reservar y acceder a los Servicios en la Plataforma. Los Créditos pueden obtenerse mediante: (a) la suscripción a un Plan de Créditos, en virtud del cual se emite un número determinado de Créditos a su cuenta al inicio de cada ciclo de facturación mensual; o (b) la compra de Créditos de forma puntual a los precios publicados en la Plataforma.
+El valor en Créditos de cada Servicio se muestra en la página de servicio correspondiente y en el momento de la reserva. Los valores en Créditos pueden actualizarse periódicamente; el valor en Créditos aplicable a su reserva es el confirmado en el momento en que usted completa la reserva.
+7.2 Suscripciones a Planes de Créditos
+Los Planes de Créditos se facturan mensualmente de forma continuada. No existe plazo contractual mínimo ni periodo de permanencia. Usted puede cancelar su Plan de Créditos en cualquier momento; véase la Cláusula 7.5.
+Los Créditos emitidos en virtud de un Plan de Créditos se asignan a su cuenta al inicio de cada ciclo de facturación. Los Créditos no utilizados se trasladan al ciclo siguiente, sujeto a un límite máximo de acumulación publicado en la Plataforma. Los Créditos no caducan mientras su Plan de Créditos permanezca activo.
+7.3 Compras puntuales de Créditos
+Los Créditos adquiridos de forma puntual, al margen de un Plan de Créditos, no caducan y pueden utilizarse en cualquier momento. Los Créditos puntuales se consumen antes que los Créditos del Plan de Créditos al reservar Servicios.
+7.4 Créditos no reembolsables
+Los Créditos son, con carácter general, no reembolsables una vez adquiridos, salvo en los supuestos previstos en estos Términos o cuando así lo exija la Legislación de Protección al Consumidor aplicable en su jurisdicción. Los Créditos carecen de valor monetario y no pueden transferirse a otra cuenta de paciente.
+7.5 Cancelación del Plan de Créditos
+Usted puede cancelar su Plan de Créditos en cualquier momento a través de la configuración de su cuenta o contactándonos en globalhealth@myglobalhealth.online. La cancelación surte efecto al final del ciclo de facturación mensual en curso. Usted conservará el acceso a los Créditos asignados y a los beneficios del Plan hasta el final del periodo pagado. No se emitirá ningún reembolso parcial por la parte no utilizada del ciclo de facturación en curso, salvo que así lo exija la Legislación de Protección al Consumidor aplicable.
+Tras la cancelación, los Créditos ya asignados en virtud del Plan cancelado permanecerán disponibles en su cuenta durante 12 meses desde la fecha de cancelación, transcurridos los cuales los Créditos del Plan no utilizados caducarán. Los Créditos puntuales no se ven afectados por la cancelación del Plan.
+7.6 Cancelaciones, reprogramaciones y reintegro de Créditos
+Si usted cancela una reserva confirmada con al menos 24 horas de antelación a la hora prevista de la cita, los Créditos utilizados para realizar dicha reserva se reintegrarán íntegramente a su cuenta.
+Las cancelaciones realizadas con menos de 24 horas de antelación a la cita darán lugar a la pérdida de los Créditos, salvo que la cancelación se deba a una emergencia médica documentada o a un fallo imputable a la plataforma, en cuyo caso los Créditos se reintegrarán.
+Usted podrá reprogramar una cita confirmada hasta 12 horas antes de la hora prevista, sujeto a la disponibilidad del Facultativo, sin incurrir en ningún cargo de Créditos. Cada reserva podrá reprogramarse una vez sin cargo. Las solicitudes de reprogramación adicionales podrán tratarse como una cancelación conforme a esta cláusula.
+7.7 Incomparecencia
+Si usted no comparece a una consulta programada sin previo aviso de cancelación o reprogramación, los Créditos utilizados para reservar dicha consulta se perderán. No se realizará ningún reintegro en caso de incomparecencia.
+7.8 Cancelación por parte de Global Health
+Si no podemos prestar una consulta reservada dentro de las 2 horas siguientes a la hora prevista por causas que nos sean imputables, los Créditos utilizados se reintegrarán íntegramente. Alternativamente, usted podrá solicitar el reembolso en efectivo del valor monetario de los Créditos utilizados, que se procesará en un plazo de 5 a 10 días hábiles a su método de pago original.
+7.9 Derechos legales de cancelación y desistimiento
+Dependiendo del país en el que usted se encuentre, es posible que disponga de derechos legales para cancelar un contrato a distancia dentro de un plazo de desistimiento determinado. Estos derechos varían según la jurisdicción y se establecen íntegramente en el Anexo de País correspondiente. Sus derechos legales no se ven afectados por estos Términos.
+Cuando resulte aplicable un plazo legal de desistimiento y usted solicite expresamente que una consulta tenga lugar dentro de dicho plazo, podrá renunciar a su derecho de desistimiento respecto de esa consulta concreta una vez completada. Los detalles específicos de cada país figuran en su Anexo de País.
+
+8. Datos de Salud, Historiales Médicos y Protección de Datos
+8.1 Compromiso con la protección de datos
+Estamos comprometidos con la protección de sus datos personales y Datos de Salud de conformidad con la Legislación de Protección de Datos Aplicable en cada mercado en el que operamos. El marco específico de protección de datos que le resulta aplicable depende de su país de residencia y se establece en el Anexo de País correspondiente.
+8.2 Tratamiento de los Datos de Salud
+Los Datos de Salud se clasifican como datos personales sensibles en todos los mercados en los que operamos y requieren un nivel de protección más elevado. Tratamos sus Datos de Salud únicamente sobre las bases lícitas exigidas por la Legislación de Protección de Datos Aplicable en su jurisdicción. Dichas bases se especifican en el Anexo de País correspondiente y en nuestra Política de Privacidad.
+8.3 Delegado de Protección de Datos
+Global Health ha designado un Delegado de Protección de Datos (DPO) a los efectos del RGPD y de la legislación de protección de datos aplicable en los mercados de la UE. Los datos de contacto del DPO se publican en nuestra Política de Privacidad en www.myglobalhealth.online/privacy.
+8.4 Conservación de datos
+Conservamos los historiales clínicos durante los plazos mínimos exigidos por la ley y la normativa profesional reguladora de cada país en el que operamos. Los plazos de conservación específicos se establecen en el Anexo de País correspondiente y en nuestra Política de Privacidad.
+8.5 Sus derechos sobre los datos
+Dependiendo de la Legislación de Protección de Datos Aplicable en su jurisdicción, es posible que disponga de algunos o de todos los siguientes derechos: acceso; rectificación; supresión (sujeta a las obligaciones legales de conservación); limitación del tratamiento; portabilidad de los datos; oposición al tratamiento; y a no ser objeto de decisiones basadas únicamente en el tratamiento automatizado.
+Para ejercer cualquiera de estos derechos o solicitar una copia de su historial médico, póngase en contacto con nosotros en globalhealth@myglobalhealth.online. Responderemos dentro del plazo exigido por la Legislación de Protección de Datos Aplicable en su jurisdicción y, en todo caso, dentro de 30 días.
+8.6 Transferencias internacionales de datos
+Como operador multimercado, los datos personales pueden transferirse entre los países en los que Global Health opera. Cuando los datos se transfieran internacionalmente, garantizamos que existan las salvaguardas adecuadas conforme a la Legislación de Protección de Datos Aplicable, incluidas las Cláusulas Contractuales Tipo de la UE o mecanismos equivalentes. Los detalles completos se establecen en nuestra Política de Privacidad.
+8.7 Notificación de violaciones de seguridad de datos
+En caso de una violación de la seguridad de los datos personales que pueda entrañar un alto riesgo para sus derechos y libertades, se lo notificaremos sin dilación indebida de conformidad con nuestras obligaciones en virtud de la Legislación de Protección de Datos Aplicable en su jurisdicción.
+8.8 Política de Privacidad
+Nuestra Política de Privacidad en www.myglobalhealth.online/privacy contiene información completa sobre cómo recopilamos, utilizamos, almacenamos, compartimos y protegemos sus datos personales y Datos de Salud en todos los mercados, incluido nuestro registro de subencargados según lo exigido por la normativa de protección de datos aplicable.
+
+9. Responsabilidades del Usuario y Conducta Prohibida
+Al acceder y utilizar los Servicios, usted se compromete a:
+
+Proporcionar en todo momento información exacta, veraz y completa a los Facultativos y en la Plataforma.
+No proporcionar antecedentes médicos, síntomas o información falsos que puedan inducir a error a un Facultativo.
+No utilizar la Plataforma para ningún fin ilícito ni de forma que vulnere la ley o la normativa aplicable.
+No intentar obtener acceso no autorizado a la Plataforma, a sus sistemas o a la cuenta de cualquier otro usuario.
+No utilizar herramientas automatizadas, bots o scripts para acceder a la Plataforma o interactuar con ella sin nuestro consentimiento previo por escrito.
+No suplantar la identidad de ninguna persona, incluidos cualquier Facultativo o empleado de Global Health.
+No cargar ni transmitir contenido ilícito, dañino, difamatorio, o que infrinja los derechos de propiedad intelectual de terceros.
+Cumplir con todas las leyes y normativas aplicables en su país de residencia al utilizar los Servicios.
+
+El incumplimiento de cualquiera de las obligaciones anteriores podrá dar lugar a la suspensión o resolución inmediata de su cuenta y, cuando proceda, a la remisión a las autoridades competentes.
+
+10. Propiedad Intelectual
+Todo el contenido de la Plataforma, incluidos, entre otros, textos, gráficos, logotipos, imágenes, audio, vídeo y software, es propiedad de o está licenciado a Global Guest s.r.o. y está protegido por la normativa aplicable en materia de derechos de autor, marcas y demás derechos de propiedad intelectual.
+Se le concede una licencia limitada, no exclusiva, intransferible y revocable para acceder a la Plataforma y a su contenido y utilizarlos exclusivamente para su uso personal y no comercial. Usted no podrá reproducir, distribuir, modificar, crear obras derivadas, exhibir públicamente ni explotar de cualquier otro modo ningún contenido de la Plataforma sin nuestro consentimiento previo por escrito, salvo que la ley aplicable lo permita expresamente.
+
+11. Limitación de Responsabilidad
+Nada de lo dispuesto en estos Términos excluye o limita nuestra responsabilidad por: muerte o lesiones personales causadas por nuestra negligencia o la de nuestros Facultativos; fraude o falsedad fraudulenta; o cualquier otra responsabilidad que no pueda excluirse o limitarse legalmente conforme a la ley aplicable en su jurisdicción.
+Sujeto a lo anterior, y en la máxima medida permitida por la ley en su jurisdicción, nuestra responsabilidad total agregada frente a usted derivada de o relacionada con su uso de los Servicios no excederá del importe total de las tarifas abonadas por usted a nosotros en los 12 meses inmediatamente anteriores al hecho que dé origen a la reclamación.
+No seremos responsables de ninguna pérdida o daño indirecto, incidental, especial, consecuente o punitivo, incluida la pérdida de datos, de ingresos o de beneficios, derivados de su uso de la Plataforma o de los Servicios.
+La distribución de la responsabilidad entre Global Health y los Facultativos individuales por actos y omisiones clínicos depende del modelo operativo aplicable en su mercado y se establece con detalle en el Anexo de País correspondiente.
+No seremos responsables de la disponibilidad, el contenido o los servicios de ningún sitio web de terceros enlazado desde la Plataforma, ni de los proveedores de servicios terceros a los que usted sea derivado.
+Cuando la Legislación de Protección al Consumidor de su jurisdicción imponga términos o remedios imperativos más favorables para usted que los anteriores, dichos términos imperativos 

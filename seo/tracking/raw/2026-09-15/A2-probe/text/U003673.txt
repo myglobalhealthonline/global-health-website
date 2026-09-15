@@ -1,0 +1,412 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cmr.ro","https://regmed.cmr.ro","https://www.dataprotection.ro"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes: tichá nemoc","description":"V Rumunsku žije s diabetem přes 1,3 milionu lidí a mnoho dalších o něm neví. Průvodce příčinami, příznaky, možnostmi léčby a budoucností péče.","url":"https://www.myglobalhealth.online/romania/cs/blog/diabetes-ticha-nemoc-4","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/romania/cs/blog/diabetes-ticha-nemoc-4#webpage","url":"https://www.myglobalhealth.online/romania/cs/blog/diabetes-ticha-nemoc-4","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/cs/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes%3A+tich%C3%A1+nemoc&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F576be3ad-21fc-4d68-bf12-cca2b14a3e52-33852.webp&v=2026-07-20.1-19n9e39","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologie"},"datePublished":"2026-07-19T06:58:26.082Z","publishingPrinciples":"https://www.myglobalhealth.online/romania/cs/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/romania/cs/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Domů","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/romania/cs/blog"},{"@type":"ListItem","position":3,"name":"Diabetes: tichá nemoc","item":"https://www.myglobalhealth.online/romania/cs/blog/diabetes-ticha-nemoc-4"}]}]Všechny článkyEndocrinologieDiabetes: tichá nemocDiabetes mellitus patří v Rumunsku k nejrozšířenějším a zároveň nejvíce podceňovaným chronickým onemocněním. Dobrou zprávou je, že se správnou diagnózou a pravidelným sledováním mohou lidé s diabetem žít plnohodnotný a zdravý život, zejména díky novým možnostem léčby, jako jsou agonisté GLP-1 a inhibitory SGLT2.Global Health Medical Team19. července 202618 min čtení+Na této stránceDiabetes v Rumunsku: jak velký je tento problémTypy diabetuPříčiny a rizikové faktoryZnámky a příznakySoučasná léčba diabetu v RumunskuVýznam pravidelných kontrolBudoucnost léčby diabetuReferenční instituce a zdroje v RumunskuČasté otázky
+
+
+
+  
+  
+    
+      
+      
+      
+      Příčiny, příznaky, léčba a budoucnost péče
+      Odhaduje se, že s diabetem žije přes 1,3 milionu Rumunů a tisíce dalších případů zůstávají nediagnostikované. Tento průvodce popisuje příčiny, varovné příznaky, nejlepší dnes dostupné možnosti léčby, význam pravidelných kontrol i nové terapie, které mohou v příštích letech proměnit péči o diabetes.
+      
+        Založeno na důkazech
+        V souladu se SRDNBM a CNAS
+        Aktualizováno v červnu 2026
+      
+      Napsal Dr. Tiago Miguel Figueira · Ordem dos Médicos č. 77986 · klinický ředitel, Global Health
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      TF
+      
+        Napsal Dr. Tiago Miguel Figueira
+        Klinický ředitel · Ordem dos Médicos č. 77986 · všeobecné a rodinné lékařství
+      
+      10 MIN ČTENÍ
+    
+
+    Diabetes mellitus patří v Rumunsku k nejrozšířenějším chronickým onemocněním a zároveň k nejvíce podceňovaným. Často se mu říká „tichá nemoc“, protože diabetes 2. typu, který tvoří přes 90 % případů, se může několik let pomalu rozvíjet bez viditelných příznaků. V době stanovení diagnózy proto nemoc mnohdy trvá již delší dobu.
+
+    Diabetes lze zvládat léčbou a pravidelným sledováním. Se správnou diagnózou, vhodnou léčbou a pravidelným sledováním mohou lidé s diabetem žít plnohodnotný a zdravý život. Díky významnému pokroku v léčbě za poslední desetiletí (zejména nástupu agonistů receptoru GLP-1 a inhibitorů SGLT2) jsou dnes možnosti dostupné v Rumunsku širší.
+
+    
+    
+    Oddíl 01
+    Diabetes v Rumunsku: jak velký je tento problém
+
+    Podle epidemiologické studie PREDATORR, kterou provedla Societatea Română de Diabet, Nutriție și Boli Metabolice (SRDNBM) v letech 2012–2014 (jde o jedinou celostátní studii prevalence diabetu v Rumunsku) má diabetes mellitus přibližně 11,6 % dospělé populace a 16,5 % se nachází ve stadiu prediabetu. Podle údajů Institutului Național de Sănătate Publică (INSP)bylo v roce 2024 ve zdravotnické evidenci vedeno 1 485 087 osob, z nichž 114 904 bylo diagnostikováno v témže roce. Odhady Federației Internaționale de Diabet (IDF) uvádějí, že v roce 2024 žilo v Rumunsku s diabetem přibližně 1,3 milionu dospělých ve věku 20 až 79 let, což odpovídá prevalenci srovnatelné s evropským průměrem.
+
+    
+      
+        11,6%
+        Podíl dospělé populace s diabetem mellitus (studie PREDATORR, SRDNBM)
+      
+      
+        16,5%
+        Podíl dospělé populace ve stadiu prediabetu
+      
+      
+        1,48M
+        Osoby vedené ve zdravotnické evidenci v roce 2024 (INSP)
+      
+      
+        1,3M
+        Dospělí ve věku 20–79 let s diabetem podle odhadu IDF pro rok 2024
+      
+    
+    Zdroje: Societatea Română de Diabet, Nutriție și Boli Metabolice (studie PREDATORR; Institutul Național de Sănătate Publică (INSP); Casa Națională de Asigurări de Sănătate (CNAS); International Diabetes Federation) Diabetes Atlas 2024.
+
+    Podle údajů Casei Naționale de Asigurări de Sănătate (CNAS)je prostřednictvím Programul Național de Diabet Zaharat léčeno pouze přibližně 1,3 milionu pacientů s diabetem: tedy jen něco přes polovinu odhadovaného počtu případů. Rozdíl představují buď lidé bez farmakologické léčby, nebo dosud nediagnostikované případy, což potvrzuje celosvětový trend. Zvláštností rumunského systému, na niž upozorňuje SRDNBM, je skutečnost, že péči o osoby s diabetem zajišťují výhradně lékaři specializovaní na diabetologii, výživu a metabolická onemocnění, samostatný obor, který existuje jen v několika zemích světa.
+
+    
+      Jste ohroženi a nevíte o tom?
+      Významná část lidí s diabetem 2. typu v Rumunsku zůstává nediagnostikovaná. Pokud máte rizikové faktory (diabetes v rodině, nadváhu, vysoký krevní tlak nebo nedostatek pohybu), promluvte si s praktickým lékařem o vyšetření glykemie nalačno nebo HbA1c. Včasná diagnóza je pro prevenci komplikací zásadní.
+    
+
+    
+    
+    Oddíl 02
+    Typy diabetu
+
+    Ne každý diabetes je stejný. Porozumění typu, který máte (nebo jehož rozvoj vám hrozí), je prvním krokem k účinnému zvládání nemoci.
+
+    
+      
+        🔵
+        Diabetes 1. typu
+        Autoimunitní · Závislý na inzulinu
+        Imunitní systém ničí beta buňky slinivky, které produkují inzulin. Tělo vytváří jen málo inzulinu, nebo žádný. Je nutná celoživotní léčba inzulinem. Nemoc obvykle začíná v dětství nebo mladé dospělosti.
+      
+      
+        🟠
+        Diabetes 2. typu
+        Životní styl & genetika · Progresivní
+        Tělo se stává vůči inzulinu odolné nebo ho nevytváří dostatek. Nemoc je silně spojena s faktory životního stylu. V Rumunsku jde o nejčastější formu, která tvoří přes 90 % případů. Zpočátku ji lze někdy zvládat úpravou stravy, pohybem a perorálními léky, mnoho pacientů však časem potřebuje inzulin.
+      
+      
+        🟡
+        Gestační diabetes
+        Souvisí s těhotenstvím · Obvykle přechodný
+        Vzniká během těhotenství, kdy hormonální změny ovlivní působení inzulinu. Po porodu zpravidla odezní, ale výrazně zvyšuje celoživotní riziko diabetu 2. typu u matky i dítěte. Nedávný výzkum ukazuje, že výskyt tohoto typu diabetu v Rumunsku roste a rozdíly mezi městskými a venkovskými oblastmi se zmenšují.
+      
+      
+        ⚪
+        Prediabetes
+        Lze mu předcházet · Často je vratný
+        Glykemie je vyšší než obvykle, ale nedosahuje hodnot pro diagnózu diabetu. Jde o rozhodující období pro zásah: změny životního stylu v této fázi mohou vzniku diabetu 2. typu předejít nebo jej výrazně oddálit. Podle SRDNBM se v této situaci nachází 16,5 % dospělých Rumunů, často aniž by o tom věděli.
+      
+    
+
+    
+    
+    Oddíl 03
+    Příčiny a rizikové faktory
+
+    Diabetes 1. typu
+    Přesná příčina diabetu 1. typu dosud není zcela objasněna. Jde o autoimunitní onemocnění: imunitní systém omylem napadá a ničí beta buňky slinivky odpovědné za tvorbu inzulinu. Určitou roli hrají genetické faktory a možná také kontakt s některými virovými infekcemi. Výzkum v Rumunsku koordinují mimo jiné instituce, jako je Institutul Național de Diabet, Nutriție și Boli Metabolice „N.C. Paulescu” v Bukurešti, spolu s odbornými společnostmi, například SRDNBM.
+
+    Diabetes 2. typu
+    Diabetes 2. typu má složitější soubor příčin, z nichž některé lze ovlivnit. Kombinuje genetickou dispozici s faktory životního stylu a prostředí. Hlavním mechanismem je inzulinová rezistence (buňky těla přestávají na inzulin účinně reagovat) společně s postupným poklesem schopnosti slinivky tento stav kompenzovat vyšší tvorbou inzulinu.
+
+    
+      
+        ⚖️
+        Nadměrná tělesná hmotnost
+        Zejména břišní neboli viscerální tuk. Obezita je nejvýznamnějším ovlivnitelným rizikovým faktorem diabetu 2. typu.
+      
+      
+        🛋️
+        Nedostatek pohybu
+        Sedavý způsob života snižuje citlivost na inzulin. Přes 80 % dospělých v Rumunsku uvádí, že se týdně nevěnuje žádné rekreační aerobní aktivitě: jde o jeden z nejvyšších podílů v EU.
+      
+      
+        🍞
+        Strava bohatá na vysoce průmyslově zpracované potraviny
+        Vysoká spotřeba rafinovaných sacharidů, cukru a vysoce průmyslově zpracovaných potravin je silně spojena s inzulinovou rezistencí.
+      
+      
+        👨‍👩‍👧
+        Rodinná anamnéza
+        Příbuzný prvního stupně s diabetem 2. typu výrazně zvyšuje osobní riziko rozvoje tohoto onemocnění.
+      
+      
+        🎂
+        Věk nad 45 let
+        Riziko se s věkem zvyšuje. Podle údajů INSP je prevalence diabetu výrazně vyšší u starších osob.
+      
+      
+        🩺
+        Vysoký krevní tlak nebo dyslipidemie
+        Metabolické rizikové faktory se často vyskytují společně. Hypertenze a poruchy krevních tuků často provázejí inzulinovou rezistenci.
+      
+      
+        🤰
+        Gestační diabetes v anamnéze
+        Ženy, které prodělaly gestační diabetes, mají po celý život podstatně vyšší riziko vzniku diabetu 2. typu.
+      
+      
+        🚬
+        Kouření
+        Kouření zvyšuje riziko diabetu 2. typu a zhoršuje kardiovaskulární prognózu lidí s diabetem. Přestat kouřit je doporučenou součástí komplexní léčby.
+      
+    
+
+    
+    
+    Oddíl 04
+    Známky a příznaky
+
+    Příznaky diabetu 1. a 2. typu se výrazně liší. Typ 1 se často projeví akutně: rychlý nástup příznaků může signalizovat diabetickou ketoacidózu (DKA), což je urgentní stav. Typ 2 se naopak obvykle rozvíjí pomalu a skrytě po řadu let; příznaky mohou být natolik mírné nebo pozvolné, že je lidé připisují stárnutí, stresu či únavě.
+
+    
+      
+        💧
+        
+          Nadměrná žízeň
+          Trvalá, obtížně uhasitelná žízeň (polydipsie) vzniká, když ledviny intenzivně filtrují nadbytečnou glukózu.
+        
+      
+      
+        🚽
+        
+          Časté močení
+          Polyurie, zejména v noci (nykturie). Často jde o nejvíce obtěžující první příznak.
+        
+      
+      
+        😴
+        
+          Přetrvávající únava
+          Trvalé vyčerpání i po dostatečném odpočinku způsobené tím, že buňky nemají glukózu jako zdroj energie.
+        
+      
+      
+        ⚖️
+        
+          Nevysvětlitelný úbytek hmotnosti
+          Zejména u typu 1: bez inzulinu tělo získává energii rozkladem tuků a svalů.
+        
+      
+      
+        👁️
+        
+          Rozmazané vidění
+          Vysoká glykemie způsobuje změny oční čočky, které dočasně zhoršují zaostřování.
+        
+      
+      
+        🩹
+        
+          Pomalé hojení ran
+          Narušený krevní oběh a oslabená funkce imunity zpomalují hojení řezných ran, poranění a infekcí.
+        
+      
+      
+        🤚
+        
+          Brnění nebo necitlivost
+          Periferní neuropatie (v rukou a nohou) může být časným příznakem, zejména u typu 2.
+        
+      
+      
+        🍽️
+        
+          Neustálý hlad
+          Polyfagie (trvalý hlad i po jídle) vzniká, když buňky nedokážou účinně přijímat glukózu.
+        
+      
+    
+
+    
+      Kdy vyhledat akutní péči:
+      Pokud se u vás nebo člena rodiny náhle objeví silná žízeň, nadměrné močení, zvracení, bolest břicha, zmatenost nebo dech páchnoucí po acetonu (zejména u dítěte či mladého dospělého), může jít o diabetickou ketoacidózu (DKA), tedy urgentní stav. Ihned volejte 112 nebo se dostavte na nejbližší urgentní příjem.
+    
+
+    
+    
+    Oddíl 05
+    Současná léčba diabetu v Rumunsku
+
+    Léčba diabetu prošla v posledním desetiletí skutečnou revolucí. V Rumunsku stanovuje Societatea Română de Diabet, Nutriție și Boli Metabolice (SRDNBM) referenční klinická doporučení v souladu s mezinárodními doporučeními American Diabetes Association (ADA). Přístup k lékům a podmínky úhrady upravuje Programul Național de Diabet Zaharat, který spravuje Casa Națională de Asigurări de Sănătate (CNAS).
+
+    Úprava životního stylu: základ každé léčby
+    U diabetu 1. i 2. typu je životní styl základem péče. Zejména u typu 2 mohou změna stravy a zvýšení fyzické aktivity významně snížit HbA1c, zlepšit citlivost na inzulin a v některých případech (především po bariatrické operaci nebo při dietě s velmi nízkým příjmem kalorií) vést k trvalé remisi. Strukturované vzdělávací programy v diabetologických ambulancích poskytují vědecky ověřenou podporu při změně životního stylu.
+
+    Farmakologická léčba
+    Níže jsou uvedeny hlavní skupiny léků dostupné v Rumunsku. Volba léčby je individuální: doporučení SRDNBM a ADA 2025 zdůrazňují přístup zaměřený na pacienta, který zohledňuje kardiovaskulární riziko, funkci ledvin, hmotnost a osobní preference.
+
+    
+      
+        První volba · Typ 2
+        Metformin
+        Glucophage · Generické přípravky (hrazené CNAS)
+        Osvědčený perorální lék první volby pro diabetes 2. typu. Snižuje glykemii omezením tvorby glukózy v játrech. Je dobře snášený, cenově dostupný a široce dostupný. Ve většině léčebných režimů diabetu 2. typu v Rumunsku zůstává standardním výchozím lékem.
+      
+      
+        Ochrana srdce a ledvin
+        Agonisté receptoru GLP-1
+        Semaglutid (Ozempic, Wegovy) · Liraglutid (Victoza)
+        Zásadní skupina injekčních a nyní také perorálních léků, které napodobují střevní hormon GLP-1. Snižují glykemii, podporují významný úbytek hmotnosti a omezují kardiovaskulární riziko. Doporučení ADA 2025 je upřednostňují u pacientů s prokázaným kardiovaskulárním onemocněním nebo vysokým rizikem. V Rumunsku jsou dostupné na lékařský předpis.
+      
+      
+        Ochrana srdce a ledvin
+        Inhibitory SGLT2
+        Empagliflozin (Jardiance) · Dapagliflozin (Forxiga)
+        Tyto tablety snižují glykemii tím, že podporují vylučování nadbytečného cukru močí. Nezávisle chrání srdce a ledviny: doporučují se jako léčba první volby pacientům se srdečním selháním nebo chronickým onemocněním ledvin bez ohledu na hodnotu HbA1c. Opírají se o robustní důkazy ze studií EMPA-REG OUTCOME a CREDENCE.
+      
+      
+        Kontrola glykemie
+        Inhibitory DPP-4
+        Sitagliptin (Januvia) · Linagliptin (Trajenta)
+        Perorální tablety, které stimulují sekreci inzulinu podle aktuální glykemie. Jsou hmotnostně neutrální a nesou nízké riziko hypoglykemie. Často se používají, když agonisté GLP-1 nebo inhibitory SGLT2 nejsou snášeny či nejsou vhodné.
+      
+      
+        Typ 1 a pokročilý typ 2
+        Léčba inzulinem
+        Bazální, bolusové a premixované inzuliny · Inzulinové pumpy
+        Je nezbytná pro všechny pacienty s typem 1 a pro mnoho lidí s typem 2. Moderní inzulinová analoga mají předvídatelnější profil účinku než starší přípravky. Inzulinové pumpy jsou pro vybrané pacienty dostupné a hrazené ze systému zdravotního pojištění.
+      
+      
+        Typ 1 · Nový standard
+        Kontinuální monitorování glukózy (CGM)
+        FreeStyle Libre · Dexcom · Medtronic
+        CGM odstraňuje nutnost vpichů do prstu, zobrazuje vývoj glykemie v reálném čase, poskytuje upozornění a zlepšuje kompenzaci diabetu. Přístup ke CGM je pacientům s diabetem 1. typu za určitých podmínek stanovených CNAS hrazen. Systémy s „uzavřenou smyčkou“ jsou dostupné ve specializovaných centrech.
+      
+    
+
+    
+      Aktualizace doporučení ADA 2025:
+      Doporučení ADA 2025 zdůrazňují, že agonisté GLP-1 a inhibitory SGLT2 mají být upřednostněni u pacientů s diabetem 2. typu, kteří mají prokázané kardiovaskulární onemocnění nebo vysoké riziko, srdeční selhání či chronické onemocnění ledvin, bez ohledu na hodnotu HbA1c. Pokud máte diabetes 2. typu a některý z těchto stavů, zeptejte se svého lékaře, zda jsou pro vás tyto skupiny léků vhodné.
+    
+
+    
+    
+    Oddíl 06
+    Význam pravidelných kontrol
+
+    Diabetes je chronické onemocnění, které se v čase vyvíjí, a pokud jeho komplikace nejsou odhaleny, mohou být závažné a nevratné. Diabetická retinopatie patří v Rumunsku k hlavním příčinám slepoty u dospělých v produktivním věku. Diabetická nefropatie významně přispívá ke konečnému stadiu chronického onemocnění ledvin. Periferní neuropatie způsobuje komplikace diabetické nohy, které mohou v těžkých případech vést k amputaci.
+
+    Desítky let výzkumu ukazují, že všem těmto komplikacím lze do značné míry předejít (nebo je podstatně oddálit) dobrou kontrolou glykemie, léčbou krevního tlaku a pravidelným sledováním. Strukturovaná každoroční kontrola pacienta s diabetem patří k nejlépe podloženým a nejúčinnějším opatřením v celé medicíně.
+
+    Co má zahrnovat každoroční kontrola diabetu
+
+    
+      Měření HbA1c (průměrná glykemie za poslední 3 měsíce)
+      Měření krevního tlaku a revize antihypertenzní léčby
+      Funkce ledvin: odhadovaná glomerulární filtrace (eGFR) a poměr albuminu ke kreatininu v moči
+      Cholesterol a úplný lipidový profil
+      Posouzení hmotnosti a indexu tělesné hmotnosti (BMI)
+      Vyšetření nohou, včetně hodnocení pulzu a citlivosti
+      Screening diabetické retinopatie: vyšetření očního pozadí nebo retinografie
+      Revize a případná úprava medikace
+      Posouzení dodržování plánu samostatné péče o diabetes
+      Zhodnocení kouření a případná podpora při odvykání
+      Očkování proti chřipce (důrazně doporučené lidem s diabetem)
+    
+
+    Screening osob bez diagnózy
+    Pokud máte rizikové faktory diabetu 2. typu a nikdy jste nebyli vyšetřeni, může praktický lékař požádat o glykemii nalačno nebo HbA1c: jednoduchá vyšetření dostupná v laboratořích po celé zemi. Je to zvlášť důležité, pokud je vám více než 45 let, máte diabetes v rodině, vysoký krevní tlak nebo jste měla v těhotenství nadváhu. Včasné odhalení prediabetu poskytuje skutečnou možnost předejít diabetu 2. typu nebo jeho nástup oddálit změnou životního stylu.
+
+    
+      Screening diabetické retinopatie v Rumunsku:
+      Societatea Română de Diabet, Nutriție și Boli Metabolice doporučuje, aby všichni pacienti s diabetem každoročně absolvovali screening diabetické retinopatie vyšetřením očního pozadí nebo retinografií. Pokud máte diabetes a toto vyšetření jste v poslední době nepodstoupili, promluvte si se svým diabetologem nebo praktickým lékařem.
+    
+
+    
+    
+    Oddíl 07
+    Budoucnost léčby diabetu
+
+    Tempo inovací v diabetologii nemá obdoby. Několik směrů výzkumu (některé již v pokročilých klinických studiích) může v příštím desetiletí zásadně změnit život s diabetem.
+
+    
+      
+        Fáze 1/2/3 · Regulační podání v roce 2026
+        Léčba kmenovými buňkami (beta buňky)
+        Zimislecel (dříve VX-880), vyvíjený společností Vertex Pharmaceuticals, spočívá v infuzi ostrůvkových buněk produkujících inzulin, plně diferencovaných z kmenových buněk, do jaterní portální žíly, s cílem obnovit vlastní produkci inzulinu u diabetu 1. typu. V červnu 2025 zahrnovala klíčová studie 50 účastníků a regulační podání se očekávalo v roce 2026. Přehled publikovaný v PMC (2025) označuje tento přístup za potenciálně „transformativní“.
+      
+      
+        Klinický vývoj
+        Umělá slinivka
+        Automatizované systémy podávání inzulinu s uzavřenou smyčkou (kombinující kontinuální monitorování glukózy s automatizovanými inzulinovými pumpami) již představují významný pokrok pro pacienty s typem 1. Nová generace těchto systémů využívá algoritmy strojového učení k předvídání výkyvů glykemie dříve, než nastanou.
+      
+      
+        Nové terapie
+        Duální a trojití agonisté receptorů
+        Tirzepatid (Mounjaro), duální agonista GIP/GLP-1, prokázal větší snížení HbA1c a vyšší úbytek hmotnosti než stávající agonisté GLP-1 a je již dostupný v Rumunsku. Trojití agonisté (GLP-1/GIP/glukagon) jsou v pokročilých klinických studiích a mohou přinést ještě větší metabolické přínosy.
+      
+      
+        Výzkum imunoterapie
+        Ovlivnění imunity u typu 1
+        Teplizumab (monoklonální protilátka proti CD3) v klinických studiích oddálil klinický nástup diabetu 1. typu přibližně o dva roky u osob s vysokým rizikem. Pokračuje výzkum inhibitorů imunitních kontrolních bodů a navození tolerance s cílem zachovat zbytkovou funkci beta buněk v době diagnózy.
+      
+      
+        Precizní medicína
+        Genomika a léčba řízená umělou inteligencí
+        Genomická charakterizace začíná odhalovat podtypy diabetu, které na určité léky reagují odlišně. Vyvíjejí se systémy kontinuálního monitorování glukózy založené na umělé inteligenci, které se učí individuální metabolické vzorce a poskytují personalizovaná doporučení.
+      
+      
+        Regenerativní medicína
+        Zapouzdření beta buněk
+        Souběžnou strategií k transplantaci kmenových buněk je zapouzdřit buňky produkující inzulin do ochranných biomateriálových zařízení, která je chrání před zničením imunitním systémem a mohou tak odstranit potřebu imunosuprese. Diabetes Research Institute při University of Miami tento princip prokázal v klinických studiích; první pacient dosáhl nezávislosti na inzulinu.
+      
+    
+
+    Výzkum léčby diabetu 1. typu kmenovými buňkami podrobně rozebírá publikace z roku 2025 v PMC (PMID: PMC12689004), která dochází k závěru, že „léčba kmenovými buňkami nabízí dvojí strategii: regeneraci beta buněk produkujících inzulin a regulaci imunitních reakcí“. Ačkoli definitivní vyléčení zůstává cílem do budoucna, směr výzkumu je nadějnější než kdy dříve.
+
+    
+    
+    Oddíl 08
+    Referenční instituce a zdroje v Rumunsku
+
+    Pokud žijete s diabetem v Rumunsku nebo vás znepokojuje riziko jeho rozvoje, následující organizace a služby jsou hlavními zdroji klinické péče, vzdělávání a podpory.
+
+    
+      🩺 Societatea Română de Diabet (SRDNBM)
+      🏥 CNAS: Programul Național de Diabet
+      📊 Institutul Național de Sănătate Publică
+      📋 Ministerul Sănătății
+      🔬 Institutul „N.C. Paulescu“
+      📋 Colegiul Medicilor din România
+      🚑 Tísňová pomoc: 112
+    
+
+    Societatea Română de Diabet, Nutriție și Boli Metabolice (SRDNBM)
+    SRDNBM je hlavní vědeckou autoritou pro všechny otázky péče o diabetes v Rumunsku. Odpovídá za epidemiologickou studii PREDATORR (nejrozsáhlejší studii prevalence diabetu provedenou v Rumunsku) a každoročně vydává sdělení a osvětové materiály ke Světovému dni diabetu 14. listopadu.
+
+    CNAS a Programul Național de Diabet Zaharat
+    Casa Națională de Asigurări de Sănătate spravuje Programul Național de Diabet Zaharat, který hradí léky a zdravotnické prostředky pro diagnostikované osoby. Údaje CNAS ve spojení s údaji Institutul Național de Statistică slouží ke sledování vývoje onemocnění na celostátní úrovni.
+
+    Institutul Național de Sănătate Publică (INSP)
+    INSPprostřednictvím Centrul Național de Statistică și Informatică în Sănătate Publică každoročně zveřejňuje podrobné epidemiologické údaje o prevalenci a incidenci diabetu v jednotlivých župách, které jsou nezbytné pro plánování politik veřejného zdraví.
+
+    Institutul Național de Diabet, Nutriție și Boli Metabolice „N.C. Paulescu”
+    Institutul „N.C. Paulescu” v Bukurešti je hlavním referenčním centrem pro diagnostiku, léčbu a výzkum diabetu a metabolických onemocnění v Rumunsku a nabízí také programy terapeutického vzdělávání pacientů.
+
+    
+    
+    Oddíl 09
+    Časté otázky
+
+    
+
+      
+        Kolik Rumunů má diabetes?
+        
+          Podle studie PREDATORR (SRDNBM) má diabetes mellitus přibližně 11,6 % dospělé populace Rumunska a 16,5 % se nachází ve stadiu prediabetu. INSP v roce 2024 evidoval 1 485 087 osob, z nichž 114 904 bylo diagnostikováno v témže roce. IDF odhaduje pro rok 2024 přibližně 1,3 milionu dospělých s diabetem, což je srovnatelné s evropským průměrem.
+        
+      
+
+      
+        Jaké jsou první příznaky diabetu?
+        
+          Mezi nejčastější příznaky patří nadměrná žízeň, časté močení, zejména v noci, přetrvávající únava, rozmazané vidění, pomalé hojení ran, neustálý hlad i po jídle a brnění či necitlivost rukou a nohou. Diabetes 2. typu se může rozv

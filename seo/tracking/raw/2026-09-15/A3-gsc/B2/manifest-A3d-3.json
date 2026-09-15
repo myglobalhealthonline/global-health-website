@@ -1,0 +1,68 @@
+{
+  "agent": "A3d-3",
+  "schema_version": "1.0",
+  "window": {
+    "start": "2026-08-24",
+    "end": "2026-09-07",
+    "days": 15,
+    "timezone": "America/Los_Angeles (Pacific Time, per GSC)"
+  },
+  "calls": [
+    {"startDate": "2026-08-24", "endDate": "2026-08-27", "startRow": 0, "rowCount": 1000, "hasMore": true},
+    {"startDate": "2026-08-24", "endDate": "2026-08-27", "startRow": 1000, "rowCount": 605, "hasMore": false},
+    {"startDate": "2026-08-28", "endDate": "2026-08-31", "startRow": 0, "rowCount": 1000, "hasMore": true},
+    {"startDate": "2026-08-28", "endDate": "2026-08-31", "startRow": 1000, "rowCount": 337, "hasMore": false},
+    {"startDate": "2026-09-01", "endDate": "2026-09-04", "startRow": 0, "rowCount": 1000, "hasMore": true},
+    {"startDate": "2026-09-01", "endDate": "2026-09-04", "startRow": 1000, "rowCount": 485, "hasMore": false},
+    {"startDate": "2026-09-05", "endDate": "2026-09-07", "startRow": 0, "rowCount": 1000, "hasMore": true},
+    {"startDate": "2026-09-05", "endDate": "2026-09-07", "startRow": 1000, "rowCount": 28, "hasMore": false}
+  ],
+  "rows_per_call_total": 5455,
+  "totals": {
+    "own_window_calls": 8,
+    "own_window_rows": 5455,
+    "own_window_files": [
+      "B2_web_2026-08-24_2026-08-27_r0.jsonl",
+      "B2_web_2026-08-24_2026-08-27_r1000.jsonl",
+      "B2_web_2026-08-28_2026-08-31_r0.jsonl",
+      "B2_web_2026-08-28_2026-08-31_r1000.jsonl",
+      "B2_web_2026-09-01_2026-09-04_r0.jsonl",
+      "B2_web_2026-09-01_2026-09-04_r1000.jsonl",
+      "B2_web_2026-09-05_2026-09-07_r0.jsonl",
+      "B2_web_2026-09-05_2026-09-07_r1000.jsonl"
+    ],
+    "merged_output_rows": 19488,
+    "merged_output_note": "gsc_page_daily.csv is a SHARED build across sibling agents (A3d-1/2/3/...) each pulling a different date window into the same B2 folder; build_B2.py (present on arrival, fixed in-flight by a sibling agent for a REPO_ROOT path bug, then run unchanged by this agent) aggregates ALL B2_web_*.jsonl files present plus the probeA 2026-09-08..09-14 envelopes. 19488 total rows spans every window pulled by all agents so far, not just A3d-3's own 15 days."
+  },
+  "extraction_utc": "2026-09-15T05:53:37Z",
+  "impression_share_vs_property_daily": {
+    "note": "page-daily (page x date, ALL country/device) summed impressions per day vs gsc_property_daily.csv (web) for the same date, own 15-day window only. Ratio slightly >1.0 across the board -- page-level dimension sums commonly run a few percent above the property-level total row due to independent GSC aggregation/sampling between dimension combinations, not a data error.",
+    "min_share": 1.0401,
+    "max_share": 1.0794,
+    "per_day": [
+      {"date": "2026-08-24", "page_daily_impressions": 2353, "property_impressions": 2224, "share": 1.0580},
+      {"date": "2026-08-25", "page_daily_impressions": 2551, "property_impressions": 2397, "share": 1.0642},
+      {"date": "2026-08-26", "page_daily_impressions": 2420, "property_impressions": 2293, "share": 1.0554},
+      {"date": "2026-08-27", "page_daily_impressions": 2350, "property_impressions": 2210, "share": 1.0633},
+      {"date": "2026-08-28", "page_daily_impressions": 2022, "property_impressions": 1944, "share": 1.0401},
+      {"date": "2026-08-29", "page_daily_impressions": 1606, "property_impressions": 1524, "share": 1.0538},
+      {"date": "2026-08-30", "page_daily_impressions": 1889, "property_impressions": 1750, "share": 1.0794},
+      {"date": "2026-08-31", "page_daily_impressions": 2715, "property_impressions": 2588, "share": 1.0491},
+      {"date": "2026-09-01", "page_daily_impressions": 3172, "property_impressions": 2998, "share": 1.0580},
+      {"date": "2026-09-02", "page_daily_impressions": 2826, "property_impressions": 2669, "share": 1.0588},
+      {"date": "2026-09-03", "page_daily_impressions": 3151, "property_impressions": 2983, "share": 1.0563},
+      {"date": "2026-09-04", "page_daily_impressions": 2430, "property_impressions": 2308, "share": 1.0529},
+      {"date": "2026-09-05", "page_daily_impressions": 1911, "property_impressions": 1803, "share": 1.0599},
+      {"date": "2026-09-06", "page_daily_impressions": 2042, "property_impressions": 1947, "share": 1.0488},
+      {"date": "2026-09-07", "page_daily_impressions": 3154, "property_impressions": 2939, "share": 1.0732}
+    ]
+  },
+  "output_files": {
+    "raw_jsonl": "seo/tracking/raw/2026-09-15/A3-gsc/B2/B2_web_<start>_<end>_r<startRow>.jsonl (this agent's 8 files)",
+    "calls_log": "seo/tracking/raw/2026-09-15/A3-gsc/B2/calls-A3d-3.json",
+    "build_script": "seo/tracking/raw/2026-09-15/A3-gsc/B2/build_B2.py (shared; path bug fixed in-flight)",
+    "csv_final": "seo/tracking/data/gsc_page_daily.csv (page x date grain, all agents merged)",
+    "csv_renamed_backup": "seo/tracking/data/gsc_page_daily_country_device.csv (prior country/device-grain file, preserved before overwrite)"
+  },
+  "blockers": "None. Note: build_B2.py is shared across concurrent sibling agents pulling other date windows into the same B2 folder -- it was found with a REPO_ROOT off-by-one path bug (5 '..' instead of 6, writing to a bogus seo/seo/tracking/data/ path), which a sibling agent fixed in-flight; this agent ran it unchanged after the fix landed and cleaned up the stray seo/seo directory the buggy runs had created."
+}

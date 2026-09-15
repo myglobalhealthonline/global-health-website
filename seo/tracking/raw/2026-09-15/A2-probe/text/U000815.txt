@@ -1,0 +1,391 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.lkcr.cz","https://www.sukl.cz","https://www.uoou.cz"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes: příznaky, léčba a prevence","description":"Přehled příznaků, rizik, léčby a prevence diabetu v Česku. Článek napsal MUDr. Ahmed Maklad, registrovaný u ČLK č. 1176686198.","url":"https://www.myglobalhealth.online/czechia/cs/blog/diabetes-ticha-nemoc","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/czechia/cs/blog/diabetes-ticha-nemoc#webpage","url":"https://www.myglobalhealth.online/czechia/cs/blog/diabetes-ticha-nemoc","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/cs/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-19"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes%3A+p%C5%99%C3%ADznaky%2C+l%C3%A9%C4%8Dba+a+prevence&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F58c09201-812d-4a9f-b12b-a5bade2ba3a8-33850.webp&v=2026-07-20.1-1ok21fi","width":1200,"height":630},"about":{"@type":"Thing","name":"Endokrinologie"},"datePublished":"2026-07-19T06:14:43.687Z","dateModified":"2026-07-19T06:15:25.832Z","publishingPrinciples":"https://www.myglobalhealth.online/czechia/cs/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/czechia/cs/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Domů","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/czechia/cs/blog"},{"@type":"ListItem","position":3,"name":"Diabetes: příznaky, léčba a prevence","item":"https://www.myglobalhealth.online/czechia/cs/blog/diabetes-ticha-nemoc"}]}]Všechny článkyEndokrinologieDiabetes: příznaky, léčba a prevenceDiabetes mellitus, v češtině nejčastěji označovaný jako cukrovka, patří k nejrozšířenějším a zároveň nejpodceňovanějším chronickým onemocněním v České republice — postihuje odhadem 10 % populace. Dobrou zprávou je, že díky moderní léčbě, včetně agonistů GLP-1 a inhibitorů SGLT2, je dnes diabetes lépe zvladatelný než kdykoli předtím.Global Health Medical Team19. července 202619 min čtení+Na této stránceDiabetes v České republice: Rozsah problémuTypy diabetuPříčiny a rizikové faktoryPříznaky a symptomy cukrovkySoučasné možnosti léčby diabetu v České republiceDůležitost pravidelných lékařských kontrolBudoucnost léčby diabetuKlíčové instituce a zdroje v České republiceČasté dotazy
+
+
+
+  
+  
+    
+      
+      
+      
+      Příčiny, příznaky, léčba a budoucnost péče
+      Odhaduje se, že přibližně 10 % obyvatel České republiky žije s diabetem — a tisíce dalších o své nemoci dosud nevědí. Tento průvodce pokrývá vše, co potřebujete vědět: příčiny, varovné signály, nejlepší dostupné léčebné postupy, důležitost pravidelných kontrol a nové terapie, které mohou v příštích letech péči o diabetiky zásadně proměnit.
+      
+        — Založeno na důkazech
+        — V souladu s ČDS a ÚZIS ČR
+        — Aktualizováno červen 2026
+      
+      — Napsal Dr. Tiago Miguel Figueira · Klinický ředitel, Global Health— Adaptace a recenze pro český trh: MUDr. Ahmed Maklad · ČLK č. 117 668 619 8
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      AM
+      
+        Napsal Dr. Tiago Miguel Figueira
+        Klinický ředitel · Global Health · Adaptace a odborná recenze pro ČR: MUDr. Ahmed Maklad · ČLK č. 117 668 619 8
+      
+      10 MIN ČTENÍ
+    
+
+    Diabetes mellitus — v češtině nejčastěji označovaný jako cukrovka — patří k nejrozšířenějším chronickým onemocněním v České republice a zároveň k těm nejpodceňovanějším. Diabetes 2. typu, který tvoří přibližně 92 % všech případů, se může nenápadně rozvíjet po mnoho let, aniž by způsoboval výrazné obtíže. V době diagnózy je onemocnění u mnoha pacientů přítomno již delší dobu.
+
+    Dobrou zprávou je, že diabetes je při správné léčbě a pravidelné kontrole velmi dobře zvladatelný. Pacienti s diabetem mohou vést plnohodnotný a kvalitní život. Zároveň v posledním desetiletí došlo k průlomovým pokrokům v léčbě — zejména příchodem agonistů receptoru GLP-1 a inhibitorů SGLT2 (gliflozinů) — a možnosti léčby jsou dnes na historicky nejvyšší úrovni.
+
+    
+    
+    Sekce 01
+    Diabetes v České republice: Rozsah problému
+
+    Podle dat Českého statistického úřadu (ČSÚ) trpělo v roce 2024 diabetem kompenzovaným léky přibližně 884,5 tisíce osob. Ústav zdravotnických informací a statistiky ČR (ÚZIS ČR), který spravuje Národní diabetologický registr (NDR), odhaduje, že diabetes mellitus postihuje přibližně 10 % populace ČR. Česká republika se opakovaně řadí mezi země s nejvyšší prevalencí diabetu v rámci Evropské unie — tento fakt dokumentuje i Diabetická asociace České republiky.
+
+    
+      
+        884k
+        Osob s diabetem léčeným léky v ČR v roce 2024 (ČSÚ)
+      
+      
+        ~10 %
+        Odhadovaný podíl populace ČR s diabetem (ÚZIS ČR)
+      
+      
+        92 %
+        Případů tvoří diabetes 2. typu
+      
+      
+        TopEU
+        ČR opakovaně mezi zeměmi s nejvyšší prevalencí DM v EU
+      
+    
+    Zdroj: Český statistický úřad (ČSÚ) 2024; ÚZIS ČR — Národní diabetologický registr; Diabetická asociace České republiky; NZIP.
+
+    Vědecká predikce zpracovaná ÚZIS ČR na základě dat Národního registru hrazených zdravotních služeb (NRHZS) ukazuje, že počet diabetiků v ČR má vzestupný trend a bez výrazné změny životního stylu populace se bude v příštích letech nadále zvyšovat. Výzkumný článek z FN Motol (Vnitřní lékařství 2025;71(3):144–151) zdůrazňuje nutnost individualizovaného přístupu k léčbě s důrazem na kardiovaskulární a renální ochranu.
+
+    
+      Jste v riziku a nevíte o tom?
+      Odhaduje se, že značná část osob s diabetem 2. typu v ČR dosud nemá stanovenou diagnózu. Pokud máte rizikové faktory — rodinnou anamnézu diabetu, nadváhu, vysoký krevní tlak nebo sedavý způsob života — poraďte se s praktickým lékařem o provedení glykémie nalačno nebo HbA1c. Včasná diagnóza je klíčová pro předcházení komplikacím.
+    
+
+    
+    
+    Sekce 02
+    Typy diabetu
+
+    Diabetes není jedna nemoc. Porozumění tomu, jakým typem trpíte — nebo pro který jste v riziku — je prvním krokem k účinné léčbě.
+
+    
+      
+        🔵
+        Diabetes 1. typu (DM1)
+        Autoimunitní · Inzulinodependentní
+        Imunitní systém ničí beta buňky slinivky břišní produkující inzulin. Tělo produkuje málo nebo žádný inzulin. Vyžaduje doživotní inzulinovou terapii. Projevuje se nejčastěji v dětství nebo v mladém dospělém věku. Tvoří přibližně 6–8 % všech případů diabetu v ČR; podle dat NRHZS bylo v ČR v roce 2013 evidováno přes 58 900 pacientů s DM1.
+      
+      
+        🟠
+        Diabetes 2. typu (DM2)
+        Životní styl & genetika · Progresivní
+        Tělo se stává rezistentním na inzulin nebo ho nevyrábí dostatek. Silně asociováno s životním stylem. Nejčastější forma — tvoří přibližně 92 % případů v ČR. Zpočátku lze zvládnout dietou, pohybem a perorálními léky, postupem času však mnoho pacientů potřebuje inzulin. Typické onemocnění středního a vyššího věku.
+      
+      
+        🟡
+        Gestační diabetes
+        Těhotenský · Obvykle přechodný
+        Rozvíjí se v těhotenství, kdy hormonální změny narušují funkci inzulinu. Obvykle odezní po porodu, ale výrazně zvyšuje celoživotní riziko DM2 pro matku i dítě. Screening se provádí standardně v českých porodnicích a gynekologických ambulancích v 24.–28. týdnu těhotenství.
+      
+      
+        ⚪
+        Prediabetes
+        Preventabilní · Často reverzibilní
+        Glykémie je vyšší než normální, ale ještě nedosahuje diabetické úrovně. Kritické intervenční okno — změny životního stylu v tomto stadiu mohou vzniku diabetu 2. typu zcela zabránit nebo jej výrazně oddálit. Mnoho lidí v ČR se v tomto stadiu nachází, aniž by o tom věděli.
+      
+    
+
+    
+    
+    Sekce 03
+    Příčiny a rizikové faktory
+
+    Diabetes 1. typu
+    Přesná příčina DM1 není zcela objasněna. Jde o autoimunitní onemocnění — imunitní systém omylem napadá a ničí beta buňky slinivky břišní zodpovědné za produkci inzulinu. Roli hrají genetické faktory a pravděpodobně i expozice určitým virovým infekcím. Výzkum v této oblasti je v ČR koordinován prostřednictvím České diabetologické společnosti ČLS JEP (ČDS) a pracovišť jako Fakultní nemocnice v Motole nebo Fakultní nemocnice Brno.
+
+    Diabetes 2. typu
+    DM2 má komplexnější a do značné míry ovlivnitelné příčiny — kombinaci genetické predispozice s faktory životního stylu a prostředí. Klíčovým mechanismem je inzulinová rezistence (buňky těla přestávají reagovat na inzulin) spolu s postupným poklesem schopnosti slinivky kompenzovat vyšší produkcí.
+
+    
+      
+        ⚖️
+        Nadváha a obezita
+        Zejména abdominální (viscerální) tuk. Obezita je nejvýznamnějším ovlivnitelným rizikovým faktorem pro DM2.
+      
+      
+        🛋️
+        Sedavý způsob života
+        Nedostatek pohybu snižuje citlivost na inzulin. Pravidelný pohyb je jedním z nejúčinnějších nástrojů prevence i léčby.
+      
+      
+        🍞
+        Strava bohatá na zpracované potraviny
+        Vysoký příjem rafinovaných sacharidů, cukru a ultra-zpracovaných potravin úzce souvisí s inzulinovou rezistencí.
+      
+      
+        👨‍👩‍👧
+        Rodinná anamnéza
+        Přítomnost DM2 u příbuzného prvního stupně výrazně zvyšuje osobní riziko onemocnění.
+      
+      
+        🎂
+        Věk nad 45 let
+        Riziko roste s věkem. Data ÚZIS ČR ukazují výrazně vyšší prevalenci DM ve vyšších věkových skupinách populace.
+      
+      
+        🩺
+        Vysoký krevní tlak nebo dyslipidémie
+        Metabolické rizikové faktory se často kumulují. Hypertenze a poruchy lipidů se v praxi pravidelně vyskytují spolu s inzulinovou rezistencí.
+      
+      
+        🤰
+        Gestační diabetes v anamnéze
+        Ženy, u nichž se v těhotenství vyvinul gestační diabetes, mají výrazně vyšší celoživotní riziko vzniku DM2.
+      
+      
+        🚬
+        Kouření
+        Kouření cigaretek zvyšuje riziko vzniku DM2 a zhoršuje kardiovaskulární prognózu diabetiků. ČDS doporučuje odvykání kouření jako součást komplexní péče.
+      
+    
+
+    
+    
+    Sekce 04
+    Příznaky a symptomy cukrovky
+
+    Příznaky se mezi DM1 a DM2 výrazně liší. DM1 se často projeví akutně — rychlým nástupem symptomů, které mohou signalizovat diabetickou ketoacidózu (DKA), život ohrožující stav. DM2 se naopak typicky rozvíjí pomalu a nenápadně po léta, s příznaky tak mírnými nebo postupnými, že je mnoho lidí přisuzuje stárnutí, stresu nebo únavě.
+
+    
+      
+        💧
+        
+          Nadměrná žízeň
+          Přetrvávající, uhasitelná žízeň — polydipsie — ledviny pracují na plný výkon, aby filtrovaly nadbytečnou glukózu.
+        
+      
+      
+        🚽
+        
+          Časté močení
+          Polyurie, zejména v noci (nykturie). Bývá nejnápadnějším prvotním příznakem, který pacienty přivádí k lékaři.
+        
+      
+      
+        😴
+        
+          Přetrvávající únava
+          Vyčerpanost i po dostatečném spánku — buňky jsou zbaveny glukózy jako zdroje energie.
+        
+      
+      
+        ⚖️
+        
+          Nevysvětlitelný úbytek váhy
+          Zejména u DM1 — tělo spaluje tuky a svaly jako zdroj energie při nedostatku inzulinu.
+        
+      
+      
+        👁️
+        
+          Rozmazané vidění
+          Vysoká glykémie způsobuje tekutinové přesuny v čočce oka, které dočasně ovlivňují zaostřování.
+        
+      
+      
+        🩹
+        
+          Pomalé hojení ran
+          Narušená cirkulace a snížená imunita zpomalují hojení řezných ran, oděrek a infekcí.
+        
+      
+      
+        🤚
+        
+          Brnění nebo necitlivost
+          Periferní neuropatie postihující ruce a nohy může být časným příznakem, zejména u DM2.
+        
+      
+      
+        🍽️
+        
+          Zvýšená chuť k jídlu
+          Polyfagie — přetrvávající hlad i po jídle — nastává, když buňky nedokáží efektivně absorbovat glukózu.
+        
+      
+    
+
+    
+      Kdy vyhledat okamžitou pomoc:
+      Pokud vy nebo člen rodiny zaznamenáte náhlý nástup silné žízně, nadměrného močení, zvracení, bolestí břicha, zmatenosti nebo zápachu dechu po acetonu — zejména u dítěte nebo mladého dospělého — může jít o diabetickou ketoacidózu (DKA), závažnou medicínskou pohotovost. Okamžitě volejte 155 (záchranná služba) nebo 112, případně se dostavte na nejbližší urgentní příjem.
+    
+
+    
+    
+    Sekce 05
+    Současné možnosti léčby diabetu v České republice
+
+    Léčba diabetu prošla za poslední desetiletí skutečnou revolucí. V České republice vydává klinická doporučení Česká diabetologická společnost ČLS JEP (ČDS), jejíž Doporučený postup péče o diabetes mellitus 2. typu (aktualizace 2020 a následné standardy z let 2021–2025) je závaznou normou pro diabetologické ambulance i praktické lékaře po celé ČR. Dostupnost léků podléhá úhradovým podmínkám Státního ústavu pro kontrolu léčiv (SÚKL).
+
+    Úprava životního stylu — základ veškeré léčby
+    Pro DM1 i DM2 je životní styl základním kamenem léčby. U DM2 může změna stravování a zvýšení pohybové aktivity výrazně snížit HbA1c, zlepšit citlivost na inzulin a v některých případech — zejména po bariatrické operaci nebo při dietě s velmi nízkým příjmem kalorií — vést k trvalé remisi. Strukturovaná edukace pacientů je součástí péče v diabetologických ambulancích a je doporučována i ČDS ve svých standardech.
+
+    Farmakologická léčba
+    Níže jsou uvedeny hlavní lékové třídy dostupné v České republice. Léčebná rozhodnutí jsou individualizovaná — doporučení ČDS i ADA 2025 zdůrazňují přístup zaměřený na pacienta, který zohledňuje kardiovaskulární riziko, funkci ledvin, tělesnou hmotnost a preference pacienta. Výzkumný článek publikovaný ve Vnitřním lékařství (2025;71(3):144–151), zpracovaný z pracoviště Interní kliniky 2. LF UK a FN Motol, upozorňuje, že u pacientů s kardiovaskulárním onemocněním, srdečním selháním nebo diabetickým onemocněním ledvin by zahájení léčby GLP-1 agonisty nebo inhibitory SGLT2 nemělo záviset na hodnotě HbA1c.
+
+    
+      
+        První linie · DM2
+        Metformin
+        Glucophage · Metformin generika (hrazeno ZP)
+        Zavedený lék první volby pro DM2. Snižuje glykémii omezením produkce glukózy v játrech. Dobře tolerován, cenově dostupný, plně hrazen zdravotními pojišťovnami v ČR. Zůstává standardem péče jako výchozí bod léčby u většiny pacientů s DM2.
+      
+      
+        Kardiorenální ochrana
+        Agonisté GLP-1 receptoru
+        Semaglutid (Ozempic, Wegovy) · Liraglutid (Victoza)
+        Přelomová třída injekčních (a nyní i perorálních) léků napodobujících střevní hormon GLP-1. Snižují glykémii, podporují výrazný úbytek hmotnosti a snižují kardiovaskulární riziko. Dle doporučení ADA 2025 a ČDS jsou preferovány u pacientů s kardiovaskulárním onemocněním nebo vysokým KV rizikem. V ČR dostupné na recept; podmínky úhrady stanovuje SÚKL.
+      
+      
+        Kardiorenální ochrana
+        Inhibitory SGLT2 (glifloziny)
+        Empagliflozin (Jardiance) · Dapagliflozin (Forxiga)
+        Tablety, které snižují glykémii tím, že ledviny vylučují přebytečný cukr do moče. Nezávisle chrání srdce a ledviny — doporučovány jako první linie u pacientů se srdečním selháním nebo chronickým onemocněním ledvin bez ohledu na HbA1c. Silná důkazní základna z klinických studií EMPA-REG OUTCOME a CREDENCE. V ČR dostupné od specialistů (diabetologie, endokrinologie, vnitřní lékařství) dle indikačních podmínek SÚKL.
+      
+      
+        Kontrola glykémie
+        Inhibitory DPP-4 (gliptiny)
+        Sitagliptin (Januvia) · Linagliptin (Trajenta)
+        Perorální tablety zvyšující sekreci inzulinu závisle na glykémii. Hmotnostně neutrální, s nízkým rizikem hypoglykémie. Používány tehdy, kdy agonisté GLP-1 nebo inhibitory SGLT2 nejsou tolerovány nebo indikovány. V ČR hrazeny zdravotními pojišťovnami při splnění indikačních podmínek.
+      
+      
+        DM1 & pokročilý DM2
+        Inzulinová terapie
+        Bazální, bolusové, premixované inzuliny · Inzulinové pumpy
+        Nezbytná pro všechny pacienty s DM1 a mnohé s DM2. Moderní inzulinová analoga mají předvídatelnější profil účinku než starší přípravky. Inzulinové pumpy (kontinuální subkutánní infuze inzulinu) jsou v ČR dostupné pro vybrané pacienty a hrazeny zdravotními pojišťovnami dle platných podmínek.
+      
+      
+        DM1 · Nový standard
+        Kontinuální monitorace glukózy (CGM)
+        FreeStyle Libre · Dexcom · Medtronic
+        CGM eliminuje nutnost opakovaného píchání do prstu, poskytuje glykémii v reálném čase včetně trendů a upozornění a zlepšuje glykemickou kompenzaci. V ČR je CGM hrazena zdravotními pojišťovnami pro pacienty s DM1 a vybrané skupiny pacientů s DM2 při splnění stanovených podmínek. Systémy automatického podávání inzulinu (SAI/closed-loop) jsou dostupné ve specializovaných centrech.
+      
+    
+
+    
+      Aktualizace doporučení ADA 2025 a ČDS:
+      Jak mezinárodní doporučení ADA 2025, tak doporučené postupy České diabetologické společnosti zdůrazňují, že agonisté GLP-1 a inhibitory SGLT2 by měly být přednostně nasazeny u pacientů s DM2, kteří mají prokázané kardiovaskulární onemocnění, srdeční selhání nebo chronické onemocnění ledvin — a to nezávisle na hodnotě HbA1c. Pokud máte DM2 a některý z těchto stavů, zeptejte se svého diabetologa nebo praktického lékaře, zda jsou pro vás tyto léky vhodné.
+    
+
+    
+    
+    Sekce 06
+    Důležitost pravidelných lékařských kontrol
+
+    Diabetes je progresivní chronické onemocnění a jeho komplikace — při nedostatečné kontrole — mohou být závažné a nevratné. Diabetická retinopatie je jednou z hlavních příčin slepoty v produktivním věku v ČR. Diabetická nefropatie je klíčovým důvodem selhání ledvin vyžadujícího dialýzu. Periferní neuropatie vede ke komplikacím diabetické nohy, které v závažných případech končí amputací. Riziko kardiovaskulárních onemocnění je u diabetiků výrazně vyšší — jak uvádí i Doporučený postup péče o pacienty se syndromem diabetické nohy ČDS z roku 2025.
+
+    Zásadní poznatek desetiletí klinického výzkumu je, že všem těmto komplikacím lze do velké míry předcházet — nebo je výrazně oddálit — dobrou glykemickou kompenzací, kontrolou krevního tlaku a pravidelnou dispenzarizací. Roční strukturovaná kontrola diabetika je jednou z nejlépe podložených a nákladově nejefektivnějších intervencí v celé medicíně.
+
+    Co by měla obsahovat vaše roční diabetologická kontrola
+
+    
+      Vyšetření HbA1c (průměrná glykémie za poslední 3 měsíce)
+      Měření krevního tlaku a přehodnocení antihypertenzní terapie
+      Funkce ledvin — eGFR a poměr albumin/kreatinin v moči (AKR)
+      Cholesterol a kompletní lipidový profil
+      Hodnocení tělesné hmotnosti a BMI
+      Vyšetření nohou — pulzace, citlivost, kožní trofika
+      Screening diabetické retinopatie — oční vyšetření nebo retinální fotografie
+      Přezkum medikace a případná úprava léčby
+      Zhodnocení edukace v oblasti selfmonitoringu
+      Posouzení stavu kouření a podpora odvykání, je-li relevantní
+      Očkování proti chřipce (silně doporučeno pro pacienty s diabetem)
+    
+
+    Screening pro dosud nediagnostikované osoby
+    Pokud máte rizikové faktory pro DM2 a nikdy jste nebyli vyšetřeni, praktický lékař pro dospělé vám může zařídit jednoduché vyšetření glykémie nalačno nebo HbA1c. Je to obzvlášť důležité, pokud jste starší 45 let, máte rodinnou anamnézu diabetu, trpíte vysokým krevním tlakem nebo jste měli v těhotenství nadváhu. Včasný záchyt prediabetu je skutečnou příležitostí k prevenci nebo oddálení vzniku DM2 úpravou životního stylu.
+
+    
+      Screening diabetické retinopatie v ČR:
+      Dle doporučení České diabetologické společnosti by všichni pacienti s diabetem měli být každoročně odesláni na oční vyšetření zaměřené na diabetickou retinopatii. V roce 2023 vydala ČDS aktualizované Stanovisko k vyšetření diabetické retinopatie v ambulanci diabetologa, které zavádí možnost fotografie sítnice přímo v diabetologických ambulancích jako alternativu k oftalmologickému vyšetření. Screening diabetické retinopatie je hrazen zdravotními pojišťovnami.
+    
+
+    
+    
+    Sekce 07
+    Budoucnost léčby diabetu
+
+    Tempo inovací v diabetologii je bezprecedentní. Několik oblastí výzkumu — některé již ve fázi pokročilých klinických studií — má potenciál zásadně proměnit život s diabetem v příštím desetiletí.
+
+    
+      
+        Fáze 1/2/3 · Regulační podání 2026
+        Terapie kmenovými buňkami (beta buňky)
+        Zimislecel (dříve VX-880) společnosti Vertex Pharmaceuticals spočívá v infuzi plně diferencovaných buněk produkujících inzulin — odvozených z kmenových buněk — do vena portae. Cílem je obnovit endogenní produkci inzulinu u DM1. K červnu 2025 bylo do pivotní studie zařazeno 50 účastníků, regulační podání se očekává v roce 2026. Recenze v PMC (2025) hodnotí tuto terapii jako potenciálně „transformační" — kombinuje regeneraci beta buněk s modulací imunitní odpovědi.
+      
+      
+        Klinický rozvoj
+        Umělá slinivka (closed-loop systémy)
+        Systémy automatického podávání inzulinu (SAI) — kombinující CGM s automatizovanou inzulinovou pumpou — již představují zásadní pokrok pro pacienty s DM1. Jsou dostupné ve specializovaných centrech v ČR (FN Motol, FN Brno a dalších). Nová generace těchto systémů využívá algoritmy strojového učení k predikci výkyvů glykémie dříve, než nastanou.
+      
+      
+        Nové terapie
+        Duální a trojité agonisté receptorů
+        Tirzepatid (Mounjaro) — duální agonista GIP/GLP-1 — prokázal lepší snížení HbA1c a výraznější úbytek hmotnosti oproti stávajícím GLP-1 agonistům a je dostupný v ČR. Trojité agonisté (GLP-1/GIP/glukagon) jsou v pokročilých klinických studiích a mohou nabídnout ještě větší metabolické benefity.
+      
+      
+        Imunoterapie
+        Imunomodulace u DM1
+        Teplizumab (anti-CD3 monoklonální protilátka) prokázal v klinických studiích oddálení klinického nástupu DM1 o přibližně dva roky u vysoce rizikových jedinců. Výzkum imunoterapie a navozování tolerance pokračuje s cílem zachovat reziduální funkci beta buněk v době diagnózy.
+      
+      
+        Precizní medicína
+        Genomika a léčba řízená AI
+        Genomické profilování začíná identifikovat podtypy diabetu, které reagují odlišně na specifická léčiva. CGM systémy poháněné umělou inteligencí, které se učí individuální metabolické vzorce a poskytují personalizovaná doporučení, jsou ve vývoji — s potenciálem proměnit každodenní správu diabetu.
+      
+      
+        Regenerativní medicína
+        Enkapsulace beta buněk
+        Paralelní strategie k transplantaci kmenových buněk — enkapsulace buněk produkujících inzulin do ochranných biomaterialových zařízení, která je chrání před imunitní destrukcí. Eliminuje tak potenciálně nutnost imunosuprese. Diabetes Research Institute University of Miami prokázal princip v klinických studiích, přičemž první pacient dosáhl nezávislosti na inzulinu.
+      
+    
+
+    Výzkum kmenových buněk pro DM1 je podrobně rozebrán v publikaci z roku 2025 v PMC (PMID: PMC12689004), která konstatuje, že „terapie kmenovými buňkami nabízí dvojí strategii: regeneraci beta buněk produkujících inzulin a regulaci imunitní odpovědi." Ačkoli definitivní léčba zůstává výzvou budoucnosti, směr výzkumu je jasnější než kdy dříve.
+
+    
+    
+    Sekce 08
+    Klíčové instituce a zdroje v České republice
+
+    Pokud žijete s diabetem v České republice, nebo máte obavy, že byste mohli být ohroženi, následující organizace a služby jsou vašimi hlavními referenčními místy pro klinickou péči, vzdělávání a podporu.
+
+    
+      🩺 ČDS ČLS JEP
+      📊 ÚZIS ČR
+      🤝 Diabetická asociace ČR
+      💊 SÚKL
+      📋 Česká lékařská komora
+      🏥 FN Motol
+      🏥 FN Brno
+      🔬 NZIP
+    
+
+    Česká diabetologická společnost ČLS JEP (ČDS)
+    Česká diabetologická společnost ČLS JEP je odbornou autoritou pro veškeré aspekty péče o diabetes v ČR. Vydává doporučené klinické postupy — včetně standardů pro DM1 (2022), DM2 (2020 + aktualizace), diabetické onemocnění ledvin (2021), syndrom diabetické nohy (2025) a prevenci progrese diabetické retinopatie pomocí fenofibrátu (2025). Všechny dokumenty jsou volně dostupné na webu ČDS.
+
+    ÚZIS ČR a Národní diabetologický registr (NDR)
+    Ústav zdravotnických informací a statistiky ČR spravuje Národní diabetologický registr a publikuje otevřená epidemiologická data o diabetu prostřednictvím Národního zdravotnického informačního portálu (NZIP). Tato data — zahrnující incidenci, prevalenci, mortalitu a způsoby léčby od roku 2010 — jsou základem pro plánování zdravotní politiky v oblasti diabetu v ČR.
+
+    Diabetická asociace České republiky
+    Diabetická asociace ČR je pacientská organizace sdružující osoby s diabetem a jejich blízké. Poskytuje vzdělávání, advocacy, poradenství a aktuální stat

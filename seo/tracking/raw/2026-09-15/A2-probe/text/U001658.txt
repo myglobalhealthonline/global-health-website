@@ -1,0 +1,90 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.medicalcouncil.ie","https://www.dataprotection.ie","https://www.hse.ie","https://www.hiqa.ie","https://www.hpra.ie","https://www.rcpi.ie","https://www.icgp.ie","https://www.irishpsychiatry.ie","https://www.nai.ie","https://irishheart.ie","https://www.citizensinformation.ie","https://www.gov.ie/en/organisation/department-of-social-protection/","https://www.samaritans.org/ireland","https://www.pieta.ie"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Jak získat online potvrzení o pracovní neschopnosti v Irsku","description":"Zjistěte, jak funguje online potvrzení o pracovní neschopnosti v Irsku, co může požadovat zaměstnavatel a kdy je nutné osobní vyšetření.","url":"https://www.myglobalhealth.online/ireland/cs/blog/jak-ziskat-online-potvrzeni-o-pracovni-neschopnosti-v-irsku","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/ireland/cs/blog/jak-ziskat-online-potvrzeni-o-pracovni-neschopnosti-v-irsku#webpage","url":"https://www.myglobalhealth.online/ireland/cs/blog/jak-ziskat-online-potvrzeni-o-pracovni-neschopnosti-v-irsku","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Ahmed Maklad","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/cs/doctors/dr-ahmed-maklad","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523450"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523450","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-08-23"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Jak+z%C3%ADskat+online+potvrzen%C3%AD+o+pracovn%C3%AD+neschopnosti+v+Irsku&image=%2Fimages%2Fireland%2Fblog%2Fsick-cert-online-ireland-2026-v2.webp&v=2026-07-20.1-hys4f6","width":1200,"height":630},"about":{"@type":"Thing","name":"General Practice"},"datePublished":"2026-07-24T15:17:03.695Z","dateModified":"2026-08-23T12:00:00.000Z","publishingPrinciples":"https://www.myglobalhealth.online/ireland/cs/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/ireland/cs/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Domů","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/ireland/cs/blog"},{"@type":"ListItem","position":3,"name":"Jak získat online potvrzení o pracovní neschopnosti v Irsku","item":"https://www.myglobalhealth.online/ireland/cs/blog/jak-ziskat-online-potvrzeni-o-pracovni-neschopnosti-v-irsku"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Potřebuji potvrzení kvůli jednomu dni absence?","acceptedAnswer":{"@type":"Answer","text":"Lékařské potvrzení potřebujete, pokud tento den uplatňujete v zákonném systému. Zaměstnavatel může mít štědřejší pravidla umožňující při krátké absenci čestné prohlášení; ověřte jeho zásady."}},{"@type":"Question","name":"Může online lékař vystavit potvrzení zpětně?","acceptedAnswer":{"@type":"Answer","text":"Pouze pokud dřívější data považuje za klinicky doložitelná. Zpětné vystavení není zaručeno a bez dostatečných důkazů o vašem tehdejším stavu nemusí být vhodné."}},{"@type":"Question","name":"Mohu získat potvrzení kvůli stresu nebo úzkosti?","acceptedAnswer":{"@type":"Answer","text":"Lékař může při vhodnosti vzdálené péče posoudit psychické příznaky přes video. Konzultace má zohlednit jejich vliv na práci, potřebnou léčbu či kontrolu a bezprostřední bezpečnostní rizika."}},{"@type":"Question","name":"Může zaměstnavatel kontaktovat lékaře?","acceptedAnswer":{"@type":"Answer","text":"Zaměstnavatel může ověřit pravost potvrzení. Tím nezískává přístup k poznámkám z konzultace. Každé zpřístupnění zdravotních údajů potřebuje odpovídající právní základ a má se omezit na potřeby pracoviště."}}]}]Všechny článkyGeneral PracticeJak získat online potvrzení o pracovní neschopnosti v IrskuCo probíhá při online konzultaci kvůli potvrzení, co potřebuje zaměstnavatel a jak se zákonná náhrada mzdy liší od Illness Benefit.Global Health Medical Team24. července 20265 min čteníPoslední kontrola 23. srpna 2026Klinicky přezkoumáno Dr Ahmed Maklad+Na této stránceCo se děje při online konzultaci kvůli potvrzení o pracovní neschopnosti?Přijme zaměstnavatel potvrzení od online lékaře?Jak funguje zákonná náhrada mzdy při nemoci v IrskuKdy online konzultace nemusí být vhodnáOtázky před objednáním
+
+  
+    Irsko · Průvodce potvrzením pro zaměstnavatele
+    Potvrzení o pracovní neschopnosti můžete získat online, pokud videokonzultace poskytne lékaři dostatek informací k bezpečnému posouzení.
+    Lékař se zeptá na příznaky, kdy začaly a jak ovlivňují vaši práci. Pokud to klinické posouzení odůvodní, může po konzultaci vystavit potvrzení. Objednáváte si lékařské posouzení, nekupujete dokument; vystavení potvrzení není automatické.
+    Bezpečná videokonzultaceLékař registrovaný u IMCKlinické rozhodnutí po posouzení
+    Zkontrolovat termíny a aktuální cenu
+  
+  
+    Co tento průvodce obsahuje
+    Co se děje při online konzultaci a jaké informace si připravit.
+    Co může zaměstnavatel ověřit a jak se zákonná náhrada mzdy liší od dávky Illness Benefit.
+    Kdy videokonzultace není vhodná, včetně naléhavých příznaků a požadavků vyžadujících jinou službu.
+    GHGlobal Health Medical Team
+    Zkontrolováno lékařským týmem Global Health.
+  
+
+
+
+
+
+  
+  Konzultace
+  Co se děje při online konzultaci kvůli potvrzení o pracovní neschopnosti?
+  Konzultace je cílené lékařské posouzení. Lékař potřebuje pochopit, co vám je a proč nemůžete bezpečně vykonávat svou běžnou práci.
+  Zvolte soukromé místo, kde můžete otevřeně mluvit. Nemusíte nemoc dokonale popsat. Užitečnější jsou data, příznaky a praktické podrobnosti o práci.
+  
+    Vězte, kdy příznaky začaly. Uveďte dny, které jste již zameškali nebo pravděpodobně zameškáte.
+    Mějte po ruce své zdravotní údaje. Lékař se může ptát na léky, relevantní onemocnění a léčbu, kterou jste již vyzkoušeli.
+    Vysvětlete náplň své práce. Popište úkoly, které nezvládáte, a zda by váš stav mohl ohrozit vás nebo někoho jiného.
+    Ověřte postup zaměstnavatele. Zjistěte, zda platí lhůta, formulář nebo portál pro odevzdání.
+  
+  Je-li potvrzení klinicky vhodné, po obdržení zkontrolujte své údaje a data. Uchovejte si kopii a odešlete ji obvyklým kanálem zaměstnavatele.
+
+
+
+  
+  Pravidla zaměstnavatele
+  Přijme zaměstnavatel potvrzení od online lékaře?
+  Pro zákonnou nemocenskou dovolenou musí potvrzení vydat registrovaný lékař a potvrdit, že kvůli nemoci nebo úrazu nemůžete pracovat.
+  Komise Workplace Relations Commission stanoví požadavek na potvrzení. Zákon Sick Leave Act 2022 a aktuální pokyny WRC podle všeho pro tento účel nerozlišují osobní a vzdálenou konzultaci.
+  Zaměstnavatel může ověřit registraci lékaře, pravost dokumentu a jednoznačnost dat. Může také vyžadovat dodržení přiměřeného postupu hlášení nepřítomnosti.
+  Pokud zaměstnavatel potvrzení odmítnePožádejte písemně o důvod. Problémem může být chybějící datum, pozdní odevzdání, požadavek firemních pravidel nebo váš nárok v zákonném systému. Než sdělíte další zdravotní údaje, řešte konkrétní problém.
+
+
+
+  
+  Mzda a dávky
+  Jak funguje zákonná náhrada mzdy při nemoci v Irsku
+  Zákonný systém nyní po 13 týdnech nepřetržitého zaměstnání poskytuje pět placených dnů nemoci za kalendářní rok.
+  
+    Výše platby. Zákonná náhrada činí 70 % běžného denního výdělku, nejvýše 110 € denně.
+    Lékařské potvrzení. Pro každý den uplatněný v zákonném systému potřebujete potvrzení od registrovaného lékaře.
+    Firemní systémy. Zaměstnavatel může nabízet plnou mzdu, více dnů nebo čestné prohlášení při krátké absenci; zkontrolujte smlouvu či příručku zaměstnance.
+  
+  Department of Enterprise v dubnu 2025 potvrdil, že plánované navýšení nebude pokračovat. Aktuální pokyny WRC nadále uvádějí pět dnů.
+  Potvrzení pro zaměstnavatele není potvrzením pro Illness Benefit
+  Potvrzení pro zaměstnavatele a lékařská certifikace pro žádost o Illness Benefit jsou odlišné postupy. Illness Benefit spravuje Department of Social Protection a používá Certificate of Incapacity for Work.
+  Online služba Global Health poskytuje pracovní dokumentaci, je-li klinicky vhodná. Nevystavuje ministerské Certificate of Incapacity for Work. Začněte oficiálními pokyny k Illness Benefit nebo si přečtěte náš návod k žádosti o Illness Benefit v Irsku pokud chcete žádat.
+
+
+
+  
+  Klinická omezení
+  Kdy online konzultace nemusí být vhodná
+  Video je vhodné pro mnoho jednoduchých onemocnění, lékař vás však může potřebovat vyšetřit, zkontrolovat hodnoty nebo zajistit testy, aby rozhodl bezpečně.
+  
+    Zpětné vystavení není automatické. Anamnéza a dostupné důkazy musí podporovat požadovaná dřívější data.
+    Některé dokumenty vyžadují jinou službu. Zprávy o způsobilosti k návratu do bezpečnostně kritické práce, pojistné formuláře a specializované pracovnělékařské posudky mohou vyžadovat osobní či odborné vyšetření.
+    Soukromí zůstává důležité. Běžné potvrzení pro zaměstnavatele mu nedává přístup k poznámkám z konzultace ani k celé zdravotní dokumentaci.
+  
+  Komise Data Protection Commission považuje zdravotní údaje za zvláštní kategorii. Požadavek zaměstnavatele má být omezen na skutečně potřebné informace. Pokud si nejste jisti vhodností videa pro své příznaky, přečtěte si náš návod k online praktickému lékaři oproti osobní návštěvě.
+  Nejprve vyhledejte naléhavou pomocPři závažné dušnosti, bolesti na hrudi, kolapsu, zmatenosti nebo známkách cévní mozkové příhody volejte 112 či 999 nebo navštivte pohotovost. Nečekejte na konzultaci kvůli potvrzení.
+
+
+
+  
+  Časté otázky
+  Otázky před objednáním
+  
+    Potřebuji potvrzení kvůli jednomu dni absence?Lékařské potvrzení potřebujete, pokud tento den uplatňujete v zákonném systému. Zaměstnavatel může mít štědřejší pravidla umožňující při krátké absenci čestné prohlášení; ověřte jeho zásady.
+    Může online lékař vystavit potvrzení zpětně?Pouze pokud dřívější data považuje za klinicky doložitelná. Zpětné vystavení není zaručeno a bez dostatečných důkazů o vašem tehdejším stavu nemusí být vhodné.
+    Mohu získat potvrzení kvůli stresu nebo úzkosti?Lékař může při vhodnosti vzdálené péče posoudit psychické příznaky přes video. Konzultace má zohlednit jejich vliv na práci, potřebnou léčbu či kontrolu a bezprostřední bezpečnostní rizika.
+    Může zaměstnavatel kontaktovat lékaře?Zaměstnavatel může ověřit pravost potvrzení. Tím nezískává přístup k poznámkám z konzultace. Každé zpřístupnění zdravotních údajů potřebuje odpovídající právní základ a má se omezit na potřeby pracoviště.
+  
+
+
+Upozornění k lékařským a právním informacímČlánek poskytuje obecné informace pro Irsko. Nenahrazuje zdravotní péči, právní radu, pracovní smlouvu ani pravidla zaměstnavatele. Pravidla a dostupnost služby se mohou měnit. Potvrzení se vydává pouze po klinickém posouzení a není nikdy zaručeno.
+Jak píšeme a revidujeme lékařský obsahStojí za sdílení?Sdílet tento článekFacebookWhatsAppXLinkedInInstagramKopírovat odkazDalší krokJste připraveni mluvit s lékařem?Zarezervujte si online konzultaci s místně registrovaným lékařem ve vaší zemi. Otevřené termíny jsou zobrazeny během rezervace.Zarezervovat konzultaciDalší článkyMental HealthVyšetření ADHD u dospělých v Irsku: veřejná cesta, soukromá cesta a co se skutečně děje na vyšetřeníJak probíhá vyšetření ADHD u dospělého v Irsku, proč cesta přes HSE vede nejprve přes místní tým duševního zdraví, kolik stojí soukromé vyšetření a co obnáší řádné vyšetření.Přečíst článek →General PracticeIllness Benefit v Irsku: výše dávky a termín výplaty v roce 2026Aktuální sazby Illness Benefit, čekací dny, týdenní výplata, zdanění a rozdíl oproti nemocenské od zaměstnavatele.Přečíst článek →General PracticeIllness Benefit v Irsku: jak o dávku zažádat a jak získat lékařské potvrzeníIllness Benefit je dávka, kterou vyplácí irský Department of Social Protection lidem, kteří nemohou pracovat kvůli nemoci nebo úrazu. Vysvětlujeme, co žádost vyžaduje, kdo smí vystavit Certificate of Incapacity for Work a čím se dávka liší od nemocenské placené zaměstnavatelem.Přečíst článek →

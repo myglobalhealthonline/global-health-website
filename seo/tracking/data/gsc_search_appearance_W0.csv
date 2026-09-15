@@ -1,0 +1,2 @@
+window_start,window_end,search_appearance,clicks,impressions,ctr,avg_position,row_key,refresh_id,data_state,source_timezone,data_quality,source
+2026-07-18,2026-08-14,PRODUCT_SNIPPETS,5,2059,0.0024283632831471587,38.41670713938805,W0|PRODUCT_SNIPPETS,R2026-09-15-GSC-C,final,America/Los_Angeles,28-day aggregate; includes 3 pre-launch days; anonymized queries omitted by Google,Search Console (openseo MCP get_search_console_performance)

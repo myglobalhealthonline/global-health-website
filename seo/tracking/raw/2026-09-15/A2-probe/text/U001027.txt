@@ -1,0 +1,368 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.lkcr.cz","https://www.sukl.cz","https://www.uoou.cz"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes: la enfermedad silenciosa","description":"Diabetes en Chequia: causas, síntomas, tratamientos con GLP-1 y SGLT2, controles periódicos y cuándo buscar atención médica.","url":"https://www.myglobalhealth.online/czechia/es/blog/diabetes-la-enfermedad-silenciosa-2","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/czechia/es/blog/diabetes-la-enfermedad-silenciosa-2#webpage","url":"https://www.myglobalhealth.online/czechia/es/blog/diabetes-la-enfermedad-silenciosa-2","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/es/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-19"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes%3A+la+enfermedad+silenciosa&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F58c09201-812d-4a9f-b12b-a5bade2ba3a8-33850.webp&v=2026-07-20.1-g3vb13","width":1200,"height":630},"about":{"@type":"Thing","name":"Endokrinologie"},"datePublished":"2026-07-19T06:14:43.687Z","dateModified":"2026-07-19T06:15:25.832Z","publishingPrinciples":"https://www.myglobalhealth.online/czechia/es/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/czechia/es/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/czechia/es/blog"},{"@type":"ListItem","position":3,"name":"Diabetes: la enfermedad silenciosa","item":"https://www.myglobalhealth.online/czechia/es/blog/diabetes-la-enfermedad-silenciosa-2"}]}]Todos los artículosEndokrinologieDiabetes: la enfermedad silenciosaLa diabetes mellitus, conocida en checo como "cukrovka", es una de las enfermedades crónicas más extendidas y, a la vez, más subestimadas de la República Checa: afecta a un 10 % estimado de la población. La buena noticia es que, gracias a los tratamientos modernos, incluidos los agonistas del GLP-1 y los inhibidores de SGLT2, hoy la diabetes se controla mejor que nunca.Global Health Medical Team19 de julio de 202624 min de lectura+En esta páginaLa diabetes en la República Checa: la magnitud del problemaTipos de diabetesCausas y factores de riesgoSignos y síntomas de la diabetesOpciones de tratamiento actuales de la diabetes en la República ChecaLa importancia de los controles médicos periódicosEl futuro del tratamiento de la diabetesInstituciones y recursos clave en la República ChecaPreguntas frecuentes
+
+
+
+  
+  
+    
+      
+      
+      
+      Causas, síntomas, tratamiento y el futuro de la atención
+      Se estima que aproximadamente el 10 % de la población de la República Checa vive con diabetes, y miles de personas más aún no lo saben. Esta guía cubre todo lo que necesita saber: las causas, las señales de alerta, las mejores opciones de tratamiento disponibles, la importancia de los controles periódicos y las nuevas terapias que podrían transformar radicalmente la atención a las personas diabéticas en los próximos años.
+      
+        — Basado en evidencia
+
+        — Conforme a la ČDS y al ÚZIS ČR
+
+        — Actualizado en junio de 2026
+
+      
+      — Escrito por el Dr. Tiago Miguel Figueira · Director Clínico, Global Health— Adaptación y revisión para el mercado checo: Dr. Ahmed Maklad · Colegio de Médicos Checo (ČLK) n.º 117 668 619 8
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      AM
+      
+        Escrito por Dr. Tiago Miguel Figueira
+
+        Director Clínico · Global Health · Adaptación y revisión médica para la República Checa: 
+
+Dr. Ahmed Maklad
+
+ · Colegio de Médicos Checo (ČLK) n.º 117 668 619 8
+      
+      10 MIN DE LECTURA
+    
+
+    La diabetes mellitus —conocida en checo como «cukrovka»— es una de las enfermedades crónicas más extendidas en la República Checa y, a la vez, una de las más subestimadas. La diabetes tipo 2, que representa aproximadamente el 92 % de todos los casos, puede desarrollarse de forma silenciosa durante muchos años sin causar molestias evidentes. En el momento del diagnóstico, la enfermedad ya lleva presente bastante tiempo en muchos pacientes.
+
+    La buena noticia es que, con el tratamiento adecuado y controles regulares, la diabetes se maneja muy bien. Las personas con diabetes pueden llevar una vida plena y de calidad. Además, en la última década se han producido avances decisivos en el tratamiento —especialmente con la llegada de los agonistas del receptor GLP-1 y los inhibidores de SGLT2 (gliflozinas)— y hoy las opciones terapéuticas están en su punto más alto de la historia.
+
+    
+    
+    Sección 01
+    La diabetes en la República Checa: la magnitud del problema
+
+    Según datos de la Oficina de Estadística Checa (ČSÚ), en 2024 padecían diabetes compensada con medicación aproximadamente 884,5 mil personas. El Instituto de Información y Estadística Sanitaria de la República Checa (ÚZIS ČR), que administra el Registro Nacional de Diabetes (NDR), estima que la diabetes mellitus afecta aproximadamente al 10 % de la población checa. La República Checa se sitúa reiteradamente entre los países con mayor prevalencia de diabetes de la Unión Europea, un hecho que también documenta la Asociación de Diabetes de la República Checa.
+
+    
+      
+        884k
+        Personas con diabetes tratada con medicación en la RC en 2024 (ČSÚ)
+      
+      
+        ~10 %
+        Proporción estimada de la población checa con diabetes (ÚZIS ČR)
+      
+      
+        92 %
+        De los casos corresponden a diabetes tipo 2
+      
+      
+        TopUE
+        La RC, reiteradamente entre los países con mayor prevalencia de DM en la UE
+      
+    
+    Fuente: Oficina de Estadística Checa (ČSÚ) 2024; ÚZIS ČR — Registro Nacional de Diabetes; Asociación de Diabetes de la República Checa; NZIP.
+
+    Las proyecciones elaboradas por el ÚZIS ČR a partir de los datos del Registro Nacional de Servicios Sanitarios Financiados (NRHZS) muestran que el número de personas diabéticas en la RC sigue una tendencia ascendente y que, sin un cambio significativo en el estilo de vida de la población, seguirá aumentando en los próximos años. Un artículo de investigación del Hospital Universitario Motol (Vnitřní lékařství 2025;71(3):144–151) subraya la necesidad de un enfoque individualizado del tratamiento, con énfasis en la protección cardiovascular y renal.
+
+    
+      ¿Está en riesgo sin saberlo?
+      Se estima que una parte considerable de las personas con diabetes tipo 2 en la RC aún no tiene el diagnóstico establecido. Si tiene factores de riesgo —antecedentes familiares de diabetes, sobrepeso, presión arterial alta o un estilo de vida sedentario— consulte con su médico de cabecera sobre la posibilidad de realizarse una prueba de glucemia en ayunas o de HbA1c. El diagnóstico temprano es clave para prevenir complicaciones.
+    
+
+    
+    
+    Sección 02
+    Tipos de diabetes
+
+    La diabetes no es una única enfermedad. Comprender qué tipo padece —o para cuál tiene mayor riesgo— es el primer paso hacia un tratamiento eficaz.
+
+    
+      
+        🔵
+        Diabetes tipo 1 (DM1)
+        Autoinmune · Insulinodependiente
+        El sistema inmunitario destruye las células beta del páncreas encargadas de producir insulina. El cuerpo produce poca o ninguna insulina. Requiere insulinoterapia de por vida. Suele manifestarse en la infancia o en la juventud. Representa aproximadamente el 6-8 % de todos los casos de diabetes en la RC; según datos del NRHZS, en 2013 había en la RC más de 58 900 pacientes registrados con DM1.
+      
+      
+        🟠
+        Diabetes tipo 2 (DM2)
+        Estilo de vida & genética · Progresiva
+        El cuerpo se vuelve resistente a la insulina o no produce suficiente. Está fuertemente asociada al estilo de vida. Es la forma más frecuente, con aproximadamente el 92 % de los casos en la RC. Al principio puede controlarse con dieta, ejercicio y medicación oral, aunque con el tiempo muchos pacientes acaban necesitando insulina. Es una enfermedad típica de la edad adulta y avanzada.
+      
+      
+        🟡
+        Diabetes gestacional
+        Del embarazo · Generalmente transitoria
+        Se desarrolla durante el embarazo, cuando los cambios hormonales interfieren con la acción de la insulina. Suele desaparecer tras el parto, pero aumenta significativamente el riesgo, a lo largo de la vida, de DM2 tanto para la madre como para el bebé. El cribado se realiza de forma estándar en las maternidades y consultas de ginecología checas entre las semanas 24 y 28 de embarazo.
+      
+      
+        ⚪
+        Prediabetes
+        Prevenible · A menudo reversible
+        La glucemia está más alta de lo normal, pero aún no alcanza el nivel diabético. Es una ventana de intervención crítica: los cambios en el estilo de vida en esta etapa pueden prevenir por completo, o retrasar significativamente, la aparición de la diabetes tipo 2. Muchas personas en la RC se encuentran en esta etapa sin saberlo.
+      
+    
+
+    
+    
+    Sección 03
+    Causas y factores de riesgo
+
+    Diabetes tipo 1
+    La causa exacta de la DM1 no está completamente esclarecida. Se trata de una enfermedad autoinmune: el sistema inmunitario ataca por error y destruye las células beta del páncreas responsables de producir insulina. Intervienen factores genéticos y, probablemente, también la exposición a determinadas infecciones víricas. La investigación en este campo en la RC está coordinada a través de la Sociedad Checa de Diabetología ČLS JEP (ČDS) y de centros como el Hospital Universitario Motol o el Hospital Universitario de Brno.
+
+    Diabetes tipo 2
+    La DM2 tiene causas más complejas y, en gran medida, modificables: una combinación de predisposición genética con factores del estilo de vida y del entorno. El mecanismo clave es la resistencia a la insulina (las células del cuerpo dejan de responder a la insulina), junto con una disminución progresiva de la capacidad del páncreas para compensarlo mediante una mayor producción.
+
+    
+      
+        ⚖️
+        Sobrepeso y obesidad
+        Especialmente la grasa abdominal (visceral). La obesidad es el factor de riesgo modificable más importante para la DM2.
+      
+      
+        🛋️
+        Estilo de vida sedentario
+        La falta de actividad física reduce la sensibilidad a la insulina. El ejercicio regular es una de las herramientas más eficaces tanto para la prevención como para el tratamiento.
+      
+      
+        🍞
+        Dieta rica en alimentos procesados
+        Un alto consumo de carbohidratos refinados, azúcar y alimentos ultraprocesados está estrechamente relacionado con la resistencia a la insulina.
+      
+      
+        👨‍👩‍👧
+        Antecedentes familiares
+        Tener un familiar de primer grado con DM2 aumenta considerablemente el riesgo personal de padecer la enfermedad.
+      
+      
+        🎂
+        Edad superior a 45 años
+        El riesgo aumenta con la edad. Los datos del ÚZIS ČR muestran una prevalencia significativamente mayor de DM en los grupos de mayor edad de la población.
+      
+      
+        🩺
+        Presión arterial alta o dislipidemia
+        Los factores de riesgo metabólico suelen agruparse. En la práctica, la hipertensión y las alteraciones lipídicas aparecen con frecuencia junto con la resistencia a la insulina.
+      
+      
+        🤰
+        Antecedentes de diabetes gestacional
+        Las mujeres que desarrollaron diabetes gestacional durante el embarazo tienen, a lo largo de la vida, un riesgo considerablemente mayor de desarrollar DM2.
+      
+      
+        🚬
+        Tabaquismo
+        Fumar aumenta el riesgo de desarrollar DM2 y empeora el pronóstico cardiovascular de las personas diabéticas. La ČDS recomienda dejar de fumar como parte de la atención integral.
+      
+    
+
+    
+    
+    Sección 04
+    Signos y síntomas de la diabetes
+
+    Los síntomas difieren notablemente entre la DM1 y la DM2. La DM1 suele manifestarse de forma aguda, con una aparición rápida de síntomas que pueden indicar cetoacidosis diabética (CAD), una afección potencialmente mortal. La DM2, en cambio, suele desarrollarse de forma lenta y silenciosa a lo largo de años, con síntomas tan leves o graduales que muchas personas los atribuyen al envejecimiento, al estrés o al cansancio.
+
+    
+      
+        💧
+        
+          Sed excesiva
+          Sed persistente e inextinguible —polidipsia—; los riñones trabajan al máximo para filtrar el exceso de glucosa.
+        
+      
+      
+        🚽
+        
+          Micción frecuente
+          Poliuria, especialmente por la noche (nicturia). Suele ser el síntoma inicial más llamativo, el que lleva a los pacientes al médico.
+        
+      
+      
+        😴
+        
+          Fatiga persistente
+          Agotamiento incluso tras dormir lo suficiente: las células se ven privadas de la glucosa como fuente de energía.
+        
+      
+      
+        ⚖️
+        
+          Pérdida de peso inexplicable
+          Especialmente en la DM1: el cuerpo quema grasa y músculo como fuente de energía ante la falta de insulina.
+        
+      
+      
+        👁️
+        
+          Visión borrosa
+          La glucemia alta provoca desplazamientos de líquido en el cristalino del ojo, que afectan temporalmente al enfoque.
+        
+      
+      
+        🩹
+        
+          Cicatrización lenta de heridas
+          La circulación alterada y la inmunidad reducida ralentizan la cicatrización de cortes, rozaduras e infecciones.
+        
+      
+      
+        🤚
+        
+          Hormigueo o entumecimiento
+          La neuropatía periférica que afecta a manos y pies puede ser un síntoma temprano, especialmente en la DM2.
+        
+      
+      
+        🍽️
+        
+          Aumento del apetito
+          Polifagia —hambre persistente incluso después de comer— aparece cuando las células no pueden absorber eficazmente la glucosa.
+        
+      
+    
+
+    
+      Cuándo buscar ayuda inmediata:
+      Si usted o un familiar presenta de forma repentina sed intensa, micción excesiva, vómitos, dolor abdominal, confusión o aliento con olor a acetona —especialmente en un niño o adulto joven— podría tratarse de una cetoacidosis diabética (CAD), una urgencia médica grave. Llame de inmediato al 155 (servicio de emergencias) o al 112, o acuda al servicio de urgencias más cercano.
+    
+
+    
+    
+    Sección 05
+    Opciones de tratamiento actuales de la diabetes en la República Checa
+
+    El tratamiento de la diabetes ha vivido una auténtica revolución en la última década. En la República Checa, la Sociedad Checa de Diabetología ČLS JEP (ČDS) publica las recomendaciones clínicas; su Guía de práctica clínica para el tratamiento de la diabetes mellitus tipo 2 (actualizada en 2020, con estándares posteriores de 2021-2025) es la norma de referencia para las consultas de diabetología y los médicos de cabecera de todo el país. La disponibilidad de los medicamentos está sujeta a las condiciones de reembolso del Instituto Estatal para el Control de Medicamentos (SÚKL).
+
+    Cambios en el estilo de vida: la base de todo tratamiento
+    Tanto para la DM1 como para la DM2, el estilo de vida es la piedra angular del tratamiento. En la DM2, cambiar la alimentación y aumentar la actividad física puede reducir significativamente la HbA1c, mejorar la sensibilidad a la insulina y, en algunos casos —especialmente tras una cirugía bariátrica o con una dieta muy baja en calorías—, llevar a una remisión duradera. La educación estructurada del paciente forma parte de la atención en las consultas de diabetología y también la recomienda la ČDS en sus estándares.
+
+    Tratamiento farmacológico
+    A continuación se presentan las principales clases de fármacos disponibles en la República Checa. Las decisiones terapéuticas son individualizadas: tanto las recomendaciones de la ČDS como las de la ADA 2025 subrayan un enfoque centrado en el paciente que tiene en cuenta el riesgo cardiovascular, la función renal, el peso corporal y las preferencias del paciente. Un artículo de investigación publicado en Vnitřní lékařství (2025;71(3):144–151), elaborado desde la Clínica de Medicina Interna de la 2.ª Facultad de Medicina de la Universidad Carolina y el Hospital Universitario Motol, señala que en pacientes con enfermedad cardiovascular, insuficiencia cardíaca o enfermedad renal diabética, el inicio del tratamiento con agonistas de GLP-1 o inhibidores de SGLT2 no debería depender del valor de HbA1c.
+
+    
+      
+        Primera línea · DM2
+        Metformina
+        Glucophage · Genéricos de metformina (cubierto por el seguro médico)
+        Fármaco de primera elección consolidado para la DM2. Reduce la glucemia al disminuir la producción de glucosa en el hígado. Bien tolerado, asequible y totalmente cubierto por las aseguradoras sanitarias checas. Sigue siendo el estándar de atención como punto de partida del tratamiento para la mayoría de los pacientes con DM2.
+      
+      
+        Protección cardiorrenal
+        Agonistas del receptor GLP-1
+        Semaglutida (Ozempic, Wegovy) · Liraglutida (Victoza)
+        Una clase innovadora de fármacos inyectables (y ahora también orales) que imitan la hormona intestinal GLP-1. Reducen la glucemia, favorecen una pérdida de peso significativa y reducen el riesgo cardiovascular. Según las recomendaciones de la ADA 2025 y de la ČDS, se prefieren en pacientes con enfermedad cardiovascular o alto riesgo CV. Disponibles con receta en la RC; las condiciones de reembolso las establece el SÚKL.
+      
+      
+        Protección cardiorrenal
+        Inhibidores de SGLT2 (gliflozinas)
+        Empagliflozina (Jardiance) · Dapagliflozina (Forxiga)
+        Comprimidos que reducen la glucemia haciendo que los riñones eliminen el exceso de azúcar por la orina. Protegen el corazón y los riñones de forma independiente: se recomiendan como primera línea en pacientes con insuficiencia cardíaca o enfermedad renal crónica, con independencia de la HbA1c. Cuentan con una sólida evidencia procedente de los ensayos clínicos EMPA-REG OUTCOME y CREDENCE. En la RC están disponibles a través de especialistas (diabetología, endocrinología, medicina interna) según las condiciones de indicación del SÚKL.
+      
+      
+        Control glucémico
+        Inhibidores de DPP-4 (gliptinas)
+        Sitagliptina (Januvia) · Linagliptina (Trajenta)
+        Comprimidos orales que aumentan la secreción de insulina de forma dependiente de la glucemia. Neutros en cuanto al peso y con bajo riesgo de hipoglucemia. Se utilizan cuando los agonistas de GLP-1 o los inhibidores de SGLT2 no se toleran o no están indicados. En la RC están cubiertos por las aseguradoras sanitarias cuando se cumplen las condiciones de indicación.
+      
+      
+        DM1 & DM2 avanzada
+        Insulinoterapia
+        Insulinas basales, en bolo, premezcladas · Bombas de insulina
+        Imprescindible para todos los pacientes con DM1 y para muchos con DM2. Los análogos de insulina modernos tienen un perfil de acción más predecible que los preparados antiguos. Las bombas de insulina (infusión subcutánea continua de insulina) están disponibles en la RC para pacientes seleccionados y están cubiertas por las aseguradoras sanitarias según las condiciones vigentes.
+      
+      
+        DM1 · Nuevo estándar
+        Monitorización continua de glucosa (MCG)
+        FreeStyle Libre · Dexcom · Medtronic
+        La MCG elimina la necesidad de pincharse el dedo repetidamente, ofrece la glucemia en tiempo real, incluidas tendencias y alertas, y mejora el control glucémico. En la RC, la MCG está cubierta por las aseguradoras sanitarias para pacientes con DM1 y para grupos seleccionados de pacientes con DM2 que cumplan determinadas condiciones. Los sistemas de administración automática de insulina (asa cerrada) están disponibles en centros especializados.
+      
+    
+
+    
+      Actualización de las recomendaciones de la ADA 2025 y de la ČDS:
+      Tanto las recomendaciones internacionales de la ADA 2025 como las guías de práctica clínica de la Sociedad Checa de Diabetología subrayan que los agonistas de GLP-1 y los inhibidores de SGLT2 deben priorizarse en pacientes con DM2 que presenten enfermedad cardiovascular confirmada, insuficiencia cardíaca o enfermedad renal crónica, con independencia del valor de HbA1c. Si tiene DM2 y alguna de estas afecciones, pregunte a su diabetólogo o médico de cabecera si estos fármacos son adecuados para usted.
+    
+
+    
+    
+    Sección 06
+    La importancia de los controles médicos periódicos
+
+    La diabetes es una enfermedad crónica progresiva y sus complicaciones —cuando el control es insuficiente— pueden ser graves e irreversibles. La retinopatía diabética es una de las principales causas de ceguera en la población en edad laboral en la RC. La nefropatía diabética es una causa clave de insuficiencia renal que requiere diálisis. La neuropatía periférica provoca complicaciones del pie diabético que, en los casos graves, terminan en amputación. El riesgo de enfermedad cardiovascular es notablemente mayor en las personas diabéticas, como también señala la Guía de práctica clínica para pacientes con síndrome de pie diabético de la ČDS de 2025.
+
+    Una conclusión fundamental de una década de investigación clínica es que todas estas complicaciones pueden prevenirse en gran medida —o retrasarse considerablemente— mediante un buen control glucémico, el control de la presión arterial y un seguimiento médico regular. El control anual estructurado de una persona diabética es una de las intervenciones mejor respaldadas y más rentables de toda la medicina.
+
+    Qué debe incluir su control anual de diabetología
+
+    
+      Análisis de HbA1c (glucemia media de los últimos 3 meses)
+      Medición de la presión arterial y revisión del tratamiento antihipertensivo
+      Función renal: TFGe y cociente albúmina/creatinina en orina (ACR)
+      Colesterol y perfil lipídico completo
+      Evaluación del peso corporal y del IMC
+      Exploración de los pies: pulsos, sensibilidad, estado de la piel
+      Cribado de retinopatía diabética: examen ocular o fotografía de retina
+      Revisión de la medicación y ajuste del tratamiento si es necesario
+      Evaluación de la formación en autocontrol
+      Valoración del hábito tabáquico y apoyo para dejar de fumar, si procede
+      Vacunación antigripal (muy recomendada para las personas con diabetes)
+    
+
+    Cribado para personas aún no diagnosticadas
+    Si tiene factores de riesgo para la DM2 y nunca se ha hecho pruebas, su médico de cabecera puede solicitarle un sencillo análisis de glucemia en ayunas o de HbA1c. Es especialmente importante si tiene más de 45 años, antecedentes familiares de diabetes, presión arterial alta o tuvo sobrepeso durante el embarazo. La detección temprana de la prediabetes es una verdadera oportunidad para prevenir o retrasar la aparición de la DM2 mediante cambios en el estilo de vida.
+
+    
+      Cribado de retinopatía diabética en la RC:
+      Según las recomendaciones de la Sociedad Checa de Diabetología, todos los pacientes con diabetes deberían ser derivados anualmente a un examen oftalmológico centrado en la retinopatía diabética. En 2023, la ČDS publicó una Declaración actualizada sobre el examen de la retinopatía diabética en la consulta de diabetología, que introduce la posibilidad de fotografiar la retina directamente en las consultas de diabetología como alternativa al examen oftalmológico. El cribado de retinopatía diabética está cubierto por las aseguradoras sanitarias.
+    
+
+    
+    
+    Sección 07
+    El futuro del tratamiento de la diabetes
+
+    El ritmo de innovación en diabetología no tiene precedentes. Varias líneas de investigación —algunas ya en fase de ensayos clínicos avanzados— tienen el potencial de transformar radicalmente la vida con diabetes en la próxima década.
+
+    
+      
+        Fase 1/2/3 · Presentación regulatoria en 2026
+        Terapia con células madre (células beta)
+        Zimislecel (antes VX-880), de Vertex Pharmaceuticals, consiste en la infusión en la vena porta de células productoras de insulina totalmente diferenciadas, derivadas de células madre. El objetivo es restaurar la producción endógena de insulina en la DM1. Hasta junio de 2025 se habían incluido 50 participantes en el estudio pivotal, y se espera la presentación regulatoria en 2026. Una revisión publicada en PMC (2025) califica esta terapia como potencialmente «transformadora»: combina la regeneración de células beta con la modulación de la respuesta inmunitaria.
+      
+      
+        Desarrollo clínico
+        Páncreas artificial (sistemas de asa cerrada)
+        Los sistemas de administración automática de insulina (AAI) —que combinan la MCG con una bomba de insulina automatizada— ya suponen un avance decisivo para los pacientes con DM1. Están disponibles en centros especializados de la RC (Hospital Universitario Motol, Hospital Universitario de Brno y otros). La nueva generación de estos sistemas utiliza algoritmos de aprendizaje automático para predecir las fluctuaciones de la glucemia antes de que se produzcan.
+      
+      
+        Nuevas terapias
+        Agonistas duales y triples de receptores
+        La tirzepatida (Mounjaro), un agonista dual de GIP/GLP-1, ha demostrado una mayor reducción de la HbA1c y una pérdida de peso más pronunciada que los agonistas de GLP-1 existentes, y ya está disponible en la RC. Los agonistas triples (GLP-1/GIP/glucagón) se encuentran en fases avanzadas de ensayos clínicos y podrían ofrecer beneficios metabólicos aún mayores.
+      
+      
+        Inmunoterapia
+        Inmunomodulación en la DM1
+        El teplizumab (un anticuerpo monoclonal anti-CD3) ha demostrado en ensayos clínicos retrasar la aparición clínica de la DM1 en aproximadamente dos años en individuos de alto riesgo. La investigación en inmunoterapia e inducción de tolerancia continúa con el objetivo de preservar la función residual de las células beta en el momento del diagnóstico.
+      
+      
+        Medicina de precisión
+        Genómica y tratamiento guiado por IA
+        El perfilado genómico está empezando a identificar subtipos de diabetes que responden de forma distinta a fármacos específicos. Los sistemas de MCG impulsados por inteligencia artificial, que aprenden los patrones metabólicos individuales y ofrecen recomendaciones personalizadas, están en desarrollo, con el potencial de transformar el manejo diario de la diabetes.
+      
+      
+        Medicina regenerativa
+        Encapsulación de células beta
+        Una estrategia paralela al trasplante de células madre: encapsular las células productoras de insulina en dispositivos biomateriales protectores que las resguardan de la destrucción inmunitaria, eliminando así, potencialmente, 

@@ -1,0 +1,46 @@
+window,breakdown,dimension_value,active_users,sessions,sessions_per_user,engagement_rate,key_events,note,refresh_id,source
+2026-07-25..2026-08-01,device,mobile,16,17,1.06,0.7058823529411765,0,,R2026-09-15-GA4,ga4_audience_device_window1_organic.json
+2026-07-25..2026-08-01,device,desktop,5,5,1.0,0.6,0,,R2026-09-15-GA4,ga4_audience_device_window1_organic.json
+2026-07-25..2026-08-01,device,tablet,1,2,2.0,0.5,0,,R2026-09-15-GA4,ga4_audience_device_window1_organic.json
+2026-09-09..2026-09-14,device,mobile,127,152,1.2,0.5921052631578947,16,,R2026-09-15-GA4,ga4_audience_device_window2_organic.json
+2026-09-09..2026-09-14,device,desktop,50,105,2.1,0.6190476190476191,11,,R2026-09-15-GA4,ga4_audience_device_window2_organic.json
+2026-09-09..2026-09-14,device,tablet,3,3,1.0,0.6666666666666666,0,,R2026-09-15-GA4,ga4_audience_device_window2_organic.json
+2026-07-25..2026-08-01,country,Ireland,7,7,1.0,1,0,,R2026-09-15-GA4,ga4_audience_country_window1_organic.json
+2026-07-25..2026-08-01,country,Czechia,5,5,1.0,0.6,0,,R2026-09-15-GA4,ga4_audience_country_window1_organic.json
+2026-07-25..2026-08-01,country,Portugal,3,4,1.33,0.5,0,,R2026-09-15-GA4,ga4_audience_country_window1_organic.json
+2026-07-25..2026-08-01,country,Romania,2,2,1.0,0.5,0,,R2026-09-15-GA4,ga4_audience_country_window1_organic.json
+2026-07-25..2026-08-01,country,Spain,2,3,1.5,0.6666666666666666,0,,R2026-09-15-GA4,ga4_audience_country_window1_organic.json
+2026-07-25..2026-08-01,country,India,1,1,1.0,0,0,,R2026-09-15-GA4,ga4_audience_country_window1_organic.json
+2026-07-25..2026-08-01,country,Pakistan,1,1,1.0,0,0,,R2026-09-15-GA4,ga4_audience_country_window1_organic.json
+2026-07-25..2026-08-01,country,United Kingdom,1,1,1.0,1,0,,R2026-09-15-GA4,ga4_audience_country_window1_organic.json
+2026-07-25..2026-08-01,country,United States,1,1,1.0,1,0,,R2026-09-15-GA4,ga4_audience_country_window1_organic.json
+2026-09-09..2026-09-14,country,Spain,31,36,1.16,0.6666666666666666,1,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Portugal,28,50,1.79,0.56,5,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Czechia,27,31,1.15,0.6451612903225806,5,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Ireland,27,37,1.37,0.6486486486486487,7,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Romania,17,18,1.06,0.3888888888888889,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,United States,8,8,1.0,0.5,1,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Luxembourg,4,4,1.0,1,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Netherlands,4,4,1.0,0.75,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,United Kingdom,4,4,1.0,0.5,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Austria,3,4,1.33,0.75,1,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Brazil,3,4,1.33,0.5,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Germany,3,3,1.0,0.6666666666666666,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Pakistan,3,33,11.0,0.6666666666666666,6,sessions/user ratio anomalous (>=5x),R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Poland,3,3,1.0,0.6666666666666666,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Colombia,2,2,1.0,0.5,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Argentina,1,1,1.0,1,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Australia,1,3,3.0,0.6666666666666666,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Benin,1,1,1.0,0,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Canada,1,2,2.0,0,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Costa Rica,1,1,1.0,1,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Cuba,1,1,1.0,0,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Italy,1,1,1.0,1,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Lithuania,1,2,2.0,0,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,New Zealand,1,4,4.0,0.5,1,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Norway,1,1,1.0,1,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Puerto Rico,1,1,1.0,0,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Sweden,1,1,1.0,1,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Switzerland,1,1,1.0,0,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Türkiye,1,1,1.0,1,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json
+2026-09-09..2026-09-14,country,Ukraine,1,1,1.0,1,0,,R2026-09-15-GA4,ga4_audience_country_window2_organic.json

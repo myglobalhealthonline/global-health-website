@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "agent": "A3c-2",
+  "dataset": "C",
+  "window": "W0",
+  "window_start": "2026-07-18",
+  "window_end": "2026-08-14",
+  "window_note": "28 complete days immediately before W1 (2026-08-15..09-11). Site launched 2026-07-21, so W0 contains 3 pre-launch days (07-18, 07-19, 07-20) which were NOT trimmed, per instructions.",
+  "extraction_utc": "2026-09-15T05:32:00Z",
+  "refresh_id": "R2026-09-15-GSC-C",
+  "property_total_from_date_dimension": {
+    "clicks": 761,
+    "impressions": 39935,
+    "row_count": 28,
+    "source_file": "C_W0_date.jsonl"
+  },
+  "query_page_vs_property_total": {
+    "query_page_clicks": 135,
+    "query_page_impressions": 16512,
+    "anonymized_click_share_pct": 82.26,
+    "anonymized_impression_share_pct": 58.65,
+    "note": "Query-dimensioned GSC reports omit low-volume/rare ('anonymized') queries entirely. query x page completed with hasMore=false (not truncated), so the gap vs the property total is Google's query anonymization, not pagination loss. Cross-check: query x country and query x device sum to ~134 clicks each, consistent with query x page's 135 -- all three query-dimensioned pulls agree with each other and disagree with the property total for this reason."
+  },
+  "calls_log_file": "calls-A3c-2.json",
+  "files": [
+    {
+      "logical_name": "query_page",
+      "raw_files": [
+        "C_W0_querypage_r0.jsonl", "C_W0_querypage_r1000.jsonl", "C_W0_querypage_r2000.jsonl",
+        "C_W0_querypage_r3000.jsonl", "C_W0_querypage_r4000.jsonl", "C_W0_querypage_r5000.jsonl"
+      ],
+      "output_csv": "seo/tracking/data/gsc_query_page_W0.csv",
+      "row_count": 5318,
+      "row_cap": 15000,
+      "truncated": false,
+      "hasMore_at_stop": false
+    },
+    {
+      "logical_name": "query_country",
+      "raw_files": [
+        "C_W0_querycountry_r0.jsonl", "C_W0_querycountry_r1000.jsonl", "C_W0_querycountry_r2000.jsonl",
+        "C_W0_querycountry_r3000.jsonl", "C_W0_querycountry_r4000.jsonl"
+      ],
+      "output_csv": "seo/tracking/data/gsc_query_country_W0.csv",
+      "row_count": 5000,
+      "row_cap": 5000,
+      "truncated": true,
+      "hasMore_at_stop": true,
+      "note": "Stopped at the 5,000-row dataset cap per instructions; GSC reported hasMore=true (more rows exist beyond this cap)."
+    },
+    {
+      "logical_name": "query_device",
+      "raw_files": [
+        "C_W0_querydevice_r0.jsonl", "C_W0_querydevice_r1000.jsonl", "C_W0_querydevice_r2000.jsonl",
+        "C_W0_querydevice_r3000.jsonl", "C_W0_querydevice_r4000.jsonl"
+      ],
+      "output_csv": "seo/tracking/data/gsc_query_device_W0.csv",
+      "row_count": 4997,
+      "row_cap": 5000,
+      "truncated": false,
+      "hasMore_at_stop": false
+    },
+    {
+      "logical_name": "search_appearance",
+      "raw_files": ["C_W0_appearance.jsonl"],
+      "output_csv": "seo/tracking/data/gsc_search_appearance_W0.csv",
+      "row_count": 1,
+      "row_cap": 5000,
+      "truncated": false,
+      "hasMore_at_stop": false
+    },
+    {
+      "logical_name": "date_property_total",
+      "raw_files": ["C_W0_date.jsonl"],
+      "output_csv": null,
+      "row_count": 28,
+      "row_cap": null,
+      "truncated": false,
+      "hasMore_at_stop": false,
+      "note": "Used only to compute the property total for the anonymized-share calculation above; not written to a data/ CSV."
+    }
+  ],
+  "total_api_calls": 18
+}

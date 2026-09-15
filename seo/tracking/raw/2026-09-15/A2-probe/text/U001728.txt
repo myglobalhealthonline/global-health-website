@@ -1,0 +1,174 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.medicalcouncil.ie","https://www.dataprotection.ie","https://www.hse.ie","https://www.hiqa.ie","https://www.hpra.ie","https://www.rcpi.ie","https://www.icgp.ie","https://www.irishpsychiatry.ie","https://www.nai.ie","https://irishheart.ie","https://www.citizensinformation.ie","https://www.gov.ie/en/organisation/department-of-social-protection/","https://www.samaritans.org/ireland","https://www.pieta.ie"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}]{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Domů","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Právní informace","item":"https://www.myglobalhealth.online/ireland/cs/legal"},{"@type":"ListItem","position":3,"name":"Obchodní podmínky","item":"https://www.myglobalhealth.online/ireland/cs/legal/terms-of-service"}]}PrávníIrsko · Právní informaceObchodní podmínkyVerze 2 · Naposledy aktualizováno 18 July 2026Všechny právní dokumentyHlavní všeobecné obchodní podmínky Global Health
+Datum účinnosti: 1. července 2026
+
+
+ProvozovatelGlobal Guest s.r.o., podnikající pod obchodní značkou Global Health
+IČOIČO: 19071680
+SídloRybná 24, 110 00 Praha 1
+Webová stránkawww.myglobalhealth.online
+Kontaktglobalhealth@myglobalhealth.online
+Datum účinnosti1. července 2026
+Provozované trhyViz www.myglobalhealth.online/markets
+
+
+Tyto Hlavní podmínky upravují používání platformy Global Health na všech trzích, na kterých Global Health působí. Musí být vykládány společně s Dodatkem pro danou zemi, který se vztahuje na konkrétní trh, na kterém Služby využíváte. V případě rozporu mezi těmito Hlavními podmínkami a Dodatkem pro danou zemi má přednost Dodatek pro danou zemi.
+Úplný seznam trhů, na kterých Global Health působí, naleznete na www.myglobalhealth.online.
+
+1. O nás
+Global Health je telemedicínská platforma provozovaná společností Global Guest s.r.o., společností s ručením omezeným založenou v České republice (IČO: 19071680; sídlo: Rybná 24, 110 00 Praha 1). Global Health působí na řadě trhů, jejichž seznam naleznete na www.myglobalhealth.online.
+V závislosti na trhu, na kterém Služby využíváte, Global Health působí buď jako registrovaný poskytovatel zdravotních služeb, nebo jako technologická platforma propojující pacienty s nezávisle registrovanými Zdravotnickými pracovníky. Příslušný provozní model pro váš trh je uveden v Dodatku pro danou zemi.
+Odkazy v těchto Podmínkách na „my", „nás" nebo „naše" se vztahují na společnost Global Guest s.r.o., podnikající pod obchodní značkou Global Health. Odkazy na „vy" nebo „Pacient" se vztahují na jakoukoli fyzickou osobu, která přistupuje k Platformě nebo Službám či je používá.
+Naše hlavní kontaktní údaje jsou:
+
+E-mail: globalhealth@myglobalhealth.online
+Webová stránka: www.myglobalhealth.online
+
+Kontaktní údaje, adresy a regulační registrační čísla pro jednotlivé země jsou uvedeny v příslušném Dodatku pro danou zemi.
+
+2. Definice
+V těchto Hlavních podmínkách a v jakémkoli Dodatku pro danou zemi mají níže uvedené pojmy tento význam:
+
+„Platforma" znamená webovou stránku Global Health na adrese www.myglobalhealth.online, veškeré související mobilní aplikace a jakékoli rezervační, konzultační nebo pacientské systémy provozované společností Global Health nebo jejím jménem.
+„Služby" znamenají online lékařské konzultace, odborná doporučení (referrals), služby související s předpisy, domácí zdravotní testy, doručování léků na předpis, Kreditní plány a jakékoli další zdravotní služby zpřístupněné prostřednictvím Platformy.
+„Pacient" nebo „vy" znamená jakoukoli fyzickou osobu, která se registruje ke Službám, rezervuje je nebo je používá.
+„Zdravotnický pracovník" znamená lékaře, specialistu, zdravotní sestru nebo jiného regulovaného zdravotnického odborníka, který poskytuje konzultace nebo klinické služby prostřednictvím Platformy a je registrován u příslušného zdravotnického regulačního orgánu v zemi, kde vykonává praxi.
+„Konzultace" znamená vzdálenou lékařskou konzultaci probíhající formou videohovoru, telefonátu nebo zabezpečené zprávy prostřednictvím Platformy.
+„Model poskytovatele" znamená provozní model uplatňovaný na trzích, kde Global Health drží registraci poskytovatele zdravotních služeb a poskytuje Služby jako regulovaný poskytovatel zdravotní péče. Na trzích s Modelem poskytovatele vykonávají Zdravotničtí pracovníci činnost v rámci registrace poskytovatele Global Health.
+„Model platformy" znamená provozní model uplatňovaný na trzích, kde Global Health vystupuje jako technologický zprostředkovatel propojující pacienty s nezávisle registrovanými Zdravotnickými pracovníky. Na trzích s Modelem platformy má každý Zdravotnický pracovník vlastní regulační registraci a poskytuje Služby vlastním jménem.
+„Kreditní plán" znamená opakující se měsíční předplatné, na jehož základě Pacient obdrží v každém zúčtovacím období definovaný počet Kreditů, které lze použít na Služby, jak je dále popsáno v článku 7.
+„Kredit" nebo „Kredity" znamená jednotku hodnoty vydanou Pacientovi v rámci Kreditního plánu nebo zakoupenou jednorázově, kterou lze uplatnit na oprávněné Služby na Platformě.
+„Dodatek pro danou zemi" znamená dodatek k těmto Hlavním podmínkám specifický pro danou zemi, který se vztahuje na trh, na kterém Služby využíváte, a který mimo jiné stanoví příslušný provozní model, rozhodné právo, údaje o regulační registraci a spotřebitelská práva.
+„Platné právní předpisy o ochraně osobních údajů" znamenají právní předpisy o ochraně osobních údajů a soukromí platné ve vaší jurisdikci, včetně, kde je to relevantní: GDPR (nařízení (EU) 2016/679); UK GDPR a Data Protection Act 2018; a rovnocenné právní předpisy na trzích mimo EU, jak je uvedeno v příslušném Dodatku pro danou zemi.
+„Zdravotní údaje" znamenají veškeré osobní údaje týkající se fyzického nebo duševního zdraví fyzické osoby, včetně údajů o poskytování zdravotních služeb dané osobě, které jsou podle Platných právních předpisů o ochraně osobních údajů klasifikovány jako citlivé údaje nebo zvláštní kategorie údajů.
+„Právní předpisy na ochranu spotřebitele" znamenají kogentní právní předpisy na ochranu spotřebitele platné v zemi vašeho bydliště, které nelze těmito Podmínkami vyloučit ani omezit bez ohledu na jakoukoli doložku o volbě práva.
+
+
+3. Přijetí podmínek
+Přístupem k Platformě nebo Službám či jejich používáním potvrzujete, že jste si přečetli, porozuměli a souhlasíte s tím, že jste vázáni těmito Hlavními podmínkami, příslušným Dodatkem pro danou zemi, naší Zásadou ochrany osobních údajů a naší Zásadou používání souborů cookie.
+Pokud s těmito Podmínkami nesouhlasíte, nesmíte přistupovat k Platformě ani Službám ani je používat.
+Tyto Podmínky jsou vždy dostupné na adrese www.myglobalhealth.online/terms. Doporučujeme, abyste si jejich kopii uložili nebo vytiskli pro vlastní potřebu.
+
+4. Způsobilost a registrace
+4.1 Věkový požadavek
+Pro samostatnou registraci ke Službám nebo jejich používání musíte dosáhnout věku nejméně 18 let. V některých jurisdikcích může být minimální věk vyšší — informace naleznete ve svém Dodatku pro danou zemi. Pacienti mladší příslušného minimálního věku mohou Služby využívat pouze za aktivní účasti a s písemným souhlasem rodiče nebo zákonného zástupce, který za ně přijímá tyto Podmínky a odpovídá za správnost všech poskytnutých informací.
+U jakékoli konzultace týkající se nezletilé osoby musí být rodič nebo zákonný zástupce přítomen nebo okamžitě dostupný po dobu konzultace, pokud Zdravotnický pracovník v klinickém zájmu pacienta nerozhodne jinak.
+4.2 Přesnost údajů
+Během registrace a po celou dobu používání Služeb musíte poskytovat přesné, úplné a aktuální informace. Poskytnutí nepravdivých nebo zavádějících zdravotních informací Zdravotnickému pracovníkovi může ohrozit kvalitu poskytované péče a může představovat přestupek nebo trestný čin podle platného práva.
+4.3 Zabezpečení účtu
+Odpovídáte za zachování důvěrnosti přihlašovacích údajů ke svému účtu. Pokud zjistíte nebo máte podezření na neoprávněný přístup k vašemu účtu, musíte nás o tom neprodleně informovat na adrese globalhealth@myglobalhealth.online.
+4.4 Jeden účet na pacienta
+Každý pacient může mít jeden aktivní účet. Vytváření více účtů za účelem obcházení jakéhokoli omezení, pozastavení nebo zákazu je zakázáno a může vést k ukončení všech souvisejících účtů.
+
+5. Povaha Služeb a klinická omezení
+5.1 Provozní modely
+Způsob, jakým Global Health poskytuje Služby, se liší podle trhu. Na některých trzích působí Global Health jako registrovaný poskytovatel zdravotních služeb. Na jiných působí jako technologická platforma propojující pacienty s nezávisle registrovanými Zdravotnickými pracovníky. Model uplatňovaný na vašem trhu a jeho důsledky pro regulační dohled, stížnosti a odpovědnost jsou uvedeny v příslušném Dodatku pro danou zemi. Tyto Hlavní podmínky se uplatní v plném rozsahu bez ohledu na provozní model.
+5.2 Omezení telemedicíny
+Naše Služby poskytují vzdálené lékařské konzultace a nenahrazují osobní péči tam, kde je taková péče klinicky vhodná. Zdravotnický pracovník provádějící vzdálenou konzultaci má omezenou schopnost provádět fyzikální vyšetření. Diagnóza a klinické doporučení vychází z informací, které poskytnete, z vaší zdravotní historie zaznamenané na Platformě a z klinicky vhodných technik vzdáleného posouzení.
+Berete na vědomí, že kvalita a přesnost klinického doporučení může být ovlivněna úplností a přesností informací, které poskytnete.
+5.3 Nouzové situace
+DŮLEŽITÉ: Naše Služby nejsou vhodné pro lékařské pohotovostní stavy. Pokud vy nebo jiná osoba prožíváte lékařskou pohotovost, okamžitě volejte záchrannou službu a vyhledejte nejbližší pohotovostní oddělení. V případě lékařské pohotovosti tuto Platformu nepoužívejte.
+Nouzová telefonní čísla pro jednotlivé trhy jsou uvedena v příslušném Dodatku pro danou zemi a na příslušné stránce dané země na Platformě.
+5.4 Předpisy
+Předpisy jsou vydávány pouze tam, kde je to klinicky vhodné a kde je to povoleno právem země, ve které se pacient v době konzultace nachází. Předpisy vydávají Zdravotničtí pracovníci, kteří mají platnou registraci u příslušného zdravotnického regulačního orgánu v zemi, kde vykonávají praxi. Jméno, registrační číslo a regulační orgán předepisujícího Zdravotnického pracovníka jsou k dispozici na vyžádání a jsou uvedeny v záznamu o vaší konzultaci.
+Předpisy na omamné nebo jinak omezené látky prostřednictvím Platformy vydávány nejsou. Pravidla pro předpisy specifická pro jednotlivé země — včetně regulačních rámců upravujících digitální předpisy, platných lékových seznamů (formulářů) a přeshraniční platnosti — jsou uvedena v příslušném Dodatku pro danou zemi.
+5.5 Přeshraniční platnost předpisů
+Předpis vydaný Zdravotnickým pracovníkem v jedné zemi nemusí být platný nebo akceptovaný lékárnami v jiné zemi. Je odpovědností pacienta ověřit platnost jakéhokoli předpisu v zemi, kde jej hodlá použít. Global Health nezaručuje, že předpisy vydané prostřednictvím Platformy budou akceptovány mimo zemi vydání.
+5.6 Doporučení (referrals)
+Je-li to klinicky indikováno, může Zdravotnický pracovník doporučit odeslání k osobnímu specialistovi nebo do pohotovostního zařízení. Global Health nezaručuje dostupnost, náklady, čekací dobu ani klinický výsledek jakéhokoli doporučení k třetí straně nebo osobní služby.
+5.7 Žádné zaručené výsledky
+Nemůžeme zaručit a nezaručujeme konkrétní klinické výsledky. Služby jsou poskytovány na základě odborného klinického úsudku uplatněného na informace dostupné v daném okamžiku. Individuální výsledky se budou lišit.
+5.8 Dostupnost služeb
+Usilujeme o zachování nepřetržité dostupnosti platformy, avšak nezaručujeme nepřerušený přístup. Plánovaná údržba, technické problémy nebo okolnosti mimo naši kontrolu mohou vést k dočasné nedostupnosti. Nemůže-li konzultace proběhnout z důvodu nedostupnosti platformy, budou veškeré Kredity použité k rezervaci této konzultace vráceny na váš účet a bude vám nabídnut náhradní termín.
+5.9 Klinické řízení kvality
+Bez ohledu na provozní model uplatňovaný na vašem trhu udržuje Global Health rámec klinického řízení kvality zahrnující kvalitu a bezpečnost Služeb poskytovaných prostřednictvím Platformy. Všichni Zdravotničtí pracovníci působící prostřednictvím Platformy musí mít platnou registraci u příslušného zdravotnického regulačního orgánu v zemi, kde vykonávají praxi, a musí mít sjednáno odpovídající pojištění profesní odpovědnosti.
+Rozsah odpovědnosti Global Health za řízení kvality a příslušný regulační dohled na vašem trhu jsou uvedeny v Dodatku pro danou zemi.
+5.10 Zeměpisná omezení
+Služby jsou dostupné pouze na trzích, kde Global Health působí. Aktuální seznam trhů naleznete na www.myglobalhealth.online. Přístup k Platformě ze země, ve které Global Health nepůsobí, vám nezakládá nárok na poskytnutí Služeb v této zemi.
+5.11 Technologie třetích stran
+Platforma využívá technologické poskytovatele třetích stran pro rezervace, zpracování plateb, videokonzultace a ukládání dat. Ačkoli podnikáme přiměřené kroky k výběru spolehlivých poskytovatelů, neneseme odpovědnost za přerušení nebo selhání způsobené systémy třetích stran, které jsou mimo naši přiměřenou kontrolu.
+
+6. Rezervace, platby a ceny
+6.1 Rezervace
+Konzultace lze rezervovat prostřednictvím Platformy pomocí Kreditů nebo, je-li to relevantní, přímou platbou. Rezervace je potvrzena, jakmile obdržíte od nás potvrzovací e-mail. Potvrzení rezervace nezaručuje konkrétního Zdravotnického pracovníka, pokud to není při rezervaci výslovně uvedeno.
+6.2 Ceny a měna
+Veškeré ceny a hodnoty Kreditů jsou zobrazeny v měně platné pro váš trh, včetně veškerých příslušných daní nebo poplatků. Aktuální ceny všech Služeb a Kreditních plánů jsou zveřejněny na stránce Ceník na Platformě a na stránce jednotlivé Služby. Pro vaši rezervaci nebo nákup Kreditů platí cena potvrzená v okamžiku dokončení transakce.
+Pokud využíváte Služby v jiné měně, než ve které je vedena vaše platební karta, může vaše banka nebo poskytovatel karty účtovat poplatky spojené s kurzovým přepočtem. Global Health za takové poplatky neodpovídá.
+Vyhrazujeme si právo kdykoli změnit ceny s přiměřeným předstihem. Změny cen se nedotknou Kreditních plánů již aktivních v okamžiku změny až do dalšího zúčtovacího období a nedotknou se jednotlivých již potvrzených rezervací.
+6.3 Platba
+Platba je vyžadována v plné výši v okamžiku rezervace nebo nákupu Kreditů. Přijímáme platební metody zobrazené na Platformě v okamžiku transakce. Veškeré platby jsou zpracovávány bezpečně naším poskytovatelem platebních služeb. Úplné údaje o platební kartě neukládáme v našich systémech.
+6.4 Daně
+Zobrazené ceny zahrnují platné místní daně tam, kde jsme povinni je účtovat. V určitých jurisdikcích se místní daně nebo poplatky vztahující se na digitální zdravotní služby mohou lišit. Podrobnosti naleznete ve svém Dodatku pro danou zemi.
+
+7. Kredity a Kreditní plány
+7.1 Jak Kredity fungují
+Kredity jsou jednotkou hodnoty používanou k rezervaci a přístupu ke Službám na Platformě. Kredity lze získat: (a) předplacením Kreditního plánu, v jehož rámci je na váš účet vydán definovaný počet Kreditů na začátku každého měsíčního zúčtovacího období; nebo (b) jednorázovým nákupem Kreditů za ceny zveřejněné na Platformě.
+Hodnota Kreditů pro jednotlivé Služby je zobrazena na příslušné stránce Služby a v okamžiku rezervace. Hodnoty Kreditů mohou být čas od času aktualizovány; pro vaši rezervaci platí hodnota potvrzená v okamžiku dokončení rezervace.
+7.2 Předplatné Kreditního plánu
+Kreditní plány jsou účtovány měsíčně na průběžné bázi. Neexistuje minimální doba trvání smlouvy ani vázací období. Svůj Kreditní plán můžete kdykoli zrušit — viz článek 7.5.
+Kredity vydané v rámci Kreditního plánu jsou na váš účet přiděleny na začátku každého zúčtovacího období. Nevyužité Kredity se převádějí do dalšího období, a to do maximálního limitu převodu zveřejněného na Platformě. Pokud je váš Kreditní plán aktivní, Kredity nepropadají.
+7.3 Jednorázové nákupy Kreditů
+Kredity zakoupené jednorázově mimo Kreditní plán nepropadají a lze je použít kdykoli. Při rezervaci Služeb jsou jednorázové Kredity spotřebovány dříve než Kredity z Kreditního plánu.
+7.4 Nevratnost Kreditů
+Kredity jsou po zakoupení obecně nevratné, s výjimkou případů uvedených v těchto Podmínkách nebo vyžadovaných Právními předpisy na ochranu spotřebitele platnými ve vaší jurisdikci. Kredity nemají žádnou peněžní hodnotu a nelze je převést na jiný účet pacienta.
+7.5 Zrušení Kreditního plánu
+Svůj Kreditní plán můžete kdykoli zrušit prostřednictvím nastavení svého účtu nebo tak, že nás kontaktujete na adrese globalhealth@myglobalhealth.online. Zrušení nabývá účinnosti na konci aktuálního měsíčního zúčtovacího období. Přístup k přiděleným Kreditům a výhodám Plánu si zachováte až do konce zaplaceného období. Za nevyužitou část aktuálního zúčtovacího období se neposkytuje žádná poměrná refundace, pokud to nevyžadují Právní předpisy na ochranu spotřebitele.
+Po zrušení zůstávají Kredity již přidělené v rámci zrušeného Plánu na vašem účtu dostupné po dobu 12 měsíců od data zrušení, poté nevyužité Kredity Plánu propadají. Zrušením Plánu nejsou dotčeny jednorázové Kredity.
+7.6 Zrušení, přesunutí termínu a vrácení Kreditů
+Zrušíte-li potvrzenou rezervaci nejméně 24 hodin před plánovaným časem schůzky, budou Kredity použité k této rezervaci v plné výši vráceny na váš účet.
+Zrušení provedená méně než 24 hodin před schůzkou povedou k propadnutí Kreditů, s výjimkou případů, kdy je zrušení způsobeno doloženou zdravotní pohotovostí nebo selháním na straně platformy — v takovém případě budou Kredity vráceny.
+Potvrzenou schůzku můžete přesunout na jiný termín až do 12 hodin před plánovaným časem, v závislosti na dostupnosti Zdravotnického pracovníka, bez jakéhokoli účtování Kreditů. Každou rezervaci lze bez poplatku přesunout jednou. Další žádosti o přesunutí termínu mohou být posouzeny jako zrušení podle tohoto článku.
+7.7 Nedostavení se
+Nedostavíte-li se na naplánovanou konzultaci bez předchozího oznámení o zrušení nebo přesunutí termínu, Kredity použité k rezervaci této konzultace propadají. V případě nedostavení se Kredity nevracejí.
+7.8 Zrušení ze strany Global Health
+Nejsme-li z důvodů na naší straně schopni poskytnout rezervovanou konzultaci do 2 hodin od plánovaného času, budou veškeré použité Kredity vráceny v plné výši. Alternativně můžete požádat o vrácení peněžní hodnoty použitých Kreditů, které bude zpracováno do 5–10 pracovních dnů na váš původní způsob platby.
+7.9 Zákonná práva na odstoupení a lhůta na rozmyšlenou
+V závislosti na zemi, ve které se nacházíte, můžete mít zákonné právo odstoupit od smlouvy uzavřené na dálku ve stanovené lhůtě na rozmyšlenou. Tato práva se liší podle jurisdikce a jsou v plném rozsahu uvedena v příslušném Dodatku pro danou zemi. Vaše zákonná práva nejsou těmito Podmínkami dotčena.
+Uplatňuje-li se zákonná lhůta na rozmyšlenou a výslovně požádáte, aby konzultace proběhla v této lhůtě, můžete se po dokončení této konkrétní konzultace vzdát práva na její zrušení. Podrobnosti pro danou zemi naleznete ve svém Dodatku pro danou zemi.
+
+8. Zdravotní údaje, zdravotnická dokumentace a ochrana osobních údajů
+8.1 Závazek k ochraně osobních údajů
+Zavazujeme se chránit vaše osobní údaje a Zdravotní údaje v souladu s Platnými právními předpisy o ochraně osobních údajů na každém trhu, na kterém působíme. Konkrétní rámec ochrany osobních údajů, který se na vás vztahuje, závisí na zemi vašeho bydliště a je uveden v příslušném Dodatku pro danou zemi.
+8.2 Zpracování Zdravotních údajů
+Zdravotní údaje jsou na všech trzích, na kterých působíme, klasifikovány jako citlivé osobní údaje a vyžadují vyšší úroveň ochrany. Vaše Zdravotní údaje zpracováváme pouze na zákonných základech vyžadovaných Platnými právními předpisy o ochraně osobních údajů ve vaší jurisdikci. Tyto základy jsou uvedeny v příslušném Dodatku pro danou zemi a v naší Zásadě ochrany osobních údajů.
+8.3 Pověřenec pro ochranu osobních údajů
+Global Health jmenovala Pověřence pro ochranu osobních údajů (DPO) pro účely GDPR a příslušných právních předpisů o ochraně osobních údajů na trzích EU. Kontaktní údaje DPO jsou zveřejněny v naší Zásadě ochrany osobních údajů na adrese www.myglobalhealth.online/privacy.
+8.4 Uchovávání údajů
+Zdravotnickou dokumentaci uchováváme po minimální dobu vyžadovanou právními předpisy a odbornými regulačními pokyny každé země, ve které působíme. Konkrétní lhůty uchovávání jsou uvedeny v příslušném Dodatku pro danou zemi a v naší Zásadě ochrany osobních údajů.
+8.5 Vaše práva k údajům
+V závislosti na Platných právních předpisech o ochraně osobních údajů ve vaší jurisdikci můžete mít některá nebo všechna z těchto práv: právo na přístup; opravu; výmaz (s výhradou zákonných povinností uchovávání); omezení zpracování; přenositelnost údajů; vznesení námitky proti zpracování; a právo nebýt předmětem výhradně automatizovaného rozhodování.
+Pro uplatnění kteréhokoli z těchto práv nebo vyžádání kopie své zdravotnické dokumentace nás kontaktujte na adrese globalhealth@myglobalhealth.online. Odpovíme ve lhůtě vyžadované Platnými právními předpisy o ochraně osobních údajů ve vaší jurisdikci, v každém případě však do 30 dnů.
+8.6 Mezinárodní předávání údajů
+Jako provozovatel působící na více trzích můžeme osobní údaje předávat mezi zeměmi, ve kterých Global Health působí. Jsou-li údaje předávány do zahraničí, zajišťujeme odpovídající záruky vyžadované Platnými právními předpisy o ochraně osobních údajů, včetně standardních smluvních doložek EU nebo rovnocenných mechanismů. Úplné podrobnosti jsou uvedeny v naší Zásadě ochrany osobních údajů.
+8.7 Oznámení o porušení zabezpečení údajů
+V případě porušení zabezpečení osobních údajů, které pravděpodobně povede k vysokému riziku pro vaše práva a svobody, vás bez zbytečného odkladu vyrozumíme v souladu s našimi povinnostmi podle Platných právních předpisů o ochraně osobních údajů ve vaší jurisdikci.
+8.8 Zásada ochrany osobních údajů
+Naše Zásada ochrany osobních údajů na adrese www.myglobalhealth.online/privacy obsahuje úplné podrobnosti o tom, jak shromažďujeme, používáme, uchováváme, sdílíme a chráníme vaše osobní údaje a Zdravotní údaje na všech trzích, včetně našeho registru zpracovatelů (sub-processorů), jak je vyžadováno platnými právními předpisy o ochraně osobních údajů.
+
+9. Povinnosti uživatele a zakázané jednání
+Přístupem ke Službám a jejich používáním se zavazujete:
+
+Vždy poskytovat Zdravotnickým pracovníkům a na Platformě přesné, pravdivé a úplné informace.
+Neposkytovat nepravdivou zdravotní historii, příznaky nebo informace, které by mohly Zdravotnického pracovníka uvést v omyl.
+Nepoužívat Platformu k žádnému protiprávnímu účelu ani způsobem, který porušuje platné právní předpisy nebo předpisy.
+Nepokoušet se získat neoprávněný přístup k Platformě, jejím systémům nebo účtu jiného uživatele.
+Nepoužívat automatizované nástroje, roboty ani skripty pro přístup k Platformě nebo interakci s ní bez našeho předchozího písemného souhlasu.
+Nevydávat se za jinou osobu, včetně jakéhokoli Zdravotnického pracovníka nebo zaměstnance Global Health.
+Nenahrávat ani nepřenášet žádný obsah, který je protiprávní, škodlivý, hanlivý nebo který porušuje práva duševního vlastnictví třetí osoby.
+Při používání Služeb dodržovat veškeré platné právní předpisy v zemi svého bydliště.
+
+Porušení kterékoli z výše uvedených povinností může vést k okamžitému pozastavení nebo ukončení vašeho účtu a případně k předání věci orgánům činným v trestním řízení.
+
+10. Duševní vlastnictví
+Veškerý obsah na Platformě, včetně mimo jiné textů, grafiky, log, obrázků, zvuku, videa a softwaru, je ve vlastnictví společnosti Global Guest s.r.o. nebo je jí licencován a je chráněn platnými právními předpisy na ochranu autorských práv, ochranných známek a dalšími právními předpisy o duševním vlastnictví.
+Je vám udělena omezená, nevýhradní, nepřevoditelná a odvolatelná licence k přístupu k Platformě a jejímu obsahu a k jejich používání výhradně pro vaše osobní, nekomerční účely. Bez našeho předchozího písemného souhlasu nesmíte reprodukovat, distribuovat, upravovat, vytvářet odvozená díla, veřejně zobrazovat ani jinak využívat žádný obsah z Platformy, s výjimkou případů výslovně povolených platným právem.
+
+11. Omezení odpovědnosti
+Nic v těchto Podmínkách nevylučuje ani neomezuje naši odpovědnost za: smrt nebo újmu na zdraví způsobenou naší nedbalostí nebo nedbalostí našich Zdravotnických pracovníků; podvod nebo podvodné uvedení v omyl; nebo jakoukoli jinou odpovědnost, kterou nelze podle platného práva vaší jurisdikce zákonně vyloučit ani omezit.
+S výhradou výše uvedeného, a v nejširším rozsahu povoleném právem vaší jurisdikce, naše celková souhrnná odpovědnost vůči vám vyplývající z vašeho používání Služeb nebo s ním související nepřesáhne celkovou částku poplatků, které jste nám zaplatili v období 12 měsíců bezprostředně předcházejících události, která vedla k nároku.
+Neodpovídáme za žádné nepřímé, náhodné, zvláštní, následné ani represivní ztráty nebo škody, včetně ztráty dat, ztráty příjmů nebo ušlého zisku, vyplývající z vašeho používání Platformy nebo Služeb.
+Rozdělení odpovědnosti mezi Global Health a jednotlivé Zdravotnické pracovníky za klinické úkony a opomenutí závisí na provozním modelu uplatňovaném na vašem trhu a je podrobně uvedeno v příslušném Dodatku pro danou zemi.
+Neodpovídáme za dostupnost, obsah ani služby jakékoli webové stránky třetí strany propojené z Platformy, ani za poskytovatele služeb třetích stran, ke kterým jste odesláni.
+Pokud Právní předpisy na ochranu spotřebitele ve vaší jurisdikci stanoví kogentní podmínky nebo prostředky nápravy pro vás výhodnější než výše uvedené, uplatní se tyto kogentní podmínky a nelze je vyloučit.
+
+12. Stížnosti a regulační orgány
+Máte-li stížnost týkající se našich Služeb, kontaktujte nás nejprve 

@@ -1,0 +1,387 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.ers.pt","https://www.ordemdosmedicos.pt","https://www.cnpd.pt","https://www.livroreclamacoes.pt","https://www.infarmed.pt","https://www.sns24.gov.pt","https://www.dgs.pt","https://www.insa.min-saude.pt","https://www.spc.pt","https://www.ihmt.unl.pt","https://www.apmgf.pt","https://www.deco.pt","https://www.utente.min-saude.pt","https://www.sosvozamiga.org","https://www.fpcardiologia.pt"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes: tichá nemoc","description":"Kompletní průvodce diabetem v Portugalsku — příčiny, příznaky a symptomy, současná léčba včetně agonistů GLP-1 a inhibitorů SGLT2, význam pravidelných kontrol a budoucí vývoj. Napsal Dr. Tiago Miguel Figueira, Ordem dos Médicos č. 77986.","url":"https://www.myglobalhealth.online/portugal/cs/blog/diabetes-ticha-nemoc-2","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/portugal/cs/blog/diabetes-ticha-nemoc-2#webpage","url":"https://www.myglobalhealth.online/portugal/cs/blog/diabetes-ticha-nemoc-2","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/cs/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-19"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes%3A+tich%C3%A1+nemoc&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F9ea3bb44-d780-4068-ac33-8f3153a05634-33848.webp&v=2026-07-20.1-x4qyue","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologia"},"datePublished":"2026-07-19T05:53:45.279Z","dateModified":"2026-07-19T07:00:32.930Z","publishingPrinciples":"https://www.myglobalhealth.online/portugal/cs/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/portugal/cs/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Domů","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/portugal/cs/blog"},{"@type":"ListItem","position":3,"name":"Diabetes: tichá nemoc","item":"https://www.myglobalhealth.online/portugal/cs/blog/diabetes-ticha-nemoc-2"}]}]Všechny článkyEndocrinologiaDiabetes: tichá nemocDiabetes patří v Portugalsku mezi nejrozšířenější a zároveň nejvíce poddiagnostikovaná chronická onemocnění: podle údajů DGS jím trpí více než milion lidí. Přesto jde o nemoc, kterou lze velmi dobře zvládat, a nedávný pokrok, jako agonisté GLP-1 a inhibitory SGLT2, posunul dnes dostupné možnosti léčby na nejvyšší úroveň v historii.Global Health Medical Team19. července 202619 min čtení+Na této stránceDiabetes v Portugalsku: pochopení rozsahu problémuTypy diabetuPříčiny a rizikové faktoryPříznaky a varovné signálySoučasná léčba diabetu v PortugalskuVýznam pravidelných kontrolBudoucnost léčby diabetuKlíčové instituce a zdroje v PortugalskuČasté dotazy
+
+
+
+  
+  
+    
+      
+      
+      
+      Příčiny, příznaky, léčba a budoucnost péče o diabetes
+      Odhaduje se, že s diabetem žije více než milion Portugalců a tisíce dalších zůstávají bez diagnózy. Tento průvodce shrnuje vše důležité: příčiny, varovné příznaky, nejlepší dnes dostupnou léčbu, význam pravidelných kontrol a nastupující terapie, které mohou v příštích letech proměnit péči o diabetes.
+      
+        — Založeno na důkazech
+        — V souladu s DGS a APDP
+        — Aktualizováno v červnu 2026
+      
+      — Autor: MUDr. Tiago Miguel Figueira · Portugalská lékařská komora č. 77986 · klinický ředitel, Global Health
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      TF
+      
+        Autor: MUDr. Tiago Miguel Figueira
+        Klinický ředitel · Portugalská lékařská komora č. 77986 · všeobecné praktické lékařství
+      
+      10 MIN ČTENÍ
+    
+
+    Diabetes patří mezi nejrozšířenější chronická onemocnění v Portugalsku, a zároveň mezi ta nejčastěji nediagnostikovaná. Často se označuje jako „tichá nemoc", protože diabetes 2. typu, který tvoří více než 90 % všech případů, se může vyvíjet pomalu a bez zjevných příznaků po celé roky. Ve chvíli, kdy je diagnóza stanovena, nemoc už bývá přítomna delší dobu.
+
+    Dobrou zprávou je, že diabetes lze velmi dobře zvládat. Se správnou diagnózou, vhodnou léčbou a pravidelnými kontrolami mohou lidé s diabetem žít plnohodnotný a zdravý život. A díky pozoruhodnému pokroku posledního desetiletí, zejména nástupu agonistů receptoru GLP-1 a inhibitorů SGLT2, jsou možnosti léčby dostupné dnes v Portugalsku nejlepší v historii.
+
+    
+    
+    Sekce 01
+    Diabetes v Portugalsku: pochopení rozsahu problému
+
+    Podle Zprávy Národního programu pro diabetes — Výzvy a strategie 2025, kterou vydává Generální ředitelství zdravotnictví (DGS), žilo na konci roku 2024 v systému primární zdravotní péče 936.987 lidí s diagnostikovaným diabetem — dosud nejvyšší zaznamenaná hodnota — což odpovídá 8,9 % osob registrovaných v portugalské Státní zdravotní službě (SNS). Stejná zpráva zaznamenala 80.915 nově diagnostikovaných případů jen v roce 2024. Podle vyhlášky Diário da República č. 3390/2025 trpí diabetem, včetně nediagnostikovaných případů, celkem přes milion Portugalců, což řadí zemi mezi státy s nejvyšší mírou výskytu v Evropské unii.
+
+    
+      
+        937k
+        Lidí s diagnózou v systému primární péče na konci roku 2024 (DGS)
+      
+      
+        +1M
+        Celkový odhad v Portugalsku, včetně nediagnostikovaných případů
+      
+      
+        81k
+        Nových případů zaznamenaných jen v roce 2024
+      
+      
+        8,4%
+        Z těhotenství v SNS v roce 2023 s gestačním diabetem
+      
+    
+    Zdroj: DGS — Národní program pro diabetes, Výzvy a strategie 2025; Diário da República, vyhláška č. 3390/2025.
+
+    Zpráva DGS zdůrazňuje, že navzdory rostoucímu počtu diagnóz došlo ke zlepšení metabolické kontroly a ke snížení celkové i předčasné úmrtnosti spojené s touto nemocí — což je znakem pozitivního dopadu screeningových programů a modernější léčby. Přesto je diabetes stále přítomen přibližně u třetiny případů akutního infarktu myokardu a cévní mozkové příhody (CMP) v Portugalsku.
+
+    
+      Jste v riziku a nevíte o tom?
+      Významná část lidí s diabetem 2. typu v Portugalsku zůstává bez diagnózy. Pokud máte rizikové faktory — rodinnou anamnézu, nadváhu, vysoký krevní tlak nebo sedavý způsob života — poraďte se se svým lékařem o vyšetření glykémie nalačno nebo HbA1c. Včasná diagnóza je klíčová pro předcházení komplikacím.
+    
+
+    
+    
+    Sekce 02
+    Typy diabetu
+
+    Ne každý diabetes je stejný. Pochopení typu, který máte — nebo kterým jste ohroženi — je prvním krokem k účinné léčbě.
+
+    
+      
+        🔵
+        Diabetes 1. typu
+        Autoimunitní · Závislý na inzulinu
+        Imunitní systém ničí beta buňky slinivky břišní, které produkují inzulin. Tělo vytváří jen málo nebo žádný inzulin. Vyžaduje celoživotní léčbu inzulinem. Obvykle se rozvíjí v dětství nebo v mladé dospělosti. Podle odhadů DGS žije v Portugalsku s diabetem 1. typu asi 33.000 lidí.
+      
+      
+        🟠
+        Diabetes 2. typu
+        Životní styl & genetika · Progresivní
+        Tělo se stává rezistentní vůči inzulinu nebo ho nevytváří dostatek. Úzce souvisí s faktory životního stylu. Nejčastější forma v Portugalsku, tvoří více než 90 % případů. Zpočátku ji lze zvládat úpravou stravy, pohybem a perorální medikací, i když mnoho pacientů nakonec potřebuje inzulin.
+      
+      
+        🟡
+        Gestační diabetes
+        Spojený s těhotenstvím · Obvykle přechodný
+        Vzniká během těhotenství, kdy hormonální změny narušují funkci inzulinu. Obvykle po porodu odezní, ale výrazně zvyšuje celoživotní riziko diabetu 2. typu u matky i dítěte. V roce 2023 byl podle DGS zjištěn u 8,4 % těhotenství vedených v rámci SNS.
+      
+      
+        ⚪
+        Prediabetes
+        Preventabilní · Často zvratný
+        Hladina glykémie je vyšší než normální, ale ještě nedosahuje úrovně diabetu. Jde o kritické okno pro zásah — úprava životního stylu v této fázi může výskyt diabetu 2. typu výrazně oddálit nebo mu předejít. V letech 2022 až 2024 zhodnotil SNS riziko u 3,89 milionu dospělých pacientů, což odpovídá 62 % cílové populace.
+      
+    
+
+    
+    
+    Sekce 03
+    Příčiny a rizikové faktory
+
+    Diabetes 1. typu
+    Přesná příčina diabetu 1. typu není dosud zcela objasněna. Jde o autoimunitní onemocnění — imunitní systém těla mylně napadá a ničí beta buňky slinivky, zodpovědné za tvorbu inzulinu. Roli hrají genetické faktory, stejně jako možná expozice některým virovým infekcím. V Portugalsku se výzkumem v této oblasti zabývají centra jako APDP — Associação Protectora dos Diabéticos de Portugal a výzkumné skupiny Lékařské fakulty Lisabonské univerzity a Lékařské fakulty Portské univerzity.
+
+    Diabetes 2. typu
+    Diabetes 2. typu má komplexnější a lépe ovlivnitelnou skladbu příčin, kombinuje genetickou predispozici s faktory životního stylu a prostředí. Klíčovým mechanismem je inzulinová rezistence — stav, kdy buňky těla přestávají účinně reagovat na inzulin — doprovázená postupným poklesem schopnosti slinivky tento nedostatek kompenzovat vyšší produkcí.
+
+    
+      
+        ⚖️
+        Nadváha a obezita
+        Zejména břišní (viscerální) tuk. Obezita je nejvýznamnějším ovlivnitelným rizikovým faktorem diabetu 2. typu.
+      
+      
+        🛋️
+        Sedavý způsob života
+        Nedostatek pohybu snižuje citlivost na inzulin. Pravidelné cvičení patří mezi nejúčinnější preventivní i léčebné nástroje.
+      
+      
+        🍞
+        Strava bohatá na zpracované potraviny
+        Vysoký příjem rafinovaných sacharidů, cukru a vysoce zpracovaných potravin je silně spojen s inzulinovou rezistencí.
+      
+      
+        👨‍👩‍👧
+        Rodinná anamnéza
+        Pokud má diabetes 2. typu příbuzný prvního stupně, osobní riziko se výrazně zvyšuje.
+      
+      
+        🎂
+        Věk nad 45 let
+        Riziko s věkem roste. Národní zdravotní průzkum i data SNS ukazují rostoucí výskyt ve vyšších věkových skupinách.
+      
+      
+        🩺
+        Vysoký krevní tlak nebo dyslipidemie
+        Metabolické rizikové faktory se často vyskytují společně. Hypertenze a dyslipidemie často doprovázejí inzulinovou rezistenci.
+      
+      
+        🤰
+        Předchozí gestační diabetes
+        Ženy, které prodělaly gestační diabetes, mají podstatně vyšší celoživotní riziko rozvoje diabetu 2. typu.
+      
+      
+        🌍
+        Etnický původ
+        Lidé jihoasijského, subsaharského afrického a blízkovýchodního původu mají vyšší výskyt diabetu 2. typu i při nižších hodnotách BMI.
+      
+    
+
+    
+    
+    Sekce 04
+    Příznaky a varovné signály
+
+    Příznaky diabetu 1. a 2. typu se výrazně liší. Diabetes 1. typu se často projevuje náhle — rychlým nástupem příznaků, které mohou signalizovat diabetickou ketoacidózu (DKA), akutní stav vyžadující neodkladnou lékařskou péči. Diabetes 2. typu se naproti tomu obvykle rozvíjí pomalu a nenápadně po řadu let, s příznaky natolik mírnými nebo postupnými, že je mnoho lidí přičítá stárnutí, stresu nebo únavě.
+
+    
+      
+        💧
+        
+          Nadměrná žízeň
+          Trvalá, obtížně utišitelná žízeň (polydipsie), protože ledviny pracují na vyloučení přebytečné glukózy.
+        
+      
+      
+        🚽
+        
+          Časté močení
+          Polyurie, zejména v noci (nykturie). Často bývá prvním a nejvíce obtěžujícím příznakem.
+        
+      
+      
+        😴
+        
+          Přetrvávající únava
+          Stálá vyčerpanost i po dostatečném odpočinku, způsobená nedostatkem glukózy v buňkách.
+        
+      
+      
+        ⚖️
+        
+          Nevysvětlitelný úbytek hmotnosti
+          Zejména u 1. typu — tělo bez inzulinu odbourává tuky a svaly, aby získalo energii.
+        
+      
+      
+        👁️
+        
+          Rozmazané vidění
+          Vysoká glykémie mění tvar oční čočky a dočasně ovlivňuje zaostřování.
+        
+      
+      
+        🩹
+        
+          Pomalé hojení ran
+          Zhoršené prokrvení a oslabená imunita zpomalují hojení řezných ran, poranění a infekcí.
+        
+      
+      
+        🤚
+        
+          Brnění nebo necitlivost
+          Periferní neuropatie — postihující ruce a nohy — může být časným příznakem, zejména u 2. typu.
+        
+      
+      
+        🍽️
+        
+          Neustálý hlad
+          Polyfagie — přetrvávající hlad i po jídle — nastává, když buňky nedokážou glukózu účinně vstřebávat.
+        
+      
+    
+
+    
+      Kdy vyhledat neodkladnou péči:
+      Pokud se u vás nebo vašeho blízkého náhle objeví silná žízeň, nadměrné močení, zvracení, bolest břicha, zmatenost nebo dech páchnoucí po acetonu — zejména u dítěte nebo mladého dospělého — může jít o diabetickou ketoacidózu (DKA), akutní stav ohrožující život. Okamžitě volejte linku 112 nebo vyhledejte nejbližší pohotovost.
+    
+
+    
+    
+    Sekce 05
+    Současná léčba diabetu v Portugalsku
+
+    Léčba diabetu prošla za poslední desetiletí zásadní proměnou. V Portugalsku stanovuje Národní program pro diabetes DGS národní klinické postupy, v souladu s mezinárodními doporučeními American Diabetes Association (ADA) a European Association for the Study of Diabetes (EASD). V únoru 2025 se inzulinové pumpy začaly vydávat i ve veřejných lékárnách v Portugalsku — významný milník v dostupnosti léčby diabetu 1. typu.
+
+    Úprava životního stylu — základ veškeré léčby
+    U diabetu 1. i 2. typu je životní styl základním kamenem léčby. Zejména u 2. typu mohou změna stravování a zvýšení fyzické aktivity výrazně snížit hodnotu HbA1c, zlepšit citlivost na inzulin a v některých případech — například po bariatrické operaci nebo při dietách s velmi nízkým energetickým příjmem — vést k trvalé remisi. APDP i nutriční a ošetřovatelské poradny ve zdravotních střediscích SNS nabízejí po celé zemi strukturovanou podporu při změně životního stylu.
+
+    Farmakologická léčba
+    V Portugalsku jsou dostupné následující skupiny léků. Terapeutická rozhodnutí jsou vždy individuální — doporučení DGS, ADA 2025 i EASD zdůrazňují přístup zaměřený na pacienta, který zohledňuje kardiovaskulární riziko, funkci ledvin, hmotnost a osobní preference.
+
+    
+      
+        První linie · 2. typ
+        Metformin
+        Glucophage · generikum (hrazeno SNS)
+        Zavedený perorální lék první volby pro diabetes 2. typu. Snižuje glykémii omezením tvorby glukózy v játrech. Dobře snášený, dostupný a široce používaný. V Portugalsku zůstává výchozím bodem většiny léčebných postupů u 2. typu.
+      
+      
+        Kardiorenální ochrana
+        Agonisté GLP-1
+        Semaglutid (Ozempic, Wegovy) · Liraglutid (Victoza)
+        Přelomová skupina injekčních (a nyní i perorálních) léků, které napodobují střevní hormon GLP-1. Snižují glykémii, podporují výrazný úbytek hmotnosti, zpomalují vyprazdňování žaludku a snižují kardiovaskulární riziko. Doporučení ADA 2025 je řadí mezi prioritní volbu u pacientů se zjištěným kardiovaskulárním onemocněním nebo vysokým rizikem. V Portugalsku dostupné na lékařský předpis.
+      
+      
+        Kardiorenální ochrana
+        Inhibitory SGLT2
+        Empagliflozin (Jardiance) · Dapagliflozin (Forxiga)
+        Tyto tablety snižují glykémii tím, že podporují vylučování přebytečného cukru močí. Nezávisle chrání srdce i ledviny — doporučují se jako první volba u pacientů se srdečním selháním nebo chronickým onemocněním ledvin, bez ohledu na hodnotu HbA1c. Podloženy silnými důkazy ze studií EMPA-REG OUTCOME a CREDENCE.
+      
+      
+        Kontrola glykémie
+        Inhibitory DPP-4
+        Sitagliptin (Januvia) · Linagliptin (Trajenta)
+        Perorální tablety, které zvyšují na glukóze závislou sekreci inzulinu. Hmotnostně neutrální, s nízkým rizikem hypoglykemie. Často se používají, když agonisté GLP-1 nebo inhibitory SGLT2 nejsou tolerovány nebo vhodné. V Portugalsku dostupné s úhradou SNS.
+      
+      
+        1. typ & pokročilý 2. typ
+        Inzulinoterapie
+        Bazální, bolusové, premixované inzuliny · Inzulinové pumpy
+        Nezbytná pro všechny pacienty s 1. typem a pro mnohé s 2. typem. Moderní analogové inzuliny nabízejí předvídatelnější účinek než starší přípravky. Od února 2025 se inzulinové pumpy vydávají i ve veřejných lékárnách v Portugalsku — dostupnost v průběhu roku 2025 exponenciálně rostla.
+      
+      
+        1. typ · Nový standard
+        Kontinuální monitorování glykémie (CGM)
+        Libre · Dexcom · Medtronic
+        CGM odstraňuje potřebu vpichů do prstu, poskytuje trendy glykémie v reálném čase a upozornění a zlepšuje kontrolu glykémie. V Portugalsku používalo na konci roku 2024 přibližně 40.000 lidí intersticiální monitorování glukózy, s náklady 55 milionů eur podle DGS. Dostupnost dále soustavně roste.
+      
+    
+
+    
+      Aktualizace doporučení ADA 2025:
+      Doporučení American Diabetes Association z roku 2025 potvrzují, že agonisté GLP-1 a inhibitory SGLT2 by měli být upřednostňováni u pacientů s diabetem 2. typu, kteří mají zjištěné kardiovaskulární onemocnění nebo vysoké riziko, srdeční selhání či chronické onemocnění ledvin — nezávisle na hodnotě HbA1c. Pokud máte diabetes 2. typu a některý z těchto stavů, poraďte se se svým lékařem, zda jsou pro vás tyto skupiny léků vhodné.
+    
+
+    
+    
+    Sekce 06
+    Význam pravidelných kontrol
+
+    Diabetes je chronické onemocnění, které se v čase vyvíjí, a jeho komplikace mohou být, pokud nejsou včas odhaleny, závažné a nevratné. Diabetická retinopatie patří v Portugalsku mezi hlavní příčiny slepoty u dospělé populace. Diabetická nefropatie je jedním z hlavních faktorů vzniku konečného stadia chronického onemocnění ledvin. Periferní neuropatie vede ke komplikacím nohou, které mohou v nejtěžších případech skončit amputací. Míra amputací diabetické nohy v Portugalsku zůstává podle zprávy DGS z roku 2025 vysoká, přestože screening nohou proběhl u 83 % pacientů s diabetem.
+
+    Desítky let výzkumu prokazují, že všem těmto komplikacím lze z velké části předejít — nebo je alespoň výrazně oddálit — díky dobré kontrole glykémie, řízení krevního tlaku a pravidelným kontrolám. Strukturovaná roční kontrola diabetu patří mezi nákladově nejefektivnější zákroky v celé medicíně.
+
+    Co by měla obsahovat vaše roční kontrola diabetu
+
+    
+      Vyšetření HbA1c (průměrná glykémie za poslední 3 měsíce)
+      Měření krevního tlaku a revize antihypertenzní léčby
+      Funkce ledvin — odhadovaná glomerulární filtrace (eGFR) a poměr albumin/kreatinin v moči
+      Cholesterol a kompletní lipidogram
+      Zhodnocení hmotnosti a BMI
+      Vyšetření nohou, včetně hodnocení pulzů a citlivosti
+      Screening diabetické retinopatie v rámci Národního screeningového programu koordinovaného DGS
+      Revize a případná úprava medikace
+      Zhodnocení dodržování plánu samostatné péče o diabetes
+      Posouzení kuřáckých návyků a podpora při odvykání kouření, je-li potřeba
+      Očkování proti chřipce (důrazně doporučeno lidem s diabetem)
+    
+
+    Screening pro dosud nediagnostikované
+    Pokud máte rizikové faktory diabetu 2. typu a nikdy jste nebyli vyšetřeni, může váš praktický lékař požádat o vyšetření glykémie nalačno nebo HbA1c — jednoduchá vyšetření prováděná v laboratořích SNS. To je obzvlášť důležité, pokud je vám více než 45 let, máte rodinnou anamnézu diabetu, vysoký krevní tlak nebo jste měli nadváhu během těhotenství. Včasné odhalení prediabetu poskytuje reálnou příležitost, jak změnou životního stylu předejít nebo oddálit vznik diabetu 2. typu.
+
+    
+      Screening diabetické retinopatie v Portugalsku:
+      Národní program screeningu diabetické retinopatie, koordinovaný DGS ve spolupráci s místními zdravotnickými jednotkami (ULS), nabízí bezplatný screening lidem s diabetem prostřednictvím zařízení primární péče. APDP provádí terénní screening již přibližně 20 let ve spolupráci s ARS Lisboa e Vale do Tejo a za jeden rok jím prošlo přibližně 50.000 lidí s diabetem. Přesto v roce 2024 screening absolvovalo jen 29 % pozvaných osob — číslo, které je třeba zlepšit. Ujistěte se, že jste do programu zařazeni.
+    
+
+    
+    
+    Sekce 07
+    Budoucnost léčby diabetu
+
+    Tempo inovací v medicíně diabetu nemá obdoby. Několik oblastí výzkumu — některé již v pokročilých klinických studiích — má potenciál v příštím desetiletí zásadně změnit, co znamená žít s diabetem.
+
+    
+      
+        Fáze 1/2/3 · regulační schválení očekáváno 2026
+        Terapie kmenovými buňkami odvozenými od beta buněk
+        Zimislecel (dříve VX-880) od společnosti Vertex Pharmaceuticals spočívá v infuzi plně diferencovaných ostrůvkových buněk produkujících inzulin, vytvořených z kmenových buněk, do portální žíly jater — s cílem obnovit vlastní tvorbu inzulinu u diabetu 1. typu. V červnu 2025 zahrnovala pivotní studie 50 účastníků, s plánovaným podáním k regulačnímu schválení v roce 2026. Přehledová studie publikovaná v PMC (2025) popisuje tento přístup jako potenciálně „převratný", protože působí současně na regeneraci beta buněk i na modulaci imunitního systému.
+      
+      
+        Klinický vývoj
+        Umělá slinivka
+        Systémy s uzavřenou smyčkou pro automatické dávkování inzulinu — které spojují kontinuální monitorování glykémie s automatizovanými inzulinovými pumpami — představují již dnes zásadní pokrok pro pacienty s 1. typem. V Portugalsku používalo v první polovině roku 2025 podle DGS už 3.546 z 5.537 pacientů léčených inzulinovými pumpami systémy automatického dávkování inzulinu (SAAI). Další generace těchto systémů zahrnuje algoritmy strojového učení, které dokážou předvídat výkyvy glykémie ještě předtím, než nastanou.
+      
+      
+        Nastupující terapie
+        Duální a triální agonisté receptorů
+        Tirzepatid (Mounjaro), duální agonista GIP/GLP-1, prokázal ve srovnání se stávajícími agonisty GLP-1 výraznější snížení HbA1c i úbytek hmotnosti a v Portugalsku je již dostupný. Triální agonisté (GLP-1/GIP/glukagon) procházejí pokročilými klinickými studiemi a mohou nabídnout ještě větší metabolický přínos.
+      
+      
+        Výzkum imunoterapie
+        Modulace imunitního systému u 1. typu
+        Teplizumab (monoklonální protilátka anti-CD3) v klinických studiích prokázal, že u vysoce rizikových jedinců dokáže oddálit klinický nástup diabetu 1. typu přibližně o dva roky. Pokračuje výzkum inhibitorů imunitních kontrolních bodů a indukce tolerance s cílem zachovat zbytkovou funkci beta buněk v době diagnózy.
+      
+      
+        Precizní medicína
+        Genomika a léčba řízená umělou inteligencí
+        Genomová charakterizace začíná odhalovat podtypy diabetu, které odlišně reagují na konkrétní léky. Vyvíjejí se kontinuální monitory glykémie s umělou inteligencí, které se učí individuální metabolické vzorce a nabízejí personalizovaná doporučení — s potenciálem proměnit každodenní péči o diabetes.
+      
+      
+        Regenerativní medicína
+        Zapouzdření beta buněk
+        Paralelní strategie k transplantaci kmenových buněk spočívá v zapouzdření buněk produkujících inzulin do ochranných biomateriálových zařízení, která je chrání před imunitní destrukcí — a mohou tak potenciálně odstranit potřebu imunosuprese. Diabetes Research Institute Univerzity v Miami prokázal v klinických studiích důkaz konceptu, přičemž první pacient dosáhl nezávislosti na inzulinu.
+      
+    
+
+    Výzkumu terapie kmenovými buňkami u diabetu 1. typu se podrobně věnuje publikace z roku 2025 v PMC (PMID: PMC12689004), která uzavírá, že „terapie kmenovými buňkami nabízí dvojí strategii: regeneraci beta buněk produkujících inzulin a regulaci imunitních odpovědí." Ačkoli definitivní lék zůstává cílem budoucnosti, směr výzkumu je nadějnější než kdy dříve.
+
+    
+    
+    Sekce 08
+    Klíčové instituce a zdroje v Portugalsku
+
+    Pokud v Portugalsku žijete s diabetem, nebo se obáváte rizika jeho rozvoje, následující organizace a služby jsou vašimi hlavními kontaktními místy pro klinickou péči, edukaci a podporu.
+
+    
+      🏥 DGS — Národní program pro diabetes
+      🩺 APDP
+      📋 Portugalská lékařská komora
+      📞 Linka SNS 24 (808 24 24 24)
+      🎓 SPEDM
+      🔬 FMUL
+      🚑 INEM (112)
+    
+
+    DGS — Národní program pro diabetes
+    ​Národní program pro diabetes Generálního ředitelství zdravotnictví je celostátní referencí pro politiku a klinické postupy v oblasti diabetu v Portugalsku. Výroční zpráva — jejíž vydání z roku 2025 obsahuje aktualizovaná data za rok 2024 — je nejucelenějším monitorovacím dokumentem o diabetu v Portugalsku, pokrývajícím prevalenci, screening, léčbu i úmrtnost. Národní klinické postupy, v souladu s evropskými a mezinárodními doporučeními, jsou dostupné na portálu DGS.
+
+    APDP — Associação Protectora dos Diabéticos de Portugal
+    APDP, založená v roce 1926, je hlavní referenční institucí pro lidi s diabetem v Portugalsku. Nabízí specializované konzultace, programy terapeutické edukace, nutriční podporu, screening diabetické retinopatie i klinický výzkum. APDP provádí terénní screening diabetické retinopatie ve spolupráci s ARS Lisboa e Vale

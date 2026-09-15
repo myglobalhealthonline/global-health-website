@@ -1,0 +1,211 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.medicalcouncil.ie","https://www.dataprotection.ie","https://www.hse.ie","https://www.hiqa.ie","https://www.hpra.ie","https://www.rcpi.ie","https://www.icgp.ie","https://www.irishpsychiatry.ie","https://www.nai.ie","https://irishheart.ie","https://www.citizensinformation.ie","https://www.gov.ie/en/organisation/department-of-social-protection/","https://www.samaritans.org/ireland","https://www.pieta.ie"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}]{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Acasă","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Informații legale","item":"https://www.myglobalhealth.online/ireland/ro/legal"},{"@type":"ListItem","position":3,"name":"Politica de Rambursare","item":"https://www.myglobalhealth.online/ireland/ro/legal/refund-policy"}]}LegalIrlanda · Informații legalePolitica de RambursareVersiunea 2 · Ultima actualizare 18 July 2026Toate documentele legalePolitica de Rambursare
+Toate Piețele | Consultații, Credite, Produse Fizice, Livrare la Domiciliu
+Data intrării în vigoare: 1 iulie 2026
+
+Politica de Rambursare — Rezumat
+
+OperatorGlobal Guest s.r.o., care activează sub numele Global Health
+IČO19071680
+Contactglobalhealth@myglobalhealth.online
+PiețeA se vedea www.myglobalhealth.online/markets
+Contact pentru rambursăriglobalhealth@myglobalhealth.online — subiect: „Cerere de Rambursare”
+Timp de procesare a rambursăriiÎn termen de 14 zile de la aprobare (UE) / 7 zile lucrătoare (Brazilia)
+Data intrării în vigoare1 iulie 2026
+
+
+Referință Rapidă — Scenarii de Rambursare
+Tabelul de mai jos rezumă rezultatul rambursării pentru fiecare scenariu. Detaliile complete pentru fiecare categorie sunt prevăzute în secțiunile următoare.
+
+ScenariuRezultatPiețe
+Consultație anulată cu ≥24h înainteCredite restituite integralToate piețele
+Consultație anulată cu <24h înainteCredite pierduteToate piețele
+Consultație anulată cu <24h — urgență medicalăCredite restituite (cu documentație)Toate piețele
+Consultație nefurnizată — vina platformeiCredite restituite + opțiune de rambursare în numerarToate piețele
+NeprezentareCredite pierduteToate piețele
+Plan de Credite — în perioada de retragere de 14 zile, fără credite utilizateRambursare integrală în numerarPiețele din UE
+Plan de Credite — în perioada de retragere de 14 zile, credite utilizateRambursare proporțională în numerarPiețele din UE
+Plan de Credite — în perioada de retragere de 7 zile, fără credite utilizateRambursare integrală în numerarBrazilia
+Plan de Credite — după perioada de retragere, credite neutilizateNerambursabilToate piețele
+Credite punctuale — neutilizateNerambursabilToate piețele
+Kit de Testare Medicală la Domiciliu — nedeschis, în 14 zileRambursare integralăToate piețele
+Kit de Testare Medicală la Domiciliu — deschis sau după 14 zileNerambursabilToate piețele
+Kit de Testare Medicală la Domiciliu — deteriorat la sosireRambursare integrală sau înlocuireToate piețele
+Dispozitiv de Telemedicină — neutilizat, în 30 de zileRambursare integralăToate piețele
+Dispozitiv de Telemedicină — utilizat sau după 30 de zileNerambursabilToate piețele
+Dispozitiv de Telemedicină — defect la sosireRambursare integrală sau înlocuireToate piețele
+Livrare la Domiciliu — înainte de expediereRambursare integralăDoar Irlanda
+Livrare la Domiciliu — după expediereNerambursabilDoar Irlanda
+
+
+1. Introducere
+Prezenta Politică de Rambursare se aplică tuturor produselor și serviciilor achiziționate prin intermediul platformei Global Health de la www.myglobalhealth.online, operată de Global Guest s.r.o. (IČO: 19071680), care activează sub numele Global Health.
+Global Health oferă patru categorii de articole achiziționabile, fiecare cu propriile reguli de rambursare: (1) consultații medicale programate individual sau utilizând Credite; (2) Planuri de Credite (abonamente lunare); (3) produse fizice, inclusiv Kituri de Testare Medicală la Domiciliu și Dispozitive de Telemedicină; și (4) servicii de Livrare la Domiciliu (doar Irlanda).
+Drepturile dumneavoastră statutare de consumator din țara dumneavoastră de reședință nu sunt afectate de prezenta Politică și prevalează atunci când oferă o protecție mai mare. Drepturile statutare aplicabile pe piața dumneavoastră sunt prevăzute în Anexa de Țară pentru piața dumneavoastră, disponibilă la www.myglobalhealth.online/terms.
+Pentru a solicita o rambursare, trimiteți un email la globalhealth@myglobalhealth.online cu subiectul „Cerere de Rambursare”. Includeți numele complet, adresa de email a contului, referința programării sau comenzii și motivul solicitării. Vom confirma primirea solicitării dumneavoastră în termen de 2 zile lucrătoare.
+
+2. Consultații Medicale
+
+2.1 Anularea cu mai mult de 24 de ore înainte de programare
+Dacă anulați o consultație confirmată cu cel puțin 24 de ore înainte de ora programată, orice Credite utilizate pentru programarea consultației vor fi restituite integral în contul dumneavoastră. Dacă ați plătit prin plată directă (nu prin Credite), veți primi o rambursare integrală către metoda dumneavoastră inițială de plată în termen de 14 zile.
+
+2.2 Anularea cu mai puțin de 24 de ore înainte de programare
+Dacă anulați o consultație confirmată cu mai puțin de 24 de ore înainte de ora programată, Creditele sau plata utilizate pentru programarea consultației se pierd. Nu se va emite nicio rambursare sau restituire de Credite, cu excepția circumstanțelor prevăzute în clauza 2.3.
+
+2.3 Excepții de la regula anulării tardive
+Creditele sau plata vor fi restituite sau rambursate atunci când anularea tardivă se datorează:
+
+Unei urgențe medicale documentate care vă afectează pe dumneavoastră sau un membru apropiat al familiei — putem solicita documentație justificativă, la discreția noastră.
+Unei defecțiuni a platformei care v-a împiedicat să accesați sau să finalizați consultația — în acest caz, restituirea este automată.
+Anulării consultației sau neprezentării Clinicianului — a se vedea clauza 2.5.
+
+
+2.4 Reprogramarea
+Puteți reprograma o consultație confirmată cu până la 12 ore înainte de ora programată, fără a suporta nicio taxă în Credite. Fiecare programare poate fi reprogramată o singură dată fără taxă. Solicitările ulterioare de reprogramare vor fi tratate ca o anulare conform clauzei 2.2.
+
+2.5 Consultație nefurnizată — vina platformei sau a Clinicianului
+Dacă o consultație programată nu poate avea loc în termen de 2 ore de la ora programată dintr-un motiv imputabil Global Health sau Clinicianului, vi se va oferi:
+
+Restituirea integrală a oricăror Credite utilizate, creditate imediat în contul dumneavoastră; sau
+O rambursare integrală în numerar a valorii monetare a Creditelor sau plății utilizate, procesată către metoda dumneavoastră inițială de plată în termen de 14 zile.
+
+Puteți alege oricare dintre opțiuni. Vă rugăm contactați globalhealth@myglobalhealth.online pentru a solicita remediul preferat.
+
+2.6 Neprezentare
+Dacă nu vă prezentați la o consultație programată fără notificare prealabilă de anulare sau reprogramare, Creditele sau plata utilizate pentru programarea acelei consultații se pierd. Nu se va emite nicio restituire sau rambursare.
+
+2.7 Preocupări privind calitatea
+Dacă aveți preocupări privind calitatea unei consultații, vă rugăm consultați procedura noastră de plângeri de la www.myglobalhealth.online/complaints. Preocupările privind calitatea sunt gestionate prin procesul nostru de guvernanță clinică și nu sunt tratate ca cereri de rambursare. Drepturile dumneavoastră statutare ca și consumator în jurisdicția dumneavoastră nu sunt afectate de prezenta clauză.
+
+3. Credite și Planuri de Credite
+
+3.1 Ce sunt Creditele?
+Creditele sunt unitatea de valoare utilizată pentru a programa Servicii pe Platformă. Creditele pot fi obținute prin abonarea la un Plan lunar de Credite sau prin achiziționarea lor punctuală. Creditele nu au valoare monetară și nu sunt transferabile între conturi.
+
+3.2 Perioada statutară de retragere — abonamente la Planul de Credite
+Drepturile dumneavoastră statutare de retragere depind de țara dumneavoastră de reședință:
+
+Piețele din UE (Irlanda, Portugalia, Republica Cehă, Spania, România): Aveți un drept de retragere de 14 zile de la data primului abonament. Dacă anulați în termen de 14 zile și nu ați utilizat niciun Credit, veți primi o rambursare integrală în numerar a taxei de abonament, către metoda dumneavoastră inițială de plată, în termen de 14 zile. Dacă ați utilizat Credite în perioada de retragere, se va aplica o deducere proporțională, reflectând valoarea monetară a Creditelor utilizate.
+Brazilia: Aveți un drept de retragere de 7 zile de la data primului abonament, conform Artigo 49 din Código de Defesa do Consumidor. Dacă anulați în termen de 7 zile și nu ați utilizat niciun Credit, veți primi o rambursare integrală în numerar în termen de 7 zile lucrătoare. Dacă au fost utilizate Credite, se aplică o deducere proporțională.
+
+
+3.3 Credite utilizate — nerambursabile
+Creditele care au fost utilizate pentru a programa o consultație sau un serviciu sunt nerambursabile, sub rezerva prevederilor privind anularea și vina la consultație din Secțiunea 2.
+
+3.4 Credite neutilizate după perioada de retragere — nerambursabile
+Creditele care rămân neutilizate în contul dumneavoastră după expirarea perioadei statutare de retragere sunt nerambursabile. Aceasta se aplică atât Creditelor din Planul de Credite, cât și Creditelor punctuale achiziționate în afara unui Plan.
+
+3.5 Anularea Planului de Credite — fără rambursare pentru porțiunea neutilizată a ciclului curent de facturare
+Atunci când anulați un Plan de Credite, anularea produce efecte la finalul ciclului lunar curent de facturare. Păstrați accesul la toate Creditele și beneficiile Planului până la sfârșitul perioadei plătite. Nu se emite nicio rambursare parțială pentru orice porțiune neutilizată a ciclului curent de facturare, după expirarea perioadei de retragere.
+
+3.6 Reportarea Creditelor de Plan neutilizate după anulare
+Creditele alocate în cadrul unui Plan de Credite anulat rămân disponibile în contul dumneavoastră timp de 12 luni de la data anulării. După 12 luni, Creditele de Plan neutilizate expiră și nu sunt rambursabile. Creditele punctuale achiziționate în afara unui Plan nu sunt afectate de anularea Planului și nu expiră.
+
+3.7 Închiderea contului
+Dacă închideți contul dumneavoastră Global Health, orice Credite rămase în cont se pierd și nu sunt rambursabile, cu excepția cazului în care închideți contul ca răspuns la o modificare semnificativă a prezenților Termeni, caz în care Creditele vor fi rambursate la valoarea lor monetară în termen de 10 zile lucrătoare, conform Termenilor Generali.
+
+3.8 Credite punctuale
+Creditele achiziționate punctual, în afara unui Plan de Credite, sunt nerambursabile odată achiziționate, cu excepția cazurilor impuse de legea aplicabilă privind protecția consumatorului din jurisdicția dumneavoastră. Creditele punctuale nu expiră și se reportează pe termen nelimitat atâta timp cât contul dumneavoastră este activ.
+
+4. Kituri de Testare Medicală la Domiciliu
+Kiturile de Testare Medicală la Domiciliu sunt produse fizice expediate la adresa dumneavoastră. Următoarea politică de rambursare se aplică tuturor kiturilor de testare achiziționate prin intermediul Platformei.
+
+4.1 Fereastră de returnare de 14 zile — kituri nedeschise
+Puteți returna un Kit de Testare Medicală la Domiciliu în termen de 14 zile de la livrare și puteți primi o rambursare integrală, cu condiția ca kitul să fie:
+
+Complet nedeschis și în ambalajul original sigilat.
+Neutilizat și neactivat — inclusiv orice coduri de activare digitală sau pași de înregistrare.
+Returnat cu toate componentele originale, instrucțiunile și ambalajul incluse.
+
+Costurile de returnare vă revin, cu excepția cazului în care returnarea se datorează unui defect sau unui articol incorect primit.
+
+4.2 Kituri deschise sau activate — nerambursabile
+Din motive de sănătate, igienă și siguranță, nu putem accepta returnarea Kiturilor de Testare Medicală la Domiciliu care au fost deschise, activate sau utilizate în orice mod. Aceasta se aplică chiar dacă testul nu a fost finalizat sau rezultatele nu au fost procesate. Nu se va emite nicio rambursare pentru kituri deschise sau activate.
+
+4.3 Articole deteriorate, defecte sau incorecte
+Dacă kitul dumneavoastră sosește deteriorat, defect sau nu este ceea ce ați comandat, vă rugăm contactați-ne la globalhealth@myglobalhealth.online în termen de 48 de ore de la livrare, cu fotografii ale articolului și ambalajului. Vă vom oferi fie:
+
+O rambursare integrală către metoda dumneavoastră inițială de plată, în termen de 14 zile; fie
+Un kit de înlocuire expediat fără costuri suplimentare.
+
+Alegeți remediul preferat. Vom acoperi costurile de returnare pentru articolele deteriorate, defecte sau incorecte.
+
+4.4 Cum se inițiază o returnare
+Trimiteți un email la globalhealth@myglobalhealth.online cu subiectul „Cerere de Rambursare — Kit de Testare”. Includeți numele complet, numărul de referință al comenzii, motivul returnării și fotografii, dacă este relevant. Vă vom furniza instrucțiuni de returnare și o adresă de returnare, după aprobare. Costurile de returnare vă revin. Atunci când o returnare implică expediere din afara Irlandei, vă vom recomanda cea mai eficientă metodă de returnare — dacă costurile de expediere a returului ar fi disproporționate, putem organiza un remediu alternativ, precum o înlocuire sau un credit.
+
+5. Dispozitive de Telemedicină
+Dispozitivele de Telemedicină sunt articole electronice fizice utilizate în conjuncție cu Platforma Global Health. Exemple includ dispozitive conectate de monitorizare a sănătății, stetoscoape digitale și echipamente similare.
+
+5.1 Fereastră de returnare de 30 de zile — dispozitive neutilizate
+Puteți returna un Dispozitiv de Telemedicină în termen de 30 de zile de la livrare și puteți primi o rambursare integrală, cu condiția ca dispozitivul să fie:
+
+Neutilizat și în starea sa originală, fără semne de utilizare sau uzură.
+În ambalajul original, cu toate accesoriile, cablurile, manualele și materialele de protecție incluse.
+Neînregistrat, neactivat sau nesincronizat cu niciun cont sau aplicație.
+
+Costurile de returnare vă revin, cu excepția cazului în care returnarea se datorează unui defect sau unui articol incorect.
+
+5.2 Dispozitive utilizate — nerambursabile
+Dispozitivele de Telemedicină care prezintă semne de utilizare, au fost activate sau înregistrate, sau sunt returnate după 30 de zile de la livrare, nu sunt eligibile pentru rambursare.
+
+5.3 Dispozitive defecte sau incorecte
+Dacă un dispozitiv sosește defect, deteriorat sau nu este ceea ce ați comandat, vă rugăm contactați-ne la globalhealth@myglobalhealth.online în termen de 48 de ore de la livrare, cu fotografii. Vă vom oferi fie o rambursare integrală, fie o înlocuire, fără costuri suplimentare. Acoperim costurile de returnare pentru dispozitivele defecte sau incorecte.
+
+5.4 Garanție
+Dispozitivele de Telemedicină sunt acoperite de garanția producătorului. Termenii de garanție variază în funcție de dispozitiv și producător și sunt incluși în documentația produsului. Reclamațiile de garanție de după fereastra de returnare de 30 de zile trebuie adresate producătorului. Global Health va asista în facilitarea cererilor de garanție, acolo unde este posibil.
+
+6. Livrare la Domiciliu — Doar Irlanda
+Doar Irlanda: Serviciile de Livrare la Domiciliu sunt disponibile în prezent doar în Irlanda.
+Livrarea la Domiciliu se referă la livrarea medicamentelor eliberate pe bază de prescripție sau a produselor de sănătate la adresa dumneavoastră din Irlanda, facilitată de Global Health împreună cu un partener farmaceutic înregistrat.
+
+6.1 Anularea înainte de expediere
+Dacă anulați o comandă de Livrare la Domiciliu înainte ca aceasta să fi fost expediată de farmacie, veți primi o rambursare integrală către metoda dumneavoastră inițială de plată, în termen de 14 zile. Pentru a anula înainte de expediere, contactați globalhealth@myglobalhealth.online cât mai curând posibil după plasarea comenzii.
+
+6.2 Anularea după expediere — nerambursabilă
+Odată ce o comandă de Livrare la Domiciliu a fost expediată de farmacie, aceasta nu poate fi anulată sau returnată, din cauza naturii medicamentelor eliberate pe bază de prescripție și a reglementărilor irlandeze aplicabile privind medicamentele. Nu se va emite nicio rambursare după expediere.
+
+6.3 Nelivrarea sau livrarea incorectă
+Dacă comanda dumneavoastră nu este livrată în termenul estimat sau dacă este livrat articolul incorect, vă rugăm contactați globalhealth@myglobalhealth.online în termen de 48 de ore. Vom investiga și, după caz, vom organiza o livrare de înlocuire sau o rambursare integrală.
+
+6.4 Articole deteriorate la livrare
+Dacă articolele sosesc deteriorate, vă rugăm fotografiați articolele și ambalajul și contactați-ne în termen de 48 de ore de la livrare. Vom organiza o înlocuire fără costuri suplimentare.
+
+7. Drepturile dumneavoastră Statutare de Consumator
+Prezenta Politică de Rambursare prevede termenii standard de rambursare ai Global Health. În toate piețele în care activează Global Health, drepturile dumneavoastră statutare de consumator se aplică și nu pot fi excluse sau limitate de prezenta Politică.
+Drepturi statutare cheie pe piață:
+
+Irlanda: Consumer Rights Act 2022 — perioadă de retragere de 14 zile pentru contractele la distanță; remedii pentru serviciile neconforme cu contractul.
+Portugalia: Decreto-Lei nr. 24/2014 — drept de retragere de 14 zile; rambursare în termen de 14 zile de la anulare.
+Republica Cehă: Občanský zákoník (Zákon č. 89/2012 Sb.) — drept de retragere de 14 zile pentru contractele la distanță.
+Spania: TRLGDCU — drept de retragere de 14 zile; rambursare integrală a oricărei plăți efectuate.
+România: OUG 34/2014 — drept de retragere de 14 zile pentru contractele la distanță.
+Brazilia: Código de Defesa do Consumidor — drept de retragere de 7 zile; rambursare în termen de 7 zile lucrătoare.
+
+Atunci când drepturile dumneavoastră statutare oferă un remediu mai favorabil pentru dumneavoastră decât cel prevăzut în prezenta Politică, se aplică drepturile dumneavoastră statutare. Dacă nu sunteți sigur de drepturile dumneavoastră, puteți contacta autoritatea de protecție a consumatorului din țara dumneavoastră — detaliile sunt în Anexa de Țară pentru piața dumneavoastră.
+
+8. Cum se Solicită o Rambursare
+Pentru a solicita o rambursare pentru orice produs sau serviciu:
+
+Trimiteți un email la globalhealth@myglobalhealth.online cu subiectul „Cerere de Rambursare”.
+Includeți: numele complet, adresa de email a contului, numărul de referință al programării sau comenzii, produsul sau serviciul pentru care solicitați rambursarea și motivul solicitării.
+Pentru returnarea produselor fizice (Kituri de Testare sau Dispozitive), includeți fotografii dacă articolul este deteriorat sau defect.
+
+Vom confirma primirea solicitării dumneavoastră în termen de 2 zile lucrătoare și vom urmări soluționarea acesteia în termen de 14 zile lucrătoare. Rambursările aprobate sunt procesate către metoda dumneavoastră inițială de plată în termen de:
+
+14 zile de la confirmarea deciziei de rambursare — piețele din UE.
+7 zile lucrătoare de la confirmarea deciziei de rambursare — Brazilia.
+
+Rambursările sunt procesate prin Stripe, furnizorul nostru de servicii de plată. Odată ce inițiem o rambursare, timpul necesar ca fondurile să apară în contul dumneavoastră depinde de emitentul cardului dumneavoastră și durează, de regulă, încă 5–10 zile lucrătoare de la inițierea procesului. Acest interval este în afara controlului nostru.
+Rambursările se emit către metoda de plată inițială utilizată la momentul achiziției. Dacă metoda dumneavoastră inițială de plată nu mai este valabilă — de exemplu, un card expirat sau un cont închis — vă rugăm contactați-ne la globalhealth@myglobalhealth.online, astfel încât să putem organiza o metodă alternativă de rambursare.
+
+9. Modificări ale Prezentei Politici de Rambursare
+Putem actualiza periodic prezenta Politică de Rambursare, pentru a reflecta modificări ale serviciilor, produselor sau legii aplicabile. Modificările semnificative vă vor fi notificate prin email cu cel puțin 30 de zile înainte de a intra în vigoare. Drepturile dumneavoastră statutare nu sunt afectate de nicio modificare a prezentei Politici.
+Versiunea curentă a prezentei Politici este întotdeauna disponibilă la www.myglobalhealth.online/refund-policy.
+
+10. Contactați-ne
+Pentru cereri de rambursare sau întrebări privind prezenta Politică:
+Global Health — Asistență Clienți
+Global Guest s.r.o., care activează sub numele Global Health | IČO: 19071680
+Email: globalhealth@myglobalhealth.online
+Subiect pentru cererile de rambursare: „Cerere de Rambursare”
+Website: www.myglobalhealth.online/refund-policy
+Prezenta Politică de Rambursare se aplică în toate piețele în care activează Global Health. Drepturile dumneavoastră statutare de consumator din jurisdicția dumneavoastră se aplică suplimentar față de prezenta Politică și nu sunt limitate de aceasta. Pentru drepturile statutare specifice fiecărei țări, consultați Anexa de Țară pentru piața dumneavoastră, la www.myglobalhealth.online/terms.

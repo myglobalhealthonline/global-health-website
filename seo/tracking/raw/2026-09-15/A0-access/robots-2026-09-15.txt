@@ -1,0 +1,133 @@
+User-Agent: *
+Allow: /
+Allow: /api/media/
+Allow: /api/og
+Allow: /api/public/gp-availability
+Allow: /api/public/booking-availability
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /account/*
+Disallow: /api/
+
+User-Agent: GPTBot
+Allow: /
+Allow: /api/media/
+Allow: /api/og
+Allow: /api/public/gp-availability
+Allow: /api/public/booking-availability
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /account/*
+Disallow: /api/
+
+User-Agent: OAI-SearchBot
+Allow: /
+Allow: /api/media/
+Allow: /api/og
+Allow: /api/public/gp-availability
+Allow: /api/public/booking-availability
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /account/*
+Disallow: /api/
+
+User-Agent: ChatGPT-User
+Allow: /
+Allow: /api/media/
+Allow: /api/og
+Allow: /api/public/gp-availability
+Allow: /api/public/booking-availability
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /account/*
+Disallow: /api/
+
+User-Agent: ClaudeBot
+Allow: /
+Allow: /api/media/
+Allow: /api/og
+Allow: /api/public/gp-availability
+Allow: /api/public/booking-availability
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /account/*
+Disallow: /api/
+
+User-Agent: Claude-SearchBot
+Allow: /
+Allow: /api/media/
+Allow: /api/og
+Allow: /api/public/gp-availability
+Allow: /api/public/booking-availability
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /account/*
+Disallow: /api/
+
+User-Agent: Claude-User
+Allow: /
+Allow: /api/media/
+Allow: /api/og
+Allow: /api/public/gp-availability
+Allow: /api/public/booking-availability
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /account/*
+Disallow: /api/
+
+User-Agent: anthropic-ai
+Allow: /
+Allow: /api/media/
+Allow: /api/og
+Allow: /api/public/gp-availability
+Allow: /api/public/booking-availability
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /account/*
+Disallow: /api/
+
+User-Agent: Google-Extended
+Allow: /
+Allow: /api/media/
+Allow: /api/og
+Allow: /api/public/gp-availability
+Allow: /api/public/booking-availability
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /account/*
+Disallow: /api/
+
+User-Agent: Gemini-Deep-Research
+Allow: /
+Allow: /api/media/
+Allow: /api/og
+Allow: /api/public/gp-availability
+Allow: /api/public/booking-availability
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /account/*
+Disallow: /api/
+
+User-Agent: PerplexityBot
+Allow: /
+Allow: /api/media/
+Allow: /api/og
+Allow: /api/public/gp-availability
+Allow: /api/public/booking-availability
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /account/*
+Disallow: /api/
+
+User-Agent: Perplexity-User
+Allow: /
+Allow: /api/media/
+Allow: /api/og
+Allow: /api/public/gp-availability
+Allow: /api/public/booking-availability
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /account/*
+Disallow: /api/
+
+Sitemap: https://www.myglobalhealth.online/sitemap.xml

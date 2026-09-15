@@ -1,0 +1,950 @@
+{
+ "https://myglobalhealth.online/": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/"
+ },
+ "https://www.myglobalhealth.online/pt/portugal/traveler's-consultation": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-do-viajante"
+ },
+ "https://www.myglobalhealth.online/post/coronary-artery-disease-signs-and-symptoms": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/blog"
+ },
+ "https://www.myglobalhealth.online/ireland/sick-leave": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/sick-certificate-ireland"
+ },
+ "https://www.myglobalhealth.online/ireland/medical-consultation": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/acute-medical-consultation"
+ },
+ "https://www.myglobalhealth.online/": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/"
+ },
+ "https://www.myglobalhealth.online/post/mounjaro-vs-ozempic-differences-benefits-and-when-to-use": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/blog"
+ },
+ "https://www.myglobalhealth.online/post/getting-a-gp-sick-note-online-simplified": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/blog"
+ },
+ "https://www.myglobalhealth.online/post/types-of-cancer-based-on-tissue-type-of-origin": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/blog"
+ },
+ "https://www.myglobalhealth.online/post/hand-foot-and-mouth-disease-signs-and-treatment": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/blog/hand-foot-and-mouth-disease-signs-and-treatment"
+ },
+ "https://www.myglobalhealth.online/ireland/weight-loss-consultation": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/weight-management-consultation"
+ },
+ "https://www.myglobalhealth.online/pt/portugal/medical-certificate-for-driving-license": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/certificado-medico-carta-de-conducao"
+ },
+ "https://www.myglobalhealth.online/pt/portugal/medical-consultation": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-medica"
+ },
+ "https://www.myglobalhealth.online/home": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ie-paediatric-primary-care-cons?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/paediatric-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/post/understanding-hypercholesterolemia-global-health": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/blog"
+ },
+ "http://www.myglobalhealth.online/": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-do-viajante-1?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-do-viajante?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/medicare-cert-medico-carta-condu%25C3%25A7%25C3%25A3o?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-cons-de-medicina-geral-e-familiar?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/medicina-geral-e-familiar?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-cons-cessa%C3%A7%C3%A3o-tabagica?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/deixar-de-fumar?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-para-disfunci%25C3%25B3n-er%25C3%25A9ctil?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/baja-medica?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/spain/es/services/justificante-medico-online?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-pneumologie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-ginecologie-obstet?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/services/sanatatea-femeii-online?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-pediatrie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/services/consultatie-pediatrie?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-geriatrie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-nutri%C8%9Bie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/services/controlul-greutatii?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-gastroenterologie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-fizioterapie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/services/dureri-musculo-scheletice?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/acne-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/asthma-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/bacterial-vaginosis-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/baixa-medica?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/baixa-medica?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/cardiology-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/cardiology-specialist-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/certificado-medico-para-carta-condu%25C3%25A7%25C3%25A3o?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/conjuntivite-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-com-dietista?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-con-dietista?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/spain/es/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-da-diabetes?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-cardiolog%25C3%25ADa?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-cardiologia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-cardiologia?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-dermatolog%25C3%25ADa?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-dermatologia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-dermatologia?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-endocrinolog%25C3%25ADa?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-endocrinologia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-fisioterapia-1?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-fisioterapia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-gastroenterolog%25C3%25ADa?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-gastroenterologia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-gen%25C3%25A9tica-1?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-gen%25C3%25A9tica?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-immunoalergologia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-inmunoalergolog%25C3%25ADa?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-medicina?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-medica?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-neumolog%25C3%25ADa?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-neurolog%25C3%25ADa?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-neurologia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-oncolog%25C3%25ADa?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-oncologia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-de-oncologia?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-perda-de-peso?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/perda-de-peso?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-pneumologia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-psicolog%25C3%25ADa?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-psicologia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-de-psicologia?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-psiquiatr%25C3%25ADa?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-psiquiatria?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-de-psiquiatria?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-reumatolog%25C3%25ADa?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-reumatologia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-urolog%25C3%25ADa?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-urologia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-de-venerologia?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-do-viajante?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-do-viajante?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-medica?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-medica?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-ortop%25C3%25A9dica-1?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-ortop%25C3%25A9dica?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-p%25C3%25A9rdida-de-peso?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-para-a-dsifun%25C3%25A7%25C3%25A3o-erectil?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-para-diabetes?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-pedi%25C3%25A1trica-1?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/consulta-pedi%25C3%25A1trica?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/contraception-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/cz-konzultace-v-oblasti-reproduk%C4%8Dn%C3%AD-me?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/dermathology-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/skin-dermatology-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/diabetes-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/chronic-disease-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/dietitian-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/nutrition-specialist-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/driving-license-medical-certificate?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/eczemaprescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/endocrynology-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/erectile-dysfunction-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/mens-health-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/erectyle-dysfunction-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/gastroentherology-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/genetic-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/geriatric-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/hair-loss-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/hay-fever-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/herpes-genital-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/herpes-labial-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/hypertension-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/chronic-disease-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ie-aesthetic-medicine-online-consultat?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/aesthetic-medicine-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ie-gp-family-medicine?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/gp-consultation-online?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ie-in-person-manual-therapy?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/physiotherapy-specialist-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ie-mental-health-assessment?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/mental-health-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/immunoallergology-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-dermatologem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/services/kozni-konzultace-praha?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-dietetikem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-endokrinologem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-fyzioterapeutem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/services/bolesti-pohyboveho-aparatu?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-gastroenterologem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-genetikem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-geriatrem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-immunoalergologem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-kardiologem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-neurologem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-onkologem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-pediatrem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/services/detsky-lekar-online?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-pneumologem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-psychiatrem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/services/dusevni-zdravi-online?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-psychologem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/services/dusevni-zdravi-online?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-revmatologem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-urologem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konsultace-s-venereologem?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konzultace-pro-diabetes?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/services/chronicka-onemocneni?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konzultace-pro-erektiln%25C3%25AD-dysfunkci?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/konzultace-pro-hubnut%25C3%25AD?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/czechia/cs/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/l%25C3%25A9ka%25C5%2599sk%25C3%25A1-konzultace?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/medical-consultation-1?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/medicare-baixa-medica?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/baixa-medica?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/medicare-consulta-da-diabetes?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/medicare-consulta-disfun%25C3%25A7%25C3%25A3o-erectil?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/medicare-renova%25C3%25A7%25C3%25A3o-tratamento?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/medicina-fisica-y-rehabilitacion?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/spain/es/services/musculoesqueletico-online?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/migraine-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/neurology-specialist-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/migraine-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/neurology-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/neurology-specialist-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/obnova-l%25C3%25A9%25C4%258Dby?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/oncology-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/oral-thrush-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/orthopedic-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/musculoskeletal-pain-assessment?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ortopedick%25C3%25A1-konsultace?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pain-management-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/musculoskeletal-pain-assessment?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pediatrics-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/paediatric-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/period-delay-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/physiotherapy-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/physiotherapy-specialist-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pneumology-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pracovn%25C3%25AD-neschopnost?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/premature-ejaculation-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/psoriase-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/psychiatric-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/psychiatry-specialist-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/psychology-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/psychology-specialist-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-consulta-de-medicina-1?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-medica?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-cardiologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-cardiologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-dermatologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-dermatologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-endocrinologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-fisioterapia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-gen%25C3%25A9tica?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-geriatria?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-medicina?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-medica?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-neurologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-oncologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-de-oncologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-perda-de-peso?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/perda-de-peso?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-pneumologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-psicologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-de-psicologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-psiquiatria?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-de-psiquiatria?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-reumatologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-urologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-de-venerologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-gastroenterologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-immunoalergologia?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-nutricionismo?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-ortop%25C3%25A9dica?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/pt-medicare-consulta-pedi%25C3%25A1trica?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/book?location=31db2656-1bd1-4106-b154-7836f55b1e20&utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/referral-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/referral-and-investigations?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/renova%25C3%25A7%25C3%25A3o-tratamento?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/renovacion-de-tratamiento?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/spain/es/services/renovacion-tratamiento-online?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/respiratory-infections?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/acute-medical-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/reumathology-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%25C8%259Bie-diabet?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%25C8%259Bie-disfunc%25C8%259Bie-erectil%25C4%2583?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%25C8%259Bie-hipertensiune?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%25C8%259Bie-medic-de-familie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%25C8%259Bie-pentru-managementul-dure?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%25C8%259Bie-pentru-migren%25C4%2583?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%25C8%259Bie-respiratorie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-cardiologie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-dermatologie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/services/consultatie-dermatologica?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-endocrinologie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-genetic%C4%83?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-imunoalergologie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-neurologie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/services/consultatie-neurologie?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-oncologie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-ortopedie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/services/dureri-musculo-scheletice?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-psihiatrie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/services/sanatate-mintala-online?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-psihologie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/services/sanatate-mintala-online?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-reumatologie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-urologie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-consulta%C8%9Bie-de-venerologie?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/ro-re%25C3%25AEnnoire-tratament?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/romania/ro/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/rosacea-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/same-day-all-dublin-except-d1-2-4-6-8?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/same-day-delivery-dublin-1-2-4-6-and-8?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/self-referral?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/referral-and-investigations?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/sick-leave?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/sick-certificate-ireland?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/sp-consulta-medica-pediatrica?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/spain/es/services/pediatria-online?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/sp-consulta-medicina-est%C3%A9tica-online?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/spain/es/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/thrush-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/travel-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/travel-health-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/treatment-refill?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/treatment-review?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/urology-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/vaginal-dryness-prescription?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/venereology-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/book?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/booking-calendar/weight-loss-consultation?utm_medium=page_links": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/services/weight-management-consultation?utm_medium=page_links"
+ },
+ "https://www.myglobalhealth.online/cs/spain-specialist-consultations/consulta-ortop%C3%A9dica": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/spain/es/see-a-specialist"
+ },
+ "https://www.myglobalhealth.online/es/ireland/diabetes-consultation": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/gp-consultation-online"
+ },
+ "https://www.myglobalhealth.online/home-health-tests/vitamin-b12-blood-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/vitamin-b12-test"
+ },
+ "https://www.myglobalhealth.online/ireland/en": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en"
+ },
+ "https://www.myglobalhealth.online/ireland/en/tools/calorie-calculator": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/tools/calorie-calculator"
+ },
+ "https://www.myglobalhealth.online/post/hypotyroidism-causes-signs-management-and-preven": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/blog"
+ },
+ "https://www.myglobalhealth.online/post/tadalafil-far-beyond-erectile-dysfunction-understand-guide-and-protect": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/blog"
+ },
+ "https://www.myglobalhealth.online/pricing-plans/checkout-1?planId=2e379317-4191-4cb5-a957-3009c1b1bcc4&checkoutFlowId=60680f6b-c925-4c88-b299-c4c15c9c8e55": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/pricing?planId=2e379317-4191-4cb5-a957-3009c1b1bcc4&checkoutFlowId=60680f6b-c925-4c88-b299-c4c15c9c8e55"
+ },
+ "https://www.myglobalhealth.online/pricing-plans/checkout-1?planId=438253f2-9f0c-46cb-931c-e9d8f4222b8a&checkoutFlowId=573165e6-19de-4b65-8069-590e3cdc4f09": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/pricing?planId=438253f2-9f0c-46cb-931c-e9d8f4222b8a&checkoutFlowId=573165e6-19de-4b65-8069-590e3cdc4f09"
+ },
+ "https://www.myglobalhealth.online/pricing-plans/checkout-1?planId=f783e348-d4b0-40c4-945c-8674c8cf5b2c&checkoutFlowId=e76e1e71-0806-4d08-acf2-94d03068de47": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en/pricing?planId=f783e348-d4b0-40c4-945c-8674c8cf5b2c&checkoutFlowId=e76e1e71-0806-4d08-acf2-94d03068de47"
+ },
+ "https://www.myglobalhealth.online/product-page/amh-test-anti-m%C3%BCllerian-hormone": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/amh-fertility-test"
+ },
+ "https://www.myglobalhealth.online/product-page/coeliac-disease-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-coeliac-disease-test"
+ },
+ "https://www.myglobalhealth.online/product-page/female-hormone-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/female-hormone-test"
+ },
+ "https://www.myglobalhealth.online/product-page/genetic-lactose-intolereance-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-lactose-intolerance-test"
+ },
+ "https://www.myglobalhealth.online/product-page/gut-microbiome-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/gut-microbiome-test"
+ },
+ "https://www.myglobalhealth.online/product-page/haemochromatosis-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/genetic-haemochromatosis-test"
+ },
+ "https://www.myglobalhealth.online/product-page/heart-health-home-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/heart-health-cholesterol-test"
+ },
+ "https://www.myglobalhealth.online/product-page/male-hormone-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/male-hormone-test"
+ },
+ "https://www.myglobalhealth.online/product-page/nutrition-and-lifestyle-home-dna-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/nutrition-lifestyle-dna-test"
+ },
+ "https://www.myglobalhealth.online/product-page/osentia-fracture-risk-assessment-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/fracture-risk-assessment-test"
+ },
+ "https://www.myglobalhealth.online/product-page/psa-test-prostatic-specific-antigen": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/psa-prostate-test"
+ },
+ "https://www.myglobalhealth.online/product-page/thyroid-home-blood-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests"
+ },
+ "https://www.myglobalhealth.online/product-page/vitamin-b12-blood-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/vitamin-b12-test"
+ },
+ "https://www.myglobalhealth.online/product-page/vitamin-d-blood-test": {
+  "status": 404,
+  "final": "https://www.myglobalhealth.online/ireland/en/lab-tests/vitamin-d-test"
+ },
+ "https://www.myglobalhealth.online/pt/portugal/traveler/'s-consultation": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/portugal/pt/services/consulta-do-viajante"
+ },
+ "https://www.myglobalhealth.online/services-1-4": {
+  "status": 200,
+  "final": "https://www.myglobalhealth.online/ireland/en"
+ }
+}

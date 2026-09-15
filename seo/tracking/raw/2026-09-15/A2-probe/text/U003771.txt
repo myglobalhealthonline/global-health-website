@@ -1,0 +1,170 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cmr.ro","https://regmed.cmr.ro","https://www.dataprotection.ro"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}]{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Startseite","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Rechtliche Informationen","item":"https://www.myglobalhealth.online/romania/de/legal"},{"@type":"ListItem","position":3,"name":"Allgemeine Geschäftsbedingungen","item":"https://www.myglobalhealth.online/romania/de/legal/terms-of-service"}]}RechtlichesRumänien · RechtlichesAllgemeine GeschäftsbedingungenVersion 2 · Zuletzt aktualisiert 18 July 2026Alle RechtsdokumenteGlobal Health Allgemeine Geschäftsbedingungen (Master Terms and Conditions)
+Datum des Inkrafttretens: 1. Juli 2026
+
+
+BetreiberGlobal Guest s.r.o. handelnd als Global Health
+Tschechische FirmennummerIČO: 19071680
+Eingetragener SitzRybna 24, 110 00 Prague 1
+Websitewww.myglobalhealth.online
+Kontaktglobalhealth@myglobalhealth.online
+Datum des Inkrafttretens1. Juli 2026
+TätigkeitsmärkteSiehe www.myglobalhealth.online/markets
+
+
+Diese Allgemeinen Geschäftsbedingungen (Master Terms) regeln die Nutzung der Global-Health-Plattform in allen Märkten, in denen Global Health tätig ist. Sie sind zusammen mit dem länderspezifischen Anhang (Country Addendum) für den jeweiligen Markt zu lesen, in dem Sie auf die Leistungen zugreifen. Im Falle eines Widerspruchs zwischen diesen Master Terms und einem Country Addendum hat das Country Addendum Vorrang.
+Die vollständige Liste der Märkte, in denen Global Health tätig ist, finden Sie unter www.myglobalhealth.online.
+
+1. Über uns
+Global Health ist eine Telemedizin-Plattform, die von der Global Guest s.r.o. betrieben wird, einer nach tschechischem Recht gegründeten Gesellschaft mit beschränkter Haftung (IČO: 19071680; eingetragener Sitz: Rybna 24, 110-00 Prague 1). Global Health ist in mehreren Märkten tätig; Einzelheiten finden Sie unter www.myglobalhealth.online.
+Je nach Markt, in dem Sie auf die Leistungen zugreifen, agiert Global Health entweder als registrierter Gesundheitsdienstleister oder als Technologieplattform, die Patienten mit unabhängig registrierten Klinikern (Clinicians) verbindet. Das für Ihren Markt geltende Betriebsmodell ist im Country Addendum festgelegt.
+Verweise in diesen Bedingungen auf „wir“, „uns“ oder „unser“ beziehen sich auf die Global Guest s.r.o., handelnd als Global Health. Verweise auf „Sie“ oder den „Patienten“ beziehen sich auf jede Person, die auf die Plattform oder die Leistungen zugreift oder diese nutzt.
+Unsere wichtigsten Kontaktdaten lauten:
+
+E-Mail: globalhealth@myglobalhealth.online
+Website: www.myglobalhealth.online
+
+Länderspezifische Kontaktdaten, Anschriften und behördliche Registrierungsnummern sind im jeweiligen Country Addendum aufgeführt.
+
+2. Begriffsbestimmungen
+In diesen Master Terms und in jedem Country Addendum haben die folgenden Begriffe die nachstehend genannte Bedeutung:
+
+„Plattform“ bezeichnet die Global-Health-Website unter www.myglobalhealth.online, sämtliche zugehörigen mobilen Anwendungen sowie alle Buchungs-, Konsultations- oder Patientenverwaltungssysteme, die von oder im Auftrag von Global Health betrieben werden.
+„Leistungen“ bezeichnet Online-Arztkonsultationen, Facharztüberweisungen, Rezeptdienste, Heimgesundheitstests, Rezeptzustellung, Credit-Pläne (Credit Plans) sowie alle sonstigen gesundheitsbezogenen Leistungen, die über die Plattform verfügbar gemacht werden.
+„Patient“ oder „Sie“ bezeichnet jede Person, die sich für die Leistungen registriert, diese bucht oder nutzt.
+„Kliniker“ (Clinician) bezeichnet einen Arzt, Facharzt, eine Pflegekraft oder eine sonstige regulierte medizinische Fachkraft, die Konsultationen oder klinische Leistungen über die Plattform erbringt und bei der zuständigen medizinischen Aufsichtsbehörde des Landes registriert ist, in dem sie tätig ist.
+„Konsultation“ bezeichnet eine medizinische Fernkonsultation, die per Videoanruf, Telefon oder sichere Nachrichtenübermittlung über die Plattform durchgeführt wird.
+„Provider-Modell“ bezeichnet das Betriebsmodell, das in Märkten gilt, in denen Global Health über eine Registrierung als Gesundheitsdienstleister verfügt und Leistungen als regulierter Gesundheitsdienstleister erbringt. In Märkten mit Provider-Modell sind Kliniker im Rahmen der Registrierung von Global Health tätig.
+„Plattform-Modell“ bezeichnet das Betriebsmodell, das in Märkten gilt, in denen Global Health als Technologievermittler auftritt, der Patienten mit unabhängig registrierten Klinikern verbindet. In Märkten mit Plattform-Modell verfügt jeder Kliniker über eine eigene behördliche Registrierung und erbringt die Leistungen in eigenem Namen.
+„Credit-Plan“ bezeichnet ein wiederkehrendes monatliches Abonnement, im Rahmen dessen ein Patient in jedem Abrechnungszeitraum eine festgelegte Anzahl an Credits erhält, die für Leistungen verwendet werden können, wie in Klausel 7 näher beschrieben.
+„Credit“ oder „Credits“ bezeichnet die Werteinheit, die einem Patienten im Rahmen eines Credit-Plans zugeteilt oder einmalig erworben wird und die gegen berechtigte Leistungen auf der Plattform eingelöst werden kann.
+„Country Addendum“ bezeichnet den länderspezifischen Zusatz zu diesen Master Terms, der für den Markt gilt, in dem Sie auf die Leistungen zugreifen, und der unter anderem das geltende Betriebsmodell, das anwendbare Recht, behördliche Registrierungsdaten und Verbraucherrechte festlegt.
+„Anwendbares Datenschutzrecht“ bezeichnet die in Ihrer Rechtsordnung geltenden Datenschutz- und Datenschutzvorschriften, einschließlich, soweit anwendbar: DSGVO (Verordnung (EU) 2016/679); UK GDPR und der Data Protection Act 2018; sowie gleichwertige Rechtsvorschriften in Nicht-EU-Märkten gemäß dem jeweiligen Country Addendum.
+„Gesundheitsdaten“ bezeichnet personenbezogene Daten über die körperliche oder geistige Gesundheit einer Person, einschließlich Daten über die Erbringung von Gesundheitsleistungen an diese Person, die nach dem anwendbaren Datenschutzrecht als sensible Daten bzw. besondere Kategorien personenbezogener Daten eingestuft werden.
+„Verbraucherschutzrecht“ bezeichnet die zwingenden Verbraucherschutzvorschriften, die in Ihrem Wohnsitzland gelten und die durch diese Bedingungen unabhängig von einer Rechtswahlklausel nicht ausgeschlossen oder eingeschränkt werden können.
+
+
+3. Annahme der Bedingungen
+Durch den Zugriff auf oder die Nutzung der Plattform oder der Leistungen bestätigen Sie, dass Sie diese Master Terms, das jeweilige Country Addendum, unsere Datenschutzrichtlinie und unsere Cookie-Richtlinie gelesen und verstanden haben und sich damit einverstanden erklären.
+Wenn Sie diesen Bedingungen nicht zustimmen, dürfen Sie nicht auf die Plattform oder die Leistungen zugreifen bzw. diese nicht nutzen.
+Diese Bedingungen sind jederzeit unter www.myglobalhealth.online/terms abrufbar. Wir empfehlen Ihnen, eine Kopie für Ihre Unterlagen zu speichern oder auszudrucken.
+
+4. Zulassungsvoraussetzungen und Registrierung
+4.1 Altersanforderung
+Sie müssen mindestens 18 Jahre alt sein, um sich für die Leistungen selbstständig zu registrieren oder diese zu nutzen. Das Mindestalter kann in bestimmten Rechtsordnungen höher sein: bitte beachten Sie Ihr Country Addendum. Patienten unter dem geltenden Mindestalter dürfen die Leistungen nur mit der aktiven Beteiligung und schriftlichen Einwilligung eines Elternteils oder gesetzlichen Vertreters nutzen, der diese Bedingungen in ihrem Namen akzeptiert und die Verantwortung für die Richtigkeit aller bereitgestellten Informationen übernimmt.
+Bei jeder Konsultation, an der ein Minderjähriger beteiligt ist, muss der Elternteil oder gesetzliche Vertreter während der Konsultation anwesend oder unmittelbar erreichbar sein, sofern der Kliniker im klinischen Interesse des Patienten nichts anderes bestimmt.
+4.2 Richtigkeit der Angaben
+Sie müssen bei der Registrierung und während der gesamten Nutzung der Leistungen genaue, vollständige und aktuelle Angaben machen. Die Bereitstellung falscher oder irreführender medizinischer Informationen gegenüber einem Kliniker kann die Qualität der von Ihnen erhaltenen Behandlung beeinträchtigen und kann nach geltendem Recht eine Straftat darstellen.
+4.3 Kontosicherheit
+Sie sind für die Wahrung der Vertraulichkeit Ihrer Anmeldedaten verantwortlich. Sie müssen uns unverzüglich unter globalhealth@myglobalhealth.online benachrichtigen, wenn Sie von einem unbefugten Zugriff auf Ihr Konto Kenntnis erlangen oder einen solchen vermuten.
+4.4 Ein Konto pro Patient
+Jeder Patient darf ein aktives Konto führen. Das Anlegen mehrerer Konten zur Umgehung einer Beschränkung, Sperrung oder eines Verbots ist untersagt und kann zur Kündigung aller zugehörigen Konten führen.
+
+5. Art der Leistungen und klinische Einschränkungen
+5.1 Betriebsmodelle
+Die Art und Weise, wie Global Health Leistungen erbringt, unterscheidet sich je nach Markt. In manchen Märkten agiert Global Health als registrierter Gesundheitsdienstleister. In anderen agiert es als Technologieplattform, die Patienten mit unabhängig registrierten Klinikern verbindet. Das für Ihren Markt geltende Modell sowie seine Auswirkungen auf die behördliche Aufsicht, Beschwerden und Haftung sind im jeweiligen Country Addendum festgelegt. Diese Master Terms gelten unabhängig vom Betriebsmodell in vollem Umfang.
+5.2 Einschränkungen der Telemedizin
+Unsere Leistungen bieten medizinische Fernkonsultationen und sind kein Ersatz für eine persönliche Behandlung, sofern diese klinisch angezeigt ist. Ein Kliniker, der eine Fernkonsultation durchführt, verfügt über eingeschränkte Möglichkeiten zur körperlichen Untersuchung. Diagnose und klinische Beratung beruhen auf den von Ihnen bereitgestellten Informationen, Ihrer auf der Plattform erfassten Krankengeschichte sowie klinisch angemessenen Fernuntersuchungstechniken.
+Sie erkennen an, dass die Qualität und Genauigkeit der klinischen Beratung durch die Vollständigkeit und Richtigkeit der von Ihnen bereitgestellten Informationen beeinflusst werden kann.
+5.3 Notfallsituationen
+WICHTIG: Unsere Leistungen sind nicht für medizinische Notfälle geeignet. Wenn Sie oder eine andere Person einen medizinischen Notfall erleiden, rufen Sie unverzüglich den Rettungsdienst und suchen Sie die nächstgelegene Notaufnahme auf. Nutzen Sie diese Plattform nicht in einem medizinischen Notfall.
+Notfallkontaktnummern für jeden Markt sind im jeweiligen Country Addendum sowie auf der entsprechenden Länderseite der Plattform aufgeführt.
+5.4 Rezepte
+Rezepte werden nur ausgestellt, wenn dies klinisch angezeigt und nach dem Recht des Landes zulässig ist, in dem sich der Patient zum Zeitpunkt der Konsultation befindet. Rezepte werden von Klinikern ausgestellt, die über eine gültige Registrierung bei der zuständigen medizinischen Aufsichtsbehörde ihres Tätigkeitslandes verfügen. Name, Registrierungsnummer und Aufsichtsbehörde des verschreibenden Klinikers sind auf Anfrage verfügbar und werden in Ihrer Konsultationsakte offengelegt.
+Rezepte für kontrollierte oder eingeschränkte Substanzen werden über die Plattform nicht ausgestellt. Länderspezifische Regeln zur Verschreibung (einschließlich der regulatorischen Rahmenbedingungen für digitale Rezepte, geltender Arzneimittellisten und der grenzüberschreitenden Gültigkeit) sind im jeweiligen Country Addendum festgelegt.
+5.5 Grenzüberschreitende Gültigkeit von Rezepten
+Ein von einem Kliniker in einem Land ausgestelltes Rezept kann in Apotheken eines anderen Landes ungültig sein oder nicht akzeptiert werden. Es liegt in der Verantwortung des Patienten, die Gültigkeit eines Rezepts in dem Land zu prüfen, in dem er es verwenden möchte. Global Health gewährleistet nicht, dass über die Plattform ausgestellte Rezepte außerhalb des Ausstellungslandes akzeptiert werden.
+5.6 Überweisungen
+Sofern klinisch angezeigt, kann ein Kliniker eine Überweisung an einen persönlich behandelnden Facharzt oder eine Notfalleinrichtung empfehlen. Global Health gewährleistet nicht die Verfügbarkeit, die Kosten, die Wartezeit oder das klinische Ergebnis einer Überweisung an Dritte oder einer persönlichen Behandlung.
+5.7 Keine garantierten Ergebnisse
+Wir können konkrete klinische Ergebnisse weder garantieren noch zusichern. Die Leistungen werden auf Grundlage der professionellen klinischen Beurteilung der zum jeweiligen Zeitpunkt verfügbaren Informationen erbracht. Die individuellen Ergebnisse können variieren.
+5.8 Verfügbarkeit der Leistungen
+Wir bemühen uns, die Verfügbarkeit der Plattform jederzeit aufrechtzuerhalten, gewährleisten jedoch keinen unterbrechungsfreien Zugang. Geplante Wartungsarbeiten, technische Probleme oder Umstände außerhalb unserer Kontrolle können zu einer vorübergehenden Nichtverfügbarkeit führen. Kann eine Konsultation aufgrund der Nichtverfügbarkeit der Plattform nicht stattfinden, werden alle für die Buchung dieser Konsultation verwendeten Credits Ihrem Konto wieder gutgeschrieben, und Ihnen wird ein neuer Termin angeboten.
+5.9 Klinische Governance
+Unabhängig vom in Ihrem Markt geltenden Betriebsmodell unterhält Global Health einen Rahmen für klinische Governance, der die Qualität und Sicherheit der über die Plattform erbrachten Leistungen abdeckt. Alle über die Plattform tätigen Kliniker müssen über eine gültige Registrierung bei der zuständigen medizinischen Aufsichtsbehörde ihres Tätigkeitslandes verfügen und eine angemessene Berufshaftpflicht- oder Haftpflichtversicherung unterhalten.
+Der Umfang der Governance-Verantwortlichkeiten von Global Health und die geltende behördliche Aufsicht in Ihrem Markt sind im Country Addendum festgelegt.
+5.10 Geografische Einschränkungen
+Die Leistungen sind nur in Märkten verfügbar, in denen Global Health tätig ist. Die aktuelle Liste der Märkte finden Sie unter www.myglobalhealth.online. Der Zugriff auf die Plattform aus einem Land, in dem Global Health nicht tätig ist, berechtigt Sie nicht dazu, in diesem Land Leistungen zu erhalten.
+5.11 Technologie Dritter
+Die Plattform nutzt Technologieanbieter Dritter für Buchung, Zahlungsabwicklung, Videokonsultation und Datenspeicherung. Obwohl wir angemessene Maßnahmen ergreifen, um zuverlässige Anbieter auszuwählen, haften wir nicht für Störungen oder Ausfälle, die durch Systeme Dritter außerhalb unserer angemessenen Kontrolle verursacht werden.
+
+6. Buchung, Zahlung und Preisgestaltung
+6.1 Buchung
+Konsultationen können über die Plattform mittels Credits oder gegebenenfalls durch Direktzahlung gebucht werden. Eine Buchung gilt als bestätigt, sobald Sie von uns eine E-Mail-Bestätigung erhalten. Die Buchungsbestätigung garantiert keinen bestimmten Kliniker, es sei denn, dies wird zum Zeitpunkt der Buchung ausdrücklich angegeben.
+6.2 Preisgestaltung und Währung
+Alle Preise und Credit-Werte werden in der für Ihren Markt geltenden Währung angezeigt, einschließlich anfallender Steuern oder Abgaben. Die aktuellen Preise für alle Leistungen und Credit-Pläne werden auf der Preisseite der Plattform sowie auf den jeweiligen Leistungsseiten veröffentlicht. Der für Ihre Buchung oder Ihren Credit-Kauf geltende Preis ist der zum Zeitpunkt des Vertragsabschlusses bestätigte Preis.
+Greifen Sie auf Leistungen in einer anderen Währung zu als jener Ihrer Zahlungskarte, kann Ihre Bank oder Ihr Kartenanbieter Wechselkursgebühren berechnen. Global Health haftet nicht für derartige Gebühren.
+Wir behalten uns das Recht vor, Preise jederzeit mit angemessener Vorankündigung zu ändern. Preisänderungen wirken sich nicht auf zum Zeitpunkt der Änderung bereits aktive Credit-Pläne bis zum nächsten Abrechnungszeitraum aus und wirken sich nicht auf bereits bestätigte Einzelbuchungen aus.
+6.3 Zahlung
+Die Zahlung ist zum Zeitpunkt der Buchung oder des Credit-Kaufs vollständig fällig. Wir akzeptieren die auf der Plattform zum Zeitpunkt der Transaktion angezeigten Zahlungsmethoden. Alle Zahlungen werden sicher von unserem Zahlungsdienstleister abgewickelt. Wir speichern keine vollständigen Zahlungskartendaten auf unseren Systemen.
+6.4 Steuern
+Die angezeigten Preise verstehen sich einschließlich der geltenden lokalen Steuern, soweit wir zu deren Erhebung verpflichtet sind. In bestimmten Rechtsordnungen können lokale Steuern oder Abgaben auf digitale Gesundheitsleistungen variieren. Einzelheiten entnehmen Sie bitte Ihrem Country Addendum.
+
+7. Credits und Credit-Pläne
+7.1 Funktionsweise der Credits
+Credits sind die Werteinheit, die zur Buchung und zum Zugriff auf Leistungen auf der Plattform verwendet wird. Credits können erworben werden durch: (a) den Abschluss eines Credit-Plans, im Rahmen dessen Ihrem Konto zu Beginn jedes monatlichen Abrechnungszeitraums eine festgelegte Anzahl an Credits gutgeschrieben wird; oder (b) den einmaligen Kauf von Credits zu den auf der Plattform veröffentlichten Preisen.
+Der Credit-Wert jeder Leistung wird auf der jeweiligen Leistungsseite und zum Zeitpunkt der Buchung angezeigt. Credit-Werte können von Zeit zu Zeit aktualisiert werden; der für Ihre Buchung geltende Credit-Wert ist der zum Zeitpunkt des Buchungsabschlusses bestätigte Wert.
+7.2 Credit-Plan-Abonnements
+Credit-Pläne werden monatlich fortlaufend abgerechnet. Es besteht keine Mindestvertragslaufzeit und keine Bindungsfrist. Sie können Ihren Credit-Plan jederzeit kündigen: siehe Klausel 7.5.
+Im Rahmen eines Credit-Plans ausgegebene Credits werden Ihrem Konto zu Beginn jedes Abrechnungszeitraums gutgeschrieben. Nicht genutzte Credits werden auf den nächsten Zeitraum übertragen, vorbehaltlich einer auf der Plattform veröffentlichten maximalen Übertragungsgrenze. Credits verfallen nicht, solange Ihr Credit-Plan aktiv bleibt.
+7.3 Einmalige Credit-Käufe
+Credits, die einmalig außerhalb eines Credit-Plans erworben werden, verfallen nicht und können jederzeit verwendet werden. Einmalig erworbene Credits werden bei der Buchung von Leistungen vor Credit-Plan-Credits verbraucht.
+7.4 Nicht erstattungsfähige Credits
+Credits sind nach dem Kauf grundsätzlich nicht erstattungsfähig, außer wie in diesen Bedingungen vorgesehen oder nach anwendbarem Verbraucherschutzrecht in Ihrer Rechtsordnung erforderlich. Credits haben keinen Bargeldwert und können nicht auf ein anderes Patientenkonto übertragen werden.
+7.5 Kündigung des Credit-Plans
+Sie können Ihren Credit-Plan jederzeit über Ihre Kontoeinstellungen oder durch Kontaktaufnahme mit uns unter globalhealth@myglobalhealth.online kündigen. Die Kündigung wird zum Ende des aktuellen monatlichen Abrechnungszeitraums wirksam. Sie behalten den Zugang zu Ihren zugeteilten Credits und Plan-Vorteilen bis zum Ende des bezahlten Zeitraums. Für den nicht genutzten Teil des aktuellen Abrechnungszeitraums wird keine anteilige Erstattung geleistet, sofern das anwendbare Verbraucherschutzrecht nichts anderes vorschreibt.
+Nach der Kündigung bleiben bereits im Rahmen des gekündigten Plans zugeteilte Credits 12 Monate ab dem Kündigungsdatum auf Ihrem Konto verfügbar; danach verfallen nicht genutzte Plan-Credits. Einmalig erworbene Credits sind von der Plankündigung nicht betroffen.
+7.6 Stornierungen, Umbuchungen und Wiedergutschrift von Credits
+Wenn Sie eine bestätigte Buchung mindestens 24 Stunden vor dem geplanten Termin stornieren, werden alle für diese Buchung verwendeten Credits vollständig Ihrem Konto wieder gutgeschrieben.
+Stornierungen weniger als 24 Stunden vor dem Termin führen zum Verfall der Credits, es sei denn, die Stornierung ist auf einen dokumentierten medizinischen Notfall oder ein plattformseitiges Versagen zurückzuführen; in diesem Fall werden die Credits wieder gutgeschrieben.
+Sie können einen bestätigten Termin bis zu 12 Stunden vor dem geplanten Zeitpunkt umbuchen, vorbehaltlich der Verfügbarkeit des Klinikers, ohne dass Credit-Kosten anfallen. Jede Buchung kann einmal kostenlos umgebucht werden. Weitere Umbuchungswünsche können als Stornierung im Sinne dieser Klausel behandelt werden.
+7.7 Nichterscheinen
+Wenn Sie einen geplanten Termin ohne vorherige Stornierungs- oder Umbuchungsmitteilung nicht wahrnehmen, verfallen die für die Buchung dieser Konsultation verwendeten Credits. Bei Nichterscheinen erfolgt keine Wiedergutschrift.
+7.8 Stornierung durch Global Health
+Können wir aus uns zurechenbaren Gründen eine gebuchte Konsultation nicht innerhalb von 2 Stunden nach dem geplanten Zeitpunkt anbieten, werden alle verwendeten Credits vollständig wieder gutgeschrieben. Alternativ können Sie eine Barrückerstattung des Geldwerts der verwendeten Credits verlangen, die innerhalb von 5–10 Werktagen auf Ihre ursprüngliche Zahlungsmethode erfolgt.
+7.9 Gesetzliche Widerrufs- und Rücktrittsrechte
+Abhängig vom Land, in dem Sie sich befinden, können Ihnen gesetzliche Rechte zustehen, einen Fernabsatzvertrag innerhalb einer festgelegten Widerrufsfrist zu kündigen. Diese Rechte variieren je nach Rechtsordnung und sind vollständig im jeweiligen Country Addendum dargelegt. Ihre gesetzlichen Rechte werden durch diese Bedingungen nicht berührt.
+Gilt eine gesetzliche Widerrufsfrist und verlangen Sie ausdrücklich, dass eine Konsultation innerhalb dieser Frist stattfindet, können Sie Ihr Widerrufsrecht für diese bestimmte Konsultation nach deren Abschluss verwirken. Länderspezifische Einzelheiten finden Sie in Ihrem Country Addendum.
+
+8. Gesundheitsdaten, Krankenakten und Datenschutz
+8.1 Verpflichtung zum Datenschutz
+Wir verpflichten uns, Ihre personenbezogenen Daten und Gesundheitsdaten gemäß dem in jedem Markt, in dem wir tätig sind, geltenden anwendbaren Datenschutzrecht zu schützen. Der für Sie geltende konkrete Datenschutzrahmen hängt von Ihrem Wohnsitzland ab und ist im jeweiligen Country Addendum festgelegt.
+8.2 Verarbeitung von Gesundheitsdaten
+Gesundheitsdaten gelten in allen Märkten, in denen wir tätig sind, als sensible personenbezogene Daten und erfordern ein höheres Schutzniveau. Wir verarbeiten Ihre Gesundheitsdaten nur auf rechtmäßigen Grundlagen, wie nach dem anwendbaren Datenschutzrecht Ihrer Rechtsordnung erforderlich. Diese Grundlagen sind im jeweiligen Country Addendum sowie in unserer Datenschutzrichtlinie festgelegt.
+8.3 Datenschutzbeauftragter
+Global Health hat für Zwecke der DSGVO und des in EU-Märkten geltenden Datenschutzrechts einen Datenschutzbeauftragten (DPO) bestellt. Die Kontaktdaten des Datenschutzbeauftragten sind in unserer Datenschutzrichtlinie unter www.myglobalhealth.online/privacy veröffentlicht.
+8.4 Datenaufbewahrung
+Wir bewahren klinische Aufzeichnungen für die nach dem Recht und den berufsrechtlichen Vorgaben jedes Landes, in dem wir tätig sind, erforderlichen Mindestfristen auf. Die konkreten Aufbewahrungsfristen sind im jeweiligen Country Addendum sowie in unserer Datenschutzrichtlinie festgelegt.
+8.5 Ihre Datenrechte
+Je nach dem in Ihrer Rechtsordnung geltenden anwendbaren Datenschutzrecht können Ihnen einige oder alle der folgenden Rechte zustehen: Auskunft; Berichtigung; Löschung (vorbehaltlich gesetzlicher Aufbewahrungspflichten); Einschränkung der Verarbeitung; Datenübertragbarkeit; Widerspruch gegen die Verarbeitung; sowie das Recht, keiner ausschließlich automatisierten Entscheidungsfindung unterworfen zu werden.
+Um eines dieser Rechte auszuüben oder eine Kopie Ihrer Krankenakte anzufordern, wenden Sie sich bitte an globalhealth@myglobalhealth.online. Wir werden innerhalb der nach dem anwendbaren Datenschutzrecht Ihrer Rechtsordnung vorgeschriebenen Frist antworten, in jedem Fall jedoch innerhalb von 30 Tagen.
+8.6 Internationale Datenübermittlungen
+Als in mehreren Märkten tätiges Unternehmen können personenbezogene Daten zwischen Ländern übermittelt werden, in denen Global Health tätig ist. Bei internationaler Datenübermittlung stellen wir sicher, dass angemessene Garantien vorhanden sind, wie nach dem anwendbaren Datenschutzrecht erforderlich, einschließlich EU-Standardvertragsklauseln oder gleichwertiger Mechanismen. Vollständige Einzelheiten sind in unserer Datenschutzrichtlinie festgelegt.
+8.7 Meldung von Datenschutzverletzungen
+Im Falle einer Verletzung des Schutzes personenbezogener Daten, die voraussichtlich ein hohes Risiko für Ihre Rechte und Freiheiten darstellt, werden wir Sie unverzüglich gemäß unseren Verpflichtungen nach dem anwendbaren Datenschutzrecht Ihrer Rechtsordnung benachrichtigen.
+8.8 Datenschutzrichtlinie
+Unsere Datenschutzrichtlinie unter www.myglobalhealth.online/privacy enthält vollständige Einzelheiten dazu, wie wir Ihre personenbezogenen Daten und Gesundheitsdaten in allen Märkten erheben, nutzen, speichern, weitergeben und schützen, einschließlich unseres nach anwendbarem Datenschutzrecht erforderlichen Verzeichnisses der Unterauftragsverarbeiter.
+
+9. Pflichten der Nutzer und untersagtes Verhalten
+Beim Zugriff auf und der Nutzung der Leistungen verpflichten Sie sich:
+
+Klinikern und der Plattform gegenüber jederzeit genaue, ehrliche und vollständige Angaben zu machen.
+Keine falschen Angaben zur Krankengeschichte, zu Symptomen oder sonstigen Informationen zu machen, die einen Kliniker irreführen könnten.
+Die Plattform nicht für rechtswidrige Zwecke oder in einer Weise zu nutzen, die gegen geltendes Recht oder geltende Vorschriften verstößt.
+Nicht zu versuchen, unbefugten Zugriff auf die Plattform, ihre Systeme oder das Konto eines anderen Nutzers zu erlangen.
+Keine automatisierten Werkzeuge, Bots oder Skripte zu verwenden, um ohne unsere vorherige schriftliche Zustimmung auf die Plattform zuzugreifen oder mit ihr zu interagieren.
+Sich nicht als eine andere Person auszugeben, einschließlich eines Klinikers oder eines Mitarbeiters von Global Health.
+Keine Inhalte hochzuladen oder zu übermitteln, die rechtswidrig, schädlich, verleumderisch sind oder die geistigen Eigentumsrechte Dritter verletzen.
+Alle geltenden Gesetze und Vorschriften Ihres Wohnsitzlandes bei der Nutzung der Leistungen einzuhalten.
+
+Ein Verstoß gegen eine der vorstehenden Verpflichtungen kann zur sofortigen Sperrung oder Kündigung Ihres Kontos und gegebenenfalls zur Meldung an die Strafverfolgungsbehörden führen.
+
+10. Geistiges Eigentum
+Sämtliche Inhalte der Plattform, einschließlich, aber nicht beschränkt auf Texte, Grafiken, Logos, Bilder, Audio-, Video- und Softwareinhalte, stehen im Eigentum der Global Guest s.r.o. oder sind dieser lizenziert und sind durch geltendes Urheber-, Marken- und sonstiges Recht des geistigen Eigentums geschützt.
+Ihnen wird eine beschränkte, nicht ausschließliche, nicht übertragbare, widerrufliche Lizenz zum Zugriff auf und zur Nutzung der Plattform und ihrer Inhalte ausschließlich für Ihren persönlichen, nicht kommerziellen Gebrauch gewährt. Sie dürfen Inhalte der Plattform ohne unsere vorherige schriftliche Zustimmung nicht vervielfältigen, verbreiten, verändern, davon abgeleitete Werke erstellen, öffentlich zugänglich machen oder anderweitig verwerten, außer soweit dies nach geltendem Recht ausdrücklich zulässig ist.
+
+11. Haftungsbeschränkung
+Nichts in diesen Bedingungen schließt unsere Haftung aus oder beschränkt diese für: Tod oder Personenschäden, die durch unsere Fahrlässigkeit oder die Fahrlässigkeit unserer Kliniker verursacht wurden; Betrug oder betrügerische Täuschung; oder sonstige Haftung, die nach dem in Ihrer Rechtsordnung geltenden Recht nicht rechtmäßig ausgeschlossen oder beschränkt werden kann.
+Vorbehaltlich des Vorstehenden und im nach dem Recht Ihrer Rechtsordnung größtmöglich zulässigen Umfang übersteigt unsere gesamte Haftung Ihnen gegenüber, die sich aus oder im Zusammenhang mit Ihrer Nutzung der Leistungen ergibt, nicht die Gesamtgebühren, die Sie uns in den 12 Monaten unmittelbar vor dem den Anspruch begründenden Ereignis gezahlt haben.
+Wir haften nicht für indirekte, zufällige, besondere, Folge- oder Strafschäden bzw. -verluste, einschließlich Datenverlust, Umsatzverlust oder entgangenem Gewinn, die aus Ihrer Nutzung der Plattform oder der Leistungen entstehen.
+Die Aufteilung der Haftung zwischen Global Health und einzelnen Klinikern für klinische Handlungen und Unterlassungen hängt von dem in Ihrem Markt geltenden Betriebsmodell ab und ist im jeweiligen Country Addendum im Einzelnen festgelegt.
+Wir haften nicht für die Verfügbarkeit, den Inhalt oder die Leistun

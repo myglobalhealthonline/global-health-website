@@ -1,0 +1,355 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cgcom.es","https://www.aepd.es"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes – eine stille Krankheit","description":"Mehr als 5,1 Millionen Menschen in Spanien leben mit Diabetes. Erfahren Sie mehr über Ursachen, Symptome, moderne Therapien und wichtige Kontrollen.","url":"https://www.myglobalhealth.online/spain/de/blog/diabetes-eine-stille-krankheit","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/spain/de/blog/diabetes-eine-stille-krankheit#webpage","url":"https://www.myglobalhealth.online/spain/de/blog/diabetes-eine-stille-krankheit","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/de/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-19"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes+%E2%80%93+eine+stille+Krankheit&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F738adbed-41df-4311-980a-e47c06e94281-33851.webp&v=2026-07-20.1-zpf3hp","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologia"},"datePublished":"2026-07-19T06:24:40.235Z","dateModified":"2026-07-19T06:59:15.525Z","publishingPrinciples":"https://www.myglobalhealth.online/spain/de/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/spain/de/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Startseite","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/spain/de/blog"},{"@type":"ListItem","position":3,"name":"Diabetes – eine stille Krankheit","item":"https://www.myglobalhealth.online/spain/de/blog/diabetes-eine-stille-krankheit"}]}]Alle ArtikelEndocrinologiaDiabetes – eine stille KrankheitDiabetes mellitus zählt in Spanien zu den häufigsten chronischen Erkrankungen und wird zugleich oft unterschätzt. Erfahren Sie mehr über Ursachen, Warnzeichen, aktuelle Behandlungsmöglichkeiten, regelmäßige Kontrollen und neue Therapieansätze.Global Health Medical Team19. Juli 202620 Minuten Lesezeit+Auf dieser SeiteDiabetes in Spanien: Das Ausmaß des Problems verstehenDiabetesformenUrsachen und RisikofaktorenSymptome und WarnzeichenAktuelle Diabetesbehandlungen in SpanienDie Bedeutung regelmäßiger KontrollenDie Zukunft der DiabetesbehandlungWichtige Institutionen und Anlaufstellen in SpanienHäufig gestellte Fragen
+
+
+
+  
+  
+    
+      
+      
+      
+      Ursachen, Symptome, Behandlung und die Zukunft der Versorgung
+      Schätzungsweise mehr als 5,1 Millionen Menschen in Spanien leben mit Diabetes – und Tausende weitere sind noch nicht diagnostiziert. Dieser Leitfaden behandelt alles, was Sie wissen müssen: Ursachen, Warnzeichen, die besten derzeit verfügbaren Behandlungen, die Bedeutung regelmäßiger Kontrollen und neue Therapien, die die Diabetesversorgung in den kommenden Jahren grundlegend verändern könnten.
+      
+        — Evidenzbasiert
+        — Im Einklang mit SED und Gesundheitsministerium
+        — Aktualisiert im Juni 2026
+      
+      – Verfasst von Dr. Tiago Miguel Figueira · Ordem dos Médicos Nr. 77986 · Ärztlicher Direktor, Global Health
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      TF
+      
+        Verfasst von Dr. Tiago Miguel Figueira
+        Ärztlicher Direktor · Ordem dos Médicos Nr. 77986 · Allgemein- und Familienmedizin
+      
+      10 MIN. LESEZEIT
+    
+
+    Diabetes mellitus ist eine der häufigsten chronischen Erkrankungen in Spanien und zugleich eine der am meisten unterschätzten. Typ-2-Diabetes, der mehr als 90 % der Fälle ausmacht, kann sich über Jahre hinweg langsam und ohne wahrnehmbare Symptome entwickeln. Zum Zeitpunkt der Diagnose besteht die Erkrankung häufig bereits seit längerer Zeit.
+
+    Die gute Nachricht ist, dass Diabetes sehr gut behandelbar ist. Mit der richtigen Diagnose, einer geeigneten Therapie und regelmäßiger Nachsorge können Menschen mit Diabetes ein erfülltes und gesundes Leben führen. Dank der therapeutischen Fortschritte des vergangenen Jahrzehnts – insbesondere der Einführung von GLP-1-Rezeptoragonisten und SGLT2-Hemmern – sind die heute in Spanien verfügbaren Möglichkeiten so gut wie nie zuvor.
+
+    
+    
+    Abschnitt 01
+    Diabetes in Spanien: Das Ausmaß des Problems verstehen
+
+    Im Jahr 2024 wurden in Spanien bei Erwachsenen zwischen 20 und 79 Jahren rund 5.121.600 Fälle von Typ-1- und Typ-2-Diabetes erfasst. Damit gehört Spanien zu den europäischen Ländern mit der höchsten Diabetesprävalenz. Laut dem Bericht Más allá de la insulina: Mapa de la diabetes tipo 1 en España der von der Fundación DiabetesCERO im Dezember 2024 veröffentlicht wurde, betrifft Typ-1-Diabetes 166.564 Menschen. Das entspricht 0,36 % der spanischen Bevölkerung; Männer sind häufiger betroffen (89.245) als Frauen (77.317). Die in Atención Primaria veröffentlichte Studie (2025) von Cebrián Cuenca und Escalada stellt fest, dass Diabetes in Spanien bei älteren Menschen, insbesondere ab 65 Jahren, häufiger vorkommt. Sie weist zudem darauf hin, dass die Prognosen für 2035 sowohl bei Erwachsenen als auch bei Kindern einen weiteren Anstieg erwarten lassen.
+
+    
+      
+        5,1 Mio.
+        Fälle von Typ-1- und Typ-2-Diabetes bei Erwachsenen in Spanien im Jahr 2024
+      
+      
+        >90%
+        der Fälle entfallen auf Typ-2-Diabetes
+      
+      
+        166 Tsd.
+        Menschen mit Typ-1-Diabetes in Spanien (Ministerio de Sanidad, 2024)
+      
+      
+        6.000
+        Neue Typ-1-Diabetes-Fälle werden in Spanien jedes Jahr diagnostiziert
+      
+    
+    Quelle: Fundación DiabetesCERO – Más allá de la insulina, Dezember 2024; Ministerio de Sanidad, BDCAP; Atención Primaria 2025;57:102992 (Cebrián Cuenca & Escalada).
+
+    Das Ministerio de Sanidad koordiniert die epidemiologische Überwachung von Diabetes über die klinische Datenbank der Primärversorgung (BDCAP). Damit lassen sich Prävalenz, Behandlung und Komplikationen im gesamten Staatsgebiet beobachten. Die Sociedad Española de Diabetes (SED) gibt die maßgeblichen klinischen Leitlinien zur Behandlung der Erkrankung heraus und veröffentlichte 2025 gemeinsam mit der SEEN und der Spanischen Gesellschaft für Nephrologie multidisziplinäre Konsensdokumente zu Ernährungsempfehlungen und zum Umgang mit diabetesbedingter chronischer Nierenerkrankung.
+
+    
+      Sind Sie gefährdet, ohne es zu wissen?
+      Ein erheblicher Teil der Menschen mit Typ-2-Diabetes in Spanien ist noch nicht diagnostiziert. Wenn Sie Risikofaktoren haben – Diabetes in der Familie, Übergewicht, Bluthochdruck oder Bewegungsmangel –, sprechen Sie mit Ihrer Ärztin oder Ihrem Arzt über eine Nüchternglukosemessung oder einen HbA1c-Test. Eine frühe Diagnose ist entscheidend, um schwere Komplikationen zu verhindern.
+    
+
+    
+    
+    Abschnitt 02
+    Diabetesformen
+
+    Diabetes ist nicht gleich Diabetes. Zu verstehen, welche Form Sie haben oder für welche Form ein Risiko besteht, ist der erste Schritt zu einer wirksamen Behandlung.
+
+    
+      
+        🔵
+        Typ-1-Diabetes (T1D)
+        Autoimmun · Insulinabhängig
+        Das Immunsystem zerstört die insulinproduzierenden Betazellen der Bauchspeicheldrüse. Der Körper bildet wenig oder gar kein Insulin. Eine lebenslange Insulintherapie ist erforderlich. Die Erkrankung beginnt meist im Kindes-, Jugend- oder jungen Erwachsenenalter. Laut T1D Index 2024 liegt die Inzidenz von Typ-1-Diabetes in Spanien bei 12,50 Fällen je 100.000 Personen; bei Kindern unter 14 Jahren beträgt sie 18,80 je 100.000 Einwohner.
+      
+      
+        🟠
+        Typ-2-Diabetes (T2D)
+        Lebensstil & Genetik · Fortschreitend
+        Der Körper wird insulinresistent oder produziert nicht genügend Insulin. Diese Form ist eng mit Lebensstilfaktoren verbunden und mit mehr als 90 % der Fälle die häufigste Diabetesform in Spanien. Anfangs lässt sie sich häufig durch Ernährung, Bewegung und orale Medikamente kontrollieren; im weiteren Verlauf benötigen jedoch viele Betroffene Insulin.
+      
+      
+        🟡
+        Schwangerschaftsdiabetes
+        Schwangerschaftsbedingt · Meist vorübergehend
+        Er entsteht während der Schwangerschaft, wenn hormonelle Veränderungen die Wirkung des Insulins beeinträchtigen. Nach der Geburt bildet er sich meist zurück, erhöht jedoch das lebenslange Risiko für Typ-2-Diabetes bei Mutter und Kind deutlich. Im spanischen öffentlichen Gesundheitssystem SNS erfolgt das Screening routinemäßig zwischen der 24. und 28. Schwangerschaftswoche.
+      
+      
+        ⚪
+        Prädiabetes
+        Vermeidbar · Häufig umkehrbar
+        Der Blutzucker liegt über dem Normalbereich, erreicht aber noch nicht die diagnostischen Grenzwerte für Diabetes. Dies ist ein entscheidendes Zeitfenster für Gegenmaßnahmen: Lebensstiländerungen können die Entstehung von Typ-2-Diabetes deutlich verhindern oder verzögern. Viele Menschen in Spanien befinden sich in diesem Stadium, ohne es zu wissen.
+      
+    
+
+    
+    
+    Abschnitt 03
+    Ursachen und Risikofaktoren
+
+    Typ-1-Diabetes
+    Die genaue Ursache von Typ-1-Diabetes ist noch nicht vollständig geklärt. Es handelt sich um eine Autoimmunerkrankung: Das Immunsystem greift irrtümlich die insulinproduzierenden Betazellen der Bauchspeicheldrüse an und zerstört sie. Genetische Faktoren spielen eine Rolle, wahrscheinlich ebenso die Exposition gegenüber bestimmten Virusinfektionen während der Entwicklung. In Spanien wird auf diesem Gebiet unter anderem von Forschungsgruppen des Instituto de Salud Carlos III (ISCIII), der Sociedad Española de Diabetes (SED) und von Referenzzentren wie dem Hospital Infantil Universitario Niño Jesús in Madrid und dem Hospital Sant Joan de Déu in Barcelona geforscht.
+
+    Typ-2-Diabetes
+    Typ-2-Diabetes hat komplexere und teilweise beeinflussbare Ursachen. Genetische Veranlagung verbindet sich dabei mit Lebensstil- und Umweltfaktoren. Der zentrale Mechanismus ist die Insulinresistenz – die Körperzellen reagieren nicht mehr ausreichend auf Insulin – zusammen mit einer fortschreitenden Abnahme der Fähigkeit der Bauchspeicheldrüse, dies durch eine höhere Insulinproduktion auszugleichen.
+
+    
+      
+        ⚖️
+        Übergewicht
+        Insbesondere Bauchfett, also viszerales Fett. Adipositas ist in Spanien der wichtigste beeinflussbare Risikofaktor für Typ-2-Diabetes.
+      
+      
+        🛋️
+        Bewegungsmangel
+        Langes Sitzen verringert die Insulinempfindlichkeit. Regelmäßige Bewegung ist eine der wirksamsten vorbeugenden und therapeutischen Maßnahmen.
+      
+      
+        🍞
+        Ernährung mit vielen hochverarbeiteten Lebensmitteln
+        Ein hoher Verzehr raffinierter Kohlenhydrate, von Zucker und hochverarbeiteten Lebensmitteln ist stark mit Insulinresistenz verbunden.
+      
+      
+        👨‍👩‍👧
+        Familiäre Vorbelastung
+        Ein Verwandter ersten Grades mit Typ-2-Diabetes erhöht das persönliche Erkrankungsrisiko erheblich.
+      
+      
+        🎂
+        Alter über 45 Jahre
+        Das Risiko steigt mit dem Alter. Daten des spanischen Gesundheitsministeriums zeigen eine deutlich höhere Prävalenz bei Menschen ab 65 Jahren.
+      
+      
+        🩺
+        Bluthochdruck oder Dyslipidämie
+        Stoffwechselbedingte Risikofaktoren treten häufig gemeinsam auf. Bluthochdruck und Fettstoffwechselstörungen bestehen oft zusammen mit einer Insulinresistenz.
+      
+      
+        🤰
+        Früherer Schwangerschaftsdiabetes
+        Frauen, die einen Schwangerschaftsdiabetes hatten, tragen lebenslang ein deutlich höheres Risiko, Typ-2-Diabetes zu entwickeln.
+      
+      
+        🚬
+        Rauchen
+        Rauchen erhöht das Risiko für Typ-2-Diabetes und verschlechtert bei Menschen mit Diabetes die kardiovaskuläre Prognose. Die SED empfiehlt den Rauchstopp als festen Bestandteil der Behandlung.
+      
+    
+
+    
+    
+    Abschnitt 04
+    Symptome und Warnzeichen
+
+    Die Symptome unterscheiden sich erheblich zwischen Typ-1- und Typ-2-Diabetes. Typ-1-Diabetes beginnt häufig akut, mit rasch einsetzenden Beschwerden, die auf eine diabetische Ketoazidose (DKA), einen schweren medizinischen Notfall, hindeuten können. Typ-2-Diabetes entwickelt sich dagegen meist über Jahre langsam und unbemerkt. Die Beschwerden sind oft so leicht oder schleichend, dass sie dem Alter, Stress oder Müdigkeit zugeschrieben werden.
+
+    
+      
+        💧
+        
+          Übermäßiger Durst
+          Anhaltender, unstillbarer Durst – Polydipsie –, während die Nieren auf Hochtouren arbeiten, um überschüssige Glukose auszufiltern.
+        
+      
+      
+        🚽
+        
+          Häufiges Wasserlassen
+          Polyurie, besonders nachts (Nykturie). Dies ist oft das auffälligste frühe Symptom, das Betroffene ärztlichen Rat suchen lässt.
+        
+      
+      
+        😴
+        
+          Anhaltende Müdigkeit
+          Ständige Erschöpfung trotz ausreichender Erholung, weil den Zellen Glukose als Energiequelle fehlt.
+        
+      
+      
+        ⚖️
+        
+          Unerklärlicher Gewichtsverlust
+          Besonders bei Typ-1-Diabetes: Wegen des Insulinmangels baut der Körper Fett und Muskeln zur Energiegewinnung ab.
+        
+      
+      
+        👁️
+        
+          Verschwommenes Sehen
+          Ein hoher Blutzucker verursacht Veränderungen der Augenlinse, die das Scharfstellen vorübergehend beeinträchtigen.
+        
+      
+      
+        🩹
+        
+          Langsame Wundheilung
+          Durchblutungsstörungen und eine beeinträchtigte Immunfunktion verlangsamen die Heilung von Schnitten, Wunden und Infektionen.
+        
+      
+      
+        🤚
+        
+          Kribbeln oder Taubheitsgefühl
+          Eine periphere Neuropathie an Händen und Füßen kann besonders bei Typ-2-Diabetes ein frühes Anzeichen sein.
+        
+      
+      
+        🍽️
+        
+          Ständiger Hunger
+          Polyphagie – anhaltender Hunger auch nach dem Essen – entsteht, wenn die Zellen Glukose nicht wirksam aufnehmen können.
+        
+      
+    
+
+    
+      Wann Sie dringend medizinische Hilfe benötigen:
+      Wenn bei Ihnen oder einem Familienmitglied plötzlich starker Durst, übermäßiges Wasserlassen, Erbrechen, Bauchschmerzen, Verwirrtheit oder ein nach Aceton riechender Atem auftreten – insbesondere bei einem Kind oder jungen Erwachsenen –, kann eine diabetische Ketoazidose (DKA) vorliegen. Sie ist ein schwerer medizinischer Notfall. Rufen Sie sofort die 061 oder die 112an oder suchen Sie die nächstgelegene Krankenhausnotaufnahme auf.
+    
+
+    
+    
+    Abschnitt 05
+    Aktuelle Diabetesbehandlungen in Spanien
+
+    Die Diabetesbehandlung hat sich im vergangenen Jahrzehnt grundlegend gewandelt. In Spanien gibt die Sociedad Española de Diabetes (SED) die maßgeblichen Leitlinien für die klinische Praxis heraus. Diese wurden 2025 durch multidisziplinäre Konsensdokumente aktualisiert, die gemeinsam mit der SEEN, der Spanischen Gesellschaft für Nephrologie und SEMERGEN erarbeitet wurden. Die gemeinsame Leitlinie der Spanischen Gesellschaft für Nephrologie und der SED bietet einen aktuellen Rahmen für Prävention und Behandlung diabetesbedingter chronischer Nierenerkrankungen. Der Zugang zu Arzneimitteln und die Erstattungsbedingungen werden vom Ministerio de Sanidad über die spanische Arzneimittelbehörde AEMPS geregelt.
+
+    Lebensstiländerung – Grundlage jeder Behandlung
+    Bei Typ-1- wie Typ-2-Diabetes ist der Lebensstil ein zentraler Bestandteil der Behandlung. Besonders bei Typ-2-Diabetes können eine Ernährungsumstellung und mehr körperliche Aktivität den HbA1c-Wert deutlich senken, die Insulinempfindlichkeit verbessern und in einigen Fällen – insbesondere nach bariatrischer Chirurgie oder bei sehr kalorienarmen Diäten – zu einer anhaltenden Remission führen. Die Leitlinie von 2025 betont, dass eine umfassende Behandlung von Typ-2-Diabetes über die Blutzuckerkontrolle hinausgehen und wichtige Aspekte eines gesunden Lebensstils einschließen muss: Rauchstopp, Alkoholverzicht, Schlafhygiene und die Berücksichtigung der psychischen Gesundheit.
+
+    Medikamentöse Behandlung
+    Nachfolgend finden Sie die wichtigsten in Spanien verfügbaren Arzneimittelklassen. Therapieentscheidungen werden individuell getroffen. Die Leitlinien der SED und der ADA von 2025 betonen einen patientenzentrierten Ansatz, der das kardiovaskuläre Risiko, die Nierenfunktion, das Gewicht und persönliche Präferenzen berücksichtigt.
+
+    
+      
+        Erste Wahl · T2D
+        Metformina
+        Glucophage · Generika (vom SNS finanziert)
+        Der etablierte orale Wirkstoff der ersten Wahl bei Typ-2-Diabetes. Metformin senkt den Blutzucker, indem es die Glukoseproduktion der Leber verringert. Es ist gut verträglich, kostengünstig und breit verfügbar. In Spanien bleibt es der übliche Ausgangspunkt der meisten Behandlungsschemata für Typ-2-Diabetes, wobei die Leitlinien von 2025 bei stark erhöhtem HbA1c auch einen Beginn mit Kombinationstherapie vorsehen.
+      
+      
+        Herz- und Nierenschutz
+        GLP-1-Rezeptoragonisten
+        Semaglutida (Ozempic, Wegovy) · Liraglutida (Victoza)
+        Diese wegweisende Klasse injizierbarer und inzwischen auch oraler Medikamente ahmt das Darmhormon GLP-1 nach. Sie senken den Blutzucker, fördern eine deutliche Gewichtsabnahme und reduzieren das kardiovaskuläre Risiko. GLP-1-Rezeptoragonisten werden bei hohem kardiovaskulärem Risiko früh empfohlen; SGLT2-Hemmer werden bei Herzinsuffizienz oder chronischer Nierenerkrankung bevorzugt. In Spanien sind sie verschreibungspflichtig; die Erstattung hängt von der jeweiligen Indikation ab.
+      
+      
+        Herz- und Nierenschutz
+        SGLT2-Hemmer
+        Empagliflozina (Jardiance) · Dapagliflozina (Forxiga)
+        Diese Tabletten senken den Blutzucker, indem sie die Ausscheidung überschüssiger Glukose über den Urin fördern. Unabhängig davon schützen sie Herz und Nieren. Bei Herzinsuffizienz oder chronischer Nierenerkrankung werden sie ungeachtet des HbA1c-Werts als vorrangige Therapie empfohlen. Die Studien EMPA-REG OUTCOME und CREDENCE liefern eine solide Evidenzbasis. In Spanien werden sie bei von der AEMPS zugelassenen Indikationen über das SNS finanziert.
+      
+      
+        Blutzuckerkontrolle
+        DPP-4-Hemmer (Gliptine)
+        Sitagliptina (Januvia) · Linagliptina (Trajenta)
+        Orale Medikamente, die die Insulinausschüttung glukoseabhängig steigern. Sie sind gewichtsneutral und haben ein geringes Hypoglykämierisiko. Sie werden eingesetzt, wenn GLP-1-Rezeptoragonisten oder SGLT2-Hemmer nicht vertragen werden oder ungeeignet sind. In Spanien werden sie gemäß den Verschreibungsbedingungen vom SNS finanziert.
+      
+      
+        T1D und fortgeschrittener T2D
+        Insulintherapie
+        Basal-, Bolus- und Mischinsuline · Insulinpumpen
+        Unverzichtbar für alle Menschen mit Typ-1-Diabetes und für viele mit Typ-2-Diabetes. Moderne Insulinanaloga bieten berechenbarere Wirkprofile als ältere Präparate. Insulinpumpen zur kontinuierlichen subkutanen Insulininfusion stehen ausgewählten Patientinnen und Patienten zur Verfügung und werden in Spanien nach den Kriterien der autonomen Gemeinschaften vom SNS finanziert.
+      
+      
+        T1D · Neuer Standard
+        Kontinuierliche Glukosemessung (CGM)
+        FreeStyle Libre · Dexcom · Medtronic
+        Die CGM macht Fingerstiche weitgehend überflüssig, zeigt Glukoseverläufe und Warnungen in Echtzeit und verbessert die Blutzuckerkontrolle. In Spanien unterscheidet sich die SNS-Finanzierung je nach autonomer Gemeinschaft und Diabetesform. Ein kontinuierlicher Glukosesensor wird empfohlen, um die Therapie anhand tatsächlicher Glukosemuster anzupassen. Geschlossene Regelkreise, auch künstliche Bauchspeicheldrüse genannt, sind in spezialisierten Zentren verfügbar.
+      
+    
+
+    
+      Aktualisierung der Leitlinien von ADA 2025 und SED:
+      Sowohl die Empfehlungen der ADA von 2025 als auch die Konsensdokumente der SED bekräftigen, dass GLP-1-Rezeptoragonisten und SGLT2-Hemmer bei Menschen mit Typ-2-Diabetes und bestehender oder stark erhöhter kardiovaskulärer Gefährdung, Herzinsuffizienz oder chronischer Nierenerkrankung unabhängig vom HbA1c-Wert bevorzugt werden sollten. Bei Begleiterkrankungen oder einem HbA1c über 8 % ist ein früher Beginn einer Kombination aus Metformin und einem GLP-1-Rezeptoragonisten oder SGLT2-Hemmer angezeigt. Wenn Sie Typ-2-Diabetes und eine dieser Erkrankungen haben, sprechen Sie mit Ihrer Ärztin, Ihrem Arzt oder Ihrer endokrinologischen Fachpraxis.
+    
+
+    
+    
+    Abschnitt 06
+    Die Bedeutung regelmäßiger Kontrollen
+
+    Diabetes ist eine chronische Erkrankung, die sich im Laufe der Zeit verändert. Unentdeckte Komplikationen können schwerwiegend und unumkehrbar sein. Die diabetische Retinopathie ist in Spanien eine der häufigsten Erblindungsursachen bei Erwachsenen im Erwerbsalter. Die diabetische Nephropathie ist ein wesentlicher Auslöser terminaler Nierenerkrankungen. Eine periphere Neuropathie verursacht diabetische Fußprobleme, die in besonders schweren Fällen zu einer Amputation führen können. Asturias, Aragón und La Rioja weisen in Spanien die höchsten Raten von Amputationen der unteren Gliedmaßen bei Menschen mit Diabetes auf; Cantabria, Extremadura und Baleares die niedrigsten.
+
+    Jahrzehntelange Forschung zeigt, dass sich all diese Komplikationen durch eine gute Blutzuckereinstellung, die Behandlung des Blutdrucks und regelmäßige Überwachung weitgehend verhindern oder deutlich verzögern lassen. Die strukturierte jährliche Untersuchung von Menschen mit Diabetes gehört zu den kosteneffektivsten Maßnahmen in der gesamten Medizin.
+
+    Was Ihre jährliche Diabeteskontrolle umfassen sollte
+
+    
+      HbA1c-Messung (durchschnittlicher Blutzucker der vergangenen 3 Monate)
+      Blutdruckkontrolle und Überprüfung der blutdrucksenkenden Behandlung
+      Nierenfunktion – geschätzte glomeruläre Filtrationsrate (eGFR) und Albumin-Kreatinin-Quotient im Urin
+      Cholesterin und vollständiges Lipidprofil
+      Beurteilung von Körpergewicht und Body-Mass-Index (BMI)
+      Fußuntersuchung – Pulse, Empfindung und Hautzustand
+      Screening auf diabetische Retinopathie – Augenhintergrunduntersuchung oder Fundusfotografie (im SNS verfügbar)
+      Überprüfung und gegebenenfalls Anpassung der Medikamente
+      Beurteilung, wie gut der Diabetes-Selbstmanagementplan eingehalten wird
+      Erfassung des Rauchverhaltens und bei Bedarf Unterstützung beim Rauchstopp
+      Grippeimpfung (für Menschen mit Diabetes ausdrücklich empfohlen)
+    
+
+    Screening für noch nicht diagnostizierte Personen
+    Wenn bei Ihnen Risikofaktoren für Typ-2-Diabetes bestehen und Sie noch nie untersucht wurden, kann Ihre hausärztliche Praxis eine Nüchternglukosemessung oder einen HbA1c-Test veranlassen. Diese einfachen Untersuchungen sind in allen Gesundheitszentren des SNS verfügbar. Besonders wichtig ist dies, wenn Sie älter als 45 Jahre sind, Diabetes in der Familie oder Bluthochdruck haben oder während einer Schwangerschaft übergewichtig waren. Die frühe Erkennung von Prädiabetes bietet eine echte Chance, den Beginn von Typ-2-Diabetes durch Lebensstiländerungen zu verhindern oder zu verzögern.
+
+    
+      Screening auf diabetische Retinopathie in Spanien:
+      Die SED empfiehlt für alle Menschen mit Diabetes ein jährliches Screening auf diabetische Retinopathie mittels Augenhintergrunduntersuchung oder Fundusfotografie. Der Zugang über das SNS unterscheidet sich je nach autonomer Gemeinschaft. Im Jahr 2025 veröffentlichte die SED eine Aktualisierung ihres Konsensdokuments zur Verhinderung des Fortschreitens der diabetischen Retinopathie, in der auch die Rolle von Fenofibrat berücksichtigt wird. Wenn Sie Diabetes haben und diese Kontrolle in letzter Zeit nicht wahrgenommen haben, wenden Sie sich an Ihre behandelnde Ärztin oder Ihren behandelnden Arzt.
+    
+
+    
+    
+    Abschnitt 07
+    Die Zukunft der Diabetesbehandlung
+
+    Das Innovationstempo in der Diabetologie ist beispiellos. Mehrere Forschungsbereiche – einige bereits in fortgeschrittenen klinischen Studien – könnten in den kommenden zehn Jahren grundlegend verändern, was es bedeutet, mit Diabetes zu leben.
+
+    
+      
+        Phase 1/2/3 · Zulassungsantrag 2026
+        Stammzelltherapie (Betazellen)
+        Zimislecel, früher VX-880, von Vertex Pharmaceuticals besteht aus einer Infusion vollständig ausdifferenzierter insulinproduzierender Zellen, die aus Stammzellen gewonnen werden, in die Pfortader der Leber. Ziel ist es, bei Typ-1-Diabetes die körpereigene Insulinproduktion wiederherzustellen. Bis Juni 2025 waren 50 Teilnehmende in die zulassungsrelevante Studie aufgenommen worden; der Zulassungsantrag ist für 2026 vorgesehen. Eine Übersichtsarbeit in PMC aus dem Jahr 2025 bezeichnet die Therapie als potenziell „transformativ“, da sie zugleich die Regeneration von Betazellen und die Immunmodulation adressiert.
+      
+      
+        Klinische Entwicklung
+        Künstliche Bauchspeicheldrüse (Closed-Loop-Systeme)
+        Systeme zur automatischen Insulinabgabe, die CGM mit automatisierten Insulinpumpen kombinieren, stellen bereits einen großen Fortschritt für Menschen mit Typ-1-Diabetes dar. In Spanien sind sie in spezialisierten endokrinologischen Einrichtungen verfügbar. Kontinuierliche oder intermittierende Messungen mit einem Glukosesensor dienen dazu, Therapien anhand tatsächlicher Glukoseverläufe anzupassen. Die nächste Generation nutzt Algorithmen des maschinellen Lernens, um Glukoseschwankungen vorherzusagen, bevor sie eintreten.
+      
+      
+        Neue Therapien
+        Duale und dreifache Rezeptoragonisten
+        Tirzepatid (Mounjaro) wirkt an den GIP- und GLP-1-Rezeptoren. Gegenüber herkömmlichen GLP-1-Rezeptoragonisten erzielt es stärkere Senkungen des HbA1c (–2,4 %) und des Körpergewichts (im Mittel –11 kg) und ist in Spanien verfügbar. Dreifache Agonisten für GLP-1, GIP und Glukagon werden in fortgeschrittenen klinischen Studien geprüft und könnten noch größere metabolische Vorteile bieten.
+      
+      
+        Immuntherapie
+        Immunmodulation bei T1D
+        Teplizumab, ein monoklonaler Anti-CD3-Antikörper, hat in klinischen Studien den klinischen Beginn von Typ-1-Diabetes bei Hochrisikopersonen im Median um etwa zwei Jahre verzögert. Die Forschung an Immuncheckpoint-Hemmern und an der Induktion von Immuntoleranz wird fortgesetzt. Ziel ist es, die verbliebene Funktion der Betazellen zum Zeitpunkt der Diagnose zu erhalten.
+      
+      
+        Präzisionsmedizin
+        Genomik und KI-gestützte Behandlung
+        Die genomische Charakterisierung beginnt, Diabetesunterformen zu identifizieren, die unterschiedlich auf bestimmte Medikamente ansprechen. KI-gestützte CGM-Systeme, die individuelle St

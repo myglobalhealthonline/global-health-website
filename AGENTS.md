@@ -15,8 +15,8 @@ dropdowns and tables, dependency-override mirroring, and the security-scanning r
 
 For SEO work, start at `seo/README.md`. It routes agents to the canonical global
 ledger and the relevant country evidence package. Read `docs/plans/seo-handover-codex.md`
-for process; `docs/plans/seo-control-state.md` remains the only operational ledger,
-roadmap and indexation watchlist.
+for process; `docs/plans/seo-control-state-2026-09.md` is the only operational ledger,
+roadmap and indexation watchlist (the old `seo-control-state.md` is frozen history).
 
 ## Conventions that are easy to get wrong
 

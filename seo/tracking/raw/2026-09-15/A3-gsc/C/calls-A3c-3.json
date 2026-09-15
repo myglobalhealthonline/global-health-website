@@ -1,0 +1,226 @@
+{
+  "agent": "A3c-3",
+  "project_id": "7804f362-5891-417e-9c3a-d9e8d4d7dc6b",
+  "calls": [
+    {
+      "date": "2026-09-05",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "query",
+          "page",
+          "country",
+          "device"
+        ],
+        "startDate": "2026-09-05",
+        "endDate": "2026-09-05",
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startRow": 0
+      },
+      "rowCount": 529,
+      "hasMore": false,
+      "timestamp_utc": "2026-09-15T05:29:17.956000+00:00",
+      "output_file": "C_daily_2026-09-05_r0.jsonl",
+      "note": "dimensions capped at 4 by tool schema (max 4 items); 'date' dropped from API dims since startDate=endDate=this call's date, injected at CSV-build time instead."
+    },
+    {
+      "date": "2026-09-06",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "query",
+          "page",
+          "country",
+          "device"
+        ],
+        "startDate": "2026-09-06",
+        "endDate": "2026-09-06",
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startRow": 0
+      },
+      "rowCount": 566,
+      "hasMore": false,
+      "timestamp_utc": "2026-09-15T05:29:20.749000+00:00",
+      "output_file": "C_daily_2026-09-06_r0.jsonl",
+      "note": "dimensions capped at 4 by tool schema (max 4 items); 'date' dropped from API dims since startDate=endDate=this call's date, injected at CSV-build time instead."
+    },
+    {
+      "date": "2026-09-07",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "query",
+          "page",
+          "country",
+          "device"
+        ],
+        "startDate": "2026-09-07",
+        "endDate": "2026-09-07",
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startRow": 0
+      },
+      "rowCount": 772,
+      "hasMore": false,
+      "timestamp_utc": "2026-09-15T05:29:23.543000+00:00",
+      "output_file": "C_daily_2026-09-07_r0.jsonl",
+      "note": "dimensions capped at 4 by tool schema (max 4 items); 'date' dropped from API dims since startDate=endDate=this call's date, injected at CSV-build time instead."
+    },
+    {
+      "date": "2026-09-08",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "query",
+          "page",
+          "country",
+          "device"
+        ],
+        "startDate": "2026-09-08",
+        "endDate": "2026-09-08",
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startRow": 0
+      },
+      "rowCount": 847,
+      "hasMore": false,
+      "timestamp_utc": "2026-09-15T05:29:25.669000+00:00",
+      "output_file": "C_daily_2026-09-08_r0.jsonl",
+      "note": "dimensions capped at 4 by tool schema (max 4 items); 'date' dropped from API dims since startDate=endDate=this call's date, injected at CSV-build time instead."
+    },
+    {
+      "date": "2026-09-09",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "query",
+          "page",
+          "country",
+          "device"
+        ],
+        "startDate": "2026-09-09",
+        "endDate": "2026-09-09",
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startRow": 0
+      },
+      "rowCount": 1000,
+      "hasMore": true,
+      "timestamp_utc": "2026-09-15T05:29:29.200000+00:00",
+      "output_file": "C_daily_2026-09-09_r0.jsonl",
+      "note": "dimensions capped at 4 by tool schema (max 4 items); 'date' dropped from API dims since startDate=endDate=this call's date, injected at CSV-build time instead."
+    },
+    {
+      "date": "2026-09-09",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "query",
+          "page",
+          "country",
+          "device"
+        ],
+        "startDate": "2026-09-09",
+        "endDate": "2026-09-09",
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startRow": 1000
+      },
+      "rowCount": 12,
+      "hasMore": false,
+      "timestamp_utc": "2026-09-15T05:32:08.880120+00:00",
+      "output_file": "C_daily_2026-09-09_r1000.jsonl",
+      "note": "dimensions capped at 4 by tool schema (max 4 items); 'date' dropped from API dims since startDate=endDate=this call's date, injected at CSV-build time instead."
+    },
+    {
+      "date": "2026-09-10",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "query",
+          "page",
+          "country",
+          "device"
+        ],
+        "startDate": "2026-09-10",
+        "endDate": "2026-09-10",
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startRow": 0
+      },
+      "rowCount": 1000,
+      "hasMore": true,
+      "timestamp_utc": "2026-09-15T05:29:30.911000+00:00",
+      "output_file": "C_daily_2026-09-10_r0.jsonl",
+      "note": "dimensions capped at 4 by tool schema (max 4 items); 'date' dropped from API dims since startDate=endDate=this call's date, injected at CSV-build time instead."
+    },
+    {
+      "date": "2026-09-10",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "query",
+          "page",
+          "country",
+          "device"
+        ],
+        "startDate": "2026-09-10",
+        "endDate": "2026-09-10",
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startRow": 1000
+      },
+      "rowCount": 87,
+      "hasMore": false,
+      "timestamp_utc": "2026-09-15T05:32:08.880120+00:00",
+      "output_file": "C_daily_2026-09-10_r1000.jsonl",
+      "note": "dimensions capped at 4 by tool schema (max 4 items); 'date' dropped from API dims since startDate=endDate=this call's date, injected at CSV-build time instead."
+    },
+    {
+      "date": "2026-09-11",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "query",
+          "page",
+          "country",
+          "device"
+        ],
+        "startDate": "2026-09-11",
+        "endDate": "2026-09-11",
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startRow": 0
+      },
+      "rowCount": 1000,
+      "hasMore": true,
+      "timestamp_utc": "2026-09-15T05:29:33.308000+00:00",
+      "output_file": "C_daily_2026-09-11_r0.jsonl",
+      "note": "dimensions capped at 4 by tool schema (max 4 items); 'date' dropped from API dims since startDate=endDate=this call's date, injected at CSV-build time instead."
+    },
+    {
+      "date": "2026-09-11",
+      "params": {
+        "type": "web",
+        "dimensions": [
+          "query",
+          "page",
+          "country",
+          "device"
+        ],
+        "startDate": "2026-09-11",
+        "endDate": "2026-09-11",
+        "dataState": "all",
+        "rowLimit": 1000,
+        "startRow": 1000
+      },
+      "rowCount": 4,
+      "hasMore": false,
+      "timestamp_utc": "2026-09-15T05:32:08.880120+00:00",
+      "output_file": "C_daily_2026-09-11_r1000.jsonl",
+      "note": "dimensions capped at 4 by tool schema (max 4 items); 'date' dropped from API dims since startDate=endDate=this call's date, injected at CSV-build time instead."
+    }
+  ]
+}

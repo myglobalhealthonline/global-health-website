@@ -1,0 +1,2 @@
+excluded_start,excluded_end,reason,refresh_id,source
+2026-08-02,2026-09-08,"Documented GA4 collection outage (per task brief / seo-control-state.md ledger sec.47). No landing-page rows exist for this range in the property - confirmed empty (zero rows), not zero-traffic; excluded from ga4_landing_daily.csv rather than written as zero-session rows.",R2026-09-15-GA4,ga4_organic_overview_full_20260725_20260914.json (trend array skips these dates entirely)

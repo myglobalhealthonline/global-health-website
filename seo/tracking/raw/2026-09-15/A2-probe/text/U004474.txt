@@ -1,0 +1,364 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.cgcom.es","https://www.aepd.es"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes: uma doença silenciosa","description":"Diabetes em Espanha: causas, sintomas, tratamentos com GLP-1 e SGLT2, controlos regulares e avanços no acompanhamento.","url":"https://www.myglobalhealth.online/spain/pt/blog/diabetes-uma-doenca-silenciosa","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/spain/pt/blog/diabetes-uma-doenca-silenciosa#webpage","url":"https://www.myglobalhealth.online/spain/pt/blog/diabetes-uma-doenca-silenciosa","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/pt/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-19"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes%3A+uma+doen%C3%A7a+silenciosa&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F738adbed-41df-4311-980a-e47c06e94281-33851.webp&v=2026-07-20.1-11iz8r2","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologia"},"datePublished":"2026-07-19T06:24:40.235Z","dateModified":"2026-07-19T06:59:15.525Z","publishingPrinciples":"https://www.myglobalhealth.online/spain/pt/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/spain/pt/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/spain/pt/blog"},{"@type":"ListItem","position":3,"name":"Diabetes: uma doença silenciosa","item":"https://www.myglobalhealth.online/spain/pt/blog/diabetes-uma-doenca-silenciosa"}]}]Todos os artigosEndocrinologiaDiabetes: uma doença silenciosaA diabetes mellitus é uma das doenças crónicas mais prevalentes em Espanha e, ao mesmo tempo, uma das mais subestimadas. A boa notícia é que, com o diagnóstico correto e um acompanhamento regular, as pessoas com diabetes podem ter uma vida plena e saudável graças aos avanços terapêuticos mais recentes.Global Health Medical Team19 de julho de 202623 min de leitura+Nesta páginaA Diabetes em Espanha: Compreender a Dimensão do ProblemaTipos de DiabetesCausas e Factores de RiscoSinais e SintomasTratamentos Actuais para a Diabetes em EspanhaA Importância das Consultas RegularesO Futuro do Tratamento da DiabetesInstituições e Recursos de Referência em EspanhaPerguntas Frequentes
+
+
+
+  
+  
+    
+      
+      
+      
+      Causas, Sintomas, Tratamento e o Futuro dos Cuidados
+      Estima-se que mais de 5,1 milhões de espanhóis vivem com diabetes — e milhares continuam sem diagnóstico. Este guia aborda tudo o que precisa de saber: causas, sinais de alerta, os melhores tratamentos disponíveis atualmente, a importância dos controlos regulares e as terapias emergentes que podem transformar os cuidados da diabetes nos próximos anos.
+      
+        — Baseado em evidência
+        — Alinhado com a SED e o Ministerio de Sanidad
+        — Atualizado em junho de 2026
+      
+      — Escrito pelo Dr. Tiago Miguel Figueira · Ordem dos Médicos n.º 77986 · Director Clínico, Global Health
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      TF
+      
+        Escrito pelo Dr. Tiago Miguel Figueira
+        Director Clínico · Ordem dos Médicos n.º 77986 · Medicina Geral e Familiar
+      
+      10 MIN LEITURA
+    
+
+    A diabetes mellitus é uma das doenças crónicas mais prevalentes em Espanha e, ao mesmo tempo, uma das mais subestimadas. A diabetes tipo 2, que representa mais de 90% dos casos, pode desenvolver-se lentamente ao longo de anos sem sintomas percetíveis. Quando o diagnóstico é estabelecido, a doença está frequentemente presente há bastante tempo.
+
+    A boa notícia é que a diabetes é altamente controlável. Com o diagnóstico correto, o tratamento adequado e um acompanhamento regular, as pessoas com diabetes podem ter uma vida plena e saudável. E, com os avanços terapêuticos da última década — em especial a chegada dos agonistas do recetor GLP-1 e dos inibidores SGLT2 — as opções disponíveis em Espanha são hoje as melhores de sempre.
+
+    
+    
+    Secção 01
+    A Diabetes em Espanha: Compreender a Dimensão do Problema
+
+    Durante o ano de 2024, foram registados em Espanha aproximadamente 5.121.600 casos de diabetes tipo 1 e tipo 2 em adultos entre os 20 e os 79 anos, colocando Espanha entre os países europeus com maior prevalência da doença. Segundo o relatório Más allá de la insulina: Mapa de la diabetes tipo 1 en España publicado pela Fundación DiabetesCERO em dezembro de 2024, a diabetes tipo 1 afeta 166.564 pessoas, o que representa 0,36% da população espanhola, sendo mais frequente nos homens (89.245) do que nas mulheres (77.317). O estudo publicado na Atención Primaria (2025), por Cebrián Cuenca e Escalada, confirma que a prevalência da diabetes em Espanha é maior nas pessoas idosas, especialmente com 65 anos ou mais, e assinala que as previsões para 2035 não são otimistas, com uma tendência de subida tanto nos adultos como nas crianças.
+
+    
+      
+        5,1 M
+        Casos de diabetes tipo 1 e 2 em adultos em Espanha em 2024
+      
+      
+        >90%
+        Dos casos correspondem a diabetes tipo 2
+      
+      
+        166 mil
+        Pessoas com diabetes tipo 1 em Espanha (Ministerio de Sanidad, 2024)
+      
+      
+        6.000
+        Novos casos de DM1 diagnosticados todos os anos em Espanha
+      
+    
+    Fonte: Fundación DiabetesCERO — Más allá de la insulina, dezembro de 2024; Ministerio de Sanidad, BDCAP; Atención Primaria 2025;57:102992 (Cebrián Cuenca & Escalada).
+
+    O Ministerio de Sanidad coordena a vigilância epidemiológica da diabetes através da Base de Datos Clínicos de Atención Primaria (BDCAP), que permite monitorizar a prevalência, o tratamento e as complicações em todo o território nacional. A Sociedad Española de Diabetes (SED) emite as orientações clínicas de referência para a gestão da doença e publicou, em 2025, documentos de consenso multidisciplinar sobre recomendações alimentares e gestão da doença renal crónica associada à diabetes, em colaboração com a SEEN e a Sociedad Española de Nefrología.
+
+    
+      Está em risco e não sabe?
+      Uma parte significativa das pessoas com diabetes tipo 2 em Espanha permanece sem diagnóstico. Se tem factores de risco — história familiar, excesso de peso, pressão arterial elevada ou sedentarismo — fale com o seu médico sobre a realização de uma glicemia em jejum ou de uma HbA1c. O diagnóstico precoce é determinante para evitar complicações.
+    
+
+    
+    
+    Secção 02
+    Tipos de Diabetes
+
+    Nem toda a diabetes é igual. Compreender o tipo que tem — ou para o qual está em risco — é o primeiro passo para uma gestão eficaz.
+
+    
+      
+        🔵
+        Diabetes Tipo 1 (DM1)
+        Autoimune · Insulinodependente
+        O sistema imunitário destrói as células beta produtoras de insulina do pâncreas. O organismo produz pouca ou nenhuma insulina. Requer insulinoterapia durante toda a vida. Desenvolve-se habitualmente na infância ou no início da idade adulta. A incidência de DM1 em Espanha atingiu 12,50 casos por cada 100.000 pessoas; nos menores de 14 anos, ascende a 18,80 por cada 100.000 habitantes, segundo o T1D Index 2024.
+      
+      
+        🟠
+        Diabetes Tipo 2 (DM2)
+        Estilo de vida & genética · Progressiva
+        O organismo torna-se resistente à insulina ou não produz insulina suficiente. Fortemente associada a factores de estilo de vida. A forma mais comum em Espanha, responsável por mais de 90% dos casos. Pode ser inicialmente controlada com alimentação, exercício e medicação oral, embora muitos doentes venham a necessitar de insulina.
+      
+      
+        🟡
+        Diabetes Gestacional
+        Relacionada com a gravidez · Geralmente transitória
+        Desenvolve-se durante a gravidez quando as alterações hormonais dificultam a função da insulina. Costuma resolver-se após o parto, mas aumenta significativamente o risco de DM2 ao longo da vida para a mãe e para a criança. O rastreio é realizado por rotina no SNS entre as 24 e as 28 semanas de gestação.
+      
+      
+        ⚪
+        Pré-diabetes
+        Prevenível · Frequentemente reversível
+        A glicemia é superior ao normal, mas sem atingir os níveis de diagnóstico da diabetes. É uma janela crítica de intervenção — as alterações do estilo de vida nesta fase podem prevenir ou atrasar significativamente o desenvolvimento da DM2. Muitas pessoas em Espanha encontram-se nesta situação sem o saber.
+      
+    
+
+    
+    
+    Secção 03
+    Causas e Factores de Risco
+
+    Diabetes Tipo 1
+    A causa exata da DM1 não é totalmente conhecida. É uma doença autoimune — o sistema imunitário ataca e destrói por engano as células beta do pâncreas responsáveis pela produção de insulina. Os fatores genéticos desempenham um papel, tal como, provavelmente, a exposição a determinadas infeções virais durante o desenvolvimento. A investigação nesta área é realizada em Espanha por grupos associados ao Instituto de Salud Carlos III (ISCIII), à Sociedad Española de Diabetes (SED) e por centros de referência como o Hospital Infantil Universitario Niño Jesús de Madrid e o Hospital Sant Joan de Déu de Barcelona.
+
+    Diabetes Tipo 2
+    A diabetes tipo 2 tem um conjunto de causas mais complexo e modificável, combinando predisposição genética com factores de estilo de vida e ambientais. O mecanismo central é a resistência à insulina — em que as células do organismo deixam de responder eficazmente à insulina — associada a um declínio progressivo na capacidade do pâncreas de compensar com uma maior produção.
+
+    
+      
+        ⚖️
+        Excesso de peso corporal
+        Em particular, a gordura abdominal (visceral). A obesidade é o fator de risco modificável mais importante para a DM2 em Espanha.
+      
+      
+        🛋️
+        Sedentarismo
+        O comportamento sedentário reduz a sensibilidade à insulina. O exercício regular é uma das ferramentas preventivas e terapêuticas mais eficazes.
+      
+      
+        🍞
+        Dieta rica em alimentos processados
+        O consumo elevado de hidratos de carbono refinados, açúcar e alimentos ultra-processados está fortemente associado à resistência à insulina.
+      
+      
+        👨‍👩‍👧
+        História familiar
+        Ter um familiar em primeiro grau com diabetes tipo 2 aumenta significativamente o risco pessoal.
+      
+      
+        🎂
+        Idade superior a 45 anos
+        O risco aumenta com a idade. Os dados do Ministerio de Sanidad mostram uma prevalência significativamente maior nas pessoas com 65 anos ou mais.
+      
+      
+        🩺
+        Hipertensão arterial ou dislipidemia
+        Os factores de risco metabólico tendem a coexistir. A hipertensão e a dislipidemia ocorrem frequentemente em simultâneo com a resistência à insulina.
+      
+      
+        🤰
+        Diabetes gestacional prévia
+        As mulheres que desenvolveram diabetes gestacional têm um risco vitalício substancialmente mais elevado de desenvolver diabetes tipo 2.
+      
+      
+        🚬
+        Tabagismo
+        Fumar aumenta o risco de DM2 e agrava o prognóstico cardiovascular nas pessoas com diabetes. A SED recomenda deixar de fumar como parte integrante da gestão da doença.
+      
+    
+
+    
+    
+    Secção 04
+    Sinais e Sintomas
+
+    Os sintomas variam consideravelmente entre a diabetes tipo 1 e a tipo 2. A tipo 1 apresenta-se muitas vezes de forma aguda — com aparecimento rápido de sintomas que podem indicar cetoacidose diabética (CAD), uma emergência médica. A tipo 2, pelo contrário, desenvolve-se tipicamente de forma lenta e silenciosa ao longo de anos, com sintomas tão subtis ou graduais que muitas pessoas os atribuem ao envelhecimento, ao stress ou ao cansaço.
+
+    
+      
+        💧
+        
+          Sede excessiva
+          Sede persistente e incontrolável — polidipsia — enquanto os rins trabalham para filtrar o excesso de glicose.
+        
+      
+      
+        🚽
+        
+          Urinar com frequência
+          Poliúria, especialmente à noite (noctúria). Frequentemente o sintoma inicial mais perturbador.
+        
+      
+      
+        😴
+        
+          Cansaço persistente
+          Fadiga constante mesmo após descanso adequado, causada pela privação de glicose nas células.
+        
+      
+      
+        ⚖️
+        
+          Perda de peso inexplicada
+          Sobretudo na tipo 1 — o organismo degrada gordura e músculo para obter energia na ausência de insulina.
+        
+      
+      
+        👁️
+        
+          Visão turva
+          A glicemia elevada provoca alterações no cristalino do olho, afectando temporariamente o foco visual.
+        
+      
+      
+        🩹
+        
+          Cicatrização lenta de feridas
+          A circulação comprometida e a disfunção imunitária retardam a cicatrização de cortes, feridas e infecções.
+        
+      
+      
+        🤚
+        
+          Formigueiro ou dormência
+          A neuropatia periférica — que afecta mãos e pés — pode ser um sinal precoce, em particular na tipo 2.
+        
+      
+      
+        🍽️
+        
+          Fome constante
+          Polifagia — fome persistente mesmo após comer — ocorre quando as células não conseguem absorver glicose de forma eficaz.
+        
+      
+    
+
+    
+      Quando procurar cuidados urgentes:
+      Se você ou um familiar apresentar um início súbito de sede intensa, micção excessiva, vómitos, dor abdominal, confusão ou hálito com odor a acetona — especialmente numa criança ou num adulto jovem — pode tratar-se de cetoacidose diabética (CAD), uma emergência médica grave. Ligue imediatamente para o 061 ou para o 112, ou dirija-se ao serviço de urgência hospitalar mais próximo.
+    
+
+    
+    
+    Secção 05
+    Tratamentos Actuais para a Diabetes em Espanha
+
+    O tratamento da diabetes sofreu uma verdadeira revolução na última década. Em Espanha, a Sociedad Española de Diabetes (SED) estabelece as orientações de prática clínica de referência, que em 2025 foram atualizadas através de documentos de consenso multidisciplinar elaborados em conjunto com a SEEN, a Sociedad Española de Nefrología e a SEMERGEN. A orientação conjunta da Sociedad Española de Nefrología e da SED oferece um enquadramento atualizado para a prevenção e a gestão da doença renal crónica associada à diabetes. O acesso aos medicamentos e as condições de financiamento são regulados pelo Ministerio de Sanidad através da Agencia Española de Medicamentos y Productos Sanitarios (AEMPS).
+
+    Modificação do Estilo de Vida — A Base de Todo o Tratamento
+    Para a DM1 e a DM2, o estilo de vida é o pilar fundamental do tratamento. Na DM2, em particular, a alteração da alimentação e o aumento da atividade física podem reduzir significativamente a HbA1c, melhorar a sensibilidade à insulina e, em alguns casos — especialmente após cirurgia bariátrica ou dietas muito hipocalóricas — conduzir a uma remissão sustentada. A orientação de 2025 salienta que a gestão integral da DM2 deve ir além do controlo glicémico e incluir aspetos fundamentais de um estilo de vida saudável, como deixar de fumar, evitar o álcool, cuidar da higiene do sono e prestar atenção à saúde mental.
+
+    Tratamento Farmacológico
+    Apresentam-se a seguir as principais classes de medicamentos disponíveis em Espanha. As decisões terapêuticas são individualizadas — as orientações da SED e da ADA 2025 sublinham uma abordagem centrada no doente, que considera o risco cardiovascular, a função renal, o peso e as preferências pessoais.
+
+    
+      
+        Primeira Linha · Tipo 2
+        Metformina
+        Glucophage · Genéricos (financiados pelo SNS)
+        O agente oral de primeira linha consolidado para a DM2. Reduz a glicemia ao diminuir a produção hepática de glicose. Bem tolerada, acessível e amplamente disponível. Continua a ser o ponto de partida habitual na maioria dos esquemas terapêuticos da DM2 em Espanha, embora as orientações de 2025 contemplem o início com terapêutica combinada quando a HbA1c é muito elevada.
+      
+      
+        Protecção Cardiorrenal
+        Agonistas GLP-1
+        Semaglutida (Ozempic, Wegovy) · Liraglutida (Victoza)
+        Uma classe transformadora de medicamentos injetáveis (e agora também orais) que imitam a hormona intestinal GLP-1. Reduzem a glicemia, promovem uma perda de peso significativa e diminuem o risco cardiovascular. Os agonistas GLP-1 são recomendados precocemente em doentes com elevado risco cardiovascular, enquanto os inibidores SGLT2 são priorizados nos doentes com insuficiência cardíaca ou doença renal crónica. Estão disponíveis em Espanha mediante receita médica, com financiamento variável conforme a indicação.
+      
+      
+        Protecção Cardiorrenal
+        Inibidores SGLT2
+        Empagliflozina (Jardiance) · Dapagliflozina (Forxiga)
+        Estes comprimidos reduzem a glicemia ao promover a eliminação do excesso de açúcar pela urina. Protegem de forma independente o coração e os rins — são recomendados como primeira linha em doentes com insuficiência cardíaca ou doença renal crónica, independentemente do valor da HbA1c. Existe uma base sólida de evidência proveniente dos ensaios EMPA-REG OUTCOME e CREDENCE. Estão disponíveis em Espanha com financiamento do SNS segundo as indicações aprovadas pela AEMPS.
+      
+      
+        Controlo Glicémico
+        Inibidores DPP-4
+        Sitagliptina (Januvia) · Linagliptina (Trajenta)
+        Comprimidos orais que potenciam a secreção de insulina de forma dependente da glicose. São neutros em relação ao peso e apresentam baixo risco de hipoglicemia. São utilizados quando os agonistas GLP-1 ou os inibidores SGLT2 não são tolerados ou adequados. São financiados pelo SNS em Espanha segundo as condições de prescrição.
+      
+      
+        Tipo 1 & Tipo 2 Avançada
+        Insulinoterapia
+        Insulinas basais, bolus, pré-misturadas · Bombas de insulina
+        Essencial para todos os doentes com DM1 e para muitos com DM2. As insulinas análogas modernas oferecem perfis de ação mais previsíveis do que as formulações mais antigas. As bombas de insulina (infusão subcutânea contínua de insulina) estão disponíveis para doentes selecionados e são financiadas pelo SNS em Espanha segundo os critérios estabelecidos pelas comunidades autónomas.
+      
+      
+        Tipo 1 · Nova Norma
+        Monitorização Contínua da Glicose (MCG)
+        FreeStyle Libre · Dexcom · Medtronic
+        A MCG elimina a necessidade de picadas no dedo, fornece tendências e alertas de glicose em tempo real e melhora o controlo glicémico. Em Espanha, o financiamento da MCG pelo SNS varia consoante a comunidade autónoma e o tipo de diabetes. Recomenda-se a utilização de um sensor contínuo de glicose (CGM) para ajustar os tratamentos com base nos padrões reais da glicemia. Os sistemas de circuito fechado (pâncreas artificial) estão disponíveis em centros especializados.
+      
+    
+
+    
+      Atualização das orientações ADA 2025 e SED:
+      Tanto as recomendações da ADA 2025 como os documentos de consenso da SED reforçam que os agonistas GLP-1 e os inibidores SGLT2 devem ser priorizados nos doentes com DM2 que apresentem doença cardiovascular estabelecida ou de alto risco, insuficiência cardíaca ou doença renal crónica — independentemente do valor da HbA1c. O início precoce de terapêutica combinada com metformina e um agonista GLP-1 ou um inibidor SGLT2 está indicado na presença de comorbilidades ou de HbA1c superior a 8%. Se tem DM2 e alguma destas condições, consulte o seu médico ou endocrinologista.
+    
+
+    
+    
+    Secção 06
+    A Importância das Consultas Regulares
+
+    A diabetes é uma doença crónica que evolui ao longo do tempo, e as suas complicações — se não forem detetadas — podem ser graves e irreversíveis. A retinopatia diabética é uma das principais causas de cegueira em adultos em idade ativa em Espanha. A nefropatia diabética é um fator determinante da doença renal crónica terminal. A neuropatia periférica causa complicações do pé diabético que, nos casos mais graves, podem resultar em amputação. Astúrias, Aragão e La Rioja apresentam as taxas mais elevadas de amputação dos membros inferiores em pessoas com diabetes em Espanha, enquanto Cantábria, Extremadura e Baleares registam as taxas mais baixas.
+
+    A investigação de décadas demonstra que todas estas complicações são amplamente preveníveis — ou significativamente atrasadas — com um bom controlo glicémico, gestão da pressão arterial e vigilância regular. A consulta de diabetes anual estruturada é uma das intervenções com melhor relação custo-eficácia em toda a medicina.
+
+    O Que Deve Incluir a Sua Consulta Anual de Diabetes
+
+    
+      Avaliação da HbA1c (média de glicemia dos últimos 3 meses)
+      Medição da pressão arterial e revisão da terapêutica anti-hipertensora
+      Função renal — taxa de filtração glomerular estimada (TFGe) e rácio albumina/creatinina urinária
+      Colesterol e perfil lipídico completo
+      Avaliação do peso e do IMC
+      Exame dos pés — incluindo avaliação de pulsos e sensibilidade
+      Rastreio da retinopatia diabética — fundo ocular ou retinografia (disponível no SNS)
+      Revisão e ajuste da medicação, se necessário
+      Avaliação da adesão ao plano de autogestão da diabetes
+      Avaliação do estado tabágico e apoio à cessação tabágica, se aplicável
+      Vacinação anti-gripal (fortemente recomendada para pessoas com diabetes)
+    
+
+    Rastreio para Quem Ainda Não Tem Diagnóstico
+    Se tem fatores de risco para a DM2 e nunca foi avaliado, o seu médico de cuidados de saúde primários pode pedir uma glicemia em jejum ou uma HbA1c — análises simples disponíveis em todos os centros de saúde do SNS. Isto é especialmente importante se tiver mais de 45 anos, antecedentes familiares de diabetes, hipertensão arterial ou se teve excesso de peso durante a gravidez. A deteção precoce da pré-diabetes oferece uma verdadeira janela de oportunidade para prevenir ou atrasar o início da DM2 através de alterações do estilo de vida.
+
+    
+      Rastreio da Retinopatia Diabética em Espanha:
+      A SED recomenda que todos os doentes com diabetes façam um rastreio anual da retinopatia diabética através de fundo ocular ou retinografia. O acesso a este exame através do SNS varia consoante a comunidade autónoma. Em 2025, a SED publicou uma atualização do seu documento de consenso sobre a prevenção da progressão da retinopatia diabética, que incorpora o papel do fenofibrato. Se tem diabetes e não realizou este controlo recentemente, consulte o seu médico de referência.
+    
+
+    
+    
+    Secção 07
+    O Futuro do Tratamento da Diabetes
+
+    O ritmo de inovação na medicina da diabetes é sem precedentes. Várias áreas de investigação — algumas já em ensaios clínicos avançados — têm o potencial de transformar fundamentalmente o que significa viver com diabetes na próxima década.
+
+    
+      
+        Fase 1/2/3 · Apresentação regulamentar em 2026
+        Terapia com Células Estaminais (células beta)
+        O Zimislecel (anteriormente VX-880) da Vertex Pharmaceuticals consiste na infusão de células ilhotas produtoras de insulina, totalmente diferenciadas a partir de células estaminais, na veia porta hepática — com o objectivo de restaurar a produção endógena de insulina na diabetes tipo 1. Em Junho de 2025, o ensaio pivotal tinha 50 participantes incluídos, com submissão regulatória prevista para 2026. Uma revisão publicada em PMC (2025) descreve esta abordagem como potencialmente "transformadora", por actuar simultaneamente na regeneração das células beta e na modulação imunitária.
+      
+      
+        Desenvolvimento Clínico
+        Pâncreas Artificial (sistemas de circuito fechado)
+        Os sistemas de administração automática de insulina — que combinam MCG com bombas de insulina automatizadas — já representam um avanço importante para os doentes com DM1. Em Espanha, estão disponíveis em unidades especializadas de endocrinologia. A monitorização contínua ou intermitente através de um sensor contínuo de glicose é utilizada para ajustar os tratamentos com base nos padrões reais da glicemia. A próxima geração incorpora algoritmos de aprendizagem automática para prever as flutuações da glicose antes de ocorrerem.
+      
+      
+        Terapias Emergentes
+        Agonistas Duplos e Triplos dos Receptores
+        A tirzepatida (Mounjaro) atua sobre os recetores GIP e GLP-1, conseguindo reduções superiores da HbA1c (–2,4%) e do peso corporal (–11 kg, em média) em comparação com os agonistas GLP-1 tradicionais, e está disponível em Espanha. Os agonistas triplos (GLP-1/GIP/glucagon) encontram-se em ensaios clínicos avançados e poderão oferecer benefícios metabólicos ainda maiores.
+      
+      
+        Imunoterapia
+        Modulação Imunitária na DM1
+        O teplizumab (anticorpo monoclonal anti-CD3) demonstrou em ensaios clínicos atrasar o início clínico da diabetes tipo 1 em cerca de dois anos em indivíduos de alto risco. A investigação sobre inibidores de checkpoints imunitários e indução de tolerância continua, com o objectivo de preservar a função residual das células beta no momento do diagnóstico.
+      
+      
+        Medicina de Precisão
+        Genómica e Tratamento Guiado por IA
+        A caracterização genómica começa a identificar subtipos de diabetes que respondem de forma diferente a medicamentos específicos. Monitorizações contínuas de glicose habilitadas por inteligência artificial, que aprendem os padrões metabólicos individuais e fazem recomendações personalizadas, estão em desenvolvimento — com potencial para transformar a gestão diária da diabetes.
+      
+      
+        Medicina Regenerativa
+        Encapsulação de Células Beta
+        Uma estratégia paralela à terapia com células estaminais consiste em encapsular células produtoras de insulina em dispositivos de biomateriais protetores que as protegem da destruição imunitária — eliminando potencialmente a necessidade de imunossupressão. O Diabetes Research Institute da Universidade de Miami demonstrou a prova de conceito em ensaios clínicos, com o primeiro doente a alcançar a independência da insulina.
+      
+    
+
+    A investigação sobre terapia com células estaminais para a diabetes tipo 1 é analisada em

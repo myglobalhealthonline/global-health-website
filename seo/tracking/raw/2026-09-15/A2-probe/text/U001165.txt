@@ -1,0 +1,385 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.lkcr.cz","https://www.sukl.cz","https://www.uoou.cz"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetul: boala tăcută","description":"Diabetul în Cehia: cauze, simptome, tratamente cu GLP-1 și SGLT2, controale regulate și când să cereți ajutor medical.","url":"https://www.myglobalhealth.online/czechia/ro/blog/diabetul-boala-tacuta-3","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/czechia/ro/blog/diabetul-boala-tacuta-3#webpage","url":"https://www.myglobalhealth.online/czechia/ro/blog/diabetul-boala-tacuta-3","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/ro/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-19"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetul%3A+boala+t%C4%83cut%C4%83&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F58c09201-812d-4a9f-b12b-a5bade2ba3a8-33850.webp&v=2026-07-20.1-1tr0enf","width":1200,"height":630},"about":{"@type":"Thing","name":"Endokrinologie"},"datePublished":"2026-07-19T06:14:43.687Z","dateModified":"2026-07-19T06:15:25.832Z","publishingPrinciples":"https://www.myglobalhealth.online/czechia/ro/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/czechia/ro/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Acasă","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/czechia/ro/blog"},{"@type":"ListItem","position":3,"name":"Diabetul: boala tăcută","item":"https://www.myglobalhealth.online/czechia/ro/blog/diabetul-boala-tacuta-3"}]}]Toate articoleleEndokrinologieDiabetul: boala tăcutăDiabetul zaharat este una dintre cele mai răspândite și subestimate boli cronice din Republica Cehă, afectând aproximativ 10% din populație. Tratamentele moderne, inclusiv agoniștii GLP-1 și inhibitorii SGLT2, permit astăzi un control mai bun ca oricând.Global Health Medical Team19 iulie 202621 min citire+Pe această paginăDiabetul în Republica Cehă: amploarea problemeiTipuri de diabetCauze și factori de riscSemnele și simptomele diabetuluiOpțiuni actuale de tratament al diabetului în Republica CehăDe ce sunt importante controalele medicale regulateViitorul tratamentului diabetuluiInstituții și resurse importante din Republica CehăÎntrebări frecvente
+
+
+
+  
+  
+    
+      
+      
+      
+      Cauze, simptome, tratament și viitorul îngrijirii
+      Se estimează că aproximativ 10% din populația Republicii Cehe trăiește cu diabet, iar alte mii de persoane nu știu încă faptul că au această boală. Acest ghid explică tot ce trebuie să știți: cauzele, semnele de alarmă, cele mai bune opțiuni de tratament disponibile, importanța controalelor regulate și terapiile noi care ar putea transforma îngrijirea diabetului în anii următori.
+      
+        — Bazat pe dovezi
+
+        — În concordanță cu recomandările ČDS și ÚZIS ČR
+
+        — Actualizat în iunie 2026
+
+      
+      — Scris de Dr. Tiago Miguel Figueira · Director clinic, Global Health— Adaptat și revizuit medical pentru piața cehă de: MUDr. Ahmed Maklad · Camera Medicală Cehă (ČLK), nr. 117 668 619 8
+    
+  
+
+  
+  
+
+  
+  
+
+    
+      AM
+      
+        Scris de Dr. Tiago Miguel Figueira
+
+        Director clinic · Global Health · Adaptat și revizuit medical pentru Republica Cehă de: 
+
+MUDr. Ahmed Maklad
+
+ · Camera Medicală Cehă (ČLK), nr. 117 668 619 8
+      
+      10 MIN DE CITIT
+    
+
+    Diabetul zaharat — numit frecvent simplu diabet — este una dintre cele mai răspândite boli cronice din Republica Cehă și, totodată, una dintre cele mai subestimate. Diabetul de tip 2, care reprezintă aproximativ 92% dintre cazuri, se poate dezvolta discret timp de mulți ani, fără simptome evidente. La momentul diagnosticului, boala este deja prezentă de ceva timp la mulți pacienți.
+
+    Vestea bună este că diabetul poate fi controlat foarte bine prin tratamentul potrivit și monitorizare regulată. Persoanele cu diabet pot avea o viață deplină și sănătoasă. Ultimul deceniu a adus progrese terapeutice majore — în special agoniștii receptorilor GLP-1 și inhibitorii SGLT2 (gliflozine) — iar opțiunile de tratament sunt astăzi mai bune ca oricând.
+
+    
+    
+    Secțiunea 01
+    Diabetul în Republica Cehă: amploarea problemei
+
+    Potrivit datelor furnizate de Oficiul Ceh de Statistică (ČSÚ), în 2024 aproximativ 884.500 de persoane urmau tratament medicamentos pentru diabet. Institutul de Informații și Statistică în Sănătate al Republicii Cehe (ÚZIS ČR), care administrează Registrul Național de Diabet (NDR), estimează că diabetul zaharat afectează aproximativ 10% din populația cehă. Republica Cehă se numără constant printre țările Uniunii Europene cu cea mai mare prevalență a diabetului, situație documentată și de Asociația Cehă de Diabet.
+
+    
+      
+        884k
+        Persoane tratate medicamentos pentru diabet în Republica Cehă în 2024 (ČSÚ)
+      
+      
+        ~10 %
+        Ponderea estimată a populației cehe cu diabet (ÚZIS ČR)
+      
+      
+        92 %
+        dintre cazuri sunt diabet de tip 2
+      
+      
+        TopEU
+        Republica Cehă se numără repetat printre țările UE cu cea mai mare prevalență a diabetului
+      
+    
+    Sursa: Oficiul Ceh de Statistică (ČSÚ) 2024; ÚZIS ČR — Registrul Național de Diabet; Asociația Cehă de Diabet; NZIP.
+
+    O prognoză științifică realizată de ÚZIS ČR pe baza datelor din Registrul Național al Serviciilor de Sănătate Rambursate (NRHZS) arată că numărul persoanelor cu diabet din Republica Cehă este în creștere și, fără schimbări importante ale stilului de viață la nivelul populației, va continua să crească în următorii ani. Un articol de cercetare de la Spitalul Universitar Motol (Vnitřní lékařství 2025;71(3):144–151) subliniază nevoia unui tratament individualizat, cu accent pe protecția cardiovasculară și renală.
+
+    
+      Ați putea fi la risc fără să știți?
+      Se estimează că o proporție importantă dintre persoanele cu diabet de tip 2 din Republica Cehă nu au fost încă diagnosticate. Dacă aveți factori de risc — diabet în familie, exces ponderal, hipertensiune sau un stil de viață sedentar — discutați cu medicul de familie despre măsurarea glicemiei pe nemâncate sau a HbA1c. Diagnosticul precoce este esențial pentru prevenirea complicațiilor.
+    
+
+    
+    
+    Secțiunea 02
+    Tipuri de diabet
+
+    Diabetul nu este o singură boală. Înțelegerea tipului pe care îl aveți sau pentru care prezentați risc este primul pas către un tratament eficient.
+
+    
+      
+        🔵
+        Diabet de tip 1 (T1D)
+        Autoimun · Dependent de insulină
+        Sistemul imunitar distruge celulele beta pancreatice care produc insulină. Organismul produce foarte puțină insulină sau deloc. Este necesară insulinoterapia pe tot parcursul vieții. Boala apare cel mai frecvent în copilărie sau la începutul vieții adulte. Reprezintă aproximativ 6–8% dintre cazurile de diabet din Republica Cehă; datele NRHZS indicau peste 58.900 de persoane cu T1D în 2013.
+      
+      
+        🟠
+        Diabet de tip 2 (T2D)
+        Stil de viață & genetică · Progresiv
+        Organismul devine rezistent la insulină sau nu produce suficientă insulină. Boala este strâns asociată cu stilul de viață și reprezintă aproximativ 92% dintre cazurile din Republica Cehă. Inițial, poate fi controlată prin alimentație, mișcare și medicamente orale, însă mulți pacienți ajung să aibă nevoie de insulină. Afectează de obicei adulții de vârstă mijlocie și vârstnicii.
+      
+      
+        🟡
+        Diabet gestațional
+        Asociat sarcinii · De obicei temporar
+        Apare în timpul sarcinii, când schimbările hormonale interferează cu acțiunea insulinei. De regulă dispare după naștere, dar crește semnificativ riscul de T2D pe parcursul vieții atât pentru mamă, cât și pentru copil. În maternitățile și cabinetele ginecologice din Republica Cehă, screeningul între săptămânile 24 și 28 de sarcină este o practică standard.
+      
+      
+        ⚪
+        Prediabet
+        Poate fi prevenit · Adesea reversibil
+        Glicemia este mai mare decât valoarea normală, dar nu se află încă în intervalul diabetului. Este o perioadă critică pentru intervenție: schimbările stilului de viață pot preveni sau întârzia considerabil apariția diabetului de tip 2. Multe persoane din Republica Cehă se află în acest stadiu fără să știe.
+      
+    
+
+    
+    
+    Secțiunea 03
+    Cauze și factori de risc
+
+    Diabet de tip 1
+    Cauza exactă a T1D nu este pe deplin înțeleasă. Este o boală autoimună în care sistemul imunitar atacă și distruge din greșeală celulele beta pancreatice care produc insulină. Factorii genetici au un rol, iar expunerea la anumite infecții virale ar putea contribui. Cercetarea din acest domeniu este coordonată în Republica Cehă prin Societatea Cehă de Diabetologie ČLS JEP (ČDS) și instituții precum Spitalul Universitar Motol și Spitalul Universitar Brno.
+
+    Diabet de tip 2
+    T2D are cauze mai complexe și în mare parte modificabile: o combinație între predispoziția genetică, stilul de viață și factorii de mediu. Mecanismul principal este rezistența la insulină — celulele organismului nu mai răspund eficient la insulină — împreună cu scăderea treptată a capacității pancreasului de a compensa printr-o producție mai mare.
+
+    
+      
+        ⚖️
+        Exces ponderal și obezitate
+        În special grăsimea abdominală (viscerală). Obezitatea este cel mai important factor de risc modificabil pentru T2D.
+      
+      
+        🛋️
+        Stil de viață sedentar
+        Lipsa activității fizice reduce sensibilitatea la insulină. Mișcarea regulată este unul dintre cele mai eficiente instrumente atât pentru prevenție, cât și pentru tratament.
+      
+      
+        🍞
+        Alimentație bogată în produse procesate
+        Consumul ridicat de carbohidrați rafinați, zahăr și alimente ultraprocesate este strâns asociat cu rezistența la insulină.
+      
+      
+        👨‍👩‍👧
+        Antecedente familiale
+        O rudă de gradul întâi cu T2D crește semnificativ riscul personal de a dezvolta boala.
+      
+      
+        🎂
+        Vârsta peste 45 de ani
+        Riscul crește odată cu vârsta. Datele ÚZIS ČR arată o prevalență mult mai mare a diabetului în grupele de vârstă înaintată.
+      
+      
+        🩺
+        Hipertensiune sau dislipidemie
+        Factorii de risc metabolici se asociază adesea. Hipertensiunea și tulburările lipidice apar frecvent împreună cu rezistența la insulină.
+      
+      
+        🤰
+        Antecedente de diabet gestațional
+        Femeile care au avut diabet gestațional în timpul sarcinii prezintă un risc mult mai mare de T2D pe tot parcursul vieții.
+      
+      
+        🚬
+        Fumat
+        Fumatul crește riscul apariției T2D și agravează prognosticul cardiovascular al persoanelor cu diabet. ČDS recomandă renunțarea la fumat ca parte a îngrijirii complete.
+      
+    
+
+    
+    
+    Secțiunea 04
+    Semnele și simptomele diabetului
+
+    Simptomele diferă considerabil între T1D și T2D. T1D debutează adesea acut, cu simptome apărute rapid, care pot indica cetoacidoză diabetică (DKA), o urgență ce pune viața în pericol. În schimb, T2D se dezvoltă de obicei lent și discret, de-a lungul anilor, iar simptomele pot fi atât de ușoare sau treptate încât multe persoane le atribuie vârstei, stresului ori oboselii.
+
+    
+      
+        💧
+        
+          Sete excesivă
+          Sete persistentă, greu de potolit — polidipsie — deoarece rinichii lucrează intens pentru a filtra excesul de glucoză.
+        
+      
+      
+        🚽
+        
+          Urinări frecvente
+          Poliurie, mai ales noaptea (nicturie). Este adesea primul simptom evident care determină pacienții să meargă la medic.
+        
+      
+      
+        😴
+        
+          Oboseală persistentă
+          Epuizare chiar și după un somn suficient, deoarece celulele nu primesc glucoza necesară ca sursă de energie.
+        
+      
+      
+        ⚖️
+        
+          Scădere inexplicabilă în greutate
+          Mai ales în T1D, când organismul arde grăsime și masă musculară pentru energie din cauza lipsei de insulină.
+        
+      
+      
+        👁️
+        
+          Vedere încețoșată
+          Glicemia crescută determină deplasări de lichid în cristalin și afectează temporar focalizarea.
+        
+      
+      
+        🩹
+        
+          Vindecarea lentă a rănilor
+          Circulația afectată și imunitatea redusă încetinesc vindecarea tăieturilor, zgârieturilor și infecțiilor.
+        
+      
+      
+        🤚
+        
+          Furnicături sau amorțeală
+          Neuropatia periferică a mâinilor și picioarelor poate fi un simptom precoce, mai ales în T2D.
+        
+      
+      
+        🍽️
+        
+          Apetit crescut
+          Polifagia — foamea persistentă chiar și după masă — apare atunci când celulele nu pot absorbi eficient glucoza.
+        
+      
+    
+
+    
+      Când trebuie să solicitați ajutor imediat:
+      Dacă dumneavoastră sau un membru al familiei aveți un debut brusc de sete intensă, urinări excesive, vărsături, dureri abdominale, confuzie ori respirație cu miros fructat sau de acetonă — mai ales la un copil sau adult tânăr — poate fi vorba despre cetoacidoză diabetică (DKA), o urgență medicală gravă. Sunați imediat la 155 (serviciul medical de urgență) sau 112 ori mergeți la cea mai apropiată unitate de primiri urgențe.
+    
+
+    
+    
+    Secțiunea 05
+    Opțiuni actuale de tratament al diabetului în Republica Cehă
+
+    Tratamentul diabetului a trecut printr-o adevărată revoluție în ultimul deceniu. În Republica Cehă, ghidurile clinice sunt emise de Societatea Cehă de Diabetologie ČLS JEP (ČDS), al cărei Standard recomandat de îngrijire pentru diabetul zaharat de tip 2 (actualizat în 2020, cu standarde ulterioare din 2021–2025) reprezintă norma pentru clinicile de diabet și medicii de familie din întreaga țară. Accesul la medicamente este stabilit prin condițiile de rambursare ale Institutului de Stat pentru Controlul Medicamentelor (SÚKL).
+
+    Schimbarea stilului de viață — baza oricărui tratament
+    Atât în T1D, cât și în T2D, stilul de viață este o componentă esențială a tratamentului. În T2D, schimbările alimentare și creșterea activității fizice pot reduce semnificativ HbA1c, pot îmbunătăți sensibilitatea la insulină și, în unele cazuri — mai ales după chirurgie bariatrică sau cu o dietă foarte hipocalorică — pot duce la remisie de durată. Educația structurată a pacienților face parte din îngrijirea oferită în clinicile de diabet și este recomandată în standardele ČDS.
+
+    Tratament farmacologic
+    Mai jos sunt prezentate principalele clase de medicamente disponibile în Republica Cehă. Deciziile terapeutice sunt individualizate: atât recomandările ČDS, cât și cele ADA 2025 pun accent pe o abordare centrată pe pacient, care ține cont de riscul cardiovascular, funcția renală, greutatea corporală și preferințele pacientului. Un articol publicat în Vnitřním lékařství (2025;71(3):144–151), realizat de Clinica de Medicină Internă a Facultății a II-a de Medicină a Universității Caroline și a Spitalului Universitar Motol, arată că la pacienții cu boli cardiovasculare, insuficiență cardiacă sau boală renală diabetică, inițierea unui agonist GLP-1 sau inhibitor SGLT2 nu ar trebui să depindă de nivelul HbA1c.
+
+    
+      
+        Prima linie · T2D
+        Metformin
+        Glucophage · Metformin generic (rambursat de asigurarea de sănătate)
+        Medicament consacrat de primă alegere pentru T2D. Reduce glicemia prin limitarea producției hepatice de glucoză. Este bine tolerat, accesibil și rambursat integral de asigurătorii cehi de sănătate. Rămâne punctul standard de pornire pentru tratamentul majorității pacienților cu T2D.
+      
+      
+        Protecție cardiorenală
+        Agoniști ai receptorilor GLP-1
+        Semaglutidă (Ozempic, Wegovy) · Liraglutidă (Victoza)
+        O clasă inovatoare de medicamente injectabile, iar acum și orale, care imită hormonul intestinal GLP-1. Reduc glicemia, susțin o scădere importantă în greutate și diminuează riscul cardiovascular. Conform recomandărilor ADA 2025 și ČDS, sunt preferate la pacienții cu boală cardiovasculară sau risc cardiovascular ridicat. În Republica Cehă sunt disponibile pe bază de rețetă; SÚKL stabilește condițiile de rambursare.
+      
+      
+        Protecție cardiorenală
+        Inhibitori SGLT2 (gliflozine)
+        Empagliflozină (Jardiance) · Dapagliflozină (Forxiga)
+        Comprimate care reduc glicemia determinând rinichii să elimine excesul de glucoză prin urină. Protejează independent inima și rinichii și sunt recomandate ca tratament prioritar la pacienții cu insuficiență cardiacă sau boală renală cronică, indiferent de HbA1c. Studiile EMPA-REG OUTCOME și CREDENCE oferă dovezi solide. În Republica Cehă sunt prescrise de specialiști în diabetologie, endocrinologie sau medicină internă, conform criteriilor SÚKL.
+      
+      
+        Control glicemic
+        Inhibitori DPP-4 (gliptine)
+        Sitagliptină (Januvia) · Linagliptină (Trajenta)
+        Comprimate orale care cresc secreția de insulină în funcție de glicemie. Nu influențează greutatea și au un risc redus de hipoglicemie. Sunt utilizate când agoniștii GLP-1 sau inhibitorii SGLT2 nu sunt tolerați ori indicați. Asigurătorii cehi de sănătate le rambursează dacă sunt îndeplinite criteriile de indicație.
+      
+      
+        T1D & T2D avansat
+        Terapie cu insulină
+        Insuline bazale, bolus și premixate · Pompe de insulină
+        Esențială pentru toate persoanele cu T1D și pentru multe dintre cele cu T2D. Analogii moderni de insulină au un profil de acțiune mai previzibil decât preparatele mai vechi. Pompele de insulină, care asigură infuzie subcutanată continuă, sunt disponibile în Republica Cehă pentru pacienții eligibili și sunt rambursate de asigurătorii de sănătate în condițiile în vigoare.
+      
+      
+        T1D · Noul standard
+        Monitorizare continuă a glucozei (CGM)
+        FreeStyle Libre · Dexcom · Medtronic
+        CGM elimină nevoia înțepăturilor repetate în deget, oferă valori ale glicemiei în timp real, tendințe și alerte și îmbunătățește controlul glicemic. În Republica Cehă, asigurătorii rambursează CGM pentru pacienții cu T1D și anumite grupuri cu T2D care îndeplinesc criteriile. Sistemele de administrare automată a insulinei (circuit închis) sunt disponibile în centre specializate.
+      
+    
+
+    
+      Actualizarea recomandărilor ADA 2025 și ČDS:
+      Atât ghidurile internaționale ADA 2025, cât și recomandările Societății Cehe de Diabetologie subliniază că agoniștii GLP-1 și inhibitorii SGLT2 ar trebui utilizați cu prioritate la pacienții cu T2D care au boală cardiovasculară confirmată, insuficiență cardiacă sau boală renală cronică, indiferent de HbA1c. Dacă aveți T2D și una dintre aceste afecțiuni, întrebați diabetologul sau medicul de familie dacă aceste medicamente sunt potrivite pentru dumneavoastră.
+    
+
+    
+    
+    Secțiunea 06
+    De ce sunt importante controalele medicale regulate
+
+    Diabetul este o boală cronică progresivă, iar complicațiile sale pot fi grave și ireversibile dacă nu este controlat corespunzător. Retinopatia diabetică este una dintre principalele cauze de orbire la adulții de vârstă activă din Republica Cehă. Nefropatia diabetică este o cauză majoră a insuficienței renale care necesită dializă. Neuropatia periferică contribuie la complicațiile piciorului diabetic, care în cazuri severe pot duce la amputație. Riscul cardiovascular este mult mai mare la persoanele cu diabet, după cum arată și Standardul recomandat de îngrijire pentru sindromul piciorului diabetic publicat de ČDS în 2025.
+
+    O concluzie esențială a deceniilor de cercetare clinică este că majoritatea acestor complicații pot fi prevenite în mare măsură sau întârziate semnificativ printr-un control glicemic bun, gestionarea tensiunii arteriale și controale regulate. Controlul anual structurat al diabetului este una dintre intervențiile medicale cel mai bine susținute de dovezi și cu cel mai bun raport cost-eficiență.
+
+    Ce ar trebui să includă controlul anual pentru diabet
+
+    
+      Test HbA1c (media glicemiei din ultimele 3 luni)
+      Măsurarea tensiunii arteriale și reevaluarea tratamentului antihipertensiv
+      Funcția renală — eGFR și raportul albumină/creatinină urinară (ACR)
+      Colesterol și profil lipidic complet
+      Evaluarea greutății corporale și a IMC
+      Examinarea picioarelor — pulsuri, sensibilitate, starea pielii
+      Screening pentru retinopatie diabetică — examen oftalmologic sau fotografie retiniană
+      Revizuirea medicației și ajustarea tratamentului, dacă este necesar
+      Evaluarea educației privind automonitorizarea
+      Evaluarea fumatului și sprijin pentru renunțare, dacă este cazul
+      Vaccinare antigripală (recomandată ferm persoanelor cu diabet)
+    
+
+    Screening pentru persoanele încă nediagnosticate
+    Dacă aveți factori de risc pentru T2D și nu ați fost testat niciodată, medicul de familie poate solicita o simplă glicemie pe nemâncate sau un test HbA1c. Acest lucru este deosebit de important dacă aveți peste 45 de ani, diabet în familie, hipertensiune sau ați avut exces ponderal în timpul sarcinii. Depistarea precoce a prediabetului oferă o posibilitate reală de a preveni sau întârzia T2D prin schimbarea stilului de viață.
+
+    
+      Screeningul retinopatiei diabetice în Republica Cehă:
+      Conform recomandărilor Societății Cehe de Diabetologie, toate persoanele cu diabet ar trebui trimise anual la o examinare oftalmologică pentru retinopatie diabetică. În 2023, ČDS a publicat o versiune actualizată a Poziției privind screeningul retinopatiei diabetice în cabinetele de diabetologie, care permite fotografia retiniană direct în clinicile de diabet ca alternativă la consultul oftalmologic. Screeningul retinopatiei diabetice este rambursat de asigurătorii de sănătate.
+    
+
+    
+    
+    Secțiunea 07
+    Viitorul tratamentului diabetului
+
+    Ritmul inovației în diabetologie este fără precedent. Mai multe domenii de cercetare, unele aflate deja în studii clinice avansate, au potențialul de a transforma fundamental viața cu diabet în următorul deceniu.
+
+    
+      
+        Fazele 1/2/3 · Depunere pentru autorizare în 2026
+        Terapie cu celule stem (celule beta)
+        Zimislecel (fost VX-880) de la Vertex Pharmaceuticals presupune infuzarea în vena portă a unor celule producătoare de insulină, complet diferențiate și derivate din celule stem. Scopul este refacerea producției proprii de insulină la persoanele cu T1D. Până în iunie 2025, 50 de participanți fuseseră incluși în studiul pivot, iar depunerea pentru autorizare este așteptată în 2026. O analiză din PMC (2025) descrie terapia drept potențial „transformatoare“, deoarece combină regenerarea celulelor beta cu modularea răspunsului imun.
+      
+      
+        Dezvoltare clinică
+        Pancreas artificial (sisteme cu circuit închis)
+        Sistemele automate de administrare a insulinei (AID), care combină CGM cu o pompă automată de insulină, reprezintă deja un progres major pentru persoanele cu T1D. Sunt disponibile în centre specializate din Republica Cehă, inclusiv la spitalele universitare Motol și Brno. Noua generație folosește algoritmi de învățare automată pentru a anticipa fluctuațiile glicemiei înainte ca acestea să apară.
+      
+      
+        Terapii noi
+        Agoniști duali și tripli ai receptorilor
+        Tirzepatida (Mounjaro), un agonist dual GIP/GLP-1, a demonstrat o reducere mai mare a HbA1c și o scădere în greutate mai pronunțată decât agoniștii GLP-1 existenți și este disponibilă în Republica Cehă. Agoniștii tripli GLP-1/GIP/glucagon se află în studii clinice avansate și ar putea oferi beneficii metabolice și mai mari.
+      
+      
+        Imunoterapie
+        Imunomodulare în T1D
+        Teplizumab, un anticorp monoclonal anti-CD3, a întârziat în studiile clinice debutul T1D cu aproximativ doi ani la persoanele cu risc ridicat. Cercetarea imunoterapiei și a inducerii toleranței continuă, cu scopul de a păstra funcția reziduală a celulelor beta la momentul diagnosticului.
+      
+      
+        Medicină de precizie
+        Genomică și tratament ghidat de IA
+        Profilarea genomică începe să identifice subtipuri de diabet care răspund diferit la anumite medicamente. Sistemele CGM bazate pe inteligență artificială, care învață tiparele metabolice individuale și oferă recomandări personalizate, sunt în dezvoltare și ar putea transforma gestionarea zilnică a diabetului.
+      
+      
+        Medicină regenerativă
+        Încapsularea celulelor beta
+        O strategie paralelă transplantului de celule stem constă în încapsularea celulelor producătoare de insulină în dispozitive din biomaterial protector, care le apără de distrugerea imună și ar putea elimina necesitatea imunosupresiei. Diabetes Research Institute de la University of Miami a demonstrat validitatea conceptului în studii clinice, primul pacient obținând independență față de insulină.
+      
+    
+
+    Cercetarea celulelor stem pentru T1D este analizată în detaliu într-o publicație din 2025 din PMC (PMID: PMC12689004), care afirmă că terapia cu celule stem oferă o strategie dublă: regenerarea celulelor beta producătoare de insulină și reglarea răspunsului imun. Deși vindecarea definitivă rămâne un obiectiv de viitor, direcția cercetării nu a fost niciodată mai clară.
+
+    
+    
+    Secțiunea 08
+    Instituții și resurse importante din Republica Cehă
+
+    Dacă trăiți cu diabet în Republica Cehă sau vă îngrijorează faptul că ați putea fi la risc, următoarele organizații și servicii sunt principalele puncte de referință pentru îngrijire clinică, educație și sprijin.
+
+    
+      🩺 ČDS ČLS JEP
+      📊 ÚZIS ČR
+      🤝 Asociația Cehă de Diabet
+      💊

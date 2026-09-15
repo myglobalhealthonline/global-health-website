@@ -1,0 +1,90 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.medicalcouncil.ie","https://www.dataprotection.ie","https://www.hse.ie","https://www.hiqa.ie","https://www.hpra.ie","https://www.rcpi.ie","https://www.icgp.ie","https://www.irishpsychiatry.ie","https://www.nai.ie","https://irishheart.ie","https://www.citizensinformation.ie","https://www.gov.ie/en/organisation/department-of-social-protection/","https://www.samaritans.org/ireland","https://www.pieta.ie"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Como obter um atestado médico online na Irlanda","description":"Saiba como funciona o atestado médico online na Irlanda, o que o empregador pode exigir e quando é necessária uma consulta presencial.","url":"https://www.myglobalhealth.online/ireland/pt/blog/como-obter-um-atestado-medico-online-na-irlanda","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/ireland/pt/blog/como-obter-um-atestado-medico-online-na-irlanda#webpage","url":"https://www.myglobalhealth.online/ireland/pt/blog/como-obter-um-atestado-medico-online-na-irlanda","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Ahmed Maklad","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/pt/doctors/dr-ahmed-maklad","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523450"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523450","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-08-23"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Como+obter+um+atestado+m%C3%A9dico+online+na+Irlanda&image=%2Fimages%2Fireland%2Fblog%2Fsick-cert-online-ireland-2026-v2.webp&v=2026-07-20.1-t8yd1b","width":1200,"height":630},"about":{"@type":"Thing","name":"General Practice"},"datePublished":"2026-07-24T15:17:03.695Z","dateModified":"2026-08-23T12:00:00.000Z","publishingPrinciples":"https://www.myglobalhealth.online/ireland/pt/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/ireland/pt/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Início","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/ireland/pt/blog"},{"@type":"ListItem","position":3,"name":"Como obter um atestado médico online na Irlanda","item":"https://www.myglobalhealth.online/ireland/pt/blog/como-obter-um-atestado-medico-online-na-irlanda"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Preciso de atestado por faltar um dia?","acceptedAnswer":{"@type":"Answer","text":"Precisa de certificação médica se reclamar esse dia ao abrigo da baixa legal remunerada. O empregador pode ter um regime mais favorável que aceite autodeclaração numa ausência curta; consulte a política aplicável."}},{"@type":"Question","name":"Um médico online pode emitir um atestado retroativo?","acceptedAnswer":{"@type":"Answer","text":"Apenas quando considerar que as datas anteriores têm suporte clínico. A retroatividade não é garantida e pode não ser adequada se não houver elementos suficientes sobre o seu estado nessas datas."}},{"@type":"Question","name":"Posso obter um atestado por stress ou ansiedade?","acceptedAnswer":{"@type":"Answer","text":"Um médico pode avaliar sintomas de saúde mental por vídeo quando os cuidados à distância forem adequados. A consulta deve considerar como os sintomas afetam o trabalho, que tratamento ou seguimento necessita e se existem riscos imediatos de segurança."}},{"@type":"Question","name":"O empregador pode contactar o médico?","acceptedAnswer":{"@type":"Answer","text":"O empregador pode procurar confirmar a autenticidade do atestado. Isso não lhe dá acesso às notas da consulta. Qualquer divulgação médica precisa de base legal adequada e deve limitar-se ao necessário para o local de trabalho."}}]}]Todos os artigosGeneral PracticeComo obter um atestado médico online na IrlandaSaiba o que acontece numa consulta online para obter um atestado, o que o empregador necessita e como a baixa remunerada difere do Illness Benefit.Global Health Medical Team24 de julho de 20266 min de leituraÚltima revisão 23 de agosto de 2026Revisado clinicamente por Dr Ahmed Maklad+Nesta páginaO que acontece numa consulta online para obter um atestado médico?O empregador aceita um atestado de um médico online?Como funciona a baixa legal remunerada na IrlandaQuando uma consulta online pode não ser adequadaPerguntas antes de marcar
+
+  
+    Irlanda · Guia do atestado para o trabalho
+    Pode obter um atestado médico online quando a videoconsulta dá ao médico informação suficiente para o avaliar em segurança.
+    O médico perguntará pelos sintomas, quando começaram e como afetam o seu trabalho. Se a avaliação clínica o justificar, poderá emitir um atestado depois da consulta. Está a marcar uma avaliação médica, não a comprar um documento, e a emissão nunca é automática.
+    Videoconsulta seguraMédico registado no IMCDecisão clínica após avaliação
+    Consultar horários e preço atual
+  
+  
+    O que este guia aborda
+    O que acontece numa consulta online e que informação deve ter preparada.
+    O que o empregador pode verificar e como a baixa por doença remunerada difere do Illness Benefit.
+    Quando a videoconsulta não é adequada, incluindo sintomas urgentes e pedidos que exigem outro serviço.
+    GHGlobal Health Medical Team
+    Revisto pela equipa médica da Global Health.
+  
+
+
+
+
+
+  
+  A consulta
+  O que acontece numa consulta online para obter um atestado médico?
+  A consulta é uma avaliação médica dirigida. O médico precisa de perceber o que se passa e por que motivo não consegue realizar o seu trabalho habitual em segurança.
+  Escolha um local privado onde possa falar abertamente. Não precisa de apresentar uma descrição perfeita da doença. Datas, sintomas e pormenores práticos sobre o trabalho são mais úteis.
+  
+    Saiba quando começaram os sintomas. Inclua os dias a que já faltou ou prevê faltar.
+    Tenha os seus dados clínicos à mão. O médico pode perguntar sobre medicamentos, doenças relevantes e tratamentos que já tentou.
+    Explique em que consiste o seu trabalho. Descreva as tarefas que não consegue realizar e se o seu estado pode colocar a si ou outra pessoa em risco.
+    Confirme o procedimento do empregador. Verifique se existe prazo, formulário ou portal para entrega.
+  
+  Se o atestado for clinicamente adequado, confirme os seus dados e as datas quando o receber. Guarde uma cópia e envie-o pelo canal habitualmente utilizado pelo empregador.
+
+
+
+  
+  Regras do empregador
+  O empregador aceita um atestado de um médico online?
+  Para a baixa legal por doença, o atestado deve ser emitido por um médico registado e confirmar que a doença ou lesão o impede de trabalhar.
+  A Workplace Relations Commission define o requisito de certificação. A Sick Leave Act 2022 e as orientações atuais da WRC não parecem distinguir, para este efeito, entre consulta presencial e remota.
+  O empregador pode confirmar se o médico está registado, se o documento é autêntico e se as datas são claras. Pode também exigir que siga um procedimento razoável de comunicação de ausência.
+  Se o atestado for recusadoPeça o motivo por escrito. Pode tratar-se de uma data em falta, entrega tardia, requisito da política da empresa ou da sua elegibilidade para o regime legal. Resolva o problema específico antes de partilhar informação clínica adicional.
+
+
+
+  
+  Remuneração e prestações
+  Como funciona a baixa legal remunerada na Irlanda
+  O regime legal prevê atualmente cinco dias de baixa remunerada por ano civil após 13 semanas de serviço contínuo.
+  
+    Valor pago. A remuneração legal por doença é 70% do rendimento diário normal, até ao limite de 110 € por dia.
+    Certificação médica. Precisa de um atestado emitido por um médico registado por cada dia reclamado ao abrigo do regime legal.
+    Regimes da empresa. O seu local de trabalho pode oferecer remuneração integral, mais dias ou autodeclaração para uma ausência curta; consulte o contrato ou manual do trabalhador.
+  
+  O Department of Enterprise confirmou em abril de 2025 que o aumento previsto não avançaria. As orientações atuais da WRC continuam a indicar cinco dias.
+  O atestado para o trabalho não é o certificado do Illness Benefit
+  O atestado para o empregador e a certificação médica usada num pedido de Illness Benefit pertencem a processos diferentes. O Illness Benefit é administrado pelo Department of Social Protection e utiliza um Certificate of Incapacity for Work.
+  O serviço de atestados online da Global Health fornece documentação laboral quando clinicamente adequado. Não emite o Certificate of Incapacity for Work do Department. Comece pelas orientações oficiais sobre o Illness Benefit ou consulte o nosso guia para pedir o Illness Benefit na Irlanda se pretende apresentar um pedido.
+
+
+
+  
+  Limites clínicos
+  Quando uma consulta online pode não ser adequada
+  A videoconsulta funciona para muitas doenças simples, mas o médico pode precisar de o examinar, verificar parâmetros ou pedir exames para tomar uma decisão segura.
+  
+    A emissão retroativa não é automática. A história clínica e os elementos disponíveis devem justificar as datas anteriores solicitadas.
+    Alguns documentos exigem outro serviço. Declarações de aptidão para regressar a funções críticas de segurança, formulários de seguros e relatórios especializados de medicina do trabalho podem exigir avaliação presencial ou por especialista.
+    A privacidade continua a ser importante. Um atestado laboral habitual não dá ao empregador acesso às notas da consulta nem ao processo clínico completo.
+  
+  A Data Protection Commission considera os dados de saúde uma categoria especial. Qualquer pedido do empregador deve limitar-se à informação de que realmente necessita. Se não sabe se a videoconsulta é adequada aos seus sintomas, consulte o nosso guia sobre consulta médica online ou presencial.
+  Procure primeiro ajuda urgenteLigue 112 ou 999, ou dirija-se a um serviço de urgência, perante dificuldade respiratória grave, dor no peito, colapso, confusão ou sinais de AVC. Não espere pela consulta do atestado.
+
+
+
+  
+  Perguntas comuns
+  Perguntas antes de marcar
+  
+    Preciso de atestado por faltar um dia?Precisa de certificação médica se reclamar esse dia ao abrigo da baixa legal remunerada. O empregador pode ter um regime mais favorável que aceite autodeclaração numa ausência curta; consulte a política aplicável.
+    Um médico online pode emitir um atestado retroativo?Apenas quando considerar que as datas anteriores têm suporte clínico. A retroatividade não é garantida e pode não ser adequada se não houver elementos suficientes sobre o seu estado nessas datas.
+    Posso obter um atestado por stress ou ansiedade?Um médico pode avaliar sintomas de saúde mental por vídeo quando os cuidados à distância forem adequados. A consulta deve considerar como os sintomas afetam o trabalho, que tratamento ou seguimento necessita e se existem riscos imediatos de segurança.
+    O empregador pode contactar o médico?O empregador pode procurar confirmar a autenticidade do atestado. Isso não lhe dá acesso às notas da consulta. Qualquer divulgação médica precisa de base legal adequada e deve limitar-se ao necessário para o local de trabalho.
+  
+
+
+Aviso de informação médica e jurídicaEste artigo fornece informação geral para a Irlanda. Não substitui cuidados médicos, aconselhamento jurídico, o contrato de trabalho nem a política do empregador. As regras e a disponibilidade do serviço podem mudar. O atestado só é emitido após avaliação clínica e nunca é garantido.
+Como escrevemos e revemos conteúdos médicosVale a pena partilhar?Partilhe este artigoFacebookWhatsAppXLinkedInInstagramCopiar ligaçãoPróximo passoPronto para falar com um médico?Agende uma consulta online com um médico registado localmente no seu país. As nomeações disponíveis são mostradas durante a reserva.Agendar consultaMais artigosMental HealthAvaliação de PHDA em adultos na Irlanda: a via pública, a via privada e o que acontece realmente na consultaComo é feita a avaliação de PHDA num adulto na Irlanda, porque razão o percurso do HSE passa primeiro pela equipa local de saúde mental, quanto custa uma avaliação privada e em que consiste uma avaliação adequada.Ler artigo →General PracticeIllness Benefit na Irlanda: valores e pagamentos em 2026Valores de 2026, dias de espera, calendário semanal, imposto e diferença entre Illness Benefit e baixa paga pelo empregador.Ler artigo →General PracticeIllness Benefit na Irlanda: como requerer e como obter o certificado médicoO Illness Benefit é o apoio pago pelo Department of Social Protection a quem não pode trabalhar por doença ou lesão. Explicamos o que o pedido exige, quem pode emitir o Certificate of Incapacity for Work e em que difere da baixa paga pela entidade patronal.Ler artigo →

@@ -1,0 +1,90 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.medicalcouncil.ie","https://www.dataprotection.ie","https://www.hse.ie","https://www.hiqa.ie","https://www.hpra.ie","https://www.rcpi.ie","https://www.icgp.ie","https://www.irishpsychiatry.ie","https://www.nai.ie","https://irishheart.ie","https://www.citizensinformation.ie","https://www.gov.ie/en/organisation/department-of-social-protection/","https://www.samaritans.org/ireland","https://www.pieta.ie"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Cum obții online un certificat medical pentru serviciu în Irlanda","description":"Află cum obții online un certificat medical în Irlanda, ce poate cere angajatorul și când este necesară evaluarea în persoană.","url":"https://www.myglobalhealth.online/ireland/ro/blog/cum-obtii-online-un-certificat-medical-pentru-serviciu-in-irlanda","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/ireland/ro/blog/cum-obtii-online-un-certificat-medical-pentru-serviciu-in-irlanda#webpage","url":"https://www.myglobalhealth.online/ireland/ro/blog/cum-obtii-online-un-certificat-medical-pentru-serviciu-in-irlanda","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Ahmed Maklad","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/ro/doctors/dr-ahmed-maklad","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523450"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523450","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-08-23"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Cum+ob%C8%9Bii+online+un+certificat+medical+pentru+serviciu+%C3%AEn+Irlanda&image=%2Fimages%2Fireland%2Fblog%2Fsick-cert-online-ireland-2026-v2.webp&v=2026-07-20.1-d0iinr","width":1200,"height":630},"about":{"@type":"Thing","name":"General Practice"},"datePublished":"2026-07-24T15:17:03.695Z","dateModified":"2026-08-23T12:00:00.000Z","publishingPrinciples":"https://www.myglobalhealth.online/ireland/ro/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/ireland/ro/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Acasă","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/ireland/ro/blog"},{"@type":"ListItem","position":3,"name":"Cum obții online un certificat medical pentru serviciu în Irlanda","item":"https://www.myglobalhealth.online/ireland/ro/blog/cum-obtii-online-un-certificat-medical-pentru-serviciu-in-irlanda"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Am nevoie de certificat pentru o singură zi de absență?","acceptedAnswer":{"@type":"Answer","text":"Ai nevoie de certificare medicală dacă soliciți acea zi în cadrul plății legale. Angajatorul poate avea un sistem mai generos care permite autodeclararea pentru absențe scurte; verifică politica sa."}},{"@type":"Question","name":"Poate un medic online să emită retroactiv certificatul?","acceptedAnswer":{"@type":"Answer","text":"Numai dacă medicul consideră că datele anterioare sunt susținute clinic. Emiterea retroactivă nu este garantată și poate fi nepotrivită când nu există suficiente dovezi privind starea ta la acele date."}},{"@type":"Question","name":"Pot obține certificat pentru stres sau anxietate?","acceptedAnswer":{"@type":"Answer","text":"Medicul poate evalua prin video simptomele de sănătate mintală când îngrijirea la distanță este potrivită. Consultația trebuie să analizeze efectul asupra muncii, tratamentul sau monitorizarea necesară și eventualele riscuri imediate."}},{"@type":"Question","name":"Poate angajatorul să contacteze medicul?","acceptedAnswer":{"@type":"Answer","text":"Angajatorul poate încerca să verifice autenticitatea certificatului. Aceasta nu îi dă acces la notele consultației. Orice divulgare medicală are nevoie de un temei juridic adecvat și trebuie limitată la necesitățile locului de muncă."}}]}]Toate articoleleGeneral PracticeCum obții online un certificat medical pentru serviciu în IrlandaCe se întâmplă la consultația online, ce îi trebuie angajatorului și cum diferă plata legală pentru concediul medical de Illness Benefit.Global Health Medical Team24 iulie 20266 min citireUltima revizuire 23 august 2026Revizuit clinic de Dr Ahmed Maklad+Pe această paginăCe se întâmplă la o consultație online pentru certificatul medical?Va accepta angajatorul un certificat emis de un medic online?Cum funcționează plata legală a concediului medical în IrlandaCând consultația online poate să nu fie potrivităÎntrebări înainte de programare
+
+  
+    Irlanda · Ghid pentru certificatul medical de serviciu
+    Poți obține online un certificat medical dacă videoconsultația îi oferă medicului suficiente informații pentru o evaluare sigură.
+    Medicul te va întreba despre simptome, când au început și cum îți afectează munca. Dacă evaluarea clinică justifică acest lucru, poate emite certificatul după consultație. Programezi o evaluare medicală, nu cumperi un document, iar emiterea nu este niciodată automată.
+    Videoconsultație securizatăMedic înregistrat la IMCDecizie clinică după evaluare
+    Verifică programările și tariful actual
+  
+  
+    Ce cuprinde acest ghid
+    Ce se întâmplă la consultația online și ce informații să pregătești.
+    Ce poate verifica angajatorul și cum diferă plata legală a concediului medical de Illness Benefit.
+    Când consultația video nu este potrivită, inclusiv simptome urgente și solicitări care necesită alt serviciu.
+    GHGlobal Health Medical Team
+    Revizuit de echipa medicală Global Health.
+  
+
+
+
+
+
+  
+  Consultația
+  Ce se întâmplă la o consultație online pentru certificatul medical?
+  Consultația este o evaluare medicală țintită. Medicul trebuie să înțeleagă problema și de ce nu îți poți desfășura în siguranță activitatea obișnuită.
+  Alege un loc privat, unde poți vorbi deschis. Nu trebuie să prezinți o relatare perfectă a bolii. Datele, simptomele și detaliile practice despre muncă sunt mai utile.
+  
+    Reține când au început simptomele. Include zilele în care ai lipsit deja sau estimezi că vei lipsi.
+    Ține la îndemână datele medicale. Medicul poate întreba despre medicamente, afecțiuni relevante și tratamentele deja încercate.
+    Explică în ce constă munca ta. Descrie sarcinile pe care nu le poți îndeplini și dacă starea ta te-ar putea pune pe tine sau pe altcineva în pericol.
+    Verifică procedura angajatorului. Află dacă există un termen, un formular sau un portal de trimitere.
+  
+  Dacă certificatul este indicat clinic, verifică datele personale și perioada când îl primești. Păstrează o copie și trimite-l prin canalul folosit de obicei de angajator.
+
+
+
+  
+  Regulile angajatorului
+  Va accepta angajatorul un certificat emis de un medic online?
+  Pentru concediul medical legal, certificatul trebuie emis de un medic înregistrat și trebuie să confirme că boala sau accidentarea te împiedică să lucrezi.
+  Comisia Workplace Relations Commission stabilește cerința de certificare. Legea Sick Leave Act 2022 și îndrumările actuale WRC nu par să facă, în acest scop, diferență între consultația în persoană și cea la distanță.
+  Angajatorul poate verifica dacă medicul este înregistrat, dacă documentul este autentic și dacă datele sunt clare. De asemenea, îți poate cere să urmezi o procedură rezonabilă de raportare a absenței.
+  Dacă certificatul este refuzatCere motivul în scris. Problema poate fi o dată lipsă, depunerea târzie, o cerință a politicii companiei sau eligibilitatea pentru sistemul legal. Rezolvă problema concretă înainte de a divulga informații medicale suplimentare.
+
+
+
+  
+  Plată și prestații
+  Cum funcționează plata legală a concediului medical în Irlanda
+  Sistemul legal oferă în prezent cinci zile plătite de concediu medical pe an calendaristic după 13 săptămâni de serviciu continuu.
+  
+    Nivelul plății. Plata legală este 70% din venitul zilnic normal, în limita a 110 € pe zi.
+    Certificare medicală. Ai nevoie de un certificat de la un medic înregistrat pentru fiecare zi solicitată prin sistemul legal.
+    Schemele companiei. Angajatorul poate oferi plata integrală, mai multe zile sau autodeclarare pentru o absență scurtă; verifică contractul ori manualul angajaților.
+  
+  Department of Enterprise a confirmat în aprilie 2025 că majorarea planificată nu va continua. Îndrumările WRC actuale indică în continuare cinci zile.
+  Certificatul pentru serviciu nu este certificatul pentru Illness Benefit
+  Certificatul pentru angajator și certificarea medicală folosită pentru cererea de Illness Benefit țin de procese diferite. Illness Benefit este administrat de Department of Social Protection și folosește un Certificate of Incapacity for Work.
+  Serviciul online Global Health oferă documentație pentru serviciu când este indicată clinic. Nu emite Certificate of Incapacity for Work al Department. Începe cu îndrumările oficiale pentru Illness Benefit sau citește ghidul nostru despre solicitarea Illness Benefit în Irlanda dacă intenționezi să depui cererea.
+
+
+
+  
+  Limite clinice
+  Când consultația online poate să nu fie potrivită
+  Consultația video este adecvată pentru multe boli simple, dar medicul poate avea nevoie să te examineze, să verifice parametri sau să solicite analize înaintea unei decizii sigure.
+  
+    Emiterea retroactivă nu este automată. Istoricul și dovezile disponibile trebuie să susțină datele anterioare solicitate.
+    Unele documente necesită alt serviciu. Avizele pentru revenirea la munci critice pentru siguranță, formularele de asigurare și rapoartele specializate de medicina muncii pot necesita evaluare în persoană sau de specialitate.
+    Confidențialitatea rămâne importantă. Un certificat obișnuit pentru serviciu nu îi oferă angajatorului acces la notele consultației sau la dosarul medical complet.
+  
+  Comisia Data Protection Commission tratează informațiile de sănătate drept date din categorie specială. Orice solicitare a angajatorului trebuie limitată la informațiile necesare în mod real. Dacă nu știi dacă consultația video este potrivită simptomelor tale, citește ghidul despre medicul de familie online comparativ cu vizita în persoană.
+  Solicită mai întâi ajutor de urgențăSună la 112 sau 999 ori mergi la Urgențe pentru dificultăți severe de respirație, durere în piept, colaps, confuzie sau semne de accident vascular cerebral. Nu aștepta consultația pentru certificat.
+
+
+
+  
+  Întrebări frecvente
+  Întrebări înainte de programare
+  
+    Am nevoie de certificat pentru o singură zi de absență?Ai nevoie de certificare medicală dacă soliciți acea zi în cadrul plății legale. Angajatorul poate avea un sistem mai generos care permite autodeclararea pentru absențe scurte; verifică politica sa.
+    Poate un medic online să emită retroactiv certificatul?Numai dacă medicul consideră că datele anterioare sunt susținute clinic. Emiterea retroactivă nu este garantată și poate fi nepotrivită când nu există suficiente dovezi privind starea ta la acele date.
+    Pot obține certificat pentru stres sau anxietate?Medicul poate evalua prin video simptomele de sănătate mintală când îngrijirea la distanță este potrivită. Consultația trebuie să analizeze efectul asupra muncii, tratamentul sau monitorizarea necesară și eventualele riscuri imediate.
+    Poate angajatorul să contacteze medicul?Angajatorul poate încerca să verifice autenticitatea certificatului. Aceasta nu îi dă acces la notele consultației. Orice divulgare medicală are nevoie de un temei juridic adecvat și trebuie limitată la necesitățile locului de muncă.
+  
+
+
+Notă privind informațiile medicale și juridiceAcest articol oferă informații generale pentru Irlanda. Nu înlocuiește îngrijirea medicală, consultanța juridică, contractul de muncă sau politica angajatorului. Regulile și disponibilitatea serviciului se pot schimba. Certificatul se emite numai după evaluarea clinică și nu este niciodată garantat.
+Cum redactăm și revizuim conținutul medicalMerită distribuit?Distribuie acest articolFacebookWhatsAppXLinkedInInstagramCopiază linkulPasul următorSunteți gata să vorbiți cu un medic?Programați o consultație online cu un medic înregistrat local în țara dumneavoastră. Programările disponibile sunt afișate în timpul rezervării.Programați consultațiaMai multe articoleMental HealthEvaluarea ADHD la adulți în Irlanda: calea publică, calea privată și ce se întâmplă de fapt în cabinetCum este evaluat un adult pentru ADHD în Irlanda, de ce traseul HSE trece mai întâi prin echipa locală de sănătate mintală, cât costă o evaluare privată și ce presupune o evaluare corectă.Citește articolul →General PracticeIllness Benefit în Irlanda: sume și plăți în 2026Sumele din 2026, zilele de așteptare, plata săptămânală, impozitul și diferența față de concediul medical plătit de angajator.Citește articolul →General PracticeIllness Benefit în Irlanda: cum se solicită și cum obții certificatul medicalIllness Benefit este indemnizația plătită de Department of Social Protection persoanelor care nu pot munci din cauza bolii sau a unui accident. Explicăm ce presupune cererea, cine poate elibera Certificate of Incapacity for Work și prin ce diferă de concediul medical plătit de angajator.Citește articolul →

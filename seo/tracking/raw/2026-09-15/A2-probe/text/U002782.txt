@@ -1,0 +1,218 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://www.ers.pt","https://www.ordemdosmedicos.pt","https://www.cnpd.pt","https://www.livroreclamacoes.pt","https://www.infarmed.pt","https://www.sns24.gov.pt","https://www.dgs.pt","https://www.insa.min-saude.pt","https://www.spc.pt","https://www.ihmt.unl.pt","https://www.apmgf.pt","https://www.deco.pt","https://www.utente.min-saude.pt","https://www.sosvozamiga.org","https://www.fpcardiologia.pt"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Understanding hypercholesterolemia","description":"High cholesterol affects about 1 in 2 adult Portuguese people, but it does not cause symptoms until a heart attack or stroke occurs. Learn about the causes, warning signs, and current treatments (statins, PCSK9 inhibitors, inclisiran) — written by a doctor registered with the Ordem dos Médicos.","url":"https://www.myglobalhealth.online/portugal/en/blog/understanding-hypercholesterolemia","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/portugal/en/blog/understanding-hypercholesterolemia#webpage","url":"https://www.myglobalhealth.online/portugal/en/blog/understanding-hypercholesterolemia","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr Tiago Miguel Figueira","jobTitle":"Physician","url":"https://www.myglobalhealth.online/ireland/en/doctors/dr-tiago-miguel-figueira","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"IMC","value":"523449"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"IMC 523449","recognizedBy":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}}],"memberOf":{"@type":"Organization","name":"Irish Medical Council","url":"https://www.medicalcouncil.ie"}},"lastReviewed":"2026-07-21"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Understanding+hypercholesterolemia&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F9235304a-5bd7-4a77-a7b4-5b8fb03f7e83-34306.webp&v=2026-07-20.1-zlw1c3","width":1200,"height":630},"about":{"@type":"Thing","name":"Cardiologia"},"datePublished":"2026-07-20T22:08:20.712Z","dateModified":"2026-07-21T13:19:22.551Z","publishingPrinciples":"https://www.myglobalhealth.online/portugal/en/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/portugal/en/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/portugal/en/blog"},{"@type":"ListItem","position":3,"name":"Understanding hypercholesterolemia","item":"https://www.myglobalhealth.online/portugal/en/blog/understanding-hypercholesterolemia"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is high cholesterol common in Portugal?","acceptedAnswer":{"@type":"Answer","text":"Yes. High cholesterol is one of the most prevalent modifiable cardiovascular risk factors in Portugal. Data from INSA and the National Health Survey show that roughly half of Portuguese adults have elevated total cholesterol. Most go undiagnosed, because high cholesterol causes no symptoms. Familial hypercholesterolemia, an inherited form that causes very high LDL from birth, affects about 1 in 250 people in Portugal, with more than 90% estimated to be undiagnosed."}},{"@type":"Question","name":"What are the signs and symptoms of high cholesterol?","acceptedAnswer":{"@type":"Answer","text":"High cholesterol is essentially a silent disease, most people have no symptoms until a serious cardiovascular event occurs. In cases of severe or familial high cholesterol, physical signs can appear, such as xanthomas (fat deposits under the skin, especially on the Achilles tendon or knuckles), xanthelasma (yellowish plaques near the eyelids), and corneal arcus (a grey ring around the iris, significant in people under 45). The only reliable way to detect high cholesterol is a blood test: a fasting lipid profile."}},{"@type":"Question","name":"What causes high cholesterol?","acceptedAnswer":{"@type":"Answer","text":"High cholesterol has both genetic and lifestyle-related causes. The most important genetic cause is familial hypercholesterolemia (FH), caused by mutations in the LDL receptor gene. Lifestyle-related causes include a diet high in saturated and trans fats, physical inactivity, obesity, smoking, and excess alcohol intake. Secondary causes include hypothyroidism, type 2 diabetes, chronic kidney disease, and certain medications. For most people, cholesterol levels are shaped by a combination of genetic predisposition and lifestyle factors."}},{"@type":"Question","name":"What are the best treatments for high cholesterol in Portugal?","acceptedAnswer":{"@type":"Answer","text":"Treatment depends on overall cardiovascular risk and LDL target, not on the cholesterol number alone. Lifestyle change, diet, exercise, smoking cessation, weight control, is the foundation for every patient. Statins (particularly high-intensity atorvastatin and rosuvastatin) are the first-line drug treatment, widely available through the SNS in Portugal. For patients who don't reach their LDL targets, ezetimibe is added. For high-risk patients or those with familial hypercholesterolemia, PCSK9 inhibitors (evolocumab, alirocumab) and inclisiran, a twice-yearly RNA injection, are available through specialist services. Bempedoic acid is now available for patients who cannot tolerate statins."}},{"@type":"Question","name":"How often should I have my cholesterol checked in Portugal?","acceptedAnswer":{"@type":"Answer","text":"The DGS recommends that all adults over 40 have their cholesterol checked at least every 5 years, or more often if risk factors are present (family history, obesity, high blood pressure, smoking, or diabetes). If you're on cholesterol medication, your doctor should repeat your fasting lipid profile 8 to 12 weeks after starting or changing dose, then annually once your levels stabilize. Anyone with a first-degree relative with premature cardiovascular disease (before age 60) or known FH should be screened earlier, ideally in their 20s or 30s."}},{"@type":"Question","name":"Can I lower my cholesterol without medication?","acceptedAnswer":{"@type":"Answer","text":"For patients with low-to-moderate cardiovascular risk and mildly elevated LDL, lifestyle change alone, particularly adopting a Mediterranean dietary pattern, exercising regularly, quitting smoking, and losing excess weight, can achieve clinically meaningful LDL reductions of 10 to 20%, and in some cases avoid the need for medication altogether. However, for patients with high or very high cardiovascular risk, or with familial hypercholesterolemia, lifestyle change alone is generally not enough to reach guideline targets, and drug therapy is recommended alongside lifestyle changes, not instead of them. Talk to your doctor about what's right for your specific risk profile."}},{"@type":"Question","name":"Can I see a doctor about high cholesterol online in Portugal?","acceptedAnswer":{"@type":"Answer","text":"Yes. Global Health offers online medical consultations with doctors registered with the Portuguese Medical Association. These include cardiovascular risk assessment, review of cholesterol tests, prescription of statins and other medications when clinically indicated, and ordering of laboratory tests (fasting lipid profile, glucose, thyroid function, and a full metabolic panel). Same-day appointments are available, seven days a week. Book your consultation at myglobalhealth.online/pt/portugal/family-and-general-medicine."}}]}]All articlesCardiologiaUnderstanding hypercholesterolemiaIt is estimated that 1 in 2 Portuguese adults has high cholesterol, and most do not know it. This guide explains the causes, the silent signs, and the latest treatments — from statins to PCSK9 inhibitors — that are transforming cardiovascular care in Portugal.Global Health Medical TeamJuly 20, 202623 min readLast reviewed July 21, 2026+On this pageHigh Cholesterol in Portugal: The Scale of the ProblemTypes of High CholesterolCauses and Risk FactorsSigns and SymptomsCurrent Treatments for High Cholesterol in PortugalPrevention and Lifestyle: What You Can DoWhy Regular Screening MattersResearch and Future TreatmentsKey Portuguese InstitutionsFrequently Asked Questions
+Cardiovascular health in PortugalCauses, warning signs, current treatments, prevention, and screening for high cholesterol.Cardiovascular disease is the leading cause of death in Portugal. And one of its main drivers, elevated blood cholesterol, affects roughly half of Portuguese adults, most of whom have no idea they have it. By its very nature, hypercholesterolemia is a condition that doesn't announce itself with symptoms, it announces itself with events: a heart attack, a stroke, sudden cardiac death.See recommended screeningExplore treatmentsUpdated clinical guideThe extraordinary challenge of high cholesterol lies precisely in this silence. Unlike diabetes, which can cause fatigue or thirst, or hypertension, which occasionally causes headaches, high cholesterol causes no sensation at all, until years of narrowing the arteries that feed the heart and brain have already done their damage. By the time it shows itself, the harm is often already done.The good news is just as significant: hypercholesterolemia is one of the most treatable conditions in all of medicine. The lipid-lowering therapies available today, from well-established statins to the newest RNA-based drugs, are among the best evidence-backed interventions in modern pharmacology. And they work best when started early, before the damage builds up. Detection, through a simple blood test, is everything.Section 01High Cholesterol in Portugal: The Scale of the ProblemCholesterol is a waxy, fat-like substance made naturally by the liver and also obtained through diet. It is essential for building cell membranes, producing hormones, and synthesizing vitamin D. The problem starts when levels, particularly of low-density lipoprotein (LDL) cholesterol, cross the threshold at which arterial damage begins. That process, atherosclerosis, underlies most heart attacks and strokes.Data from the National Institute of Health Doutor Ricardo Jorge (INSA) and the National Health Survey (INS), published by the Directorate-General of Health, show that high cholesterol is one of the most common uncontrolled cardiovascular risk factors in the Portuguese adult population. According to the DGS National Programme for Cerebro-Cardiovascular Disease, cardiovascular disease is the leading cause of death in Portugal, with high cholesterol playing a decisive role in that reality.
+
+~50%
+Of Portuguese adults with elevated total cholesterol
+
+
+1 in 250
+People in Portugal affected by Familial Hypercholesterolemia (FH)
+
+
+1st cause
+Cardiovascular disease, the leading cause of death in Portugal
+
+
+>90%
+Of FH cases in Portugal estimated to be undiagnosed
+
+Source: INSA, National Health Survey; DGS, National Programme for Cerebro-Cardiovascular Disease; Portuguese Cardiology Foundation; Portuguese Association of Familial Hypercholesterolemia.Familial hypercholesterolemia (FH) deserves particular attention. This inherited genetic condition, affecting roughly 1 in 250 people, or about 40,000 individuals in Portugal, drives dramatically elevated LDL from birth, putting those affected at risk of a heart attack often decades earlier than would otherwise be expected. The Portuguese Association of Familial Hypercholesterolemia (APHF) estimates that more than 90% of FH cases in Portugal remain undiagnosed. Without treatment, men with FH face a 50% risk of a coronary event before age 50; women before age 60.
+Do you have a family history of early heart disease?
+      If a parent, sibling, or grandparent had a heart attack or stroke before age 60, you may be at significantly elevated risk of familial hypercholesterolemia or inherited cardiovascular risk. See your doctor for a fasting lipid profile. Early detection of FH can prevent cardiovascular events that would otherwise occur in mid-life.
+    Section 02Types of High CholesterolNot all high cholesterol has the same cause or the same clinical significance. Understanding the type and pattern of your lipid abnormality guides treatment decisions.
+
+
+Familial Hypercholesterolemia (FH)
+Genetic · Autosomal dominant · High risk
+Caused by mutations in the LDL receptor gene (most commonly), APOB, or PCSK9. Results in very high LDL from birth, typically above 4.9 mmol/L. Left untreated, it leads to early atherosclerosis and cardiovascular events. Requires early identification and aggressive treatment, usually high-intensity statins plus additional agents.
+
+
+
+Primary (Lifestyle) Hypercholesterolemia
+Acquired · Modifiable · Most common
+The most common form. Driven by a diet high in saturated and trans fats, physical inactivity, obesity, and smoking. LDL elevation is usually moderate and responds well to lifestyle change combined with drug therapy when needed.
+
+
+
+Secondary Hypercholesterolemia
+Underlying condition · Treatable cause
+High cholesterol arising from an underlying medical condition, hypothyroidism, uncontrolled type 2 diabetes, chronic kidney disease, nephrotic syndrome, or liver disease, or from medications such as corticosteroids, thiazide diuretics, or certain antipsychotics. Treating the underlying cause often significantly improves lipid values.
+
+
+
+Mixed Dyslipidemia
+Elevated LDL + triglycerides · Complex risk
+A combination of elevated LDL and elevated triglycerides, often with low HDL (reduced "good cholesterol"). Often associated with metabolic syndrome, insulin resistance, and obesity. Requires a multi-pronged treatment approach that targets several lipid fractions at once.
+
+Section 03Causes and Risk FactorsGenetic CausesFamilial hypercholesterolemia is the most important genetic cause of premature cardiovascular disease. It results mainly from mutations in the gene that codes for the LDL receptor, the cellular mechanism through which LDL cholesterol is cleared from the bloodstream. When LDL receptors are missing or too few, LDL builds up in the blood and progressively deposits in the artery walls. The condition is autosomal dominant, meaning a single copy of the affected gene is enough to cause it. Children of an affected parent have a 50% chance of inheriting it.Lifestyle and Environmental CausesFor most people, high cholesterol results from the intersection of genetic predisposition and lifestyle. Each of the following risk factors is independently associated with elevated LDL or total cholesterol, and combining them substantially amplifies the risk.
+
+
+A diet high in saturated fat
+Red meat, full-fat dairy, butter, coconut oil, and palm oil raise LDL. Trans fats are the most harmful and are now largely banned from food production across the EU.
+
+
+
+Physical inactivity
+Regular aerobic exercise raises HDL ("good cholesterol") and lowers triglycerides. A sedentary lifestyle has the opposite effect and independently worsens the lipid profile.
+
+
+
+Obesity
+Excess body weight, particularly central adiposity, is associated with elevated triglycerides, low HDL, and often raised LDL. Weight loss improves all lipid parameters.
+
+
+
+Smoking
+Tobacco smoke lowers HDL and accelerates the oxidative modification of LDL, making it more atherogenic (more damaging to the arteries), even at comparable total cholesterol levels.
+
+
+
+Excess alcohol intake
+Heavy drinking significantly raises triglycerides. Moderate intake may slightly raise HDL, but it does not offset the broader cardiovascular harm of heavy drinking.
+
+
+
+Age
+Cholesterol levels tend to rise with age as LDL receptor activity declines. Postmenopausal women see a marked rise in LDL, which partly explains why cardiovascular risk between the sexes converges after menopause.
+
+
+
+Family history
+A first-degree relative with early cardiovascular disease or known FH substantially raises personal risk and should prompt earlier, more frequent screening.
+
+
+
+Coexisting conditions
+Hypothyroidism, type 2 diabetes, chronic kidney disease, nephrotic syndrome, and obstructive liver disease each independently raise cholesterol and call for targeted management.
+
+Section 04Signs and SymptomsThis is the central clinical challenge of high cholesterol: it is almost entirely symptom-free until significant arterial damage has occurred. There's no pain, fever, or shortness of breath caused directly by cholesterol. For many patients, the first "symptom" is a heart attack or stroke, often in someone who felt completely fine the day before.In cases of severe or long-standing elevation, particularly in familial hypercholesterolemia, certain physical signs can appear. It's worth recognizing them, since they're often the only visible clue that a significant lipid abnormality is present:
+
+
+
+Xanthomas
+Cholesterol deposits under the skin. Tendon xanthomas (typically on the Achilles tendon or the knuckles) are strongly linked to FH and are nearly diagnostic on their own.
+
+
+
+
+
+Xanthelasma
+Soft, yellowish plaques on or near the eyelids. Often noticed for cosmetic reasons, they're a marker of dyslipidemia and warrant a lipid profile.
+
+
+
+
+
+Corneal arcus
+A grey or white ring around the iris. In people under 45, corneal arcus can be a marker of high cholesterol and warrants investigation.
+
+
+
+
+
+Chest pain (angina)
+Not caused directly by cholesterol, but a consequence of the atherosclerosis it drives. Chest tightness or discomfort on exertion needs urgent cardiovascular assessment.
+
+
+
+
+
+Leg pain when walking
+Peripheral artery disease, calf pain on exertion that eases with rest (claudication), is caused by atherosclerosis in the arteries of the lower limbs.
+
+
+
+
+
+Signs of TIA or stroke
+Sudden weakness, slurred speech, facial asymmetry, or vision loss can signal a transient ischaemic attack (TIA) or stroke, a medical emergency.
+
+
+
+FAST — Recognize the signs of stroke:
+      Face drooping · Arm weakness · Speech difficulty · Time to call 112. Stroke is a medical emergency. If you notice these signs, call 112 immediately. Do not drive to the hospital. Every minute counts.
+    The core clinical message is unambiguous: don't wait for symptoms. A fasting lipid profile is the only reliable way to detect high cholesterol. It's simple, affordable, and widely available through your family doctor. Having no symptoms is not proof of good health, it's precisely when acting matters most.Section 05Current Treatments for High Cholesterol in PortugalTreatment of high cholesterol in Portugal follows the guidance of the Directorate-General of Health (DGS), the European Society of Cardiology (ESC) / European Atherosclerosis Society (EAS) Guidelines for the Management of Dyslipidaemias (updated in 2024), and the recommendations of the Portuguese Society of Cardiology (SPC). The treatment goal isn't defined by a single cholesterol number, but by an LDL target set according to individual cardiovascular risk, with higher-risk patients needing a more aggressive LDL reduction.LDL Targets by Risk CategoryThe 2024 ESC/EAS guidelines set the following LDL goals: very high risk (established cardiovascular disease, severe kidney disease, diabetes with organ damage), LDL below 1.4 mmol/L; high risk, below 1.8 mmol/L; moderate risk, below 2.6 mmol/L; low risk, below 3.0 mmol/L. Your doctor will calculate your cardiovascular risk using validated tools (SCORE2, QRISK3) to determine which target applies to you.
+
+First line · All risk groups
+Statins (HMG-CoA Reductase Inhibitors)
+Atorvastatin · Rosuvastatin · Simvastatin
+The cornerstone of cholesterol treatment for three decades. Statins inhibit HMG-CoA reductase, the rate-limiting enzyme in liver cholesterol synthesis, lowering LDL by 30 to 55% depending on the drug and dose. High-intensity statins (atorvastatin 40–80 mg, rosuvastatin 20–40 mg) are preferred for high- and very-high-risk patients. Available through the SNS in Portugal. The evidence base, including the Heart Protection Study and multiple meta-analyses, is among the strongest in pharmacology.
+
+
+Second line · Add-on therapy
+Ezetimibe
+Ezetrol · Generic ezetimibe
+Reduces intestinal absorption of cholesterol. Lowers LDL by a further 15 to 22% when added to a statin. The IMPROVE-IT trial showed a modest but real reduction in cardiovascular events when added to simvastatin in high-risk patients. Well tolerated and available through the SNS. Standard second-line therapy in Portugal when statin monotherapy fails to reach the LDL target.
+
+
+High risk and FH · Specialist-initiated
+PCSK9 Inhibitors
+Evolocumab (Repatha) · Alirocumab (Praluent)
+Monoclonal antibodies that block PCSK9, the protein responsible for breaking down LDL receptors in liver cells. They dramatically increase the availability of LDL receptors, lowering LDL by an additional 50 to 65% on top of a statin. The FOURIER and ODYSSEY OUTCOMES trials showed 15 to 20% reductions in major cardiovascular events. Given by subcutaneous injection every two or four weeks. Available in Portugal by specialist prescription for FH and very-high-risk patients.
+
+
+Innovative · Twice-yearly injection
+Inclisiran
+Leqvio
+A small interfering RNA (siRNA) therapy that silences liver production of PCSK9 at the genetic level, lowering LDL by roughly 50% with just two injections a year after an initial loading dose. The ORION study programme showed sustained LDL reduction with an excellent safety profile. Available in Portugal through specialist lipid and cardiology services.
+
+
+Elevated triglycerides
+Fibrates and Omega-3 Fatty Acids
+Fenofibrate · Icosapent Ethyl (Vascepa)
+Fibrates primarily lower triglycerides and modestly raise HDL. Purified icosapent ethyl (EPA omega-3) showed a 25% reduction in cardiovascular events in the REDUCE-IT trial in high-risk patients with elevated triglycerides despite statin therapy, a striking result now reflected in updated international guidelines. Available in Portugal by specialist prescription.
+
+
+Statin intolerance · Alternative
+Bempedoic Acid
+Nilemdo · Nustendi (with ezetimibe)
+An oral agent that inhibits cholesterol synthesis upstream of statins, via ATP-citrate lyase. Because it is activated only in the liver (not in muscle tissue), it does not cause the muscle pain that leads some patients to stop taking statins. The CLEAR Outcomes trial (2023) confirmed that bempedoic acid reduces major cardiovascular events in statin-intolerant patients. Available in Portugal for patients who cannot tolerate statins.
+
+
+2024 ESC/EAS Guideline Update:
+      The updated European guidelines reinforced that very-high-risk patients, those with established cardiovascular disease or familial hypercholesterolemia, should reach an LDL below 1.4 mmol/L, and that combination therapy (statin + ezetimibe ± a PCSK9 inhibitor or inclisiran) should be started early rather than step by step, when monotherapy is unlikely to reach the goals. If you have established heart disease and your LDL remains above target, talk to your doctor or cardiologist about intensifying treatment.
+    Section 06Prevention and Lifestyle: What You Can DoLifestyle change is the first and most sustainable intervention for managing cholesterol and lowering cardiovascular risk. For patients with low-to-moderate cardiovascular risk, dietary and lifestyle changes, kept up consistently, can achieve clinically meaningful LDL reductions and, for many, avoid the need for medication altogether. Even for those on drug therapy, lifestyle changes amplify the effectiveness of treatment and independently lower cardiovascular risk through mechanisms that go beyond cholesterol.
+
+
+Adopt a heart-healthy diet
+Replace saturated fats (red meat, butter, cream, coconut oil) with unsaturated fats (olive oil, nuts, avocado, oily fish). The Mediterranean dietary pattern, widely recommended by the ESC and supported by the PREDIMED study, lowers cardiovascular events independently of cholesterol values. Increase fibre intake from oats, legumes, and vegetables.
+
+
+
+Exercise regularly
+At least 150 minutes a week of moderate-intensity aerobic exercise (brisk walking, cycling, swimming). Regular aerobic exercise raises HDL, lowers triglycerides, and reduces cardiovascular risk beyond its effect on cholesterol. Resistance training adds further metabolic health benefits.
+
+
+
+Quit smoking
+Quitting smoking is one of the highest-impact interventions available for lowering cardiovascular risk. It raises HDL, reduces LDL oxidation, and cuts cardiovascular risk by half within 1 to 2 years. Your doctor can prescribe pharmacological support (varenicline, nicotine replacement therapy, bupropion), all available in Portugal through the SNS.
+
+
+
+Maintain a healthy weight
+Losing 5 to 10% of body weight produces meaningful improvements across the whole lipid profile: it lowers LDL and triglycerides and raises HDL. Weight management also independently lowers blood pressure and insulin resistance, the two conditions most commonly linked to high cholesterol.
+
+
+
+Limit alcohol intake
+Alcohol significantly raises triglycerides. Follow DGS guidance: no more than 10 to 17 units a week depending on sex, with several alcohol-free days. For those with elevated triglycerides, abstinence may be necessary.
+
+
+
+Prioritize sleep and stress management
+Chronic sleep deprivation and psychological stress negatively affect the lipid profile and cardiovascular risk through pathways mediated by cortisol and inflammation. Seven to nine hours of sleep a night and stress-reduction practices are recognized components of cardiovascular prevention.
+
+The Portuguese Cardiology Foundation offers free, comprehensive resources on heart-healthy habits, including dietary guides and smoking-cessation programmes tailored for Portuguese patients. The National Health Service (SNS) also offers community support for lifestyle change across the country.Section 07Why Regular Screening MattersBecause high cholesterol causes no symptoms, detection depends entirely on proactive blood testing. And because cardiovascular risk isn't set by cholesterol alone but by the combined effect of every risk factor over time, your full cardiovascular risk profile, not just your cholesterol number, needs regular evaluation and monitoring.In Portugal, cholesterol screening is built into adult check-ups within SNS primary care. The DGS recommends that all adults over 40 have their cholesterol tested at least every 5 years, and more often if risk factors are present or treatment has already started.What Your Cardiovascular Risk Assessment Should Include
+Fasting lipid profile: total cholesterol, LDL, HDL, and triglycerides
+Non-HDL cholesterol and LDL/HDL ratio calculation
+Blood pressure measurement
+Fasting glucose and HbA1c (diabetes screening)
+Thyroid function (TSH), to rule out hypothyroidism as a secondary cause
+Kidney function — eGFR and urine albumin (CKD raises cardiovascular risk)
+Weight and BMI
+Cardiovascular risk score calculation (SCORE2 or QRISK3)
+Review of family history, particularly early cardiovascular disease
+Physical exam for xanthomas, xanthelasma, and corneal arcus
+Assessment of smoking status and cessation support if applicable
+Medication review and adjustment if already on lipid-lowering therapy
+Monitoring During Lipid-Lowering TherapyAfter starting a statin or another lipid-lowering agent, a fasting lipid profile should be repeated 8 to 12 weeks after starting or changing dose, both to assess response and to check for adverse effects (liver enzymes, CK if muscle symptoms appear). Once a stable LDL target is reached, annual monitoring is standard. For patients on PCSK9 inhibitors or inclisiran, monitoring intervals are set by the prescribing specialist.Cascade Screening for Familial HypercholesterolemiaIf FH is suspected, based on very high LDL, physical signs (tendon xanthom

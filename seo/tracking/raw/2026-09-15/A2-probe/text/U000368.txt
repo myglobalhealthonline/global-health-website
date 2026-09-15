@@ -1,0 +1,207 @@
+[{"@context":"https://schema.org","@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","legalName":"Global Guest s.r.o.","url":"https://www.myglobalhealth.online","logo":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/logos/global-health-light.png","width":399,"height":260},"foundingDate":"2023","slogan":"Medicine Anytime Anywhere","description":"Global Health connects patients with locally-licensed doctors across multiple markets in Europe and Latin America. No waiting rooms, no call centres, transparent pricing. GDPR compliant.","sameAs":["https://www.instagram.com/globalhealth_ie/","https://www.instagram.com/globalhealth_es/","https://www.instagram.com/globalhealth_ro/","https://www.instagram.com/globalhealth_pt/","https://www.instagram.com/globalhealth_cz/","https://www.tiktok.com/@globalhealth.online","https://www.linkedin.com/company/myglobalhealth.online","https://www.youtube.com/@GlobalHealth-y9o","https://www.wikidata.org/wiki/Q140363271","https://portal.cfm.org.br","https://portal.cfm.org.br/crms/","https://www.gov.br/anpd/pt-br"],"areaServed":[{"@type":"Country","name":"Ireland"},{"@type":"Country","name":"Portugal"},{"@type":"Country","name":"Spain"},{"@type":"Country","name":"Czech Republic"},{"@type":"Country","name":"Romania"},{"@type":"Country","name":"Brazil"}],"medicalSpecialty":["https://schema.org/PrimaryCare","https://schema.org/Cardiovascular","https://schema.org/Neurologic","https://schema.org/Pediatric","https://schema.org/Dermatology","https://schema.org/Psychiatric"],"contactPoint":{"@type":"ContactPoint","email":"info@myglobalhealth.online","contactType":"customer service","availableLanguage":["English","Portuguese","Spanish","Czech","Romanian","Arabic","Urdu"]},"address":{"@type":"PostalAddress","addressCountry":"CZ","addressLocality":"Prague"},"identifier":[{"@type":"PropertyValue","name":"Czech company registration","value":"IČO: 19071680"},{"@type":"PropertyValue","name":"Irish company registration","value":"CRO: 910267"},{"@type":"PropertyValue","name":"NRPZS","value":"4687/2026"}]},{"@context":"https://schema.org","@type":"WebSite","@id":"https://www.myglobalhealth.online/#website","name":"Global Health","url":"https://www.myglobalhealth.online"}][{"@context":"https://schema.org","@type":"Article","headline":"Diabetes: la enfermedad silenciosa","description":"Guía completa sobre la diabetes en Brasil: causas, síntomas, tratamientos con GLP-1 y SGLT2, y cuidados esenciales. Escrito por un médico especialista.","url":"https://www.myglobalhealth.online/brazil/es/blog/diabetes-la-enfermedad-silenciosa-3","mainEntityOfPage":{"@type":"MedicalWebPage","@id":"https://www.myglobalhealth.online/brazil/es/blog/diabetes-la-enfermedad-silenciosa-3#webpage","url":"https://www.myglobalhealth.online/brazil/es/blog/diabetes-la-enfermedad-silenciosa-3","reviewedBy":{"@context":"https://schema.org","@type":"Person","name":"Dr. Renato Sarmento","jobTitle":"Physician","url":"https://www.myglobalhealth.online/brazil/es/doctors/dr-renato-sarmento","worksFor":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online"},"identifier":{"@type":"PropertyValue","propertyID":"CRM","value":"170837"},"hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Medical registration","name":"CRM 170837","recognizedBy":{"@type":"Organization","name":"Conselho Federal de Medicina","url":"https://portal.cfm.org.br"}}],"memberOf":{"@type":"Organization","name":"Conselho Federal de Medicina","url":"https://portal.cfm.org.br"}},"lastReviewed":"2026-07-21"},"image":{"@type":"ImageObject","url":"https://www.myglobalhealth.online/api/og?kind=article&title=Diabetes%3A+la+enfermedad+silenciosa&image=https%3A%2F%2Fapi.myglobalhealth.online%2Fapi%2Fmedia%2Fmedia%2F689af434-d0e0-42e1-83e5-16ed1fa8170f-33848.webp&v=2026-07-20.1-zjpfju","width":1200,"height":630},"about":{"@type":"Thing","name":"Endocrinologia"},"datePublished":"2026-07-20T12:01:50.812Z","dateModified":"2026-07-21T13:41:31.588Z","publishingPrinciples":"https://www.myglobalhealth.online/brazil/es/blog/medical-review-policy","author":{"@type":"Organization","name":"Global Health Medical Team","url":"https://www.myglobalhealth.online"},"publisher":{"@type":"MedicalOrganization","@id":"https://www.myglobalhealth.online/#organization","name":"Global Health","url":"https://www.myglobalhealth.online","publishingPrinciples":"https://www.myglobalhealth.online/brazil/es/blog/medical-review-policy"}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.myglobalhealth.online/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.myglobalhealth.online/brazil/es/blog"},{"@type":"ListItem","position":3,"name":"Diabetes: la enfermedad silenciosa","item":"https://www.myglobalhealth.online/brazil/es/blog/diabetes-la-enfermedad-silenciosa-3"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Cuántas personas tienen diabetes en Brasil?","acceptedAnswer":{"@type":"Answer","text":"Según el Atlas Mundial de la Diabetes 2025 de la IDF, Brasil ocupa el 6.º lugar mundial en número de casos, con 16,6 millones de personas viviendo con la enfermedad. La encuesta Vigitel del Ministerio de Salud muestra que la prevalencia en adultos pasó del 5,5 % en 2006 al 12,9 % en 2024. La SBD estima que el total, incluyendo los casos no diagnosticados, ya se acerca a los 20 millones de brasileños."}},{"@type":"Question","name":"¿Cuáles son las primeras señales de la diabetes?","acceptedAnswer":{"@type":"Answer","text":"Las señales más comunes incluyen sed excesiva, orinar con frecuencia (especialmente por la noche), cansancio persistente, visión borrosa, cicatrización lenta de heridas, hambre constante incluso después de comer, y hormigueo o entumecimiento en manos y pies. La diabetes tipo 2 puede desarrollarse de forma lenta y silenciosa; según la IDF, cerca de 1 de cada 3 personas con diabetes en Brasil no sabe que tiene la enfermedad. Si tiene factores de riesgo, hable con su médico sobre la realización de una glucemia en ayunas o una HbA1c aunque no tenga síntomas."}},{"@type":"Question","name":"¿Cuál es la diferencia entre la diabetes tipo 1 y la tipo 2?","acceptedAnswer":{"@type":"Answer","text":"La diabetes tipo 1 es una enfermedad autoinmune en la que el sistema inmunitario destruye las células beta productoras de insulina en el páncreas, lo que exige insulinoterapia de por vida y suele presentarse en la infancia o en la edad adulta temprana. La diabetes tipo 2 ocurre cuando el organismo se vuelve resistente a la insulina o no produce insulina suficiente; está fuertemente asociada a factores del estilo de vida como la alimentación, el sedentarismo y el exceso de peso, y representa más del 90 % de los casos en Brasil. Ambas afecciones tienen causas, tratamientos y evoluciones clínicas diferentes, aunque las dos requieren un manejo cuidadoso para evitar complicaciones."}},{"@type":"Question","name":"¿Cuáles son los mejores tratamientos para la diabetes tipo 2 en Brasil?","acceptedAnswer":{"@type":"Answer","text":"El tratamiento de primera línea suele incluir metformina junto con modificaciones del estilo de vida. Las clases de medicamentos más recientes, en particular los agonistas del GLP-1 (como la semaglutida/Ozempic) y los inhibidores del SGLT2 (como la empagliflozina/Jardiance), han revolucionado el tratamiento al reducir la glucemia y, al mismo tiempo, proteger el corazón y los riñones y favorecer la pérdida de peso. El PCDT del Ministerio de Salud y las directrices de la SBD y la ADA 2025 recomiendan estas clases en pacientes con enfermedad cardiovascular establecida, insuficiencia cardíaca o enfermedad renal crónica. El tratamiento siempre es individualizado: su médico lo adaptará a su perfil específico."}},{"@type":"Question","name":"¿Con qué frecuencia debo ir al médico si tengo diabetes en Brasil?","acceptedAnswer":{"@type":"Answer","text":"Si tiene diabetes diagnosticada, debe realizar al menos una revisión anual estructurada, que incluye la evaluación de HbA1c, presión arterial, función renal, colesterol, peso, exploración de los pies y examen de fondo de ojo. Se recomiendan mediciones más frecuentes de HbA1c (cada 3 a 6 meses) si el control glucémico no es adecuado o si la terapia se ha modificado recientemente. A diferencia de otros países, Brasil todavía no cuenta con un programa nacional unificado de cribado de retinopatía, por lo que vale la pena agendar su examen de retina directamente con un oftalmólogo o a través de la Atención Primaria del SUS."}},{"@type":"Question","name":"¿La diabetes puede entrar en remisión?","acceptedAnswer":{"@type":"Answer","text":"La diabetes tipo 2 puede, en algunos casos, entrar en remisión, definida como la obtención de valores de glucemia cercanos a la normalidad sin medicación, mediante una pérdida de peso significativa, con frecuencia a través de dietas de muy bajo aporte calórico o cirugía bariátrica. El estudio DiRECT demostró remisión en cerca del 50 % de los participantes después de un año con un programa dietético estructurado. Esto no significa que la tendencia subyacente desaparezca: la remisión exige cambios sostenidos en el estilo de vida para mantenerse. La diabetes tipo 1 no tiene cura actualmente, aunque las terapias con células madre en ensayos clínicos prometen restaurar la producción de insulina en los próximos años."}},{"@type":"Question","name":"¿Puedo consultar a un médico sobre diabetes en línea en Brasil?","acceptedAnswer":{"@type":"Answer","text":"Sí. Global Health ofrece consultas de medicina general en línea con médicos registrados en el CRM, incluidas consultas de seguimiento de la diabetes, evaluación de síntomas, revisión de medicación y solicitud de análisis (incluyendo HbA1c, glucemia en ayunas y panel metabólico completo). La receta digital se emite conforme a las normas del CFM y se acepta directamente en farmacias de todo Brasil, cuando esté clínicamente indicado. Agende su consulta en myglobalhealth.online o póngase en contacto por correo electrónico a globalhealth@myglobalhealth.online."}}]}]Todos los artículosEndocrinologiaDiabetes: la enfermedad silenciosaBrasil ya ocupa el 6.º lugar mundial en casos de diabetes, con 16,6 millones de personas afectadas, muchas de ellas aún sin diagnóstico. Descubra las señales de alerta, los tratamientos más eficaces disponibles hoy y qué esperar del futuro de la atención.Global Health Medical Team20 de julio de 202624 min de lecturaÚltima revisión 21 de julio de 2026Revisado clínicamente por Dr. Renato Sarmento+En esta páginaLa diabetes en Brasil: entendiendo la magnitud del problemaTipos de diabetesCausas y factores de riesgoSeñales y síntomasTratamientos actuales para la diabetes en BrasilLa importancia de las revisiones periódicasEl futuro del tratamiento de la diabetesInstituciones y recursos de referencia en BrasilPreguntas frecuentes
+Enfermedad Crónica · Brasil · Publicado en junio de 2026Causas, síntomas, tratamientos y el futuro de la atenciónBrasil ya ocupa el 6.º lugar mundial en número de casos de diabetes, con 16,6 millones de personas que viven con la enfermedad, muchas de ellas todavía sin diagnóstico. Esta guía aborda todo lo que necesita saber: causas, señales de alerta, los mejores tratamientos disponibles hoy, la importancia de las revisiones periódicas y las terapias emergentes que podrían transformar el cuidado de la diabetes en los próximos años.— Basado en evidencia científica— Alineado con el Ministerio de Salud de Brasil y la SBD— Actualizado en junio de 2026Ver seguimiento recomendadoExplorar tratamientosGuía clínica actualizada en junio de 2026La diabetes es una de las enfermedades crónicas más prevalentes en Brasil, y una de las más infradiagnosticadas. A menudo se la describe como una «enfermedad silenciosa» porque la diabetes tipo 2, responsable de más del 90 % de los casos, puede desarrollarse lentamente durante varios años sin síntomas perceptibles. Cuando se llega al diagnóstico, la enfermedad suele llevar ya tiempo presente.La buena noticia es que la diabetes es altamente controlable. Con el diagnóstico correcto, el tratamiento adecuado y un seguimiento regular, las personas con diabetes pueden llevar una vida plena y saludable. Y gracias a los notables avances de la última década, en especial la llegada de los agonistas del receptor GLP-1 y de los inhibidores del SGLT2, las opciones clínicas disponibles en Brasil son hoy mejores que nunca.TFEscrito por el Dr. Tiago Miguel FigueiraOM 77986 · Revisión clínica: Dr. Renato Sarmento, director clínico · CRM 170837/SP10 MIN DE LECTURARevisado por el equipo médico de Global Health.Sección 01La diabetes en Brasil: entendiendo la magnitud del problemaSegún el Ministerio de Salud de Brasil, la encuesta Vigitel mostró que la prevalencia de diabetes en adultos brasileños pasó del 5,5 % en 2006 al 12,9 % en 2024, un incremento del 135 % en casi dos décadas que motivó el lanzamiento en 2026 del programa Viva Mais Brasil, con una inversión prevista de R$ 1,5 mil millones para abordar conjuntamente la diabetes y la hipertensión. El Atlas Mundial de la Diabetes 2025, publicado por la Federación Internacional de Diabetes (IDF), reveló que Brasil ocupa el 6.º lugar mundial en número de casos, con 16,6 millones de personas viviendo con la enfermedad, un aumento del 5,7 % en solo cuatro años. La Sociedad Brasileña de Diabetes (SBD) estima que el total en el país, incluyendo los casos no diagnosticados, ya se acerca a los 20 millones de personas.
+
+12,9%
+Prevalencia de diabetes en adultos brasileños en 2024 (Vigitel/Ministerio de Salud)
+
+
+16,6M
+Personas con diabetes en Brasil, 6.º lugar mundial (Atlas IDF 2025)
+
+
+~20M
+Estimación total incluyendo casos no diagnosticados (SBD)
+
+
+18%
+Prevalencia estimada de diabetes gestacional en Brasil (SBD)
+
+Fuentes: Ministerio de Salud de Brasil — Vigitel 2025; Federación Internacional de Diabetes — Atlas Mundial de la Diabetes 2025; Sociedad Brasileña de Diabetes (SBD).Según la IDF, la diabetes ya es responsable de más de 111 000 muertes al año en Brasil, unas 20 veces el número de fallecimientos por dengue en el mismo período, y figura, según la SBD, como la principal causa de amputación no traumática de miembros inferiores en el país, con más de 10 000 amputaciones registradas anualmente por el SUS, una media superior a 28 por día.
+¿Está en riesgo y no lo sabe?
+      Según la IDF, cerca de 1 de cada 3 personas con diabetes en Brasil permanece sin diagnosticar. Si tiene factores de riesgo (antecedentes familiares, exceso de peso, presión alta o sedentarismo), hable con su médico sobre la realización de una glucemia en ayunas o una HbA1c. El diagnóstico precoz es determinante para evitar complicaciones.
+    Sección 02Tipos de diabetesNo toda la diabetes es igual. Entender el tipo que tiene, o para el que está en riesgo, es el primer paso para un manejo eficaz.
+
+
+Diabetes tipo 1
+Autoinmune · Insulinodependiente
+El sistema inmunitario destruye las células beta productoras de insulina del páncreas. El organismo produce poca o ninguna insulina. Requiere insulinoterapia de por vida. Suele aparecer en la infancia o en la edad adulta temprana. La SBD estima que cerca de 600 000 brasileños viven con diabetes tipo 1.
+
+
+
+Diabetes tipo 2
+Estilo de vida y genética · Progresiva
+El organismo se vuelve resistente a la insulina o no produce insulina suficiente. Está fuertemente asociada a factores del estilo de vida. Es la forma más común en Brasil, responsable de más del 90 % de los casos. Puede controlarse inicialmente con alimentación, ejercicio y medicación oral, aunque muchos pacientes acaban necesitando insulina.
+
+
+
+Diabetes gestacional
+Relacionada con el embarazo · Generalmente transitoria
+Se desarrolla durante el embarazo cuando los cambios hormonales comprometen la función de la insulina. Suele resolverse tras el parto, pero aumenta significativamente el riesgo de por vida de desarrollar diabetes tipo 2, tanto para la madre como para el bebé. La SBD estima una prevalencia de cerca del 18 % de los embarazos en Brasil, variando según la región y los criterios diagnósticos utilizados.
+
+
+
+Prediabetes
+Prevenible · Frecuentemente reversible
+La glucemia está por encima de lo normal, pero aún no alcanza los niveles de la diabetes. Es una ventana de intervención crítica: los cambios en el estilo de vida en esta etapa pueden prevenir o retrasar significativamente la aparición de la diabetes tipo 2. Es una prioridad creciente en la Atención Primaria de Salud del SUS.
+
+Sección 03Causas y factores de riesgoDiabetes tipo 1La causa exacta de la diabetes tipo 1 sigue sin comprenderse del todo. Es una enfermedad autoinmune: el sistema inmunitario del organismo ataca y destruye erróneamente las células beta del páncreas, responsables de producir insulina. Los factores genéticos desempeñan un papel, al igual que, posiblemente, la exposición a determinadas infecciones virales. En Brasil, la investigación en esta área la desarrollan centros como la SBD — Sociedad Brasileña de Diabetes y grupos de investigación de la Universidad de São Paulo (USP) y la Universidad Federal de São Paulo (UNIFESP).Diabetes tipo 2La diabetes tipo 2 tiene un conjunto de causas más complejo y modificable, que combina predisposición genética con factores de estilo de vida y ambientales. El mecanismo central es la resistencia a la insulina, en la que las células del organismo dejan de responder eficazmente a la insulina, asociada a un declive progresivo en la capacidad del páncreas para compensar con una mayor producción.
+
+
+Exceso de peso corporal
+En particular, la grasa abdominal (visceral). La obesidad es el factor de riesgo modificable más importante para la diabetes tipo 2, y creció un 118 % en Brasil entre 2006 y 2024, según el Vigitel.
+
+
+
+Sedentarismo
+El comportamiento sedentario reduce la sensibilidad a la insulina. El ejercicio regular es una de las herramientas preventivas y terapéuticas más eficaces.
+
+
+
+Dieta rica en alimentos procesados
+El consumo elevado de carbohidratos refinados, azúcar y alimentos ultraprocesados está fuertemente asociado a la resistencia a la insulina.
+
+
+
+Antecedentes familiares
+Tener un familiar de primer grado con diabetes tipo 2 aumenta significativamente el riesgo personal.
+
+
+
+Edad superior a 45 años
+El riesgo aumenta con la edad. Los datos del Vigitel y del Ministerio de Salud muestran una prevalencia creciente en los grupos de mayor edad.
+
+
+
+Presión alta o colesterol elevado
+Los factores de riesgo metabólico tienden a coexistir. La hipertensión y la dislipidemia ocurren frecuentemente junto con la resistencia a la insulina.
+
+
+
+Diabetes gestacional previa
+Las mujeres que desarrollaron diabetes gestacional tienen un riesgo de por vida sustancialmente más elevado de desarrollar diabetes tipo 2.
+
+
+
+Ascendencia y antecedentes poblacionales
+Las personas de ascendencia sudasiática, africana e indígena presentan, en diversos estudios, tasas más elevadas de diabetes tipo 2 con umbrales de IMC más bajos.
+
+Sección 04Señales y síntomasLos síntomas varían considerablemente entre la diabetes tipo 1 y la tipo 2. La tipo 1 suele presentarse de forma aguda, con una aparición rápida de síntomas que pueden indicar cetoacidosis diabética (CAD), una urgencia médica. La tipo 2, en cambio, se desarrolla típicamente de forma lenta y silenciosa a lo largo de los años, con síntomas tan sutiles o graduales que muchas personas los atribuyen al envejecimiento, al estrés o al cansancio del día a día.
+
+
+
+Sed excesiva
+Sed persistente e incontrolable (polidipsia) mientras los riñones trabajan para filtrar el exceso de glucosa.
+
+
+
+
+
+Orinar con frecuencia
+Poliuria, especialmente por la noche (nocturia). A menudo el síntoma inicial más molesto.
+
+
+
+
+
+Cansancio persistente
+Fatiga constante incluso después de descansar adecuadamente, causada por la falta de glucosa en las células.
+
+
+
+
+
+Pérdida de peso inexplicada
+Sobre todo en la tipo 1: el organismo degrada grasa y músculo para obtener energía en ausencia de insulina.
+
+
+
+
+
+Visión borrosa
+La glucemia elevada provoca alteraciones en el cristalino del ojo, afectando temporalmente el enfoque visual.
+
+
+
+
+
+Cicatrización lenta de heridas
+La circulación comprometida y la disfunción inmunitaria retrasan la cicatrización de cortes, heridas e infecciones.
+
+
+
+
+
+Hormigueo o entumecimiento
+La neuropatía periférica, que afecta a manos y pies, puede ser una señal precoz, en particular en la tipo 2.
+
+
+
+
+
+Hambre constante
+Polifagia (hambre persistente incluso después de comer) que ocurre cuando las células no logran absorber la glucosa de forma eficaz.
+
+
+
+Cuándo buscar atención de urgencia:
+      Si usted o un familiar presenta de forma súbita sed intensa, micción excesiva, vómitos, dolor abdominal, confusión o aliento con olor a acetona, especialmente en un niño o adulto joven, podría tratarse de cetoacidosis diabética (CAD), una urgencia médica. Llame de inmediato al SAMU (192) o acuda a la urgencia hospitalaria más cercana.
+    Sección 05Tratamientos actuales para la diabetes en BrasilEl tratamiento de la diabetes ha experimentado una verdadera revolución en la última década. En Brasil, el Ministerio de Salud define el Protocolo Clínico y Directrices Terapéuticas (PCDT) de Diabetes Mellitus Tipo 2, actualizado en abril de 2024 y vigente desde 2025 tras la evaluación de la CONITEC, alineado con las recomendaciones internacionales de la American Diabetes Association (ADA) y la European Association for the Study of Diabetes (EASD). El país también invierte en la producción nacional de insulina: una asociación público-privada prevé la entrega de 20 millones de frascos de insulina glargina al SUS, y se está debatiendo la ampliación del acceso a insulinas análogas de acción prolongada para pacientes con diabetes tipo 1.Modificación del estilo de vida: la base de todo tratamientoTanto para la diabetes tipo 1 como para la tipo 2, el estilo de vida es la base del manejo de la enfermedad. Para la tipo 2 en particular, el cambio en la alimentación y el aumento de la actividad física pueden reducir significativamente la HbA1c, mejorar la sensibilidad a la insulina y, en algunos casos, sobre todo tras una cirugía bariátrica o dietas de muy bajo aporte calórico, llevar a una remisión sostenida. La SBD, la ANAD y los equipos de nutrición y enfermería de las Unidades Básicas de Salud del SUS ofrecen apoyo estructurado para el manejo del estilo de vida en todo el país.Tratamiento farmacológicoLas siguientes clases de medicamentos están disponibles en Brasil. Las decisiones terapéuticas son individualizadas: las directrices del Ministerio de Salud, de la SBD y de la ADA 2025 refuerzan un enfoque centrado en el paciente, que considera el riesgo cardiovascular, la función renal, el peso y las preferencias individuales.
+
+Primera línea · Tipo 2
+Metformina
+Glifage · Genérico (disponible en el SUS)
+El agente oral de primera línea establecido para la diabetes tipo 2. Reduce la glucemia disminuyendo la producción hepática de glucosa. Bien tolerada, asequible y ampliamente disponible. Sigue siendo el punto de partida en la mayoría de los abordajes terapéuticos de la tipo 2 en Brasil.
+
+
+Protección cardiorrenal
+Agonistas del GLP-1
+Semaglutida (Ozempic, Wegovy) · Liraglutida (Victoza)
+Una clase transformadora de medicamentos inyectables (y ahora también orales) que imitan la hormona intestinal GLP-1. Reducen la glucemia, favorecen una pérdida de peso significativa, disminuyen el vaciamiento gástrico y reducen el riesgo cardiovascular. Las directrices de la ADA 2025 recomiendan priorizarlos en pacientes con enfermedad cardiovascular establecida o alto riesgo. Disponibles en Brasil con prescripción médica.
+
+
+Protección cardiorrenal
+Inhibidores del SGLT2
+Empagliflozina (Jardiance) · Dapagliflozina (Forxiga)
+Estos comprimidos reducen la glucemia favoreciendo la eliminación del exceso de azúcar por la orina. Protegen de forma independiente el corazón y los riñones, y se recomiendan como primera línea en pacientes con insuficiencia cardíaca o enfermedad renal crónica, independientemente del valor de HbA1c. Cuentan con una sólida base de evidencia de los estudios EMPA-REG OUTCOME y CREDENCE.
+
+
+Control glucémico
+Inhibidores de la DPP-4
+Sitagliptina (Januvia) · Linagliptina (Trajenta)
+Comprimidos orales que potencian la secreción de insulina de forma dependiente de la glucosa. Son neutros respecto al peso, con bajo riesgo de hipoglucemia. Se utilizan con frecuencia cuando los agonistas del GLP-1 o los inhibidores del SGLT2 no se toleran o no son adecuados.
+
+
+Tipo 1 & Tipo 2 avanzada
+Insulinoterapia
+Insulinas basales, bolo, premezcladas · Bombas de insulina
+Esencial para todos los pacientes con tipo 1 y para muchos con tipo 2. Las insulinas análogas modernas ofrecen perfiles de acción más predecibles que las formulaciones más antiguas. El Ministerio de Salud ha ampliado la producción nacional de insulina glargina para el SUS, y estudia la inclusión de análogos de acción prolongada en el protocolo para pacientes con tipo 1.
+
+
+Tipo 1 · Tecnología en expansión
+Monitorización continua de glucosa (MCG)
+Libre · Dexcom · Medtronic
+La MCG elimina la necesidad de pincharse el dedo, ofrece tendencias de glucosa en tiempo real y alertas, y mejora el control glucémico. En Brasil, el acceso ha crecido de forma constante, tanto por la incorporación parcial al SUS como por la cobertura de los planes de salud privados, aunque el acceso universal sigue siendo un reto, según la SBD.
+
+
+Actualización de las directrices de la ADA 2025:
+      Las directrices de la American Diabetes Association de 2025 refuerzan que los agonistas del GLP-1 y los inhibidores del SGLT2 deben priorizarse en pacientes con diabetes tipo 2 que presenten enfermedad cardiovascular establecida o de alto riesgo, insuficiencia cardíaca o enfermedad renal crónica, con independencia del valor de HbA1c. Si tiene diabetes tipo 2 y alguna de estas condiciones, hable con su médico sobre si estas clases terapéuticas son adecuadas para usted.
+    Sección 06La importancia de las revisiones periódicasLa diabetes es una enfermedad crónica que evoluciona con el tiempo, y sus complicaciones, si no se detectan, pueden ser graves e irreversibles. La retinopatía diabética es una de las principales causas de ceguera evitable en la población adulta brasileña. La nefropatía diabética es uno de los mayores determinantes de la enfermedad renal crónica terminal. La neuropatía periférica origina complicaciones en el pie que, en los casos más graves, pueden derivar en amputación; según la SBD, la diabetes ya es la principal causa de amputación no traumática de miembros inferiores en Brasil, con más de 10 000 procedimientos al año registrados por el SUS, una media superior a 28 por día, y cerca de 13 millones de personas con diabetes que conviven con úlceras en los pies.Décadas de investigación demuestran que todas estas complicaciones son ampliamente prevenibles, o se pueden retrasar de forma significativa, con un buen control glucémico, un manejo adecuado de la presión arterial y un seguimiento regular. La revisión anual estructurada para la diabetes es una de las intervenciones con mejor relación coste-beneficio de toda la medicina.Qué debe incluir su revisión anual de diabetes
+Evaluación de la HbA1c (promedio de glucemia de los últimos 3 meses)
+Medición de la presión arterial y revisión de la terapia antihipertensiva
+Función renal: tasa de filtración glomerular estimada (TFGe) y relación albúmina/creatinina urinaria
+Colesterol y perfil lipídico completo
+Evaluación del peso y del IMC
+Exploración de los pies, incluida la evaluación de pulsos y sensibilidad
+Examen de fondo de ojo para el cribado de retinopatía diabética
+Revisión y ajuste de la medicación, si es necesario
+Evaluación de la adherencia al plan de autocuidado de la diabetes
+Evaluación del tabaquismo y apoyo para dejar de fumar, si procede
+Vacunación contra la gripe (muy recomendada para personas con diabetes)
+Cribado para quienes aún no tienen diagnósticoSi tiene factores de riesgo para la diabetes tipo 2 y nunca se ha realizado pruebas, su médico puede solicitar una glucemia en ayunas o una HbA1c, pruebas sencillas disponibles tanto en la red pública como en la privada. Esto es especialmente importante si tiene más de 45 años, antecedentes familiares de diabetes, presión alta o tuvo exceso de peso durante el embarazo. La detección precoz de la prediabetes ofrece una ventana real de oportunidad para prevenir o retrasar la aparición de la diabetes tipo 2 mediante cambios en el estilo de vida.
+Cribado de la retinopatía diabética en Brasil:
+      A diferencia de otros países, Brasil todavía no cuenta con un programa nacional unificado de cribado de la retinopatía diabética; el tema sigue en consulta pública y evaluación por parte de la CONITEC para un nuevo protocolo clínico. Diversas iniciativas regionales, universidades como la UERJ y proyectos de telemedicina con apoyo de inteligencia artificial están ampliando el acceso al examen de fondo de ojo en la Atención Primaria. Mientras el cribado universal no sea una realidad, procure agendar su examen de retina anualmente, ya sea por el SUS o con un oftalmólogo particular.
+    Sección 07El futuro del tratamiento de la diabetesEl ritmo de innovación en la medicina de la diabetes no tiene precedentes. Diversas áreas de investigación, algunas ya en ensayos clínicos avanzados, tienen el potencial de transformar fundamentalmente lo que significa vivir con diabetes en la próxima década.
+
+Ensayo fase 1/2/3 · Presentación regulatoria en 2026
+Terapia con células madre derivadas de células beta
+El zimislecel (anteriormente VX-880) de Vertex Pharmaceuticals consiste en la infusión de células de los islotes productoras de insulina, totalmente diferenciadas a partir de células madre, en la vena porta hepática, con el objetivo de restaurar la producción endógena de insulina en la diabetes tipo 1. En junio de 2025, el ensayo pivotal contaba con 50 participantes, con presentación regulatoria prevista para 2026. Una revisión pu
