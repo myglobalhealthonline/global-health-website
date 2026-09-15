@@ -10403,6 +10403,28 @@ incremental build: run it with `--incremental false` before pushing.
 - `/brazil/*/dr-renato` (B6): answer "no" — meaning to be confirmed.
 - Legal (B7): correct it — footer compliance line changed from EU GDPR/RGPD to LGPD on Brazil.
 
+### 59.14 Brazil LGPD footer, pricing copy and hero country name — 15 September 2026
+
+**Status: LIVE.** Code only. Commit `eaf9e563`; Frontend deployment
+`a0ccc8b7-4e62-4bf6-8f1b-3cb14227a1f8` SUCCESS.
+
+- **Change.** `brazil-editorial-copy.json` gains en/es entries and more pt keys: footer
+  `euCompliant` names the LGPD (pt/en/es); pricing `howItWorks.availability` "Disponível no
+  Brasil" / "Available in Brazil" / "Disponible en Brasil" (was "Only Ireland"); pricing lede
+  (also the Brazil pricing meta description) drops "specialist savings"; `howItWorks.lede` drops
+  "wide range of specialised professionals"; pt-BR subscription steps, trust cards and
+  subscription-terms copy; ES trust title "Médicos registrados"; `statsBand.stat2Caption`
+  no longer says EU-registered. Homepage `HomeHero` badge/trust item use `countryNames.br`.
+- **Proof.** `tsc --noEmit --incremental false` exit 0; `check-locale-keys` passed; i18n tests
+  72/72 (pre-existing `same-day-booking-state` failure only). Production: `/brazil/{pt,en,es}/pricing`
+  200, self-canonical, Brazil availability text, 0 "Ireland"/specialist-savings strings; `/brazil/pt`
+  "Registrados no Brasil". Controls `/portugal/pt/pricing` ("Apenas Irlanda", RGPD) and
+  `/ireland/en/pricing` ("Only Ireland", GDPR) unchanged.
+- **Left.** EN/ES trust bar and homepage ribbon still say GDPR/RGPD: stored
+  `CountryLegalProfileTrustTranslation.dataProtectionLawName` (fix script `brazil-lgpd-law-name.mjs`,
+  owner-run). Plan names/benefits on pricing are PT-PT in the plans table.
+- **Cohort.** Brazil pricing ×3: measure 2026-10-15, 2026-11-14, 2026-12-14.
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
