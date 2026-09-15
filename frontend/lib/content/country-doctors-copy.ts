@@ -149,6 +149,13 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
     trustCard1Subtitle: "Clínicos totalmente verificados",
     trustCard2Title: "Avaliado no Doctify",
     trustCard2Subtitle: "{count}+ consultas",
+    // Brazil SEO handoff R1 (2026-09-15): no same-day or 24-hour promise.
+    trustCard3Title: "Horários atualizados",
+    trustCard3Subtitle: "Exibidos no agendamento",
+    floatCard1Title: "Disponibilidade atual",
+    floatCard1Subtitle: "Veja os horários no calendário de agendamento",
+    bottomCtaTitle: "Escolha um médico. Agende",
+    bottomCtaAccent: "online.",
   },
   // Same EU/Brazilian consumer-protection issue as Ireland/Romania: the
   // fabricated "4.9 rating / 2,000+ reviews" claim must not appear on the
@@ -157,10 +164,22 @@ const OVERRIDES: Record<string, DoctorsOverride> = {
   "br:en": {
     trustCard2Title: "Reviewed on Doctify",
     trustCard2Subtitle: "{count}+ consultations",
+    trustCard3Title: "Up-to-date times",
+    trustCard3Subtitle: "Shown when you book",
+    floatCard1Title: "Current availability",
+    floatCard1Subtitle: "See times in the booking calendar",
+    bottomCtaTitle: "Pick a clinician. Book",
+    bottomCtaAccent: "online.",
   },
   "br:es": {
     trustCard2Title: "Valorado en Doctify",
     trustCard2Subtitle: "{count}+ consultas",
+    trustCard3Title: "Horarios actualizados",
+    trustCard3Subtitle: "Se muestran al reservar",
+    floatCard1Title: "Disponibilidad actual",
+    floatCard1Subtitle: "Consulte los horarios en el calendario de reservas",
+    bottomCtaTitle: "Elija un médico. Reserve",
+    bottomCtaAccent: "online.",
   },
   "br:cs": {
     trustCard2Title: "Hodnoceno na Doctify",
@@ -241,6 +260,24 @@ const SEO: Record<string, DoctorDirectorySeo> = {
     title: "Online-Ärzte Irland | Hausärzte und Fachärzte beim IMC",
     description:
       "Finden Sie beim IMC registrierte Ärzte und klinische Fachkräfte in Irland. Sehen Sie Fachgebiete, Registrierungsdaten, Sprachen und Online-Buchungsoptionen.",
+  },
+  // Brazil SEO handoff R1 (2026-09-15). Beats the stored DOCTORS_INDEX
+  // seoTitle/seoDescription, which still promise same-day booking and name
+  // Palliative Care. Clear those stored fields before editing them in the admin.
+  "br:pt": {
+    title: "Médicos registrados no CRM | Consultas online no Brasil",
+    description:
+      "Consulte médicos registrados no CRM disponíveis online no Brasil. Veja dados de registro, idiomas e horários de consulta por vídeo.",
+  },
+  "br:en": {
+    title: "CRM-Registered Doctors | Online Consultations in Brazil",
+    description:
+      "See CRM-registered doctors available online in Brazil. View registration details, languages and video consultation times.",
+  },
+  "br:es": {
+    title: "Médicos registrados en el CRM | Consultas online en Brasil",
+    description:
+      "Consulte médicos registrados en el CRM disponibles online en Brasil. Vea datos de registro, idiomas y horarios de consulta por vídeo.",
   },
 };
 
