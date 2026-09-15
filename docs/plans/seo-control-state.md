@@ -10441,6 +10441,33 @@ incremental build: run it with `--incremental false` before pushing.
   attribution batch blocked by the permission classifier (plan not written); `/brazil/*/dr-renato`
   indexing answer to confirm.
 
+### 59.16 D1 disclaimer follow-up and pt-BR pricing plans — 15 September 2026
+
+**Status: LIVE.** Database writes, owner-run.
+
+- **D1 follow-up.** `disclaimerParagraphs` on HOME en/pt/es and DOCTORS_INDEX en/pt: "Conselho Federal
+  de Medicina (CFM) / CRM" → CRM under CFM supervision; PT rows in pt-BR. Plan
+  `content-briefs/d1b-disclaimer-plan-2026-09-15.json` (commit `c316b4b2`), manifest `9c345f42…`;
+  owner dry-run 5/5 ready, apply reported "already applied" (written in an earlier owner run).
+  API: 0 "(CFM) / CRM" on all six Brazil HOME/DOCTORS_INDEX rows.
+- **Pricing plans.** Runner `backend/scripts/brazil-plan-content.mjs` (commit `f240a4e2`; display fields
+  only, never price/credits/Stripe ids). Plan `content-briefs/plans-ptbr-plan-2026-09-15.json` (commit
+  `d258b18e`), manifest `5bff3b46…`: PricingPlan base and PT `PlanTranslation` long/short descriptions
+  and features in pt-BR ("você tem direito", "fazer seus agendamentos", "para você", "clínica geral",
+  "Agendamento online e acesso aos seus registros clínicos"); ES name typo "Esential" → "Esencial".
+  Owner dry-run 7/7 ready; owner apply 7/7. API `/api/countries/br/plans?locale=PT` returns the new
+  features; production `/brazil/pt/pricing` shows them, `/brazil/es/pricing` "Plan de Salud Esencial";
+  control `/portugal/pt/pricing` still "Marcação online … registos clínicos".
+- **Phase 7: LIVE.** Deleted " — um dos formatos mais inovadores de telemedicina no SUS —" (and EN/ES) from
+  Dr. Renato Sarmento's profile FAQ; biography unchanged per owner. Plan `content-briefs/phase7-plan.json`
+  (commit `d258b18e`), manifest `c1bea18f…`, 1 group, 3 operations. Super-admin-confirmed verbal approval
+  (`clinical-approval-phase7.json`, commit `8770c0f5`). Backend `821c3d95-621e-47c4-a8ed-cad75cd006c5` SUCCESS
+  on `bb5a1564`, `/ready` ok; receipt `enforcement-deployment-phase7.json`. Rollout 04:57 UTC: applied and
+  publicly verified 3/3. Cohort: measure 2026-10-15, 2026-11-14, 2026-12-14.
+- **Done.** Every owner-requested Brazil item is applied. Left by owner decision: article attribution
+  (classifier-blocked), `/brazil/*/dr-renato` indexing, GA4 funnel check, article fact-checks, medical-review
+  policy page, signing provider; service legal claims and Renato biography unchanged.
+
 - spain group service:consulta-diagnotico-vascular: database committed; public verification pending. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-applied.json.
 - Spain group service:consulta-diagnotico-vascular: public HTML/FAQ/schema verified 2026-09-14T02:03:40.8188830Z. Receipt: seo/spain/raw/rollout/service-consulta-diagnotico-vascular-public.json.
 
@@ -10770,3 +10797,6 @@ incremental build: run it with `--incremental false` before pushing.
 
 - brazil group text:doctor:cmqyzr0fb000o01lu9deh6mf5: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/text-doctor-cmqyzr0fb000o01lu9deh6mf5-applied.json.
 - seo/brazil phase 6 group text:doctor:cmqyzr0fb000o01lu9deh6mf5: public verification passed 2026-09-15T02:58:55.7652207Z. Receipt: seo/brazil/raw/rollout/phase6/text-doctor-cmqyzr0fb000o01lu9deh6mf5-public.json.
+
+- brazil group text:doctor:cmqyzr0fb000o01lu9deh6mf5: database committed; public verification pending. Receipt: seo/brazil/raw/rollout/text-doctor-cmqyzr0fb000o01lu9deh6mf5-applied.json.
+- seo/brazil phase 7 group text:doctor:cmqyzr0fb000o01lu9deh6mf5: public verification passed 2026-09-15T04:57:14.2355997Z. Receipt: seo/brazil/raw/rollout/phase7/text-doctor-cmqyzr0fb000o01lu9deh6mf5-public.json.
