@@ -1,4 +1,50 @@
 {
+  "en": {
+    "common": {
+      "footer": {
+        "euCompliant": "Licensed telemedicine platform · LGPD compliant"
+      }
+    },
+    "home": {
+      "statsBand": {
+        "stat2Caption": "CRM-registered, LGPD-compliant by default."
+      }
+    },
+    "subscription": {
+      "pricing": {
+        "lede": "Monthly online GP care with consultation credits, priced for {country}."
+      },
+      "howItWorks": {
+        "lede": "General practice doctors to look after your everyday health",
+        "availability": "Available in Brazil"
+      }
+    }
+  },
+  "es": {
+    "common": {
+      "footer": {
+        "euCompliant": "Plataforma de telemedicina autorizada · Conforme a la LGPD"
+      },
+      "pricingPage": {
+        "trustLicensedTitle": "Médicos registrados"
+      }
+    },
+    "home": {
+      "statsBand": {
+        "stat2Caption": "Registrados en el CRM, conformidad con la LGPD."
+      }
+    },
+    "subscription": {
+      "pricing": {
+        "lede": "Atención mensual de medicina general online con créditos de consulta, con precios para {country}.",
+        "trust_card1_title": "Médicos registrados"
+      },
+      "howItWorks": {
+        "lede": "Médicos de medicina general para cuidar tu salud en el día a día",
+        "availability": "Disponible en Brasil"
+      }
+    }
+  },
   "pt": {
     "common": {
       "navigation": {
@@ -12,6 +58,7 @@
       },
       "footer": {
         "ourDoctors": "Nossos médicos",
+        "euCompliant": "Plataforma de telemedicina licenciada · Em conformidade com a LGPD",
         "tagline": "Medicina a qualquer hora e em qualquer lugar. Consultas médicas online com médicos registrados localmente nos mercados onde atuamos.",
         "newsletterPrivacy": "Respeitamos sua privacidade. Cancele a inscrição quando quiser."
       },
@@ -124,6 +171,7 @@
       },
       "statsBand": {
         "body": "Acesse clínicos registrados com horários disponíveis, perfis claros e etapas de agendamento específicas para cada serviço.",
+        "stat2Caption": "Registrados no CRM, em conformidade com a LGPD.",
         "stat3Value": "Ao vivo"
       }
     },
@@ -139,6 +187,49 @@
         "headline": "Cuidado para o que realmente está acontecendo.",
         "featuredDescription": "A maioria dos pacientes começa aqui. Escolha um horário de consulta disponível com um médico registrado no seu país.",
         "bookConsultation": "Agendar consulta"
+      }
+    },
+    "subscription": {
+      "pricing": {
+        "lede": "Cuidados mensais de medicina geral online com créditos de consulta, com preços para o {country}.",
+        "bookingLine": "Acesso ao agendamento de consultas online de clínica geral",
+        "trust_card1_title": "Médicos registrados",
+        "trust_card1_subtitle": "Registrados localmente",
+        "archLicensedTitle": "Médicos registrados",
+        "archLicensedSubtitleTemplate": "Registrados no {country}",
+        "archImageAltTemplate": "Médico revisando planos de assinatura de saúde no {country}"
+      },
+      "howItWorks": {
+        "lede": "Médicos de clínica geral para cuidar da sua saúde no dia a dia",
+        "availability": "Disponível no Brasil",
+        "steps": [
+          {
+            "title": "Escolha o plano ideal para você",
+            "body": "Selecione o plano de saúde que se adapta ao seu estilo de vida e às suas necessidades: Essencial, Completo ou Premium."
+          },
+          {
+            "title": "Cadastre-se com facilidade",
+            "body": "Crie sua conta em minutos e comece sua assinatura mensal com segurança, sem complicações."
+          },
+          {
+            "title": "Agende sua consulta a qualquer hora",
+            "body": "Agende uma consulta online quando for melhor para você, de dia ou à noite, de qualquer dispositivo."
+          },
+          {
+            "title": "Sem taxas extras de agendamento",
+            "body": "Seu plano mensal cobre o agendamento, sem custos inesperados na hora de agendar."
+          },
+          {
+            "title": "Fale com um médico de qualquer lugar",
+            "body": "Fale com seu médico por videochamada segura, de casa, do trabalho ou em viagem."
+          }
+        ]
+      },
+      "legal": {
+        "eyebrow": "Informações legais",
+        "title": "Termos da assinatura",
+        "renewal_p": "Sua adesão é renovada automaticamente todo mês. A data de renovação é a data de aniversário da sua assinatura. Não guardamos os dados do seu cartão — eles são mantidos com segurança pelo nosso provedor de pagamentos.",
+        "contact_p": "Para qualquer dúvida sobre cobrança ou adesão, fale com nossa equipe de suporte."
       }
     },
     "company": {

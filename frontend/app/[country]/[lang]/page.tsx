@@ -601,7 +601,7 @@ export default async function CountryLangHomePage({
           without an override keep the generic brand headline (t.countryHero). */}
       <HomeHero
         countryCode={config.code}
-        countryName={config.name}
+        countryName={code === "br" ? (cc.countryNames?.[code] ?? config.name) : config.name}
         doctorCount={countryDoctors.length}
         languageLabel={languageLabel}
         bookHref={page?.ctaHref ?? bookHref}

@@ -19,6 +19,8 @@ describe("Brazil pt-BR locale layer", () => {
       const original = at(shared, path);
       expect(typeof original, path).toBe("string");
       expect(tokens(value), path).toEqual(tokens(original as string));
+      // "licenciada" is kept on the compliance line: same claim as the shared copy, only the law changes.
+      if (path === "common.footer.euCompliant") continue;
       expect(value, path).not.toMatch(
         /registad|registo|equipa|marcaç|\bmarcar\b|\bmarque\b|doente|ecrã|telemóvel|contacto|subscriç|anónim|actualiz|consoante|call centre|licenciad|connosco|Em direto|Saltar|no próprio dia/i,
       );
@@ -30,13 +32,28 @@ describe("Brazil pt-BR locale layer", () => {
     const original = JSON.stringify(shared);
     const brazilPt = loadLocaleBundle("pt", "brazil");
     expect(brazilPt.common.navigation.contact).toBe("Contato");
+    // Arrays replace wholesale in deepMergeLocale: the override must keep every step.
+    expect(brazilPt.subscription.howItWorks.steps).toHaveLength(shared.subscription.howItWorks.steps.length);
+    for (const locale of ["pt", "en", "es"] as const) {
+      expect(loadLocaleBundle(locale, "brazil").subscription.howItWorks.availability).not.toMatch(/Irlanda|Ireland/);
+      expect(loadLocaleBundle(locale, "brazil").subscription.pricing.lede).not.toMatch(/especialistas|specialist/i);
+    }
+    expect(loadLocaleBundle("pt", "portugal").subscription.howItWorks.availability).toBe("Apenas Irlanda");
     expect(loadLocaleBundle("pt", "br")).toBe(brazilPt);
     for (const country of [undefined, "pt", "portugal", "ie", "ireland", "cz", "czechia"]) {
       expect(loadLocaleBundle("pt", country)).toBe(shared);
     }
     expect(JSON.stringify(shared)).toBe(original);
-    for (const locale of ["en", "es"] as const) {
-      expect(loadLocaleBundle(locale, "brazil")).toEqual(loadLocaleBundle(locale));
+    // en/es: only the footer compliance line differs (LGPD, not the EU GDPR).
+    for (const locale of ["en", "es", "pt"] as const) {
+      const br = loadLocaleBundle(locale, "brazil");
+      expect(br.common.footer.euCompliant).toMatch(/LGPD/);
+      expect(br.common.footer.euCompliant).not.toMatch(/GDPR|RGPD/);
+      if (locale !== "pt") {
+        // Only the footer line and the pricing trust title may differ in common.
+        const strip = (c: typeof br.common) => ({ ...c, footer: { ...c.footer, euCompliant: "" }, pricingPage: { ...c.pricingPage, trustLicensedTitle: "" } });
+        expect(strip(br.common)).toEqual(strip(loadLocaleBundle(locale).common));
+      }
     }
   });
 
