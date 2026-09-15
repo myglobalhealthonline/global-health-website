@@ -243,3 +243,13 @@ Cadence unchanged: one `inspect_urls` pass every 2-3 weeks; next global pass **2
 | `seo/tracking/Global_Health_SEO_Tracker.xlsx` | analytical view and proposed-action queue (never status) |
 | `seo/tracking/data/`, `seo/tracking/raw/<date>/`, `seo/tracking/scripts/` | normalized data + manifests, raw pulls, refresh tooling |
 | `seo/<country>/` | dated market evidence packages |
+
+## 6. Owner decision on Ireland lab tests and sitemap gate fix — 2026-09-15
+
+**Owner (Hassaan, 2026-09-15):** Irish lab tests "will be live again in a week" — the `health-tests` feature is re-enabled by operations, not retired. No 410s, no redirect repointing, no removal of internal links.
+
+**Implemented (code, not yet deployed by this session):** commit `d2618e73` — `frontend/app/sitemap.ts` lab-test detail loop now applies the same `isCountryFeatureEnabled(country, "health-tests")` gate as the hub loop and the page (`TECH-001` / `CPL-012`, TF-12). Unit test added (`frontend/tests/unit/seo/sitemap.test.ts`: catalogue rows present, flag off → no detail URLs). `vitest` 33/33, `tsc --noEmit` exit 0. Effect: while the flag is off the sitemap stops advertising the 84 dead URLs; once operations re-enables the flag they return automatically with their `lastmod`.
+
+**Watchlist (updates §4):** after the flag is back on, inspect `/ireland/en/lab-tests` plus five detail URLs 14 days later; expect "Submitted and indexed" with a post-re-enable crawl date. The 40 legacy `/product-page/*` and `/home-health-tests*/*` redirects stay as they are (they resolve once the pages return). Re-run `SEO_CHECK_BASE=https://www.myglobalhealth.online` `seo-live-urls.test.ts` the day the flag is on: expect 9/9.
+
+**Not done:** deploy (owner pipeline); the flag flip itself (operations); MIG-*, MEAS-*, INTL-002 and the coupling programme remain proposals in §3.
