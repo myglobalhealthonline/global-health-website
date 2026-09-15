@@ -954,8 +954,8 @@ async function SelectedServiceFlow({
               at={at}
               month={monthOffset}
               bp={bp}
-              cardI18n={doctorCardI18n(c.doctors)}
-              bookingAvailability={c.bookingAvailability}
+              cardI18n={doctorCardI18n(loadLocaleBundle(lang as LocaleCode, brazilOnly(code)).common.doctors)}
+              bookingAvailability={loadLocaleBundle(lang as LocaleCode, brazilOnly(code)).common.bookingAvailability}
               bookingTimezone={bookingTimezone}
               benefit={benefitHrefParam}
             />
