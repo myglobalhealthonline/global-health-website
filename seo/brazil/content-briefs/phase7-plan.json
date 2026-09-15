@@ -1,0 +1,27 @@
+{
+  "snapshot": "raw/storage-phase7-2026-09-15.json",
+  "source": "Owner (super admin) 2026-09-15: remove the unverifiable superlative \"um dos formatos mais inovadores de telemedicina no SUS\" from Dr. Renato Sarmento's profile FAQ (PT/EN/ES). Biography unchanged per owner instruction. Deletion only.",
+  "replacements": [
+    {
+      "table": "doctorFaqs",
+      "id": "cmrmj60ns0003n4jurcztrvm8",
+      "field": "answer",
+      "from": " — um dos formatos mais inovadores de telemedicina no SUS —",
+      "to": ","
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrny5qwy008pbsjuo4fxmr08",
+      "field": "answer",
+      "from": " — one of the most innovative formats of telemedicine in the SUS —",
+      "to": ","
+    },
+    {
+      "table": "doctorFaqs",
+      "id": "cmrny64fj008vbsjujkwkhwf6",
+      "field": "answer",
+      "from": " — uno de los formatos más innovadores de telemedicina en el SUS —",
+      "to": ","
+    }
+  ]
+}
